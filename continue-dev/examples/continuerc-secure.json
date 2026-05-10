@@ -1,0 +1,29 @@
+{
+  "_comment": "Workspace-level Continue.dev overrides. Place as .continuerc.json in the project root.",
+
+  "models": [
+    {
+      "name": "project-model",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "apiKey": "${{ secrets.OPENAI_API_KEY }}"
+    }
+  ],
+
+  "contextProviders": [
+    { "name": "code" },
+    { "name": "docs" },
+    { "name": "diff" },
+    { "name": "tree" }
+  ],
+
+  "allowAnonymousTelemetry": false,
+
+  "customCommands": [
+    {
+      "name": "security-review",
+      "description": "Review code for security issues",
+      "prompt": "Review this code for security vulnerabilities. Check for: SQL injection, XSS, CSRF, insecure deserialization, hard-coded secrets, insecure cryptography, path traversal, and authentication/authorization flaws. List each finding with severity (Critical/High/Medium/Low) and remediation."
+    }
+  ]
+}

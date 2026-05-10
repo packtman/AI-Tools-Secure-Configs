@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/org-policy.json",
+  "_comment": "MODERATE OpenAI organization policy. Balanced access control with project-based isolation and reasonable limits. Use for standard enterprise teams.",
+
+  "organization": {
+    "name": "acme-corp",
+    "sso_enabled": true,
+    "sso_provider": "okta",
+    "ip_allowlist": [
+      "203.0.113.0/24",
+      "198.51.100.0/24"
+    ],
+    "mfa_required": true,
+    "audit_logging_enabled": true,
+    "max_organization_owners": 3
+  },
+
+  "default_project_policy": {
+    "default_member_role": "member",
+    "require_service_accounts": true,
+    "key_rotation_days": 90
+  },
+
+  "rate_limits": {
+    "requests_per_minute": 500,
+    "tokens_per_minute": 200000
+  },
+
+  "spending_limit_usd": 5000,
+
+  "allowed_models": [
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+
+  "content_filtering": {
+    "moderation_enabled": true,
+    "pre_check_user_input": true,
+    "post_check_model_output": true,
+    "block_categories": [
+      "hate", "hate/threatening",
+      "self-harm",
+      "sexual", "sexual/minors",
+      "violence", "violence/graphic"
+    ],
+    "threshold": 0.7
+  },
+
+  "data_controls": {
+    "log_prompts": false,
+    "log_responses": false,
+    "data_retention_days": 30
+  }
+}

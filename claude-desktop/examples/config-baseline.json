@@ -1,0 +1,34 @@
+{
+  "_comment": "BASELINE Claude Desktop config — MCP enabled with scoped filesystem access, extensions allowed. Essential security only. Suitable for startups and individual developers.",
+
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/REPLACE_WITH_USERNAME/Documents/projects"
+      ],
+      "_comment": "Scope to your projects directory — avoid granting home directory root or system paths."
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository", "/Users/REPLACE_WITH_USERNAME/Documents/projects"
+      ],
+      "_comment": "Git operations scoped to your projects directory."
+    }
+  },
+
+  "_enterprise_policies": {
+    "_comment": "Deploy these via MDM — listed here as a reference, not part of the runtime config.",
+    "isLocalDevMcpEnabled": true,
+    "isDesktopExtensionEnabled": true,
+    "isDesktopExtensionDirectoryEnabled": true,
+    "isClaudeCodeForDesktopEnabled": true,
+    "secureVmFeaturesEnabled": true,
+    "disableAutoUpdates": false,
+    "autoUpdaterEnforcementHours": 72
+  }
+}

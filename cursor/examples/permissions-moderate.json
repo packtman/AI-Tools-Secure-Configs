@@ -1,0 +1,41 @@
+{
+  "_comment": "MODERATE Cursor permissions — read-only and common dev commands auto-run. Build/test commands included. No MCP auto-approval.",
+
+  "terminalAllowlist": [
+    "ls",
+    "cat",
+    "head",
+    "tail",
+    "grep",
+    "find",
+    "wc",
+    "echo",
+    "pwd",
+    "tree",
+    "file",
+    "which",
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "git stash list",
+    "npm test",
+    "npm run lint",
+    "npm run build",
+    "npm run typecheck",
+    "npx tsc --noEmit",
+    "npx prettier --check",
+    "npx eslint",
+    "python -m pytest",
+    "python -m mypy",
+    "python -m flake8",
+    "go test ./...",
+    "go vet ./...",
+    "cargo test",
+    "cargo clippy",
+    "make test",
+    "make lint"
+  ],
+
+  "mcpAllowlist": []
+}

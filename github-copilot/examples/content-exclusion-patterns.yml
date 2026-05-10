@@ -1,0 +1,71 @@
+# GitHub Copilot — Content Exclusion Patterns
+# Use these patterns in repository, organization, or enterprise settings.
+# Patterns use fnmatch notation (case insensitive).
+
+# ──────────────────────────────────────────────
+# Secrets and credentials
+# ──────────────────────────────────────────────
+secrets_and_credentials:
+  - "**/.env"
+  - "**/.env.*"
+  - "**/.env.local"
+  - "**/.env.production"
+  - "**/secrets/**"
+  - "**/*secret*"
+  - "**/credentials*"
+  - "**/token*"
+
+# ──────────────────────────────────────────────
+# Cryptographic material
+# ──────────────────────────────────────────────
+crypto_material:
+  - "**/*.pem"
+  - "**/*.key"
+  - "**/*.p12"
+  - "**/*.pfx"
+  - "**/*.jks"
+  - "**/*.keystore"
+  - "**/*.crt"
+  - "**/*.cer"
+
+# ──────────────────────────────────────────────
+# Cloud provider credentials
+# ──────────────────────────────────────────────
+cloud_credentials:
+  - "**/.aws/**"
+  - "**/.azure/**"
+  - "**/.config/gcloud/**"
+  - "**/.ssh/**"
+  - "**/.kube/config"
+  - "**/kubeconfig*"
+
+# ──────────────────────────────────────────────
+# Infrastructure state (may contain secrets)
+# ──────────────────────────────────────────────
+infrastructure_state:
+  - "**/terraform.tfstate"
+  - "**/terraform.tfstate.backup"
+  - "**/terraform.tfvars"
+  - "**/*.auto.tfvars"
+  - "**/pulumi.*.yaml"
+  - "**/.pulumi/**"
+
+# ──────────────────────────────────────────────
+# Database and data files
+# ──────────────────────────────────────────────
+data_files:
+  - "**/*.sql"
+  - "**/*.dump"
+  - "**/*.bak"
+  - "**/fixtures/**"
+  - "**/seeds/**"
+
+# ──────────────────────────────────────────────
+# Vendor and dependency directories
+# ──────────────────────────────────────────────
+vendor_dependencies:
+  - "**/node_modules/**"
+  - "**/vendor/**"
+  - "**/.venv/**"
+  - "**/dist/**"
+  - "**/build/**"

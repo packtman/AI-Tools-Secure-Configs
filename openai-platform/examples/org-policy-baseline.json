@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/org-policy.json",
+  "_comment": "BASELINE OpenAI organization policy. Essential security with minimal friction. Suitable for startups and individual developers.",
+
+  "organization": {
+    "name": "my-org",
+    "sso_enabled": false,
+    "mfa_required": false,
+    "audit_logging_enabled": true,
+    "max_organization_owners": 5
+  },
+
+  "default_project_policy": {
+    "default_member_role": "member",
+    "require_service_accounts": false,
+    "key_rotation_days": 180
+  },
+
+  "rate_limits": {
+    "requests_per_minute": 1000,
+    "tokens_per_minute": 500000
+  },
+
+  "spending_limit_usd": 20000,
+
+  "allowed_models": [
+    "gpt-4o",
+    "gpt-4o-mini",
+    "o3-mini"
+  ],
+
+  "content_filtering": {
+    "moderation_enabled": true,
+    "pre_check_user_input": false,
+    "post_check_model_output": true,
+    "block_categories": [
+      "sexual/minors",
+      "self-harm/instructions"
+    ],
+    "threshold": 0.9
+  },
+
+  "data_controls": {
+    "log_prompts": false,
+    "log_responses": false,
+    "data_retention_days": 90
+  }
+}

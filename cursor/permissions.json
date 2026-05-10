@@ -1,0 +1,20 @@
+{
+  "_comment": "Cursor permissions.json — deploy to ~/.cursor/permissions.json. Controls auto-run behavior for terminal commands and MCP tools.",
+
+  "terminalAllowlist": [
+    "ls",
+    "wc",
+    "pwd",
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "npm test",
+    "npm run lint",
+    "npx tsc --noEmit",
+    "python -m pytest",
+    "go test ./..."
+  ],
+
+  "mcpAllowlist": []
+}

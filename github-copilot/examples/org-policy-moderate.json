@@ -1,0 +1,60 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
+  "_comment": "MODERATE GitHub Copilot organization policy. Core features enabled, sensible content exclusion, individual plan blocked. Use for standard enterprise teams.",
+
+  "organization": "acme-corp",
+  "copilot_plan": "enterprise",
+
+  "seat_management": {
+    "assignment": "selected_teams",
+    "auto_assign_new_members": false,
+    "allowed_teams": [
+      "engineering",
+      "devops",
+      "security"
+    ]
+  },
+
+  "feature_policies": {
+    "copilot_in_ide": "enabled",
+    "copilot_chat_in_ide": "enabled",
+    "copilot_chat_on_github": "enabled",
+    "copilot_cli": "disabled",
+    "copilot_code_review": "enabled",
+    "copilot_pull_request_summaries": "enabled",
+    "copilot_docset_management": "disabled",
+    "copilot_bing_search": "disabled",
+    "copilot_web_search": "disabled"
+  },
+
+  "content_exclusions": {
+    "global_patterns": [
+      "**/.env",
+      "**/.env.*",
+      "**/secrets/**",
+      "**/*.pem",
+      "**/*.key",
+      "**/credentials*",
+      "**/terraform.tfstate",
+      "**/terraform.tfvars"
+    ],
+    "excluded_repositories": [
+      "acme-corp/payroll-service",
+      "acme-corp/security-configs",
+      "acme-corp/key-management"
+    ]
+  },
+
+  "network_routing": {
+    "allow_enterprise_traffic": true,
+    "allow_business_traffic": true,
+    "block_individual_traffic": true,
+    "firewall_allowlist": [
+      "*.enterprise.githubcopilot.com",
+      "*.business.githubcopilot.com"
+    ],
+    "firewall_blocklist": [
+      "*.individual.githubcopilot.com"
+    ]
+  }
+}

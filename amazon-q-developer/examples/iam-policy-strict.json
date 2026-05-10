@@ -1,0 +1,71 @@
+{
+  "Version": "2012-10-17",
+  "_comment": "STRICT — Read-only Q access. Denies all admin, customization, and agent actions. Region-locked. MFA required. Use for regulated environments.",
+  "Statement": [
+    {
+      "Sid": "AllowQReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "q:GetConversation",
+        "q:ListConversations",
+        "codewhisperer:ListCodeAnalysisFindings"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["us-east-1"]
+        },
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    },
+    {
+      "Sid": "AllowQChat",
+      "Effect": "Allow",
+      "Action": [
+        "q:StartConversation",
+        "q:SendMessage"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["us-east-1"]
+        },
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    },
+    {
+      "Sid": "AllowCodeSuggestions",
+      "Effect": "Allow",
+      "Action": [
+        "codewhisperer:GenerateRecommendations"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["us-east-1"]
+        }
+      }
+    },
+    {
+      "Sid": "DenyAllAdmin",
+      "Effect": "Deny",
+      "Action": [
+        "q:CreateAssignment",
+        "q:DeleteAssignment",
+        "q:UpdateProfile",
+        "q:CreateProfile",
+        "q:DeleteProfile",
+        "codewhisperer:CreateCustomization",
+        "codewhisperer:UpdateCustomization",
+        "codewhisperer:DeleteCustomization",
+        "codewhisperer:UpdateProfile",
+        "qdeveloper:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

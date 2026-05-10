@@ -1,0 +1,20 @@
+# Codex CLI — Secure user-level configuration
+# Deploy to: ~/.codex/config.toml
+
+# Sandbox mode controls what the agent can technically do.
+# "workspace-write" limits writes to the active workspace and disables network.
+sandbox_mode = "workspace-write"
+
+# Approval policy controls when the agent pauses for human confirmation.
+# "on-request" = ask before every command execution.
+approval_policy = "on-request"
+
+# Credential storage — "keyring" uses the OS credential store (most secure).
+cli_auth_credentials_store = "keyring"
+
+# Model selection — pin to a specific model to prevent drift.
+model = "o4-mini"
+
+# Sandbox network settings — disabled by default for security.
+[sandbox_workspace_write]
+network_access = false

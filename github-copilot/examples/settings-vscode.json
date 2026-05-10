@@ -1,0 +1,24 @@
+{
+  "_comment": "VS Code / Cursor settings for secure GitHub Copilot usage. Add to .vscode/settings.json or user settings.",
+
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "ini": false,
+    "properties": false,
+    "yaml": true,
+    "json": true
+  },
+
+  "github.copilot.advanced": {
+    "debug.overrideCAPIUrl": "",
+    "debug.overrideProxyUrl": "",
+    "length": 500,
+    "top_p": 1
+  },
+
+  "github.copilot.chat.followUps": "firstOnly",
+
+  "http.proxyStrictSSL": true
+}

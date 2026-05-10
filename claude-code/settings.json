@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Recommended project-level settings. Place at .claude/settings.json in each repository and commit to git.",
+
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS",
+      "Diff"
+    ],
+
+    "ask": [
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Bash",
+      "WebFetch"
+    ],
+
+    "deny": [
+      "Bash(curl * | bash)",
+      "Bash(curl * | sh)",
+      "Bash(wget * | bash)",
+      "Bash(wget * | sh)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(sudo *)",
+      "Bash(eval *)",
+      "Bash(nc *)",
+      "Bash(ncat *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/*.p12)",
+      "Read(./**/credentials*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(./secrets/**)",
+      "Write(./**/*.pem)",
+      "Write(./**/*.key)"
+    ]
+  },
+
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-lint.sh",
+            "timeout": 60,
+            "statusMessage": "Running lint checks..."
+          }
+        ]
+      }
+    ]
+  },
+
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
+  }
+}

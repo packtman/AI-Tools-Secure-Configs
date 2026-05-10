@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/tabnine/workspace-restrictions.json",
+  "_comment": "Workspace-scoped tool restrictions for Tabnine agents. These prevent access to sensitive paths outside the workspace.",
+
+  "workspace_boundary": {
+    "enforce": true,
+    "allow_symlink_traversal": false
+  },
+
+  "blocked_paths": [
+    "/etc/passwd",
+    "/etc/shadow",
+    "/etc/sudoers",
+    "~/.ssh",
+    "~/.aws",
+    "~/.config/gcloud",
+    "~/.azure",
+    "~/.kube",
+    "~/.gnupg",
+    "~/.npmrc",
+    "~/.pypirc",
+    "~/.docker/config.json",
+    "~/.gitconfig"
+  ],
+
+  "blocked_file_patterns": [
+    "*.pem",
+    "*.key",
+    "*.p12",
+    "*.pfx",
+    "*.jks",
+    ".env",
+    ".env.*",
+    "credentials*",
+    "token*",
+    "secret*"
+  ],
+
+  "allowed_external_paths": [
+    "/usr/bin",
+    "/usr/local/bin",
+    "/opt/homebrew/bin"
+  ]
+}

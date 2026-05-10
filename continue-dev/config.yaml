@@ -1,0 +1,42 @@
+# Continue.dev — Secure global configuration
+# Deploy to: ~/.continue/config.yaml
+
+schema: v1
+
+# Model configuration — use environment variables for API keys, NEVER inline.
+models:
+  - name: "default"
+    provider: "openai"
+    model: "gpt-4o"
+    apiKey: "${{ secrets.OPENAI_API_KEY }}"
+    requestOptions:
+      timeout: 30
+      headers:
+        X-Request-Source: "continue-dev"
+
+# Tab autocomplete model
+tabAutocompleteModel:
+  provider: "openai"
+  model: "gpt-4o-mini"
+  apiKey: "${{ secrets.OPENAI_API_KEY }}"
+
+# Embeddings for @codebase indexing
+embeddingsProvider:
+  provider: "openai"
+  model: "text-embedding-3-small"
+  apiKey: "${{ secrets.OPENAI_API_KEY }}"
+
+# Context providers — limit to safe, read-only providers
+contextProviders:
+  - name: "code"
+  - name: "docs"
+  - name: "diff"
+  - name: "terminal"
+  - name: "tree"
+  - name: "codebase"
+
+# Disable telemetry
+allowAnonymousTelemetry: false
+
+# Indexing enabled for codebase search; set to true for untrusted codebases
+disableIndexing: false

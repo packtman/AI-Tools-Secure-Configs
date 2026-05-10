@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/org-policy.json",
+  "_comment": "MODERATE Claude API organization policy. Balanced access control with reasonable rate limits. Use for standard enterprise development teams.",
+
+  "organization": {
+    "name": "acme-corp",
+    "sso_enforced": true,
+    "scim_enabled": true,
+    "max_org_admins": 3,
+    "compliance_api_enabled": true,
+    "activity_log_retention_days": 180
+  },
+
+  "default_workspace_policy": {
+    "max_members_per_workspace": 25,
+    "default_member_role": "workspace_user",
+    "api_key_max_age_days": 90,
+    "require_key_rotation": true
+  },
+
+  "rate_limits": {
+    "requests_per_minute": 500,
+    "input_tokens_per_minute": 200000,
+    "output_tokens_per_minute": 100000
+  },
+
+  "spend_controls": {
+    "monthly_budget_usd": 10000,
+    "alert_thresholds_percent": [50, 75, 90],
+    "hard_cap_enabled": true,
+    "notification_emails": ["finops@acme.com"]
+  },
+
+  "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"],
+
+  "data_controls": {
+    "zero_data_retention": true,
+    "disable_training_on_data": true
+  }
+}

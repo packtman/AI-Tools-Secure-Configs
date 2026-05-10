@@ -1,0 +1,35 @@
+# Continue.dev — BASELINE configuration
+# Essential security only. All context providers enabled, public API endpoints.
+# Suitable for startups and individual developers.
+
+schema: v1
+
+models:
+  - name: "default"
+    provider: "openai"
+    model: "gpt-4o"
+    apiKey: "${{ secrets.OPENAI_API_KEY }}"
+    requestOptions:
+      timeout: 60
+
+tabAutocompleteModel:
+  provider: "openai"
+  model: "gpt-4o-mini"
+  apiKey: "${{ secrets.OPENAI_API_KEY }}"
+
+embeddingsProvider:
+  provider: "openai"
+  model: "text-embedding-3-small"
+  apiKey: "${{ secrets.OPENAI_API_KEY }}"
+
+contextProviders:
+  - name: "code"
+  - name: "docs"
+  - name: "diff"
+  - name: "terminal"
+  - name: "tree"
+  - name: "codebase"
+  - name: "web"
+
+allowAnonymousTelemetry: false
+disableIndexing: false

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "BASELINE enterprise policy. Essential security only — blocks the most dangerous patterns while maximizing developer autonomy. Suitable for startups, individual developers, and low-risk internal tools.",
+
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS",
+      "Diff",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "WebFetch"
+    ],
+
+    "ask": [
+      "Bash",
+      "mcp__*"
+    ],
+
+    "deny": [
+      "Bash(curl * | bash)",
+      "Bash(curl * | sh)",
+      "Bash(wget * | bash)",
+      "Bash(wget * | sh)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/*)",
+      "Bash(eval *)",
+      "Bash(sudo *)",
+      "Bash(su *)",
+      "Bash(nc -l *)",
+      "Bash(python* -m http.server*)",
+
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(//etc/shadow)",
+
+      "Write(~/.ssh/**)",
+      "Write(~/.aws/**)",
+      "Write(~/.bashrc)",
+      "Write(~/.zshrc)",
+      "Write(./.env)",
+      "Write(./.env.*)"
+    ]
+  },
+
+  "allowManagedPermissionRulesOnly": false,
+  "disableAutoMode": "allow",
+  "allowManagedHooksOnly": false,
+  "allowManagedMcpServersOnly": false,
+  "disableRemoteControl": false,
+  "disableDeepLinkRegistration": "allow",
+
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.38",
+
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
+  }
+}

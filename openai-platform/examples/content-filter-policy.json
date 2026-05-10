@@ -1,0 +1,60 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/content-filter-policy.json",
+  "_comment": "Content filtering and safety configuration for OpenAI API calls. Apply these settings in your application layer when making API requests.",
+
+  "moderation": {
+    "enabled": true,
+    "pre_check_user_input": true,
+    "post_check_model_output": true,
+    "endpoint": "/v1/moderations",
+    "block_categories": [
+      "hate",
+      "hate/threatening",
+      "self-harm",
+      "sexual",
+      "sexual/minors",
+      "violence",
+      "violence/graphic"
+    ],
+    "threshold": 0.7
+  },
+
+  "request_guardrails": {
+    "max_tokens_per_request": 4096,
+    "max_input_tokens": 128000,
+    "allowed_models": [
+      "gpt-4o",
+      "gpt-4o-mini"
+    ],
+    "temperature_range": {
+      "min": 0.0,
+      "max": 1.0
+    },
+    "block_system_prompt_override": true
+  },
+
+  "pii_handling": {
+    "scan_inputs_for_pii": true,
+    "pii_categories_to_block": [
+      "ssn",
+      "credit_card",
+      "bank_account",
+      "passport_number"
+    ],
+    "redact_before_sending": true,
+    "log_pii_incidents": true
+  },
+
+  "logging": {
+    "log_prompts": false,
+    "log_responses": false,
+    "log_metadata_only": true,
+    "metadata_fields": [
+      "model",
+      "tokens_used",
+      "timestamp",
+      "user_id",
+      "project"
+    ]
+  }
+}

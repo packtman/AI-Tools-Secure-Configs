@@ -1,0 +1,10 @@
+# Codex CLI — BASELINE configuration
+# Essential security only — suitable for startups and individual developers.
+
+sandbox_mode = "workspace-write"
+approval_policy = "never"
+cli_auth_credentials_store = "keyring"
+model = "o4-mini"
+
+[sandbox_workspace_write]
+network_access = true

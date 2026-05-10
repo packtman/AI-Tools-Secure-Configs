@@ -1,0 +1,53 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AmazonQDeveloperFullAdmin",
+      "Effect": "Allow",
+      "Action": [
+        "q:*",
+        "codewhisperer:*",
+        "qdeveloper:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1",
+            "us-west-2"
+          ]
+        },
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    },
+    {
+      "Sid": "KMSForQEncryption",
+      "Effect": "Allow",
+      "Action": [
+        "kms:CreateGrant",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey",
+        "kms:RetireGrant"
+      ],
+      "Resource": "arn:aws:kms:*:ACCOUNT_ID:key/KEY_ID",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": "q.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "IdentityCenterForQ",
+      "Effect": "Allow",
+      "Action": [
+        "sso:DescribeRegisteredRegions",
+        "sso-directory:DescribeUser"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

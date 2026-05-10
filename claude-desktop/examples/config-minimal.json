@@ -1,0 +1,4 @@
+{
+  "_comment": "Minimal Claude Desktop config — no MCP servers enabled. Use this as a baseline for locked-down deployments.",
+  "mcpServers": {}
+}

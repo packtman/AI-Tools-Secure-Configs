@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/rate-limits.json",
+  "_comment": "Rate-limit and spend-cap policy per workspace. Apply via the Admin API Rate Limits endpoint.",
+
+  "workspaces": [
+    {
+      "name": "ml-team-prod",
+      "rate_limits": {
+        "requests_per_minute": 500,
+        "input_tokens_per_minute": 200000,
+        "output_tokens_per_minute": 100000
+      },
+      "spend_controls": {
+        "monthly_budget_usd": 10000,
+        "alert_thresholds_percent": [50, 75, 90],
+        "hard_cap_enabled": true,
+        "notification_emails": ["ml-leads@acme.com", "finops@acme.com"]
+      }
+    },
+    {
+      "name": "ml-team-staging",
+      "rate_limits": {
+        "requests_per_minute": 100,
+        "input_tokens_per_minute": 50000,
+        "output_tokens_per_minute": 25000
+      },
+      "spend_controls": {
+        "monthly_budget_usd": 2000,
+        "alert_thresholds_percent": [50, 75, 90],
+        "hard_cap_enabled": true,
+        "notification_emails": ["ml-leads@acme.com"]
+      }
+    },
+    {
+      "name": "sandbox",
+      "rate_limits": {
+        "requests_per_minute": 20,
+        "input_tokens_per_minute": 10000,
+        "output_tokens_per_minute": 5000
+      },
+      "spend_controls": {
+        "monthly_budget_usd": 200,
+        "alert_thresholds_percent": [75, 90],
+        "hard_cap_enabled": true,
+        "notification_emails": ["finops@acme.com"]
+      }
+    }
+  ]
+}

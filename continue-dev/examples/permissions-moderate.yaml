@@ -1,0 +1,20 @@
+# Continue.dev — MODERATE tool permissions
+# Read-only tools auto-approved, write tools require confirmation.
+# Dangerous operations excluded. Use for enterprise development teams.
+
+allow:
+  - "Read(*)"
+  - "List(*)"
+  - "Search(*)"
+  - "Fetch(*)"
+  - "Diff(*)"
+  - "AskQuestion(*)"
+
+ask:
+  - "Edit"
+  - "MultiEdit"
+  - "Write"
+  - "Bash"
+
+exclude:
+  - "Delete"

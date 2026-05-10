@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/google-gemini/safety-settings.json",
+  "_comment": "BASELINE Gemini safety settings. Essential content filtering with generous limits. Suitable for startups and individual developers.",
+
+  "safety_settings": [
+    {
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "BLOCK_ONLY_HIGH"
+    },
+    {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "BLOCK_ONLY_HIGH"
+    },
+    {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    }
+  ],
+
+  "generation_config": {
+    "max_output_tokens": 8192,
+    "temperature": 0.9,
+    "top_p": 0.95,
+    "top_k": 40
+  },
+
+  "application_layer_checks": {
+    "pre_request": {
+      "pii_scan": false,
+      "profanity_filter": false,
+      "input_length_limit_chars": 200000
+    },
+    "post_response": {
+      "output_validation": true,
+      "pii_redaction": false,
+      "content_moderation": false
+    }
+  },
+
+  "quota_overrides": {
+    "gemini_api_requests_per_minute": 300,
+    "gemini_code_assist_requests_per_minute": 120
+  }
+}

@@ -1,0 +1,108 @@
+// Cursor / VS Code Settings: MODERATE (Enterprise) Tier
+// Deploy as .vscode/settings.json in each repository (workspace-level, committed to git)
+// OR deploy to the user settings path via onboarding script.
+// Strip comments before deploying as valid JSON.
+{
+  // -- Workspace Trust --
+  // WHAT: Treats every newly opened folder as untrusted until the user explicitly grants trust.
+  // WHY: Prevents malicious repositories from auto-executing tasks, debug configs, and
+  //      workspace settings on open. Supply-chain attacks increasingly target developer
+  //      environments through poisoned repos.
+  // BREAKS IF FALSE: Opening a cloned repo could execute arbitrary commands from its
+  //      .vscode/tasks.json or .vscode/launch.json automatically.
+  "security.workspace.trust.enabled": true,
+
+  // WHAT: Shows the trust prompt every time Cursor starts and opens a folder.
+  // WHY: Forces a conscious trust decision each session; prevents stale trust from
+  //      months-old approvals.
+  "security.workspace.trust.startupPrompt": "always",
+
+  // WHAT: Shows a banner in untrusted workspaces reminding the user of restricted mode.
+  "security.workspace.trust.banner": "always",
+
+  // WHAT: Empty Cursor windows (no folder open) are NOT trusted by default.
+  // WHY: Empty windows can still run terminals and extensions. No implicit trust.
+  "security.workspace.trust.emptyWindow": false,
+
+  // -- Terminal Security --
+  // WHAT: Restricts clickable link schemes in the terminal to HTTPS, HTTP, and file.
+  // WHY: Prevents terminal output from creating clickable vscode://, cursor://, or
+  //      javascript: links that could trigger IDE actions or code execution.
+  "terminal.integrated.allowedLinkSchemes": ["https", "http", "file"],
+
+  // WHAT: Disables automatic file-path-to-editor linking in terminal output.
+  // WHY: Prevents crafted terminal output from opening sensitive files in the editor
+  //      where they might be indexed or sent to AI context.
+  "terminal.integrated.enableFileLinks": "off",
+
+  // -- Port Forwarding --
+  // WHAT: Disables automatic port forwarding for remote development.
+  // WHY: Auto-forwarding can expose internal services to the developer's local network
+  //      without awareness. All port forwarding should be explicit.
+  "remote.autoForwardPorts": false,
+  "remote.autoForwardPortsSource": "process",
+
+  // -- Telemetry --
+  // WHAT: Disables all telemetry.
+  // WHY: Data minimization. Prevents usage data from being sent to external services.
+  "telemetry.telemetryLevel": "off",
+
+  // -- Extensions --
+  // WHAT: Disables automatic extension updates and recommendations.
+  // WHY: Prevents unreviewed extension updates that could introduce vulnerabilities
+  //      or behavior changes. Extensions should be updated on a reviewed schedule.
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false,
+  "extensions.ignoreRecommendations": true,
+
+  // -- Git --
+  // WHAT: Disables automatic git fetch and requires confirmation before sync.
+  // WHY: Prevents unintended pulls from upstream that could introduce malicious changes.
+  //      Confirmation on sync prevents accidental pushes to wrong branches.
+  "git.autofetch": false,
+  "git.confirmSync": true,
+
+  // -- SSL --
+  // WHAT: Enforces TLS certificate verification for all proxy connections.
+  // WHY: Never disable this. Setting to false enables man-in-the-middle attacks between
+  //      the IDE and the proxy.
+  "http.proxyStrictSSL": true,
+
+  // -- File Visibility --
+  // WHAT: Hides sensitive files from the explorer and search.
+  // WHY: Prevents .env files, secrets directories, and key files from appearing in
+  //      the file explorer, which also prevents them from being accidentally opened
+  //      and sent to AI context.
+  "files.exclude": {
+    "**/.env": true,
+    "**/.env.*": true,
+    "**/secrets/**": true,
+    "**/*.pem": true,
+    "**/*.key": true
+  },
+
+  "search.exclude": {
+    "**/.env": true,
+    "**/.env.*": true,
+    "**/secrets/**": true,
+    "**/node_modules/**": true
+  },
+
+  // -- GitHub Copilot (IDE-level settings) --
+  // WHAT: Disables Copilot completions for plaintext, INI, and properties files.
+  // WHY: These file types commonly contain credentials, connection strings, and
+  //      sensitive configuration. Copilot ingesting them risks reproducing secrets.
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "ini": false,
+    "properties": false,
+    "markdown": true,
+    "yaml": true,
+    "json": true
+  },
+
+  // WHAT: Limits auto-generated follow-up suggestions in Copilot Chat.
+  // WHY: Reduces the chance of developers blindly following AI-suggested next steps.
+  "github.copilot.chat.followUps": "firstOnly"
+}

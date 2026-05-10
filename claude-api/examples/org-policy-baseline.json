@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/org-policy.json",
+  "_comment": "BASELINE Claude API organization policy. Essential security with minimal friction. Suitable for startups and individual developers.",
+
+  "organization": {
+    "name": "my-org",
+    "sso_enforced": false,
+    "scim_enabled": false,
+    "max_org_admins": 5
+  },
+
+  "default_workspace_policy": {
+    "default_member_role": "workspace_developer",
+    "api_key_max_age_days": 180,
+    "require_key_rotation": false
+  },
+
+  "rate_limits": {
+    "requests_per_minute": 1000,
+    "input_tokens_per_minute": 400000,
+    "output_tokens_per_minute": 200000
+  },
+
+  "spend_controls": {
+    "monthly_budget_usd": 50000,
+    "alert_thresholds_percent": [75, 90],
+    "hard_cap_enabled": false,
+    "notification_emails": ["billing@my-org.com"]
+  },
+
+  "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"],
+
+  "data_controls": {
+    "zero_data_retention": false,
+    "disable_training_on_data": true
+  }
+}

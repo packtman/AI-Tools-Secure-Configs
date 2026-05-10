@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/org-policy.json",
+  "_comment": "STRICT Claude API organization policy. Maximum access control, tight rate limits, and aggressive spend caps. Use for regulated industries with compliance requirements.",
+
+  "organization": {
+    "name": "acme-corp",
+    "sso_enforced": true,
+    "scim_enabled": true,
+    "max_org_admins": 2,
+    "compliance_api_enabled": true,
+    "activity_log_retention_days": 365
+  },
+
+  "default_workspace_policy": {
+    "max_members_per_workspace": 10,
+    "default_member_role": "workspace_user",
+    "api_key_max_age_days": 30,
+    "require_key_rotation": true
+  },
+
+  "rate_limits": {
+    "requests_per_minute": 100,
+    "input_tokens_per_minute": 50000,
+    "output_tokens_per_minute": 25000
+  },
+
+  "spend_controls": {
+    "monthly_budget_usd": 2000,
+    "alert_thresholds_percent": [25, 50, 75, 90],
+    "hard_cap_enabled": true,
+    "notification_emails": ["security@acme.com", "finops@acme.com"]
+  },
+
+  "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414"],
+
+  "data_controls": {
+    "zero_data_retention": true,
+    "disable_training_on_data": true
+  }
+}

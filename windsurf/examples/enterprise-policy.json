@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
+  "_comment": "Windsurf enterprise policy. Deploy via registry (Windows), MDM profile (macOS), or /etc/windsurf/policy.json (Linux).",
+
+  "AllowedExtensions": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "golang.go",
+    "eamodio.gitlens",
+    "ms-vscode.vscode-typescript-next"
+  ],
+
+  "UpdateMode": "manual",
+
+  "WorkspaceTrustEnabled": true,
+
+  "TelemetryLevel": "off",
+
+  "ProxySettings": {
+    "http_proxy": "http://proxy.corp.example.com:8080",
+    "https_proxy": "https://proxy.corp.example.com:8443",
+    "no_proxy": "localhost,127.0.0.1,.corp.example.com"
+  },
+
+  "SecuritySettings": {
+    "disableUntrustedWorkspaces": true,
+    "enforceProxyStrictSSL": true,
+    "blockExternalExtensions": true
+  }
+}

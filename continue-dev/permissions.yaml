@@ -1,0 +1,23 @@
+# Continue.dev — Tool permission configuration
+# Deploy to: ~/.continue/permissions.yaml
+
+# Read-only tools — safe to auto-approve
+allow:
+  - "Read(*)"
+  - "List(*)"
+  - "Search(*)"
+  - "Fetch(*)"
+  - "Diff(*)"
+  - "AskQuestion(*)"
+
+# Write tools — require confirmation
+ask:
+  - "Edit"
+  - "MultiEdit"
+  - "Write"
+  - "Bash"
+
+# Dangerous operations — completely excluded
+exclude: []
+# Uncomment to exclude specific tools:
+# - "Delete"

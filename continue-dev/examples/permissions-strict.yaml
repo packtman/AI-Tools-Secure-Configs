@@ -1,0 +1,20 @@
+# Continue.dev — STRICT tool permissions
+# Read-only tools only. All write and execute tools excluded.
+# Use for regulated environments or code review workflows.
+
+allow:
+  - "Read(*)"
+  - "List(*)"
+  - "Search(*)"
+  - "Diff(*)"
+  - "AskQuestion(*)"
+
+ask: []
+
+exclude:
+  - "Edit"
+  - "MultiEdit"
+  - "Write"
+  - "Bash"
+  - "Fetch(*)"
+  - "Delete"

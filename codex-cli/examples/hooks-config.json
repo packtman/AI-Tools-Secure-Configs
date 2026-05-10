@@ -1,0 +1,128 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/codex-cli/hooks-config.json",
+  "_comment": "Example Codex CLI hooks configuration for security enforcement. Deploy alongside your .codex/config.toml.",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "name": "validate-environment",
+        "description": "Verify security prerequisites before the session begins",
+        "command": "bash",
+        "args": ["-c", "set -euo pipefail; ERRORS=0; if [ \"${CODEX_SANDBOX_MODE:-}\" = 'full-auto' ]; then echo 'ERROR: full-auto sandbox mode is not permitted' >&2; ERRORS=$((ERRORS+1)); fi; if ! command -v semgrep >/dev/null 2>&1; then echo 'WARN: semgrep not installed — pre-commit security scanning unavailable' >&2; fi; if ! command -v gitleaks >/dev/null 2>&1; then echo 'WARN: gitleaks not installed — secret scanning unavailable' >&2; fi; if ! git config user.email >/dev/null 2>&1; then echo 'ERROR: git user.email not configured — commits will not be attributed' >&2; ERRORS=$((ERRORS+1)); fi; if [ \"$ERRORS\" -gt 0 ]; then exit 1; fi; echo 'Environment validation passed'"],
+        "timeout_ms": 5000,
+        "on_failure": "abort"
+      },
+      {
+        "name": "log-session-start",
+        "description": "Record session start for audit trail",
+        "command": "bash",
+        "args": ["-c", "echo \"{\\\"event\\\": \\\"session_start\\\", \\\"timestamp\\\": \\\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\\\", \\\"user\\\": \\\"$(whoami)\\\", \\\"workspace\\\": \\\"$(pwd)\\\", \\\"sandbox_mode\\\": \\\"${CODEX_SANDBOX_MODE:-unknown}\\\", \\\"approval_policy\\\": \\\"${CODEX_APPROVAL_POLICY:-unknown}\\\"}\" >> \"${CODEX_AUDIT_LOG:-/tmp/codex-audit.jsonl}\""],
+        "timeout_ms": 2000,
+        "on_failure": "warn"
+      }
+    ],
+
+    "PreToolUse": [
+      {
+        "name": "block-destructive-commands",
+        "description": "Prevent dangerous shell commands from executing",
+        "command": "bash",
+        "args": ["-c", "CMD=\"$CODEX_TOOL_ARGS\"; BLOCKED_PATTERNS=('rm -rf /' 'rm -rf ~' 'rm -rf $HOME' 'mkfs\\.' 'dd if=' ':(){' 'chmod 777' 'chmod -R 777' 'sudo ' 'su -' 'su root'); for pattern in \"${BLOCKED_PATTERNS[@]}\"; do if echo \"$CMD\" | grep -qiE \"$pattern\"; then echo \"BLOCKED: Command matches destructive pattern: $pattern\" >&2; exit 1; fi; done; echo 'Command approved'"],
+        "timeout_ms": 2000,
+        "on_failure": "abort",
+        "applies_to": ["shell", "bash", "terminal"]
+      },
+      {
+        "name": "block-network-tools",
+        "description": "Block network access commands as defense-in-depth (supplements sandbox)",
+        "command": "bash",
+        "args": ["-c", "CMD=\"$CODEX_TOOL_ARGS\"; NETWORK_CMDS=('curl ' 'wget ' 'nc ' 'ncat ' 'netcat ' 'ssh ' 'scp ' 'rsync ' 'ftp ' 'telnet ' 'nmap '); for ncmd in \"${NETWORK_CMDS[@]}\"; do if echo \"$CMD\" | grep -qiE \"(^|[;&|])\\s*$ncmd\"; then echo \"BLOCKED: Network command not permitted: $ncmd\" >&2; exit 1; fi; done; echo 'No network commands detected'"],
+        "timeout_ms": 2000,
+        "on_failure": "abort",
+        "applies_to": ["shell", "bash", "terminal"]
+      },
+      {
+        "name": "block-sensitive-path-access",
+        "description": "Prevent read/write access to credential and config directories",
+        "command": "bash",
+        "args": ["-c", "CMD=\"$CODEX_TOOL_ARGS\"; SENSITIVE_PATHS=('.ssh/' '.aws/' '.gnupg/' '.config/gcloud' '.kube/' '.env' 'id_rsa' 'id_ed25519' 'credentials' '.netrc'); for spath in \"${SENSITIVE_PATHS[@]}\"; do if echo \"$CMD\" | grep -qi \"$spath\"; then echo \"BLOCKED: Access to sensitive path not permitted: $spath\" >&2; exit 1; fi; done; echo 'No sensitive path access detected'"],
+        "timeout_ms": 2000,
+        "on_failure": "abort",
+        "applies_to": ["shell", "bash", "terminal", "file_read", "file_write"]
+      },
+      {
+        "name": "block-install-commands",
+        "description": "Block package installation to prevent supply chain attacks",
+        "command": "bash",
+        "args": ["-c", "CMD=\"$CODEX_TOOL_ARGS\"; INSTALL_PATTERNS=('pip install' 'npm install' 'yarn add' 'gem install' 'cargo install' 'go install' 'apt install' 'apt-get install' 'brew install' 'curl.*|.*sh' 'curl.*|.*bash'); for pattern in \"${INSTALL_PATTERNS[@]}\"; do if echo \"$CMD\" | grep -qiE \"$pattern\"; then echo \"BLOCKED: Package installation not permitted without approval: $pattern\" >&2; exit 1; fi; done; echo 'No install commands detected'"],
+        "timeout_ms": 2000,
+        "on_failure": "abort",
+        "applies_to": ["shell", "bash", "terminal"]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "name": "audit-log-tool-use",
+        "description": "Log every tool execution for audit trail",
+        "command": "bash",
+        "args": ["-c", "echo \"{\\\"event\\\": \\\"tool_use\\\", \\\"timestamp\\\": \\\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\\\", \\\"session_id\\\": \\\"${CODEX_SESSION_ID:-unknown}\\\", \\\"tool\\\": \\\"${CODEX_TOOL_NAME:-unknown}\\\", \\\"exit_code\\\": ${CODEX_TOOL_EXIT_CODE:-0}, \\\"output_hash\\\": \\\"$(echo \\\"${CODEX_TOOL_OUTPUT:-}\\\" | sha256sum | cut -d' ' -f1)\\\"}\" >> \"${CODEX_AUDIT_LOG:-/tmp/codex-audit.jsonl}\""],
+        "timeout_ms": 3000,
+        "on_failure": "warn"
+      },
+      {
+        "name": "scan-output-for-secrets",
+        "description": "Check tool output for accidentally exposed secrets",
+        "command": "bash",
+        "args": ["-c", "OUTPUT=\"${CODEX_TOOL_OUTPUT:-}\"; SECRET_PATTERNS=('sk-[a-zA-Z0-9]{20,}' 'AKIA[A-Z0-9]{16}' 'ghp_[a-zA-Z0-9]{36}' 'glpat-[a-zA-Z0-9\\-]{20}' '-----BEGIN.*PRIVATE KEY-----' 'xox[bpras]-[a-zA-Z0-9\\-]+'); for pattern in \"${SECRET_PATTERNS[@]}\"; do if echo \"$OUTPUT\" | grep -qE \"$pattern\"; then echo \"WARNING: Possible secret detected in tool output (pattern: $pattern)\" >&2; echo \"{\\\"event\\\": \\\"secret_detected\\\", \\\"timestamp\\\": \\\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\\\", \\\"pattern\\\": \\\"$pattern\\\", \\\"tool\\\": \\\"${CODEX_TOOL_NAME:-unknown}\\\"}\" >> \"${CODEX_AUDIT_LOG:-/tmp/codex-audit.jsonl}\"; fi; done"],
+        "timeout_ms": 3000,
+        "on_failure": "warn"
+      },
+      {
+        "name": "check-file-permissions",
+        "description": "Verify that written files do not have overly permissive permissions",
+        "command": "bash",
+        "args": ["-c", "if [ \"${CODEX_TOOL_NAME:-}\" = 'file_write' ] && [ -n \"${CODEX_TOOL_TARGET:-}\" ]; then PERMS=$(stat -c '%a' \"$CODEX_TOOL_TARGET\" 2>/dev/null || stat -f '%Lp' \"$CODEX_TOOL_TARGET\" 2>/dev/null); if [ \"$PERMS\" = '777' ] || [ \"$PERMS\" = '776' ] || [ \"$PERMS\" = '766' ]; then echo \"WARNING: File $CODEX_TOOL_TARGET has overly permissive permissions: $PERMS\" >&2; fi; fi"],
+        "timeout_ms": 2000,
+        "on_failure": "warn"
+      }
+    ],
+
+    "SessionEnd": [
+      {
+        "name": "generate-session-summary",
+        "description": "Create an audit summary of the session",
+        "command": "bash",
+        "args": ["-c", "AUDIT_LOG=\"${CODEX_AUDIT_LOG:-/tmp/codex-audit.jsonl}\"; if [ -f \"$AUDIT_LOG\" ]; then TOOL_COUNT=$(grep -c '\"event\": \"tool_use\"' \"$AUDIT_LOG\" 2>/dev/null || echo 0); SECRET_COUNT=$(grep -c '\"event\": \"secret_detected\"' \"$AUDIT_LOG\" 2>/dev/null || echo 0); echo \"{\\\"event\\\": \\\"session_end\\\", \\\"timestamp\\\": \\\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\\\", \\\"session_id\\\": \\\"${CODEX_SESSION_ID:-unknown}\\\", \\\"total_tool_uses\\\": $TOOL_COUNT, \\\"secrets_detected\\\": $SECRET_COUNT}\" >> \"$AUDIT_LOG\"; echo \"Session complete: $TOOL_COUNT tool uses, $SECRET_COUNT secret warnings\"; fi"],
+        "timeout_ms": 5000,
+        "on_failure": "warn"
+      }
+    ]
+  },
+
+  "_usage_notes": {
+    "environment_variables": {
+      "CODEX_AUDIT_LOG": "Path to the JSONL audit log file (default: /tmp/codex-audit.jsonl)",
+      "CODEX_SESSION_ID": "Unique session identifier (set by Codex CLI)",
+      "CODEX_SANDBOX_MODE": "Current sandbox mode (set by Codex CLI)",
+      "CODEX_APPROVAL_POLICY": "Current approval policy (set by Codex CLI)",
+      "CODEX_TOOL_NAME": "Name of the tool being executed (set by Codex CLI)",
+      "CODEX_TOOL_ARGS": "Arguments passed to the tool (set by Codex CLI)",
+      "CODEX_TOOL_OUTPUT": "Output from the tool execution (PostToolUse only)",
+      "CODEX_TOOL_EXIT_CODE": "Exit code from the tool execution (PostToolUse only)",
+      "CODEX_TOOL_TARGET": "Target file path for file operations (set by Codex CLI)"
+    },
+    "customization": [
+      "Adjust BLOCKED_PATTERNS in block-destructive-commands to match your organization's policy",
+      "Add organization-specific sensitive paths to block-sensitive-path-access",
+      "Configure CODEX_AUDIT_LOG to point to a centralized log location or SIEM forwarder",
+      "Adjust timeout_ms values based on your environment's performance characteristics",
+      "Set on_failure to 'abort' for critical security hooks, 'warn' for advisory hooks"
+    ],
+    "on_failure_options": {
+      "abort": "Stop the operation — use for security-critical hooks",
+      "warn": "Log a warning and continue — use for audit and advisory hooks",
+      "ignore": "Silently continue — NOT recommended for security hooks"
+    }
+  }
+}

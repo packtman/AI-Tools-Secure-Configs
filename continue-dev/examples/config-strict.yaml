@@ -1,0 +1,36 @@
+# Continue.dev — STRICT configuration
+# Maximum restrictions. Read-only tools only, bash disabled, telemetry off.
+# Use for regulated environments where AI autonomy must be minimized.
+
+schema: v1
+
+models:
+  - name: "corporate-llm"
+    provider: "openai"
+    model: "gpt-4o"
+    apiBase: "https://llm-gateway.corp.example.com/v1"
+    apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
+    requestOptions:
+      timeout: 30
+      proxy: "https://proxy.corp.example.com:8443"
+      verifySsl: true
+
+tabAutocompleteModel:
+  provider: "openai"
+  model: "gpt-4o-mini"
+  apiBase: "https://llm-gateway.corp.example.com/v1"
+  apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
+
+embeddingsProvider:
+  provider: "openai"
+  model: "text-embedding-3-small"
+  apiBase: "https://llm-gateway.corp.example.com/v1"
+  apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
+
+contextProviders:
+  - name: "code"
+  - name: "diff"
+  - name: "tree"
+
+allowAnonymousTelemetry: false
+disableIndexing: true

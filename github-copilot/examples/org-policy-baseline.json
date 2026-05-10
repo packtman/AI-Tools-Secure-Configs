@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
+  "_comment": "BASELINE GitHub Copilot organization policy. Most features enabled, minimal content exclusion. Suitable for startups and individual developers.",
+
+  "organization": "my-org",
+  "copilot_plan": "business",
+
+  "seat_management": {
+    "assignment": "all_members",
+    "auto_assign_new_members": true,
+    "allowed_teams": []
+  },
+
+  "feature_policies": {
+    "copilot_in_ide": "enabled",
+    "copilot_chat_in_ide": "enabled",
+    "copilot_chat_on_github": "enabled",
+    "copilot_cli": "enabled",
+    "copilot_code_review": "enabled",
+    "copilot_pull_request_summaries": "enabled",
+    "copilot_docset_management": "enabled",
+    "copilot_bing_search": "disabled",
+    "copilot_web_search": "disabled"
+  },
+
+  "content_exclusions": {
+    "global_patterns": [
+      "**/.env",
+      "**/.env.*",
+      "**/secrets/**",
+      "**/*.pem",
+      "**/*.key"
+    ],
+    "excluded_repositories": []
+  },
+
+  "network_routing": {
+    "allow_enterprise_traffic": true,
+    "allow_business_traffic": true,
+    "block_individual_traffic": true,
+    "firewall_allowlist": [
+      "*.enterprise.githubcopilot.com",
+      "*.business.githubcopilot.com"
+    ],
+    "firewall_blocklist": [
+      "*.individual.githubcopilot.com"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+# Codex CLI — STRICT configuration
+# For regulated environments where the agent should be read-only.
+
+sandbox_mode = "read-only"
+approval_policy = "on-request"
+cli_auth_credentials_store = "keyring"
+model = "o4-mini"
+
+[sandbox_workspace_write]
+network_access = false

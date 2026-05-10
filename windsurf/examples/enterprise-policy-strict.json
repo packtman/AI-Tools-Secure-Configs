@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
+  "_comment": "STRICT Windsurf enterprise policy. No extensions, workspace trust enforced, telemetry off, external extensions blocked. Use for regulated environments.",
+
+  "AllowedExtensions": [],
+
+  "UpdateMode": "manual",
+
+  "WorkspaceTrustEnabled": true,
+
+  "TelemetryLevel": "off",
+
+  "ProxySettings": {
+    "http_proxy": "http://proxy.corp.example.com:8080",
+    "https_proxy": "https://proxy.corp.example.com:8443",
+    "no_proxy": "localhost,127.0.0.1,.corp.example.com"
+  },
+
+  "SecuritySettings": {
+    "disableUntrustedWorkspaces": true,
+    "enforceProxyStrictSSL": true,
+    "blockExternalExtensions": true,
+    "blockLocalMcpServers": true,
+    "disableWebSearch": true
+  }
+}

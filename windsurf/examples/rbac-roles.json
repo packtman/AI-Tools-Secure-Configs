@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/windsurf/rbac-roles.json",
+  "_comment": "Custom RBAC role definitions for Windsurf enterprise. Configure via the Admin Portal.",
+
+  "custom_roles": [
+    {
+      "name": "security-auditor",
+      "description": "Read-only access to analytics and attribution data",
+      "permissions": {
+        "teams": { "read": true, "write": false, "delete": false },
+        "analytics": { "read": true },
+        "attribution": { "read": true },
+        "license": { "read": true, "write": false },
+        "sso": { "read": true, "write": false },
+        "service_keys": { "read": true, "create": false, "revoke": false },
+        "role_management": { "read": true, "write": false },
+        "indexing": { "read": true, "write": false }
+      }
+    },
+    {
+      "name": "team-lead",
+      "description": "Manage team members and view analytics",
+      "permissions": {
+        "teams": { "read": true, "write": true, "delete": false },
+        "analytics": { "read": true },
+        "attribution": { "read": true },
+        "license": { "read": true, "write": false },
+        "sso": { "read": false, "write": false },
+        "service_keys": { "read": false, "create": false, "revoke": false },
+        "role_management": { "read": true, "write": false },
+        "indexing": { "read": true, "write": false }
+      }
+    },
+    {
+      "name": "platform-admin",
+      "description": "Full administrative access",
+      "permissions": {
+        "teams": { "read": true, "write": true, "delete": true },
+        "analytics": { "read": true },
+        "attribution": { "read": true },
+        "license": { "read": true, "write": true },
+        "sso": { "read": true, "write": true },
+        "service_keys": { "read": true, "create": true, "revoke": true },
+        "role_management": { "read": true, "write": true },
+        "indexing": { "read": true, "write": true }
+      }
+    }
+  ]
+}

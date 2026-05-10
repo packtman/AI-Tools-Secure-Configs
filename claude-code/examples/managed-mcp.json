@@ -1,0 +1,13 @@
+{
+  "_comment": "Managed MCP configuration for Claude Code. Deploy to the OS-specific managed settings path alongside managed-settings.json. Controls which MCP servers are available organization-wide.",
+
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT}"
+      }
+    }
+  }
+}

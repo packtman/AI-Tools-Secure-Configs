@@ -1,0 +1,73 @@
+// Cursor Permissions: MODERATE (Enterprise) Tier
+// Deploy to ~/.cursor/permissions.json on each developer endpoint.
+// Strip comments before deploying. See ROLLOUT-PLAN.md Section 4.2 for deployment steps.
+//
+// NOTE: Cursor does not support MDM-enforced permissions. This file is user-writable.
+// Use workspace trust (MDM-enforced) and network egress filtering as compensating controls.
+{
+  // WHAT: Commands that Cursor's AI agent can run in the terminal without asking.
+  // WHY: Only read-only commands and standard test/lint/build commands are included.
+  //      Commands that install packages, start servers, or modify system state require
+  //      user approval. The pnpm commands are included per org requirements.
+  // BREAKS IF EMPTY: Every terminal command prompts the user, even "ls" and "pwd".
+  // BREAKS IF TOO BROAD: Dangerous commands could auto-run without review.
+  "terminalAllowlist": [
+    "ls",
+    "cat",
+    "head",
+    "tail",
+    "grep",
+    "find",
+    "wc",
+    "echo",
+    "pwd",
+    "tree",
+    "file",
+    "which",
+
+    // Git read-only commands (safe, no side effects)
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "git stash list",
+
+    // Test and lint commands (read source, report results, no modifications)
+    "npm test",
+    "npm run lint",
+    "npm run build",
+    "npm run typecheck",
+    "npx tsc --noEmit",
+    "npx prettier --check",
+    "npx eslint",
+
+    // CUSTOM: pnpm equivalents added per org constraint (pnpm must be allowed)
+    "pnpm test",
+    "pnpm run lint",
+    "pnpm run build",
+    "pnpm run typecheck",
+
+    // Python testing and linting
+    "python -m pytest",
+    "python -m mypy",
+    "python -m flake8",
+
+    // Go testing and linting
+    "go test ./...",
+    "go vet ./...",
+
+    // Rust testing and linting
+    "cargo test",
+    "cargo clippy",
+
+    // Make targets (common CI commands)
+    "make test",
+    "make lint"
+  ],
+
+  // WHAT: MCP tools that can run without approval.
+  // WHY: Empty array means all MCP tool invocations prompt the user.
+  //      In Moderate tier, we do not auto-approve any MCP tools.
+  // BREAKS IF POPULATED: Named MCP tools would run without user review.
+  "mcpAllowlist": []
+}

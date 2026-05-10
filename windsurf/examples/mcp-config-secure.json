@@ -1,0 +1,15 @@
+{
+  "_comment": "Secure Windsurf MCP configuration. Place at ~/.codeium/windsurf/mcp_config.json (global) or .windsurf/mcp_config.json (per-project). Only include audited, approved MCP servers.",
+
+  "mcpServers": {
+    "filesystem-project": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "./src"
+      ],
+      "_comment": "Scoped to src/ directory only."
+    }
+  }
+}

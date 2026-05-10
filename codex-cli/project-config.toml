@@ -1,0 +1,13 @@
+# Codex CLI — Secure project-level configuration
+# Deploy to: .codex/config.toml in each repository
+# NOTE: Only loaded when the project is marked as trusted.
+
+# Restrict sandbox to workspace-write for controlled development.
+# Change to "read-only" for CI/code-review workflows.
+sandbox_mode = "workspace-write"
+
+# Require approval for all command execution.
+approval_policy = "on-request"
+
+# Project-specific model pinning.
+model = "o4-mini"

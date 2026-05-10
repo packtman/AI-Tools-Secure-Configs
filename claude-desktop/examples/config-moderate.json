@@ -1,0 +1,34 @@
+{
+  "_comment": "MODERATE Claude Desktop config — tightly scoped MCP servers with single-directory access. Extensions disabled. Use for standard enterprise development teams.",
+
+  "mcpServers": {
+    "filesystem-workspace": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/developer/projects/current-project"
+      ],
+      "_comment": "Read/write access limited to one project directory. Scope to the narrowest path possible."
+    },
+    "git-repo": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository", "/home/developer/projects/current-project"
+      ],
+      "_comment": "Git operations on a single repo only. Install via pip/uvx."
+    }
+  },
+
+  "_enterprise_policies": {
+    "_comment": "Deploy these via MDM — listed here as a reference, not part of the runtime config.",
+    "isLocalDevMcpEnabled": true,
+    "isDesktopExtensionEnabled": false,
+    "isDesktopExtensionDirectoryEnabled": false,
+    "isClaudeCodeForDesktopEnabled": true,
+    "secureVmFeaturesEnabled": true,
+    "disableAutoUpdates": false,
+    "autoUpdaterEnforcementHours": 48
+  }
+}
