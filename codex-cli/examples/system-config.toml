@@ -1,0 +1,19 @@
+# Codex CLI — System-wide configuration
+# Deploy to: /etc/codex/config.toml (Unix/Linux/macOS)
+# Sets organization-wide defaults. User and project configs can override.
+
+# Default to workspace-write with no network.
+sandbox_mode = "workspace-write"
+
+# Require approval for all operations.
+approval_policy = "on-request"
+
+# Enforce keyring-based credential storage.
+cli_auth_credentials_store = "keyring"
+
+# Default model.
+model = "o4-mini"
+
+# Disable network in workspace-write sandbox mode at the system level.
+[sandbox_workspace_write]
+network_access = false

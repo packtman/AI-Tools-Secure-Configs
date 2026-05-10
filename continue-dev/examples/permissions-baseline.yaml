@@ -1,0 +1,21 @@
+# Continue.dev — BASELINE tool permissions
+# Most tools auto-approved for maximum productivity.
+# Only destructive operations require confirmation.
+# Suitable for startups and individual developers.
+
+allow:
+  - "Read(*)"
+  - "List(*)"
+  - "Search(*)"
+  - "Fetch(*)"
+  - "Diff(*)"
+  - "AskQuestion(*)"
+  - "Edit"
+  - "MultiEdit"
+  - "Write"
+
+ask:
+  - "Bash"
+  - "Delete"
+
+exclude: []

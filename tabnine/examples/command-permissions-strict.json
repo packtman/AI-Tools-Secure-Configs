@@ -1,0 +1,70 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/tabnine/command-permissions.json",
+  "_comment": "STRICT Tabnine command permissions. Read-only commands only. All write, infrastructure, and package management commands disabled. Use for regulated environments.",
+
+  "default_permission": "disabled",
+
+  "command_categories": {
+    "git": "require-confirmation",
+    "npm": "disabled",
+    "yarn": "disabled",
+    "pip": "disabled",
+    "docker": "disabled",
+    "kubectl": "disabled",
+    "terraform": "disabled",
+    "aws": "disabled",
+    "gcloud": "disabled",
+    "az": "disabled"
+  },
+
+  "individual_commands": {
+    "auto-approve": [
+      "git status",
+      "git diff",
+      "git log",
+      "ls",
+      "cat",
+      "head",
+      "tail",
+      "grep",
+      "find",
+      "wc",
+      "pwd"
+    ],
+
+    "require-confirmation": [
+      "git branch",
+      "git stash list",
+      "git show"
+    ],
+
+    "disabled": [
+      "git add",
+      "git commit",
+      "git push",
+      "git pull",
+      "git checkout",
+      "git merge",
+      "git rebase",
+      "rm -rf",
+      "sudo",
+      "chmod",
+      "chown",
+      "curl | bash",
+      "curl | sh",
+      "wget | bash",
+      "wget | sh",
+      "eval",
+      "exec",
+      "npm install",
+      "npm run build",
+      "pip install",
+      "docker build",
+      "docker run",
+      "docker system prune -a",
+      "kubectl delete",
+      "terraform destroy",
+      "terraform apply"
+    ]
+  }
+}

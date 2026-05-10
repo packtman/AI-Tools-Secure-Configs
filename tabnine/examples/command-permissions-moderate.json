@@ -1,0 +1,74 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/tabnine/command-permissions.json",
+  "_comment": "MODERATE Tabnine command permissions. Read-only and test commands auto-approved. Write and build commands need confirmation. Infrastructure disabled. Use for enterprise teams.",
+
+  "default_permission": "require-confirmation",
+
+  "command_categories": {
+    "git": "require-confirmation",
+    "npm": "require-confirmation",
+    "yarn": "require-confirmation",
+    "pip": "require-confirmation",
+    "docker": "require-confirmation",
+    "kubectl": "disabled",
+    "terraform": "disabled",
+    "aws": "disabled",
+    "gcloud": "disabled",
+    "az": "disabled"
+  },
+
+  "individual_commands": {
+    "auto-approve": [
+      "git status",
+      "git diff",
+      "git log",
+      "git branch",
+      "git stash list",
+      "ls",
+      "cat",
+      "head",
+      "tail",
+      "grep",
+      "find",
+      "wc",
+      "pwd",
+      "echo",
+      "which",
+      "npm test",
+      "npm run lint",
+      "npx tsc --noEmit",
+      "python -m pytest",
+      "go test ./...",
+      "cargo test"
+    ],
+
+    "require-confirmation": [
+      "git add",
+      "git commit",
+      "git push",
+      "git pull",
+      "git checkout",
+      "git merge",
+      "npm install",
+      "npm run build",
+      "pip install",
+      "docker build",
+      "docker run"
+    ],
+
+    "disabled": [
+      "rm -rf",
+      "sudo",
+      "chmod 777",
+      "curl | bash",
+      "curl | sh",
+      "wget | bash",
+      "wget | sh",
+      "eval",
+      "exec",
+      "kubectl delete",
+      "terraform destroy",
+      "docker system prune -a"
+    ]
+  }
+}

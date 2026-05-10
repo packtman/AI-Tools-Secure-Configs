@@ -1,0 +1,53 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/google-gemini/safety-settings.json",
+  "_comment": "STRICT Gemini safety settings. Maximum content filtering, aggressive PII handling, tight output limits. Use for regulated environments (healthcare, finance, government).",
+
+  "safety_settings": [
+    {
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "BLOCK_LOW_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "BLOCK_LOW_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "BLOCK_LOW_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "BLOCK_LOW_AND_ABOVE"
+    }
+  ],
+
+  "generation_config": {
+    "max_output_tokens": 2048,
+    "temperature": 0.3,
+    "top_p": 0.8,
+    "top_k": 20
+  },
+
+  "application_layer_checks": {
+    "pre_request": {
+      "pii_scan": true,
+      "pii_categories_to_block": [
+        "ssn", "credit_card", "bank_account", "passport_number",
+        "drivers_license", "phone_number", "email_address"
+      ],
+      "profanity_filter": true,
+      "input_length_limit_chars": 50000
+    },
+    "post_response": {
+      "output_validation": true,
+      "pii_redaction": true,
+      "content_moderation": true,
+      "log_blocked_responses": true
+    }
+  },
+
+  "quota_overrides": {
+    "gemini_api_requests_per_minute": 30,
+    "gemini_code_assist_requests_per_minute": 20
+  }
+}

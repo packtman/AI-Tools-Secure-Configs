@@ -1,0 +1,34 @@
+---
+description: Security rules for all Cursor Agent interactions
+globs: **/*
+alwaysApply: true
+---
+
+# Security Rules
+
+## Never Do
+
+- Never read, display, log, or reference contents of `.env`, `.env.*`, or files under `secrets/`.
+- Never hard-code API keys, passwords, tokens, connection strings, or any credentials.
+- Never execute `curl | bash`, `wget | sh`, or piped-execution patterns.
+- Never run `rm -rf /`, `DROP DATABASE`, `FORMAT`, or other destructive commands without explicit user confirmation.
+- Never modify `.ssh/`, `.aws/`, `.config/gcloud/`, or other credential directories.
+- Never disable TLS verification, SSL checks, or certificate validation.
+- Never install packages from unverified sources or arbitrary URLs.
+
+## Always Do
+
+- Use environment variables for all secrets and configuration values.
+- Validate and sanitize all user inputs in generated code.
+- Use parameterized queries for database operations, never string concatenation.
+- Include error handling that does not leak sensitive information.
+- Follow the principle of least privilege for file permissions, IAM roles, and access grants.
+- Use well-maintained, actively-supported dependencies only.
+
+## Code Generation Standards
+
+- Add input validation to all public-facing functions.
+- Use secure defaults (HTTPS, strong encryption algorithms, secure cookie flags).
+- Generate code that passes common SAST tools (Semgrep, CodeQL, Bandit).
+- When creating Docker configurations, never run as root; use non-root users.
+- When generating CI/CD pipelines, never store secrets in plain text; use the platform's secrets mechanism.

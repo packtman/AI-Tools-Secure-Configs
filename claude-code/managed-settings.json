@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Enterprise managed-settings.json for Claude Code. Deploy to the OS-specific managed settings path. These settings CANNOT be overridden by user, project, or local scopes.",
+
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS",
+      "Diff"
+    ],
+
+    "ask": [
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Bash",
+      "WebFetch",
+      "mcp__*"
+    ],
+
+    "deny": [
+      "Bash(curl * | bash)",
+      "Bash(curl * | sh)",
+      "Bash(wget * | bash)",
+      "Bash(wget * | sh)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/*)",
+      "Bash(chmod 777 *)",
+      "Bash(chmod -R 777 *)",
+      "Bash(eval *)",
+      "Bash(sudo *)",
+      "Bash(su *)",
+      "Bash(nc *)",
+      "Bash(ncat *)",
+      "Bash(netcat *)",
+      "Bash(python* -c *)",
+      "Bash(python* -m http.server*)",
+      "Bash(node -e *)",
+      "Bash(ruby -e *)",
+      "Bash(perl -e *)",
+      "Bash(exec *)",
+      "Bash(nohup *)",
+      "Bash(setsid *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/*.p12)",
+      "Read(./**/*.pfx)",
+      "Read(./**/*.jks)",
+      "Read(./**/credentials*)",
+      "Read(./**/token*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gcloud/**)",
+      "Read(~/.azure/**)",
+      "Read(~/.kube/config)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.npmrc)",
+      "Read(~/.pypirc)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.netrc)",
+      "Read(~/.git-credentials)",
+      "Read(//etc/shadow)",
+      "Read(//etc/passwd)",
+      "Read(//etc/sudoers)",
+      "Write(~/.ssh/**)",
+      "Write(~/.aws/**)",
+      "Write(~/.config/gcloud/**)",
+      "Write(~/.azure/**)",
+      "Write(~/.kube/**)",
+      "Write(~/.docker/**)",
+      "Write(~/.gnupg/**)",
+      "Write(~/.bashrc)",
+      "Write(~/.zshrc)",
+      "Write(~/.profile)",
+      "Write(~/.bash_profile)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(./secrets/**)",
+      "Write(./**/*.pem)",
+      "Write(./**/*.key)",
+      "Write(./**/*.p12)",
+      "Write(./**/*.pfx)"
+    ],
+
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  "disableAutoMode": "disable",
+
+  "allowManagedPermissionRulesOnly": false,
+
+  "allowManagedHooksOnly": false,
+
+  "allowManagedMcpServersOnly": false,
+
+  "forceRemoteSettingsRefresh": false,
+
+  "forceLoginMethod": "claudeai",
+
+  "disableRemoteControl": true,
+
+  "disableSkillShellExecution": false,
+
+  "disableDeepLinkRegistration": "disable",
+
+  "autoUpdatesChannel": "stable",
+
+  "minimumVersion": "2.1.38",
+
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+  }
+}

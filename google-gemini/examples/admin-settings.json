@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/google-gemini/admin-settings.json",
+  "_comment": "Gemini for Google Cloud admin settings. Configure via the GCP Console or gcloud CLI per project.",
+
+  "project_settings": {
+    "gemini_code_assist": {
+      "enabled": true,
+      "logging_enabled": false,
+      "release_channel": "GA",
+      "code_customization_enabled": false
+    },
+    "gemini_cloud_assist": {
+      "enabled": true,
+      "data_sharing_enabled": false,
+      "release_channel": "GA"
+    }
+  },
+
+  "iam_bindings": [
+    {
+      "role": "roles/cloudaicompanion.user",
+      "members": [
+        "group:developers@example.com"
+      ],
+      "condition": {
+        "title": "business-hours-only",
+        "expression": "request.time.getHours('America/New_York') >= 8 && request.time.getHours('America/New_York') <= 20"
+      }
+    },
+    {
+      "role": "roles/cloudaicompanion.admin",
+      "members": [
+        "group:platform-admins@example.com"
+      ]
+    }
+  ],
+
+  "quota_overrides": {
+    "gemini_api_requests_per_minute": 100,
+    "gemini_code_assist_requests_per_minute": 60
+  }
+}

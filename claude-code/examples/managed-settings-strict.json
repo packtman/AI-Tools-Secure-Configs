@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "STRICT enterprise lockdown. All write/exec tools are denied at managed level. Users cannot override any permission rules. Bypass mode, auto mode, and remote control are disabled. Use for regulated environments (finance, healthcare, government).",
+
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS"
+    ],
+
+    "ask": [
+      "Diff",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Bash",
+      "WebFetch"
+    ],
+
+    "deny": [
+      "mcp__*",
+      "Agent(Explore)",
+      "Agent(Plan)",
+
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(rm *)",
+      "Bash(sudo *)",
+      "Bash(su *)",
+      "Bash(chmod *)",
+      "Bash(chown *)",
+      "Bash(eval *)",
+      "Bash(exec *)",
+      "Bash(nc *)",
+      "Bash(ncat *)",
+      "Bash(netcat *)",
+      "Bash(nohup *)",
+      "Bash(setsid *)",
+      "Bash(python* -c *)",
+      "Bash(python* -m http.server*)",
+      "Bash(node -e *)",
+      "Bash(ruby -e *)",
+      "Bash(perl -e *)",
+      "Bash(php -r *)",
+
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/*.p12)",
+      "Read(./**/*.pfx)",
+      "Read(./**/*.jks)",
+      "Read(./**/*.keystore)",
+      "Read(./**/credentials*)",
+      "Read(./**/token*)",
+      "Read(./**/*secret*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gcloud/**)",
+      "Read(~/.azure/**)",
+      "Read(~/.kube/**)",
+      "Read(~/.docker/**)",
+      "Read(~/.npmrc)",
+      "Read(~/.pypirc)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.netrc)",
+      "Read(~/.git-credentials)",
+      "Read(//etc/shadow)",
+      "Read(//etc/passwd)",
+      "Read(//etc/sudoers)",
+      "Read(//etc/ssl/private/**)",
+
+      "Write(~/.ssh/**)",
+      "Write(~/.aws/**)",
+      "Write(~/.config/gcloud/**)",
+      "Write(~/.azure/**)",
+      "Write(~/.kube/**)",
+      "Write(~/.docker/**)",
+      "Write(~/.gnupg/**)",
+      "Write(~/.bashrc)",
+      "Write(~/.zshrc)",
+      "Write(~/.profile)",
+      "Write(~/.bash_profile)",
+      "Write(~/.npmrc)",
+      "Write(~/.pypirc)",
+      "Write(~/.netrc)",
+      "Write(~/.git-credentials)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(./secrets/**)",
+      "Write(./**/*.pem)",
+      "Write(./**/*.key)",
+      "Write(./**/*.p12)",
+      "Write(./**/*.pfx)"
+    ],
+
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  "allowManagedPermissionRulesOnly": true,
+  "disableAutoMode": "disable",
+  "allowManagedHooksOnly": true,
+  "allowManagedMcpServersOnly": true,
+  "forceRemoteSettingsRefresh": true,
+  "disableRemoteControl": true,
+  "disableSkillShellExecution": true,
+  "disableDeepLinkRegistration": "disable",
+  "channelsEnabled": false,
+
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
+
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.38",
+
+  "autoMemoryEnabled": false,
+
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": false,
+    "allowUnsandboxedCommands": false,
+    "failIfUnavailable": true,
+    "filesystem": {
+      "denyRead": [
+        "~/",
+        "//etc/",
+        "//var/"
+      ],
+      "allowRead": [
+        "."
+      ],
+      "denyWrite": [
+        "~/",
+        "//etc/",
+        "//var/",
+        "//tmp/"
+      ]
+    },
+    "network": {
+      "allowManagedDomainsOnly": true
+    }
+  },
+
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1"
+  }
+}

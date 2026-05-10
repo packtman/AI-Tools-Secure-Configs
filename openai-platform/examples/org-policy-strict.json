@@ -1,0 +1,52 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/org-policy.json",
+  "_comment": "STRICT OpenAI organization policy. Maximum access control, IP allowlisting, MFA enforced, tight spending limits. Use for regulated industries.",
+
+  "organization": {
+    "name": "acme-corp",
+    "sso_enabled": true,
+    "sso_provider": "okta",
+    "ip_allowlist": [
+      "203.0.113.0/24"
+    ],
+    "mfa_required": true,
+    "audit_logging_enabled": true,
+    "max_organization_owners": 2
+  },
+
+  "default_project_policy": {
+    "default_member_role": "viewer",
+    "require_service_accounts": true,
+    "key_rotation_days": 30
+  },
+
+  "rate_limits": {
+    "requests_per_minute": 100,
+    "tokens_per_minute": 50000
+  },
+
+  "spending_limit_usd": 1000,
+
+  "allowed_models": [
+    "gpt-4o-mini"
+  ],
+
+  "content_filtering": {
+    "moderation_enabled": true,
+    "pre_check_user_input": true,
+    "post_check_model_output": true,
+    "block_categories": [
+      "hate", "hate/threatening",
+      "self-harm", "self-harm/intent", "self-harm/instructions",
+      "sexual", "sexual/minors",
+      "violence", "violence/graphic"
+    ],
+    "threshold": 0.5
+  },
+
+  "data_controls": {
+    "log_prompts": false,
+    "log_responses": false,
+    "data_retention_days": 0
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/google-gemini/safety-settings.json",
+  "_comment": "Apply these safety settings in your application code when calling the Gemini API. These are NOT server-side configurations — they must be included in each API request.",
+
+  "recommended_safety_settings": {
+    "production": [
+      {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      }
+    ],
+    "strict": [
+      {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_LOW_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_LOW_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_LOW_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_LOW_AND_ABOVE"
+      }
+    ]
+  },
+
+  "generation_config": {
+    "max_output_tokens": 4096,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "top_k": 40
+  },
+
+  "application_layer_checks": {
+    "pre_request": {
+      "pii_scan": true,
+      "profanity_filter": true,
+      "input_length_limit_chars": 100000
+    },
+    "post_response": {
+      "output_validation": true,
+      "pii_redaction": true,
+      "content_moderation": true
+    }
+  }
+}

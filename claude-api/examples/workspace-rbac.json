@@ -1,0 +1,64 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/workspace-rbac.json",
+  "_comment": "Example workspace RBAC configuration for the Claude Admin API. Use as a reference when scripting workspace provisioning via the Admin API.",
+
+  "organization": {
+    "name": "acme-corp",
+    "sso_enforced": true,
+    "scim_enabled": true,
+    "max_org_admins": 3
+  },
+
+  "workspaces": [
+    {
+      "name": "ml-team-prod",
+      "description": "Production workspace for the ML team",
+      "members": [
+        { "email": "alice@acme.com", "role": "workspace_admin" },
+        { "email": "bob@acme.com",   "role": "workspace_developer" },
+        { "email": "carol@acme.com", "role": "workspace_user" }
+      ],
+      "api_keys": [
+        {
+          "name": "ml-inference-service",
+          "scope": "model_calls_only",
+          "rotation_days": 90,
+          "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414"]
+        }
+      ]
+    },
+    {
+      "name": "ml-team-staging",
+      "description": "Staging workspace — lower rate limits, broader model access for testing",
+      "members": [
+        { "email": "alice@acme.com", "role": "workspace_admin" },
+        { "email": "bob@acme.com",   "role": "workspace_developer" },
+        { "email": "carol@acme.com", "role": "workspace_developer" },
+        { "email": "dave@acme.com",  "role": "workspace_user" }
+      ],
+      "api_keys": [
+        {
+          "name": "staging-test-harness",
+          "scope": "model_calls_only",
+          "rotation_days": 90,
+          "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"]
+        }
+      ]
+    },
+    {
+      "name": "sandbox",
+      "description": "Open experimentation — strict spend caps",
+      "members": [
+        { "email": "dev-team@acme.com", "role": "workspace_user" }
+      ],
+      "api_keys": [
+        {
+          "name": "sandbox-exploration",
+          "scope": "model_calls_only",
+          "rotation_days": 30,
+          "allowed_models": ["claude-haiku-4-20250414"]
+        }
+      ]
+    }
+  ]
+}

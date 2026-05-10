@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Security-focused hooks configuration. Add to managed-settings.json or .claude/settings.json. These hooks enforce security policies at the tool-call level.",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(rm *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-destructive-rm.sh",
+            "timeout": 10,
+            "statusMessage": "Checking for destructive rm commands..."
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/validate-git-push.sh",
+            "timeout": 10,
+            "statusMessage": "Validating git push target..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Edit(.env*)",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Editing .env files is blocked by security policy\"}}'"
+          },
+          {
+            "type": "command",
+            "if": "Write(.env*)",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Writing .env files is blocked by security policy\"}}'"
+          }
+        ]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scan-secrets-in-diff.sh",
+            "timeout": 30,
+            "statusMessage": "Scanning for leaked secrets..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-log.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-summary-audit.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+
+    "ConfigChange": [
+      {
+        "matcher": "project_settings|local_settings",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/log-config-change.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

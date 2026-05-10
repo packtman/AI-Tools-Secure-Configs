@@ -1,0 +1,23 @@
+{
+  "_comment": "Claude Desktop config with tightly scoped MCP servers. Each server is limited to a specific directory and has a documented purpose.",
+
+  "mcpServers": {
+    "filesystem-workspace": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/developer/projects/current-project"
+      ],
+      "_comment": "Read/write access limited to one project directory only. The filesystem server restricts operations to the specified paths."
+    },
+    "git-repo": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository", "/home/developer/projects/current-project"
+      ],
+      "_comment": "Git operations on a single repo. Note: mcp-server-git is a Python package (install via pip/uvx, not npx). The server exposes both read and write git tools — scope to a single repo to limit blast radius."
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "Version": "2012-10-17",
+  "_comment": "MODERATE — Standard developer access to Q features. Region-locked. Admin actions denied. Use for enterprise development teams.",
+  "Statement": [
+    {
+      "Sid": "AllowQDeveloperUse",
+      "Effect": "Allow",
+      "Action": [
+        "q:StartConversation",
+        "q:SendMessage",
+        "q:GetConversation",
+        "q:ListConversations",
+        "codewhisperer:GenerateRecommendations",
+        "codewhisperer:ListCodeAnalysisFindings"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyAdminActions",
+      "Effect": "Deny",
+      "Action": [
+        "q:CreateAssignment",
+        "q:DeleteAssignment",
+        "q:UpdateProfile",
+        "q:CreateProfile",
+        "q:DeleteProfile",
+        "codewhisperer:CreateCustomization",
+        "codewhisperer:DeleteCustomization",
+        "codewhisperer:UpdateProfile"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

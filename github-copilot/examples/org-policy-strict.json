@@ -1,0 +1,70 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
+  "_comment": "STRICT GitHub Copilot organization policy. Most features disabled, broad content exclusion, individual plan traffic blocked. Use for regulated industries.",
+
+  "organization": "acme-corp",
+  "copilot_plan": "enterprise",
+
+  "seat_management": {
+    "assignment": "selected_teams",
+    "auto_assign_new_members": false,
+    "allowed_teams": ["security-approved-devs"]
+  },
+
+  "feature_policies": {
+    "copilot_in_ide": "enabled",
+    "copilot_chat_in_ide": "enabled",
+    "copilot_chat_on_github": "disabled",
+    "copilot_cli": "disabled",
+    "copilot_code_review": "disabled",
+    "copilot_pull_request_summaries": "disabled",
+    "copilot_docset_management": "disabled",
+    "copilot_bing_search": "disabled",
+    "copilot_web_search": "disabled"
+  },
+
+  "content_exclusions": {
+    "global_patterns": [
+      "**/.env",
+      "**/.env.*",
+      "**/secrets/**",
+      "**/*.pem",
+      "**/*.key",
+      "**/*.p12",
+      "**/*.pfx",
+      "**/*.jks",
+      "**/credentials*",
+      "**/token*",
+      "**/*secret*",
+      "**/terraform.tfstate",
+      "**/terraform.tfvars",
+      "**/*.tfvars",
+      "**/docker-compose*.yml",
+      "**/Dockerfile*",
+      "**/.aws/**",
+      "**/.ssh/**",
+      "**/.kube/**",
+      "**/helm/values*.yaml"
+    ],
+    "excluded_repositories": [
+      "acme-corp/payroll-service",
+      "acme-corp/security-configs",
+      "acme-corp/key-management",
+      "acme-corp/infrastructure",
+      "acme-corp/compliance-data"
+    ]
+  },
+
+  "network_routing": {
+    "allow_enterprise_traffic": true,
+    "allow_business_traffic": false,
+    "block_individual_traffic": true,
+    "firewall_allowlist": [
+      "*.enterprise.githubcopilot.com"
+    ],
+    "firewall_blocklist": [
+      "*.individual.githubcopilot.com",
+      "*.business.githubcopilot.com"
+    ]
+  }
+}

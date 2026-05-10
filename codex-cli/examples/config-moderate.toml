@@ -1,0 +1,10 @@
+# Codex CLI — MODERATE configuration
+# Balanced for development teams — write access allowed, network off, approval required.
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+cli_auth_credentials_store = "keyring"
+model = "o4-mini"
+
+[sandbox_workspace_write]
+network_access = false

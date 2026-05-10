@@ -1,0 +1,124 @@
+// GitHub Copilot Organization Policy: MODERATE (Enterprise) Tier
+// Configure via Organization Settings -> Copilot -> Policies & features.
+// This is a REFERENCE file; GitHub Copilot org policies are set through the web UI
+// or API, not deployed as a file. Strip comments for API usage.
+{
+  // WHAT: Your GitHub organization name.
+  "organization": "REPLACE_WITH_YOUR_ORG",
+
+  // WHAT: The Copilot plan type. Enterprise provides additional IP protections and
+  //      data processing guarantees over Business.
+  "copilot_plan": "enterprise",
+
+  "seat_management": {
+    // WHAT: Only members of listed teams get Copilot seats.
+    // WHY: Least privilege. Not every org member needs AI code assistance.
+    //      Contractors, managers, and non-engineers do not benefit from completions
+    //      but would have Copilot ingesting context from repos they access.
+    // BREAKS IF "all_members": Every org member gets a seat, including bots,
+    //      inactive accounts, and contractors without security training.
+    "assignment": "selected_teams",
+
+    // WHAT: New org members do NOT automatically receive a Copilot seat.
+    // WHY: Creates an intentional gate where security training can be verified
+    //      before granting AI tool access.
+    "auto_assign_new_members": false,
+
+    // WHAT: Teams whose members receive Copilot seats.
+    // WHY: Explicitly list engineering teams. Adjust to match your org structure.
+    "allowed_teams": [
+      "engineering",
+      "devops",
+      "security"
+    ]
+  },
+
+  "feature_policies": {
+    // WHAT: Inline code completions in IDEs.
+    // WHY: Core Copilot feature. If you are paying for seats, this is the primary value.
+    "copilot_in_ide": "enabled",
+
+    // WHAT: Copilot Chat panel and inline chat in editors.
+    // WHY: High-productivity feature for natural-language code assistance.
+    "copilot_chat_in_ide": "enabled",
+
+    // WHAT: Copilot Chat on the GitHub website.
+    // WHY: Enabled in Moderate; useful for code review and PR discussions.
+    "copilot_chat_on_github": "enabled",
+
+    // WHAT: Copilot in the GitHub CLI (gh copilot suggest, gh copilot explain).
+    // WHY: DISABLED. CLI generates shell commands from natural language. On shared
+    //      systems, an attacker could use Copilot CLI to generate exfiltration commands.
+    // BREAKS IF ENABLED: Shell command suggestions on shared servers or CI runners.
+    "copilot_cli": "disabled",
+
+    // WHAT: AI-powered code review on pull requests.
+    // WHY: Security-positive feature. Catches SQL injection, hardcoded secrets,
+    //      missing input validation, and other patterns human reviewers may miss.
+    "copilot_code_review": "enabled",
+
+    // WHAT: AI-generated summaries of pull request changes.
+    // WHY: Helps reviewers understand scope quickly. Low risk.
+    "copilot_pull_request_summaries": "enabled",
+
+    // WHAT: Docset management for knowledge bases.
+    // WHY: Disabled in Moderate to limit the surface area of data Copilot can access.
+    "copilot_docset_management": "disabled",
+
+    // WHAT: Allows Copilot Chat to search the web (via Bing).
+    // WHY: DISABLED. Web search sends conversation context (which may include code
+    //      snippets) to external search APIs. Data leakage risk.
+    // BREAKS IF ENABLED: Code fragments and internal project names could leak to
+    //      search providers.
+    "copilot_bing_search": "disabled",
+
+    // WHAT: Allows Copilot Chat to search the web (generic).
+    // WHY: Same risk as Bing search above. Disabled in all enterprise tiers.
+    "copilot_web_search": "disabled"
+  },
+
+  "content_exclusions": {
+    // WHAT: File patterns that Copilot will ignore across all repositories.
+    // WHY: Prevents Copilot from ingesting and reproducing secrets, credentials,
+    //      cryptographic material, and infrastructure state files.
+    "global_patterns": [
+      "**/.env",
+      "**/.env.*",
+      "**/secrets/**",
+      "**/*.pem",
+      "**/*.key",
+      "**/credentials*",
+      "**/terraform.tfstate",
+      "**/terraform.tfvars"
+    ],
+
+    // WHAT: Repositories entirely excluded from Copilot processing.
+    // WHY: Some repositories contain sensitive data that should never be processed
+    //      by any AI tool (payroll, security configs, key management).
+    "excluded_repositories": [
+      "REPLACE_WITH_YOUR_ORG/payroll-service",
+      "REPLACE_WITH_YOUR_ORG/security-configs",
+      "REPLACE_WITH_YOUR_ORG/key-management"
+    ]
+  },
+
+  "network_routing": {
+    // WHAT: Allow enterprise and business plan traffic.
+    "allow_enterprise_traffic": true,
+    "allow_business_traffic": true,
+
+    // WHAT: Block individual/free plan traffic on your network.
+    // WHY: Individual plan terms allow code to be used for model training.
+    //      Blocking prevents shadow AI via personal Copilot accounts on corporate code.
+    "block_individual_traffic": true,
+
+    // WHAT: Firewall rules to implement the routing above.
+    "firewall_allowlist": [
+      "*.enterprise.githubcopilot.com",
+      "*.business.githubcopilot.com"
+    ],
+    "firewall_blocklist": [
+      "*.individual.githubcopilot.com"
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RestrictQToApprovedRegions",
+      "Effect": "Deny",
+      "Action": [
+        "q:*",
+        "codewhisperer:*",
+        "qdeveloper:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyQCustomizationsInNonProdAccounts",
+      "Effect": "Deny",
+      "Action": [
+        "codewhisperer:CreateCustomization",
+        "codewhisperer:UpdateCustomization",
+        "codewhisperer:DeleteCustomization"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:PrincipalOrgID": "o-YOUR_ORG_ID"
+        }
+      }
+    },
+    {
+      "Sid": "RequireMFAForQAdmin",
+      "Effect": "Deny",
+      "Action": [
+        "q:CreateAssignment",
+        "q:DeleteAssignment",
+        "q:CreateProfile",
+        "q:DeleteProfile",
+        "q:UpdateProfile"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}

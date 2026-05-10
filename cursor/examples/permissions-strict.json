@@ -1,0 +1,19 @@
+{
+  "_comment": "STRICT Cursor permissions — only safe read-only commands auto-run. All MCP tools require approval.",
+
+  "terminalAllowlist": [
+    "ls",
+    "cat",
+    "head",
+    "tail",
+    "grep",
+    "find",
+    "wc",
+    "pwd",
+    "git status",
+    "git diff",
+    "git log"
+  ],
+
+  "mcpAllowlist": []
+}

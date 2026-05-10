@@ -1,0 +1,15 @@
+{
+  "_comment": "Secure Claude Desktop configuration template. Only include MCP servers that have been audited and approved by your security team.",
+
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/REPLACE_WITH_USERNAME/Documents/approved-workspace"
+      ],
+      "_comment": "IMPORTANT: Restrict the filesystem server to a single approved directory. Never grant access to home directory root or system paths."
+    }
+  }
+}

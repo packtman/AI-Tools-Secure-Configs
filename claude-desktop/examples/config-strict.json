@@ -1,0 +1,16 @@
+{
+  "_comment": "STRICT Claude Desktop config — zero MCP servers, all extension features disabled. Use for regulated environments (finance, healthcare, government) where AI tool access must be minimized.",
+
+  "mcpServers": {},
+
+  "_enterprise_policies": {
+    "_comment": "Deploy these via MDM (macOS managed preferences or Windows registry). They are NOT part of this JSON file — listed here as a reference.",
+    "isLocalDevMcpEnabled": false,
+    "isDesktopExtensionEnabled": false,
+    "isDesktopExtensionDirectoryEnabled": false,
+    "isClaudeCodeForDesktopEnabled": false,
+    "secureVmFeaturesEnabled": false,
+    "disableAutoUpdates": false,
+    "autoUpdaterEnforcementHours": 24
+  }
+}

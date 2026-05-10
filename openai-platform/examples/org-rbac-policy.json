@@ -1,0 +1,74 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/org-rbac-policy.json",
+  "_comment": "Example RBAC and project structure for OpenAI organization. Use as a reference when provisioning via the Admin API.",
+
+  "organization": {
+    "name": "acme-corp",
+    "sso_enabled": true,
+    "sso_provider": "okta",
+    "ip_allowlist": [
+      "203.0.113.0/24",
+      "198.51.100.0/24"
+    ],
+    "mfa_required": true,
+    "audit_logging_enabled": true,
+    "max_organization_owners": 3
+  },
+
+  "projects": [
+    {
+      "name": "backend-prod",
+      "description": "Production API workloads for the backend team",
+      "members": [
+        { "email": "alice@acme.com", "role": "owner" },
+        { "email": "bob@acme.com", "role": "member" }
+      ],
+      "service_accounts": [
+        {
+          "name": "backend-inference-svc",
+          "description": "Production inference service",
+          "key_rotation_days": 90
+        }
+      ],
+      "rate_limits": {
+        "requests_per_minute": 500,
+        "tokens_per_minute": 200000
+      },
+      "spending_limit_usd": 5000
+    },
+    {
+      "name": "backend-staging",
+      "description": "Staging environment for the backend team",
+      "members": [
+        { "email": "alice@acme.com", "role": "owner" },
+        { "email": "bob@acme.com", "role": "member" },
+        { "email": "carol@acme.com", "role": "member" }
+      ],
+      "service_accounts": [
+        {
+          "name": "staging-test-svc",
+          "description": "Staging test harness",
+          "key_rotation_days": 90
+        }
+      ],
+      "rate_limits": {
+        "requests_per_minute": 100,
+        "tokens_per_minute": 50000
+      },
+      "spending_limit_usd": 1000
+    },
+    {
+      "name": "sandbox",
+      "description": "Experimentation sandbox — strict limits",
+      "members": [
+        { "email": "dev-team@acme.com", "role": "member" }
+      ],
+      "service_accounts": [],
+      "rate_limits": {
+        "requests_per_minute": 20,
+        "tokens_per_minute": 10000
+      },
+      "spending_limit_usd": 200
+    }
+  ]
+}

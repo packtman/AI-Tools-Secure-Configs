@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
+  "_comment": "BASELINE Windsurf enterprise policy. Broad extension allowlist, automatic updates, essential restrictions only. Suitable for startups and individual developers.",
+
+  "AllowedExtensions": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "golang.go",
+    "eamodio.gitlens",
+    "ms-vscode.vscode-typescript-next",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag"
+  ],
+
+  "UpdateMode": "default",
+
+  "WorkspaceTrustEnabled": true,
+
+  "TelemetryLevel": "crash",
+
+  "SecuritySettings": {
+    "disableUntrustedWorkspaces": false,
+    "enforceProxyStrictSSL": true,
+    "blockExternalExtensions": false,
+    "blockLocalMcpServers": false,
+    "disableWebSearch": false
+  }
+}

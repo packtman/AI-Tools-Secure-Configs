@@ -1,0 +1,40 @@
+{
+  "Version": "2012-10-17",
+  "_comment": "BASELINE — Broad Q developer access with essential guardrails. Suitable for startups and individual developers.",
+  "Statement": [
+    {
+      "Sid": "AllowQFullDeveloperAccess",
+      "Effect": "Allow",
+      "Action": [
+        "q:StartConversation",
+        "q:SendMessage",
+        "q:GetConversation",
+        "q:ListConversations",
+        "q:ListPlugins",
+        "codewhisperer:GenerateRecommendations",
+        "codewhisperer:GenerateCompletions",
+        "codewhisperer:ListCodeAnalysisFindings",
+        "qdeveloper:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": [
+            "us-east-1",
+            "us-west-2",
+            "eu-west-1"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyProfileDeletion",
+      "Effect": "Deny",
+      "Action": [
+        "q:DeleteProfile",
+        "q:DeleteAssignment"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

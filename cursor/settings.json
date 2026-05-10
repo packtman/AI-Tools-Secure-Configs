@@ -1,0 +1,40 @@
+{
+  "_comment": "Recommended Cursor / VS Code settings for security-conscious organizations. Deploy as user settings or workspace settings.",
+
+  "security.workspace.trust.enabled": true,
+  "security.workspace.trust.startupPrompt": "always",
+  "security.workspace.trust.banner": "always",
+  "security.workspace.trust.emptyWindow": false,
+
+  "terminal.integrated.allowedLinkSchemes": ["https", "http", "file"],
+  "terminal.integrated.enableFileLinks": "off",
+
+  "remote.autoForwardPorts": false,
+  "remote.autoForwardPortsSource": "process",
+
+  "telemetry.telemetryLevel": "off",
+
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false,
+  "extensions.ignoreRecommendations": true,
+
+  "git.autofetch": false,
+  "git.confirmSync": true,
+
+  "http.proxyStrictSSL": true,
+
+  "files.exclude": {
+    "**/.env": true,
+    "**/.env.*": true,
+    "**/secrets/**": true,
+    "**/*.pem": true,
+    "**/*.key": true
+  },
+
+  "search.exclude": {
+    "**/.env": true,
+    "**/.env.*": true,
+    "**/secrets/**": true,
+    "**/node_modules/**": true
+  }
+}

@@ -1,0 +1,40 @@
+# Continue.dev — Enterprise configuration
+# Includes proxy settings and private model endpoints.
+
+schema: v1
+
+models:
+  - name: "corporate-llm"
+    provider: "openai"
+    model: "gpt-4o"
+    apiBase: "https://llm-gateway.corp.example.com/v1"
+    apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
+    requestOptions:
+      timeout: 30
+      extraHeaders:
+        X-Corp-Team: "engineering"
+        X-Corp-Env: "production"
+      proxy: "https://proxy.corp.example.com:8443"
+      verifySsl: true
+
+tabAutocompleteModel:
+  provider: "openai"
+  model: "gpt-4o-mini"
+  apiBase: "https://llm-gateway.corp.example.com/v1"
+  apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
+
+embeddingsProvider:
+  provider: "openai"
+  model: "text-embedding-3-small"
+  apiBase: "https://llm-gateway.corp.example.com/v1"
+  apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
+
+contextProviders:
+  - name: "code"
+  - name: "docs"
+  - name: "diff"
+  - name: "tree"
+  - name: "codebase"
+
+allowAnonymousTelemetry: false
+disableIndexing: false
