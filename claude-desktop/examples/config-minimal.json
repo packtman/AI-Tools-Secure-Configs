@@ -1,4 +1,16 @@
 {
-  "_comment": "Minimal Claude Desktop config — no MCP servers enabled. Use this as a baseline for locked-down deployments.",
-  "mcpServers": {}
+  "_comment": "MINIMAL Claude Desktop config — zero MCP servers, all features disabled. Legacy alias for config-strict.json. Prefer the strict tier for new deployments.",
+
+  "mcpServers": {},
+
+  "_enterprise_policies": {
+    "_comment": "Deploy these via MDM (macOS managed preferences or Windows registry). They are NOT part of this JSON file — listed here as a reference.",
+    "isLocalDevMcpEnabled": false,
+    "isDesktopExtensionEnabled": false,
+    "isDesktopExtensionDirectoryEnabled": false,
+    "isClaudeCodeForDesktopEnabled": false,
+    "secureVmFeaturesEnabled": false,
+    "disableAutoUpdates": false,
+    "autoUpdaterEnforcementHours": 24
+  }
 }

@@ -11,7 +11,7 @@ This directory contains security-hardened configurations for **Amazon Q Develope
 | `examples/iam-policy-moderate.json` | **Moderate** — Standard developer access, region-locked (enterprise teams) |
 | `examples/iam-policy-baseline.json` | **Baseline** — Broad developer access, essential guardrails (startups) |
 | `examples/iam-policy-full-access.json` | Full admin IAM policy |
-| `examples/iam-policy-developer.json` | Restricted developer IAM policy |
+| `examples/iam-policy-developer.json` | Restricted developer IAM policy (reference, aligns with moderate tier) |
 | `examples/iam-scp-restrict.json` | Service Control Policy to restrict Q features |
 | `examples/encryption-config.md` | Customer-managed KMS encryption guide |
 | `examples/settings-rationale.md` | Comprehensive rationale for every security setting |

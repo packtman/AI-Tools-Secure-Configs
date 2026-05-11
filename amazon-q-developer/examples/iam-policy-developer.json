@@ -1,4 +1,5 @@
 {
+  "_comment": "Amazon Q Developer IAM policy for individual developers. Aligns with the MODERATE tier — see iam-policy-strict.json, iam-policy-moderate.json, and iam-policy-baseline.json for tiered alternatives.",
   "Version": "2012-10-17",
   "Statement": [
     {

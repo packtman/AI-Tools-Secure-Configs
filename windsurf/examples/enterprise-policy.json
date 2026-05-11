@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
-  "_comment": "Windsurf enterprise policy. Deploy via registry (Windows), MDM profile (macOS), or /etc/windsurf/policy.json (Linux).",
+  "_comment": "Windsurf enterprise policy starting-point. For tiered configs, see enterprise-policy-strict.json, enterprise-policy-moderate.json, and enterprise-policy-baseline.json. Deploy via registry (Windows), MDM profile (macOS), or /etc/windsurf/policy.json (Linux).",
 
   "AllowedExtensions": [
     "esbenp.prettier-vscode",
