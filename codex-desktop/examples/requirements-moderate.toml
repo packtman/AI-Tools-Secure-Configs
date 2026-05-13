@@ -1,0 +1,38 @@
+# Codex Desktop App — MODERATE admin-enforced requirements
+# Users CANNOT override these constraints. Deploy via cloud-managed config,
+# macOS MDM, or system file (/etc/codex/requirements.toml).
+# For standard enterprise development teams.
+
+allowed_approval_policies = ["untrusted", "on-request"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_web_search_modes = ["cached"]
+
+# Disable high-risk features but allow core development
+[features]
+browser_use = false
+computer_use = false
+codex_hooks = true
+
+# Deny reads to credential files
+[permissions.filesystem]
+deny_read = [
+  "~/.ssh/id_*",
+  "~/.aws/credentials",
+  "**/*.pem",
+  "**/*.key",
+]
+
+# Require approval for risky commands
+[rules]
+prefix_rules = [
+  { pattern = [{ token = "git" }, { any_of = ["push", "force-push"] }], decision = "prompt", justification = "Require review before pushing to remote." },
+  { pattern = [{ token = "rm" }, { token = "-rf" }], decision = "prompt", justification = "Recursive delete requires explicit approval." },
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
+]
+
+# Only approved MCP servers
+[mcp_servers.filesystem]
+identity = { command = "npx" }
+
+[mcp_servers.git]
+identity = { command = "uvx" }

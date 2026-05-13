@@ -1,0 +1,19 @@
+# Codex Desktop App — BASELINE admin-enforced requirements
+# Users CANNOT override these constraints. Deploy via cloud-managed config,
+# macOS MDM, or system file (/etc/codex/requirements.toml).
+# For startups and individual developers — essential guardrails only.
+
+# Block the most dangerous sandbox mode
+allowed_approval_policies = ["untrusted", "on-request", "never"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_web_search_modes = ["cached", "live"]
+
+# Only pin the most dangerous feature
+[features]
+computer_use = false
+
+# Block privilege escalation
+[rules]
+prefix_rules = [
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "prompt", justification = "Privilege escalation requires explicit approval." },
+]

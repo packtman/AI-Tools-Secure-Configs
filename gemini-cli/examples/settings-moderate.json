@@ -1,0 +1,69 @@
+{
+  "_comment": "MODERATE Gemini CLI config — read/write tools with sandbox, scoped MCP servers, telemetry enabled without prompt logging. Use for standard enterprise development teams.",
+
+  "general": {
+    "disableAutoUpdate": false
+  },
+
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+
+  "tools": {
+    "sandbox": "docker",
+    "core": [
+      "ReadFileTool",
+      "ReadManyFilesTool",
+      "WriteFileTool",
+      "EditFileTool",
+      "GlobTool",
+      "GrepTool",
+      "ListDirectoryTool",
+      "ShellTool(git)",
+      "ShellTool(ls)",
+      "ShellTool(cat)",
+      "ShellTool(grep)",
+      "ShellTool(npm test)",
+      "ShellTool(npm run lint)"
+    ]
+  },
+
+  "mcp": {
+    "allowed": ["corp-tools"]
+  },
+
+  "mcpServers": {
+    "corp-tools": {
+      "command": "/usr/local/bin/corp-mcp-server",
+      "timeout": 5000,
+      "includeTools": ["search", "query", "lint"]
+    }
+  },
+
+  "security": {
+    "folderTrust": {
+      "enabled": true
+    },
+    "auth": {
+      "enforcedType": "oauth-personal"
+    }
+  },
+
+  "telemetry": {
+    "enabled": true,
+    "target": "gcp",
+    "logPrompts": false
+  },
+
+  "model": {
+    "name": "gemini-2.5-pro",
+    "maxSessionTurns": 50
+  },
+
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true
+    }
+  }
+}

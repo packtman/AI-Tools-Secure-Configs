@@ -1,0 +1,46 @@
+{
+  "_comment": "Enterprise system defaults file. Deploy to the system-defaults path (lowest precedence). Provides sensible base values that users can override — use system overrides for enforced policies.",
+
+  "general": {
+    "vimMode": false,
+    "disableAutoUpdate": false
+  },
+
+  "ui": {
+    "hideBanner": false,
+    "hideTips": false,
+    "showCitations": true
+  },
+
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+
+  "tools": {
+    "sandbox": "docker"
+  },
+
+  "security": {
+    "folderTrust": {
+      "enabled": true
+    }
+  },
+
+  "telemetry": {
+    "enabled": true,
+    "target": "gcp",
+    "logPrompts": false
+  },
+
+  "model": {
+    "name": "gemini-2.5-pro"
+  },
+
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true
+    },
+    "discoveryMaxDirs": 200
+  }
+}

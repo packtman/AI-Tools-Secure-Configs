@@ -1,0 +1,26 @@
+# Codex Desktop App — MODERATE configuration
+# For standard enterprise development teams. Allows workspace writes with
+# approval prompts. Network disabled, high-risk features disabled.
+# Deploy to: ~/.codex/config.toml or via managed_config.toml
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+cli_auth_credentials_store = "keyring"
+model = "o4-mini"
+model_reasoning_effort = "high"
+web_search = "cached"
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+browser_use = false
+in_app_browser = false
+computer_use = false
+memories = false
+codex_hooks = true
+multi_agent = true
+undo = false
+
+[shell_environment_policy]
+include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]
