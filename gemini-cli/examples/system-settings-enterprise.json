@@ -1,0 +1,66 @@
+{
+  "_comment": "Enterprise system overrides file. Deploy to the system settings path (highest precedence). This configuration enforces security policies that users cannot override.",
+
+  "tools": {
+    "sandbox": "docker",
+    "core": [
+      "ReadFileTool",
+      "ReadManyFilesTool",
+      "WriteFileTool",
+      "EditFileTool",
+      "GlobTool",
+      "GrepTool",
+      "ListDirectoryTool",
+      "ShellTool(git)",
+      "ShellTool(ls)",
+      "ShellTool(cat)",
+      "ShellTool(grep)",
+      "ShellTool(npm test)",
+      "ShellTool(npm run)"
+    ]
+  },
+
+  "mcp": {
+    "allowed": ["corp-data-api", "source-code-analyzer"]
+  },
+
+  "mcpServers": {
+    "corp-data-api": {
+      "command": "/usr/local/bin/start-corp-api.sh",
+      "timeout": 5000,
+      "includeTools": ["search", "query", "get-document"]
+    },
+    "source-code-analyzer": {
+      "command": "/usr/local/bin/start-analyzer.sh",
+      "timeout": 10000,
+      "includeTools": ["analyze", "lint", "security-scan"]
+    }
+  },
+
+  "security": {
+    "folderTrust": {
+      "enabled": true
+    },
+    "auth": {
+      "enforcedType": "oauth-personal"
+    }
+  },
+
+  "telemetry": {
+    "enabled": true,
+    "target": "gcp",
+    "otlpEndpoint": "https://telemetry.example.com:4317",
+    "otlpProtocol": "grpc",
+    "logPrompts": false
+  },
+
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+
+  "advanced": {
+    "bugCommand": {
+      "urlTemplate": "https://servicedesk.example.com/new-ticket?title={title}&details={info}"
+    }
+  }
+}

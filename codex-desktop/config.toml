@@ -1,0 +1,43 @@
+# Codex Desktop App — Secure configuration template
+# Deploy to: ~/.codex/config.toml
+# Shared across Codex App, CLI, and IDE extension.
+
+# Sandbox mode — "workspace-write" limits writes to the active workspace
+# and disables network access by default. Never use "danger-full-access"
+# in production or shared environments.
+sandbox_mode = "workspace-write"
+
+# Approval policy — "on-request" requires human confirmation before
+# every write/execute operation while allowing automatic reads.
+approval_policy = "on-request"
+
+# Credential storage — "keyring" uses OS credential store (macOS Keychain,
+# Windows Credential Manager, Linux Secret Service). Avoids plaintext files.
+cli_auth_credentials_store = "keyring"
+
+# Model — pin to a specific model to prevent drift across the team.
+model = "o4-mini"
+
+# Web search — "cached" returns pre-indexed results, reducing exposure
+# to prompt injection from live web content.
+web_search = "cached"
+
+# Reasoning effort — set explicit reasoning level.
+model_reasoning_effort = "high"
+
+# Sandbox network settings
+[sandbox_workspace_write]
+network_access = false
+
+# Feature flags — disable high-risk features by default.
+[features]
+browser_use = false
+in_app_browser = false
+computer_use = false
+memories = false
+codex_hooks = true
+multi_agent = true
+
+# Shell environment — only forward essential variables to spawned commands.
+[shell_environment_policy]
+include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]

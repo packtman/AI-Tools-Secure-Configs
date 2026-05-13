@@ -1,0 +1,29 @@
+# Codex Desktop App — Managed defaults
+# Deploy to: /etc/codex/managed_config.toml (Linux/macOS)
+#         or: %USERPROFILE%\.codex\managed_config.toml (Windows)
+#         or: via macOS MDM (com.openai.codex:config_toml_base64)
+#
+# These values override user config.toml and take effect at launch.
+# Users can change settings during a session; Codex reapplies on restart.
+
+approval_policy = "on-request"
+sandbox_mode    = "workspace-write"
+web_search      = "cached"
+model           = "o4-mini"
+
+model_reasoning_effort = "high"
+cli_auth_credentials_store = "keyring"
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+browser_use = false
+computer_use = false
+codex_hooks = true
+
+# OpenTelemetry — point at your corporate OTLP collector
+[otel]
+environment = "prod"
+exporter = "otlp-http"
+log_user_prompt = false

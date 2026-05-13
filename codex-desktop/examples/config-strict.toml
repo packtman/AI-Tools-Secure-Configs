@@ -1,0 +1,27 @@
+# Codex Desktop App — STRICT configuration
+# For regulated environments (finance, healthcare, government) where AI tool
+# access must be minimized and every action requires explicit human approval.
+# Deploy to: ~/.codex/config.toml or via managed_config.toml
+
+sandbox_mode = "read-only"
+approval_policy = "on-request"
+cli_auth_credentials_store = "keyring"
+model = "o4-mini"
+model_reasoning_effort = "high"
+web_search = "disabled"
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+browser_use = false
+in_app_browser = false
+computer_use = false
+memories = false
+codex_hooks = true
+multi_agent = false
+undo = false
+shell_snapshot = false
+
+[shell_environment_policy]
+include_only = ["PATH", "HOME"]

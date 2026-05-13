@@ -1,0 +1,58 @@
+{
+  "_comment": "Secure Gemini CLI configuration template. Deploy to ~/.gemini/settings.json for user-level settings, or to the system overrides path for enterprise enforcement.",
+
+  "general": {
+    "disableAutoUpdate": false
+  },
+
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+
+  "tools": {
+    "sandbox": "docker",
+    "core": [
+      "ReadFileTool",
+      "ReadManyFilesTool",
+      "WriteFileTool",
+      "EditFileTool",
+      "GlobTool",
+      "GrepTool",
+      "ListDirectoryTool",
+      "ShellTool(git status)",
+      "ShellTool(git diff)",
+      "ShellTool(git log)",
+      "ShellTool(ls)",
+      "ShellTool(cat)",
+      "ShellTool(grep)"
+    ]
+  },
+
+  "mcp": {
+    "allowed": []
+  },
+
+  "mcpServers": {},
+
+  "security": {
+    "folderTrust": {
+      "enabled": true
+    }
+  },
+
+  "telemetry": {
+    "enabled": false,
+    "logPrompts": false
+  },
+
+  "model": {
+    "name": "gemini-2.5-pro"
+  },
+
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true
+    }
+  }
+}

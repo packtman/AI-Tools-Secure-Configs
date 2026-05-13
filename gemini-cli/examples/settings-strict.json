@@ -1,0 +1,61 @@
+{
+  "_comment": "STRICT Gemini CLI config — read-only tools only, Docker sandbox enforced, no MCP servers, no telemetry prompt logging. Use for regulated environments (finance, healthcare, government).",
+
+  "general": {
+    "disableAutoUpdate": true
+  },
+
+  "privacy": {
+    "usageStatisticsEnabled": false
+  },
+
+  "tools": {
+    "sandbox": "docker",
+    "core": [
+      "ReadFileTool",
+      "ReadManyFilesTool",
+      "GlobTool",
+      "GrepTool",
+      "ListDirectoryTool",
+      "ShellTool(ls)",
+      "ShellTool(cat)",
+      "ShellTool(grep)",
+      "ShellTool(git status)",
+      "ShellTool(git log)",
+      "ShellTool(git diff)"
+    ]
+  },
+
+  "mcp": {
+    "allowed": []
+  },
+
+  "mcpServers": {},
+
+  "security": {
+    "folderTrust": {
+      "enabled": true
+    },
+    "auth": {
+      "enforcedType": "oauth-personal"
+    }
+  },
+
+  "telemetry": {
+    "enabled": true,
+    "target": "gcp",
+    "logPrompts": false
+  },
+
+  "model": {
+    "name": "gemini-2.5-pro",
+    "maxSessionTurns": 20
+  },
+
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true
+    }
+  }
+}

@@ -1,0 +1,43 @@
+# Codex Desktop App — STRICT admin-enforced requirements
+# Users CANNOT override these constraints. Deploy via cloud-managed config,
+# macOS MDM, or system file (/etc/codex/requirements.toml).
+# For regulated environments (finance, healthcare, government).
+
+allowed_approval_policies = ["untrusted", "on-request"]
+allowed_sandbox_modes = ["read-only"]
+allowed_web_search_modes = []
+enforce_residency = "us"
+
+# Disable all extended features
+[features]
+browser_use = false
+in_app_browser = false
+computer_use = false
+memories = false
+multi_agent = false
+
+# Deny reads to sensitive directories
+[permissions.filesystem]
+deny_read = [
+  "/etc/shadow",
+  "/etc/passwd",
+  "~/.ssh",
+  "~/.aws",
+  "~/.config/gcloud",
+  ".env",
+  "**/*.pem",
+  "**/*.key",
+]
+
+# Block dangerous commands
+[rules]
+prefix_rules = [
+  { pattern = [{ any_of = ["rm", "rmdir"] }], decision = "forbidden", justification = "Destructive file operations are not permitted." },
+  { pattern = [{ token = "git" }, { any_of = ["push", "commit", "rebase", "reset"] }], decision = "forbidden", justification = "Git mutations are not permitted in read-only mode." },
+  { pattern = [{ any_of = ["curl", "wget", "nc", "ncat"] }], decision = "forbidden", justification = "Network operations are forbidden in strict mode." },
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
+]
+
+# No MCP servers allowed
+# (empty mcp_servers table disables all MCP)
+[mcp_servers]

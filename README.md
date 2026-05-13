@@ -12,8 +12,10 @@ A comprehensive collection of **security-hardened configurations** for popular A
 | [`cursor/`](./cursor/) | Cursor IDE | `permissions.json`, settings, rules, MDM policies |
 | [`openai-platform/`](./openai-platform/) | OpenAI API Platform | Org RBAC, content filters, network security |
 | [`codex-cli/`](./codex-cli/) | OpenAI Codex CLI | `config.toml`, sandbox modes, approval policies |
+| [`codex-desktop/`](./codex-desktop/) | OpenAI Codex Desktop App | `config.toml`, requirements, MDM policies |
 | [`github-copilot/`](./github-copilot/) | GitHub Copilot | Content exclusion, instructions, network routing |
 | [`amazon-q-developer/`](./amazon-q-developer/) | Amazon Q Developer | IAM policies, SCPs, KMS encryption |
+| [`gemini-cli/`](./gemini-cli/) | Google Gemini CLI | `settings.json`, tool restrictions, sandbox, MCP |
 | [`google-gemini/`](./google-gemini/) | Google Gemini | Safety settings, VPC controls, org policies |
 | [`windsurf/`](./windsurf/) | Windsurf (Codeium) | Enterprise policies, Cascade Hooks, RBAC |
 | [`tabnine/`](./tabnine/) | Tabnine Enterprise | Command permissions, workspace restrictions |
@@ -88,6 +90,11 @@ AI-Secure-Configs/
 │   ├── config.toml
 │   ├── project-config.toml
 │   └── examples/
+├── codex-desktop/               # OpenAI Codex Desktop App
+│   ├── README.md
+│   ├── config.toml
+│   ├── enterprise-policy.md
+│   └── examples/
 ├── github-copilot/              # GitHub Copilot
 │   ├── README.md
 │   ├── copilot-instructions.md
@@ -96,6 +103,11 @@ AI-Secure-Configs/
 ├── amazon-q-developer/          # Amazon Q Developer
 │   ├── README.md
 │   ├── secure-admin-policy.md
+│   └── examples/
+├── gemini-cli/                  # Google Gemini CLI
+│   ├── README.md
+│   ├── settings.json
+│   ├── enterprise-policy.md
 │   └── examples/
 ├── google-gemini/               # Google Gemini
 │   ├── README.md
@@ -168,12 +180,14 @@ Every tool in this repository provides three configuration tiers — **Strict**,
 |------|--------|----------|----------|
 | Claude Code | `managed-settings-strict.json` | `managed-settings-moderate.json` | `managed-settings-baseline.json` |
 | Codex CLI | `config-strict.toml` | `config-moderate.toml` | `config-baseline.toml` |
+| Codex Desktop | `config-strict.toml` / `requirements-strict.toml` | `config-moderate.toml` / `requirements-moderate.toml` | `config-baseline.toml` / `requirements-baseline.toml` |
 | Cursor | `permissions-strict.json` | `permissions-moderate.json` | `permissions-baseline.json` |
 | Claude Desktop | `config-strict.json` | `config-moderate.json` | `config-baseline.json` |
 | Claude API | `org-policy-strict.json` | `org-policy-moderate.json` | `org-policy-baseline.json` |
 | Amazon Q Developer | `iam-policy-strict.json` | `iam-policy-moderate.json` | `iam-policy-baseline.json` |
 | Continue.dev | `config-strict.yaml` / `permissions-strict.yaml` | `config-moderate.yaml` / `permissions-moderate.yaml` | `config-baseline.yaml` / `permissions-baseline.yaml` |
 | GitHub Copilot | `org-policy-strict.json` | `org-policy-moderate.json` | `org-policy-baseline.json` |
+| Gemini CLI | `settings-strict.json` | `settings-moderate.json` | `settings-baseline.json` |
 | Google Gemini | `safety-settings-strict.json` | `safety-settings-moderate.json` | `safety-settings-baseline.json` |
 | OpenAI Platform | `org-policy-strict.json` | `org-policy-moderate.json` | `org-policy-baseline.json` |
 | Tabnine | `command-permissions-strict.json` | `command-permissions-moderate.json` | `command-permissions-baseline.json` |

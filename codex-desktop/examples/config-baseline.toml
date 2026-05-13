@@ -1,0 +1,27 @@
+# Codex Desktop App — BASELINE configuration
+# For startups and individual developers. Essential security only.
+# Allows workspace writes, cached web search, and core productivity features.
+# Deploy to: ~/.codex/config.toml
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+cli_auth_credentials_store = "keyring"
+model = "o4-mini"
+model_reasoning_effort = "high"
+web_search = "cached"
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+browser_use = true
+in_app_browser = true
+computer_use = false
+memories = true
+codex_hooks = true
+multi_agent = true
+undo = true
+shell_snapshot = true
+
+[shell_environment_policy]
+include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM", "EDITOR", "NODE_ENV"]
