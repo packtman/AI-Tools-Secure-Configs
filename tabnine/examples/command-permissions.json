@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/tabnine/command-permissions.json",
-  "_comment": "Tabnine command permission configuration. Defines what commands the AI agent can execute and whether approval is required.",
+  "_comment": "Tabnine command permission starting-point. For tiered configs, see command-permissions-strict.json, command-permissions-moderate.json, and command-permissions-baseline.json. Defines what commands the AI agent can execute and whether approval is required.",
 
   "default_permission": "require-confirmation",
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/google-gemini/safety-settings.json",
-  "_comment": "Apply these safety settings in your application code when calling the Gemini API. These are NOT server-side configurations — they must be included in each API request.",
+  "_comment": "API-request safety settings template for Gemini. For tiered admin-level configs, see safety-settings-strict.json, safety-settings-moderate.json, and safety-settings-baseline.json. These are NOT server-side configurations — they must be included in each API request.",
 
   "recommended_safety_settings": {
     "production": [
