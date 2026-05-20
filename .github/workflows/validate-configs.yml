@@ -1,0 +1,170 @@
+name: Validate Configs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-json:
+    name: Validate JSON files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate JSON (strict)
+        run: |
+          errors=0
+          while IFS= read -r file; do
+            if ! python3 -m json.tool "$file" > /dev/null 2>&1; then
+              echo "::error file=$file::Invalid JSON syntax"
+              errors=$((errors + 1))
+            fi
+          done < <(find . -name "*.json" -not -path "./.git/*")
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors JSON file(s) with syntax errors"
+            exit 1
+          fi
+          echo "All JSON files valid"
+
+  validate-yaml:
+    name: Validate YAML files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate YAML
+        run: |
+          errors=0
+          while IFS= read -r file; do
+            if ! python3 -c "import yaml; yaml.safe_load(open('$file'))" 2>/dev/null; then
+              echo "::error file=$file::Invalid YAML syntax"
+              errors=$((errors + 1))
+            fi
+          done < <(find . \( -name "*.yaml" -o -name "*.yml" \) -not -path "./.git/*")
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors YAML file(s) with syntax errors"
+            exit 1
+          fi
+          echo "All YAML files valid"
+
+  validate-toml:
+    name: Validate TOML files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate TOML
+        run: |
+          errors=0
+          while IFS= read -r file; do
+            if ! python3 -c "import tomllib; tomllib.loads(open('$file').read())" 2>/dev/null; then
+              echo "::error file=$file::Invalid TOML syntax"
+              errors=$((errors + 1))
+            fi
+          done < <(find . -name "*.toml" -not -path "./.git/*")
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors TOML file(s) with syntax errors"
+            exit 1
+          fi
+          echo "All TOML files valid"
+
+  validate-structure:
+    name: Validate directory structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files per tool directory
+        run: |
+          errors=0
+          for dir in claude-code claude-desktop claude-api cursor codex-cli codex-desktop \
+                     github-copilot amazon-q-developer gemini-cli google-gemini \
+                     windsurf tabnine continue-dev; do
+            if [ ! -f "$dir/README.md" ]; then
+              echo "::error::Missing $dir/README.md"
+              errors=$((errors + 1))
+            fi
+            if [ ! -d "$dir/examples" ]; then
+              echo "::error::Missing $dir/examples/ directory"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors structural issue(s)"
+            exit 1
+          fi
+          echo "Directory structure valid"
+
+  check-no-secrets:
+    name: Check for accidental secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for potential secrets
+        run: |
+          patterns=(
+            'sk-[a-zA-Z0-9]{20,}'
+            'AKIA[A-Z0-9]{16}'
+            'ghp_[a-zA-Z0-9]{36}'
+            'gho_[a-zA-Z0-9]{36}'
+            'glpat-[a-zA-Z0-9\-]{20,}'
+            'xoxb-[0-9]+'
+          )
+          errors=0
+          for pattern in "${patterns[@]}"; do
+            matches=$(grep -rnE "$pattern" --include="*.json" --include="*.yaml" \
+                      --include="*.yml" --include="*.toml" --include="*.md" \
+                      . 2>/dev/null | grep -v ".git/" || true)
+            if [ -n "$matches" ]; then
+              echo "::error::Potential secret found matching pattern '$pattern':"
+              echo "$matches"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ $errors -gt 0 ]; then
+            echo "Found potential secrets in $errors pattern(s)"
+            exit 1
+          fi
+          echo "No secrets detected"
+
+  check-links:
+    name: Validate internal Markdown links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check relative links in README
+        run: |
+          errors=0
+          while IFS= read -r link; do
+            target=$(echo "$link" | sed 's/.*](\.\///' | sed 's/).*//' | sed 's/#.*//')
+            if [ -n "$target" ] && [ ! -e "$target" ]; then
+              echo "::warning::Broken link in README.md: ./$target"
+              errors=$((errors + 1))
+            fi
+          done < <(grep -oE '\]\(\./[^)]+\)' README.md 2>/dev/null || true)
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors broken link(s) (warnings only, not failing)"
+          fi
+          echo "Link check complete"
