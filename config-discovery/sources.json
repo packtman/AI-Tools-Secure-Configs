@@ -1,0 +1,450 @@
+{
+  "version": 1,
+  "description": "Official vendor documentation and release sources watched by the automated config discovery workflow.",
+  "tools": [
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "local_paths": [
+        "claude-code/README.md",
+        "claude-code/managed-settings.json",
+        "claude-code/examples/*.json",
+        "claude-code/examples/*.md"
+      ],
+      "watch_terms": [
+        "managed settings",
+        "permissions",
+        "sandbox",
+        "hooks",
+        "MCP",
+        "admin",
+        "enterprise"
+      ],
+      "sources": [
+        {
+          "id": "settings",
+          "name": "Settings reference",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/settings"
+        },
+        {
+          "id": "hooks",
+          "name": "Hooks reference",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks"
+        },
+        {
+          "id": "mcp",
+          "name": "MCP reference",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp"
+        }
+      ]
+    },
+    {
+      "id": "claude-desktop",
+      "name": "Claude Desktop",
+      "local_paths": [
+        "claude-desktop/README.md",
+        "claude-desktop/enterprise-policy.md",
+        "claude-desktop/examples/*.json",
+        "claude-desktop/examples/*.md"
+      ],
+      "watch_terms": [
+        "desktop",
+        "configuration",
+        "MCP",
+        "managed",
+        "enterprise",
+        "policy"
+      ],
+      "sources": [
+        {
+          "id": "mcp-local-servers",
+          "name": "Claude Desktop local MCP servers",
+          "url": "https://support.anthropic.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop"
+        }
+      ]
+    },
+    {
+      "id": "claude-api",
+      "name": "Claude API",
+      "local_paths": [
+        "claude-api/README.md",
+        "claude-api/secure-org-policy.md",
+        "claude-api/examples/*.json",
+        "claude-api/examples/*.md"
+      ],
+      "watch_terms": [
+        "admin api",
+        "workspace",
+        "api key",
+        "rate limit",
+        "audit",
+        "policy"
+      ],
+      "sources": [
+        {
+          "id": "admin-api",
+          "name": "Admin API reference",
+          "url": "https://docs.anthropic.com/en/api/admin-api"
+        },
+        {
+          "id": "rate-limits",
+          "name": "Rate limits",
+          "url": "https://docs.anthropic.com/en/api/rate-limits"
+        }
+      ]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "local_paths": [
+        "cursor/README.md",
+        "cursor/permissions.json",
+        "cursor/settings.json",
+        "cursor/examples/*.json",
+        "cursor/examples/*.md",
+        "cursor/rules/*.mdc"
+      ],
+      "watch_terms": [
+        "admin",
+        "team",
+        "policy",
+        "MCP",
+        "rules",
+        "permissions",
+        "privacy"
+      ],
+      "sources": [
+        {
+          "id": "admin",
+          "name": "Team admin docs",
+          "url": "https://docs.cursor.com/account/teams/admin"
+        },
+        {
+          "id": "rules",
+          "name": "Rules docs",
+          "url": "https://docs.cursor.com/context/rules"
+        },
+        {
+          "id": "privacy-security",
+          "name": "Privacy and security docs",
+          "url": "https://docs.cursor.com/account/privacy-and-security"
+        }
+      ]
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "local_paths": [
+        "github-copilot/README.md",
+        "github-copilot/content-exclusion.md",
+        "github-copilot/copilot-instructions.md",
+        "github-copilot/examples/*.json",
+        "github-copilot/examples/*.md",
+        "github-copilot/examples/*.yml"
+      ],
+      "watch_terms": [
+        "organization",
+        "policy",
+        "content exclusion",
+        "coding agent",
+        "audit log",
+        "enterprise"
+      ],
+      "sources": [
+        {
+          "id": "organization-management",
+          "name": "Organization management docs",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization"
+        },
+        {
+          "id": "content-exclusions",
+          "name": "Content exclusion docs",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion/configuring-content-exclusions-for-github-copilot"
+        },
+        {
+          "id": "business-features",
+          "name": "Business feature docs",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/github-copilot-business/feature-set"
+        }
+      ]
+    },
+    {
+      "id": "codex-cli",
+      "name": "Codex CLI",
+      "local_paths": [
+        "codex-cli/README.md",
+        "codex-cli/*.toml",
+        "codex-cli/examples/*.toml",
+        "codex-cli/examples/*.json",
+        "codex-cli/examples/*.md"
+      ],
+      "watch_terms": [
+        "config",
+        "approval",
+        "sandbox",
+        "policy",
+        "MCP",
+        "profile"
+      ],
+      "sources": [
+        {
+          "id": "repo-readme",
+          "name": "OpenAI Codex README",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/README.md"
+        },
+        {
+          "id": "releases",
+          "name": "OpenAI Codex releases",
+          "url": "https://api.github.com/repos/openai/codex/releases?per_page=10"
+        }
+      ]
+    },
+    {
+      "id": "codex-desktop",
+      "name": "Codex Desktop",
+      "local_paths": [
+        "codex-desktop/README.md",
+        "codex-desktop/*.toml",
+        "codex-desktop/enterprise-policy.md",
+        "codex-desktop/examples/*.toml",
+        "codex-desktop/examples/*.md"
+      ],
+      "watch_terms": [
+        "desktop",
+        "config",
+        "managed",
+        "MDM",
+        "requirements",
+        "sandbox"
+      ],
+      "sources": [
+        {
+          "id": "repo-readme",
+          "name": "OpenAI Codex README",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/README.md"
+        },
+        {
+          "id": "releases",
+          "name": "OpenAI Codex releases",
+          "url": "https://api.github.com/repos/openai/codex/releases?per_page=10"
+        }
+      ]
+    },
+    {
+      "id": "continue-dev",
+      "name": "Continue.dev",
+      "local_paths": [
+        "continue-dev/README.md",
+        "continue-dev/config.yaml",
+        "continue-dev/examples/*.yaml",
+        "continue-dev/examples/*.json",
+        "continue-dev/examples/*.md"
+      ],
+      "watch_terms": [
+        "config",
+        "permissions",
+        "MCP",
+        "model",
+        "secrets",
+        "policy"
+      ],
+      "sources": [
+        {
+          "id": "configuration",
+          "name": "Configuration docs",
+          "url": "https://docs.continue.dev/customize/deep-dives/configuration"
+        },
+        {
+          "id": "reference",
+          "name": "Reference docs",
+          "url": "https://docs.continue.dev/reference"
+        }
+      ]
+    },
+    {
+      "id": "amazon-q-developer",
+      "name": "Amazon Q Developer",
+      "local_paths": [
+        "amazon-q-developer/README.md",
+        "amazon-q-developer/secure-admin-policy.md",
+        "amazon-q-developer/examples/*.json",
+        "amazon-q-developer/examples/*.md"
+      ],
+      "watch_terms": [
+        "administrator",
+        "IAM",
+        "policy",
+        "SCP",
+        "security",
+        "encryption"
+      ],
+      "sources": [
+        {
+          "id": "iam",
+          "name": "Amazon Q Developer IAM docs",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security-iam.html"
+        },
+        {
+          "id": "admin",
+          "name": "Amazon Q Developer administrator docs",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html"
+        }
+      ]
+    },
+    {
+      "id": "gemini-cli",
+      "name": "Gemini CLI",
+      "local_paths": [
+        "gemini-cli/README.md",
+        "gemini-cli/settings.json",
+        "gemini-cli/enterprise-policy.md",
+        "gemini-cli/examples/*.json",
+        "gemini-cli/examples/*.md"
+      ],
+      "watch_terms": [
+        "settings",
+        "sandbox",
+        "MCP",
+        "policy",
+        "checkpointing",
+        "authentication"
+      ],
+      "sources": [
+        {
+          "id": "repo-readme",
+          "name": "Gemini CLI README",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/README.md"
+        },
+        {
+          "id": "releases",
+          "name": "Gemini CLI releases",
+          "url": "https://api.github.com/repos/google-gemini/gemini-cli/releases?per_page=10"
+        }
+      ]
+    },
+    {
+      "id": "google-gemini",
+      "name": "Google Gemini",
+      "local_paths": [
+        "google-gemini/README.md",
+        "google-gemini/examples/*.json",
+        "google-gemini/examples/*.md"
+      ],
+      "watch_terms": [
+        "safety settings",
+        "content filter",
+        "policy",
+        "Vertex AI",
+        "Gemini API",
+        "data governance"
+      ],
+      "sources": [
+        {
+          "id": "safety-settings",
+          "name": "Gemini API safety settings",
+          "url": "https://ai.google.dev/gemini-api/docs/safety-settings"
+        },
+        {
+          "id": "vertex-safety",
+          "name": "Vertex AI safety filters",
+          "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters"
+        }
+      ]
+    },
+    {
+      "id": "openai-platform",
+      "name": "OpenAI Platform",
+      "local_paths": [
+        "openai-platform/README.md",
+        "openai-platform/secure-org-policy.md",
+        "openai-platform/examples/*.json",
+        "openai-platform/examples/*.md"
+      ],
+      "watch_terms": [
+        "admin",
+        "project",
+        "service account",
+        "data retention",
+        "organization",
+        "policy"
+      ],
+      "sources": [
+        {
+          "id": "production-best-practices",
+          "name": "Production best practices",
+          "url": "https://platform.openai.com/docs/guides/production-best-practices"
+        },
+        {
+          "id": "data-controls",
+          "name": "Data controls",
+          "url": "https://platform.openai.com/docs/guides/your-data"
+        },
+        {
+          "id": "admin-api",
+          "name": "Admin API reference",
+          "url": "https://platform.openai.com/docs/api-reference/admin"
+        }
+      ]
+    },
+    {
+      "id": "tabnine",
+      "name": "Tabnine",
+      "local_paths": [
+        "tabnine/README.md",
+        "tabnine/secure-admin-policy.md",
+        "tabnine/examples/*.json",
+        "tabnine/examples/*.md"
+      ],
+      "watch_terms": [
+        "admin",
+        "policy",
+        "command",
+        "workspace",
+        "model",
+        "enterprise"
+      ],
+      "sources": [
+        {
+          "id": "admin",
+          "name": "Tabnine admin docs",
+          "url": "https://docs.tabnine.com/main/admin"
+        },
+        {
+          "id": "security",
+          "name": "Tabnine security docs",
+          "url": "https://docs.tabnine.com/main/security"
+        }
+      ]
+    },
+    {
+      "id": "windsurf",
+      "name": "Windsurf",
+      "local_paths": [
+        "windsurf/README.md",
+        "windsurf/secure-admin-policy.md",
+        "windsurf/examples/*.json",
+        "windsurf/examples/*.md"
+      ],
+      "watch_terms": [
+        "admin",
+        "enterprise",
+        "policy",
+        "MCP",
+        "Cascade",
+        "RBAC"
+      ],
+      "sources": [
+        {
+          "id": "admin",
+          "name": "Windsurf admin docs",
+          "url": "https://docs.windsurf.com/windsurf/admin"
+        },
+        {
+          "id": "mcp",
+          "name": "Windsurf MCP docs",
+          "url": "https://docs.windsurf.com/windsurf/cascade/mcp"
+        }
+      ]
+    }
+  ]
+}

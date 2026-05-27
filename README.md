@@ -29,6 +29,17 @@ A comprehensive collection of **security-hardened configurations** for popular A
 4. **Deploy** — Use your MDM, config management, or manual deployment to roll out.
 5. **Monitor** — Set up audit logging and review regularly.
 
+## Automated Config Discovery
+
+This repo includes a scheduled **Config Discovery Agent** that watches official vendor documentation and release feeds for changes that may affect hardened AI tool configs.
+
+- Workflow: [`.github/workflows/config-discovery.yml`](./.github/workflows/config-discovery.yml)
+- Source manifest: [`config-discovery/sources.json`](./config-discovery/sources.json)
+- Scanner: [`scripts/discover_config_updates.py`](./scripts/discover_config_updates.py)
+- Operating guide: [`docs/CONFIG-DISCOVERY-AUTOMATION.md`](./docs/CONFIG-DISCOVERY-AUTOMATION.md)
+
+When a watched source changes, the workflow opens a pull request with updated fingerprints and a triage report. The scanner does not blindly rewrite tier files, because vendor configuration changes need security review before rollout.
+
 ## Security Principles
 
 Every configuration in this repository follows these core principles:

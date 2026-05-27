@@ -1,0 +1,59 @@
+name: Config Discovery Agent
+
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: config-discovery-agent
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: Watch upstream config sources
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Scan vendor docs and release feeds
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/discover_config_updates.py --update-state
+
+      - name: Detect generated changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create discovery pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: refresh config discovery sources"
+          title: "chore: review upstream AI config source changes"
+          body: |
+            This automated PR was created by the Config Discovery Agent.
+
+            It updates upstream source fingerprints and includes a generated triage report under `config-discovery/reports/`.
+
+            Review the report, then decide whether any tiered configs, rationale docs, rollout steps, or workflow-preservation notes need updates. The scanner does not rewrite hardened configs by itself because vendor docs often require security review before a setting is safe to roll out.
+          branch: automation/config-discovery
+          delete-branch: true
