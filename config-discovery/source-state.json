@@ -3,7 +3,7 @@
     "amazon-q-developer:admin": {
       "content_length": 16893,
       "content_type": "text/html",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Amazon Q Developer administrator docs",
       "normalized_as": "html",
       "sha256": "d0ac2d56b36d3dd11c4b9f764851652b401f6edab15258fd6e418702fbb7f20e",
@@ -14,7 +14,7 @@
     "amazon-q-developer:iam": {
       "content_length": 16438,
       "content_type": "text/html",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Amazon Q Developer IAM docs",
       "normalized_as": "html",
       "sha256": "bc3bee8f88b61d10c1aee7fe280a5ec4c3a57e4da581328268bb5ccfb8cfbbac",
@@ -25,7 +25,7 @@
     "claude-api:admin-api": {
       "content_length": 8941,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Admin API reference",
       "normalized_as": "html",
       "sha256": "a5642ad785cbc1520a8ff5c55b7645df140aec7a1af60d9636c0b847bd642be1",
@@ -36,7 +36,7 @@
     "claude-api:rate-limits": {
       "content_length": 17099,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Rate limits",
       "normalized_as": "html",
       "sha256": "7ce0fb259d846f5ccdb6b488b76074bc624e0ba8ab6e7d6450bbda4fd08d4b2c",
@@ -47,7 +47,7 @@
     "claude-code:hooks": {
       "content_length": 133083,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Hooks reference",
       "normalized_as": "html",
       "sha256": "d59221775ebe6f39150a31d1192ea048e56f9805e40699fb9c7ecf4dc15ad398",
@@ -58,7 +58,7 @@
     "claude-code:mcp": {
       "content_length": 43683,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "MCP reference",
       "normalized_as": "html",
       "sha256": "cfa639bfd63b1c15f388b64d6ce9653507b450d28744173e85008089c2e21b63",
@@ -69,7 +69,7 @@
     "claude-code:settings": {
       "content_length": 70840,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Settings reference",
       "normalized_as": "html",
       "sha256": "be413c3079f3286560fd3a08e44066f18552e65aaad0317adc75b5f7c0160731",
@@ -80,7 +80,7 @@
     "claude-desktop:mcp-local-servers": {
       "content_length": 7981,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Claude Desktop local MCP servers",
       "normalized_as": "html",
       "sha256": "776652d6b4f5c165eef43cf17fbfff4fb1915794e7b4a5a5dad24b22be653618",
@@ -89,12 +89,12 @@
       "url": "https://support.anthropic.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop"
     },
     "codex-cli:releases": {
-      "content_length": 2289780,
+      "content_length": 623797,
       "content_type": "application/json; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "OpenAI Codex releases",
       "normalized_as": "json",
-      "sha256": "2b31f24675730343bb9818c696fb8b648b296784c327dd87472bc08572afe39e",
+      "sha256": "3af3804982ab5d69c2ab19f0ddcf4e51536c69dfa7f0448be043a5bb827d0936",
       "source": "releases",
       "tool": "codex-cli",
       "url": "https://api.github.com/repos/openai/codex/releases?per_page=10"
@@ -102,7 +102,7 @@
     "codex-cli:repo-readme": {
       "content_length": 2776,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "OpenAI Codex README",
       "normalized_as": "text",
       "sha256": "433c0f676857d612ffbff7e77c0f03b5b91586407ad10e22dbd943d83935639c",
@@ -111,12 +111,12 @@
       "url": "https://raw.githubusercontent.com/openai/codex/main/README.md"
     },
     "codex-desktop:releases": {
-      "content_length": 2289780,
+      "content_length": 623797,
       "content_type": "application/json; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "OpenAI Codex releases",
       "normalized_as": "json",
-      "sha256": "2b31f24675730343bb9818c696fb8b648b296784c327dd87472bc08572afe39e",
+      "sha256": "3af3804982ab5d69c2ab19f0ddcf4e51536c69dfa7f0448be043a5bb827d0936",
       "source": "releases",
       "tool": "codex-desktop",
       "url": "https://api.github.com/repos/openai/codex/releases?per_page=10"
@@ -124,7 +124,7 @@
     "codex-desktop:repo-readme": {
       "content_length": 2776,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "OpenAI Codex README",
       "normalized_as": "text",
       "sha256": "433c0f676857d612ffbff7e77c0f03b5b91586407ad10e22dbd943d83935639c",
@@ -135,7 +135,7 @@
     "continue-dev:configuration": {
       "content_length": 5091,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Configuration docs",
       "normalized_as": "html",
       "sha256": "d4f3e5d9b8510018af5427ace451818e3daabaac8fc6f4cdb6a204acbf68f8a3",
@@ -146,7 +146,7 @@
     "continue-dev:reference": {
       "content_length": 15055,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Reference docs",
       "normalized_as": "html",
       "sha256": "0d22f4657d307149b92f0483460c05f7c15b29edceba8f66cdc0aa542abc6364",
@@ -157,7 +157,7 @@
     "cursor:admin": {
       "content_length": 7171,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Team admin docs",
       "normalized_as": "text",
       "sha256": "5b7405970a9bf434c332993640206f522b1ae0d9c05ebaa5f0721067ff9e93b6",
@@ -168,7 +168,7 @@
     "cursor:privacy-security": {
       "content_length": 4577,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Privacy and security docs",
       "normalized_as": "text",
       "sha256": "c45e71b4a40d2f25e85d92149fa97f8ccab37d6f03bd4c3ac08d5fea0b1e6a3c",
@@ -179,7 +179,7 @@
     "cursor:rules": {
       "content_length": 15566,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Rules docs",
       "normalized_as": "text",
       "sha256": "4bf2873b7ff4171868b240e82a03bda1722c6bf25ac984909158ced27b98a116",
@@ -188,12 +188,12 @@
       "url": "https://cursor.com/docs/rules.md"
     },
     "gemini-cli:releases": {
-      "content_length": 116310,
+      "content_length": 81125,
       "content_type": "application/json; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Gemini CLI releases",
       "normalized_as": "json",
-      "sha256": "2bdc03b2302e3c035b52b17976a3fb6f4ab404d321d40cddd3713da2418ea499",
+      "sha256": "2fceaca14a2af39c53f66a288e4adcdacb76e4c5ee61dbb8d6867013e7013c81",
       "source": "releases",
       "tool": "gemini-cli",
       "url": "https://api.github.com/repos/google-gemini/gemini-cli/releases?per_page=10"
@@ -201,7 +201,7 @@
     "gemini-cli:repo-readme": {
       "content_length": 13211,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Gemini CLI README",
       "normalized_as": "text",
       "sha256": "0c380d39525b4f032f3f2e04fc832c8de717b2625b7506babde73cddc9f9bbfc",
@@ -212,7 +212,7 @@
     "github-copilot:business-features": {
       "content_length": 18151,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Business feature docs",
       "normalized_as": "html",
       "sha256": "74f3375d1f1eef8ca994729c2ca7811e6ef71f33c0f02852bc474a8169c72fda",
@@ -223,7 +223,7 @@
     "github-copilot:content-exclusions": {
       "content_length": 24789,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Content exclusion docs",
       "normalized_as": "html",
       "sha256": "d403b54a830dfda1c1e6df2726615d79b2c46058e833ba45281ef275bfdca015",
@@ -234,7 +234,7 @@
     "github-copilot:organization-management": {
       "content_length": 12941,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Organization management docs",
       "normalized_as": "html",
       "sha256": "9ee9dc5c4ff00923b1ab3131519b8691d3d8d33e6d0688736d6c796e2e22cf87",
@@ -245,7 +245,7 @@
     "google-gemini:safety-settings": {
       "content_length": 12319,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Gemini API safety settings",
       "normalized_as": "html",
       "sha256": "0151d574a205d506588a702c0215fb3d17dd1fca16bde6d6db7d8e835012689f",
@@ -256,7 +256,7 @@
     "google-gemini:vertex-safety": {
       "content_length": 48094,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Vertex AI safety filters",
       "normalized_as": "html",
       "sha256": "8648ff382075a3ca603c2b0f3c31ef5cb00ab1a1915f4e7cfc1a191cb1199d2c",
@@ -267,7 +267,7 @@
     "openai-platform:admin-api": {
       "content_length": 910638,
       "content_type": "text/plain; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "OpenAPI specification",
       "normalized_as": "text",
       "sha256": "f0263f1d20e124f58a1fcb61877d514eb999b277891d2d5efa957a7a46715882",
@@ -278,7 +278,7 @@
     "openai-platform:production-best-practices": {
       "content_length": 19913,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Admin API guide",
       "normalized_as": "html",
       "sha256": "046910702cd162040f87694442cef0e36ec3b97424ee5a45aaee606f7445ef97",
@@ -289,7 +289,7 @@
     "tabnine:admin": {
       "content_length": 18552,
       "content_type": "text/markdown; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Tabnine API docs",
       "normalized_as": "text",
       "sha256": "e8439e9eb8d9976325e26cd125f4d9e167d15b7232cf2a9d067bdb7ddcd7ef3c",
@@ -300,7 +300,7 @@
     "tabnine:security": {
       "content_length": 7402,
       "content_type": "text/markdown; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Tabnine CLI settings docs",
       "normalized_as": "text",
       "sha256": "8da2d72f821fc853be52192ce343941ce3180b67e204aa1792397a3a44579aa8",
@@ -311,7 +311,7 @@
     "windsurf:admin": {
       "content_length": 11698,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Windsurf admin docs",
       "normalized_as": "html",
       "sha256": "8274ef2559535c9bb1510a2476b01cb7fc03687987ed15598e1cdfb584177c3b",
@@ -322,7 +322,7 @@
     "windsurf:mcp": {
       "content_length": 12777,
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-05-27T03:08:38+00:00",
+      "fetched_at": "2026-05-27T03:10:08+00:00",
       "name": "Windsurf MCP docs",
       "normalized_as": "html",
       "sha256": "9cd248bff21d2c5518a0deb9b3bcc28f6318b24a42d56be834f5b5ce02845ab2",
@@ -331,6 +331,6 @@
       "url": "https://docs.windsurf.com/windsurf/enterprise-policies"
     }
   },
-  "updated_at": "2026-05-27T03:08:38+00:00",
+  "updated_at": "2026-05-27T03:10:08+00:00",
   "version": 1
 }

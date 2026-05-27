@@ -48,11 +48,15 @@ VOLATILE_JSON_KEYS = {
     "assets_url",
     "author",
     "created_at",
+    "download_count",
     "id",
     "node_id",
+    "reactions",
     "tarball_url",
     "upload_url",
     "url",
+    "updated_at",
+    "uploader",
     "zipball_url",
 }
 
