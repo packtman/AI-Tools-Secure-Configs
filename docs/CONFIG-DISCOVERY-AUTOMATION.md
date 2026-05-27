@@ -69,19 +69,19 @@ Each report includes:
 Run a dry check:
 
 ```bash
-python scripts/discover_config_updates.py
+python3 scripts/discover_config_updates.py
 ```
 
 Update fingerprints and write a report when changes are found:
 
 ```bash
-python scripts/discover_config_updates.py --update-state
+python3 scripts/discover_config_updates.py --update-state
 ```
 
 Fail if any source cannot be fetched:
 
 ```bash
-python scripts/discover_config_updates.py --update-state --fail-on-fetch-error
+python3 scripts/discover_config_updates.py --update-state --fail-on-fetch-error
 ```
 
 ## Reviewer expectations

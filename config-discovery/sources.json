@@ -84,7 +84,7 @@
         {
           "id": "admin-api",
           "name": "Admin API reference",
-          "url": "https://docs.anthropic.com/en/api/admin-api"
+          "url": "https://docs.anthropic.com/en/api/administration-api"
         },
         {
           "id": "rate-limits",
@@ -117,17 +117,17 @@
         {
           "id": "admin",
           "name": "Team admin docs",
-          "url": "https://docs.cursor.com/account/teams/admin"
+          "url": "https://cursor.com/docs/account/teams/dashboard.md"
         },
         {
           "id": "rules",
           "name": "Rules docs",
-          "url": "https://docs.cursor.com/context/rules"
+          "url": "https://cursor.com/docs/rules.md"
         },
         {
           "id": "privacy-security",
           "name": "Privacy and security docs",
-          "url": "https://docs.cursor.com/account/privacy-and-security"
+          "url": "https://cursor.com/docs/enterprise/privacy-and-data-governance.md"
         }
       ]
     },
@@ -159,12 +159,12 @@
         {
           "id": "content-exclusions",
           "name": "Content exclusion docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion/configuring-content-exclusions-for-github-copilot"
+          "url": "https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot"
         },
         {
           "id": "business-features",
           "name": "Business feature docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/github-copilot-business/feature-set"
+          "url": "https://docs.github.com/en/copilot/get-started/plans"
         }
       ]
     },
@@ -287,7 +287,7 @@
         {
           "id": "admin",
           "name": "Amazon Q Developer administrator docs",
-          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html"
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/id-based-policy-examples-admins.html"
         }
       ]
     },
@@ -371,18 +371,13 @@
       "sources": [
         {
           "id": "production-best-practices",
-          "name": "Production best practices",
-          "url": "https://platform.openai.com/docs/guides/production-best-practices"
-        },
-        {
-          "id": "data-controls",
-          "name": "Data controls",
-          "url": "https://platform.openai.com/docs/guides/your-data"
+          "name": "Admin API guide",
+          "url": "https://developers.openai.com/api/docs/guides/admin-apis"
         },
         {
           "id": "admin-api",
-          "name": "Admin API reference",
-          "url": "https://platform.openai.com/docs/api-reference/admin"
+          "name": "OpenAPI specification",
+          "url": "https://raw.githubusercontent.com/openai/openai-openapi/refs/heads/manual_spec/openapi.yaml"
         }
       ]
     },
@@ -406,13 +401,13 @@
       "sources": [
         {
           "id": "admin",
-          "name": "Tabnine admin docs",
-          "url": "https://docs.tabnine.com/main/admin"
+          "name": "Tabnine API docs",
+          "url": "https://docs.tabnine.com/main/administering-tabnine/managing-your-team/tabnine-apis.md"
         },
         {
           "id": "security",
-          "name": "Tabnine security docs",
-          "url": "https://docs.tabnine.com/main/security"
+          "name": "Tabnine CLI settings docs",
+          "url": "https://docs.tabnine.com/main/getting-started/tabnine-cli/features/settings.md"
         }
       ]
     },
@@ -437,12 +432,12 @@
         {
           "id": "admin",
           "name": "Windsurf admin docs",
-          "url": "https://docs.windsurf.com/windsurf/admin"
+          "url": "https://docs.windsurf.com/windsurf/guide-for-admins"
         },
         {
           "id": "mcp",
           "name": "Windsurf MCP docs",
-          "url": "https://docs.windsurf.com/windsurf/cascade/mcp"
+          "url": "https://docs.windsurf.com/windsurf/enterprise-policies"
         }
       ]
     }
