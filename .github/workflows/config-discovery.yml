@@ -42,9 +42,12 @@ jobs:
       - name: Run discovery scanner
         id: discover
         shell: bash
+        env:
+          WRITE_NO_CHANGE_REPORT: >-
+            ${{ github.event.inputs.write_no_change_report }}
         run: |
           extra_args=()
-          if [[ "${{ github.event.inputs.write_no_change_report }}" == "true" ]]; then
+          if [[ "${WRITE_NO_CHANGE_REPORT:-false}" == "true" ]]; then
             extra_args+=(--write-no-change-report)
           fi
           python3 scripts/discover_config_updates.py \
@@ -58,7 +61,9 @@ jobs:
           sed -n '1,220p' "${{ steps.discover.outputs.report_path }}"
 
       - name: Create config discovery pull request
-        if: steps.discover.outputs.changes_detected == 'true' || steps.discover.outputs.report_written == 'true'
+        if: >-
+          steps.discover.outputs.changes_detected == 'true' ||
+          steps.discover.outputs.report_written == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -69,9 +74,14 @@ jobs:
           body: |
             ## Summary
 
-            The config discovery agent found official vendor source changes or was manually asked to write a report.
+            The config discovery agent found official vendor source changes
+            or was manually asked to write a report.
 
-            Review `config-discovery/reports/latest.md` first. If the source change affects a tiered config, deployment path, validation command, or workflow-preservation note, use `config-discovery/ROLLOUT_AGENT_PROMPT.md` to update the affected docs and examples.
+            Review `config-discovery/reports/latest.md` first. If the source
+            change affects a tiered config, deployment path, validation
+            command, or workflow-preservation note, use
+            `config-discovery/ROLLOUT_AGENT_PROMPT.md` to update the affected
+            docs and examples.
 
             ## Safety notes
 

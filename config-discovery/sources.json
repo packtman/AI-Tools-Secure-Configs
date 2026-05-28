@@ -42,7 +42,7 @@
       "id": "claude-api-admin",
       "tool": "Claude API",
       "category": "admin-api",
-      "url": "https://platform.claude.com/docs/en/admin-api/overview.md",
+      "url": "https://platform.claude.com/docs/en/manage-claude/admin-api.md",
       "notes": "Watch for workspace, user, and admin automation changes."
     },
     {
@@ -63,21 +63,21 @@
       "id": "cursor-admin",
       "tool": "Cursor",
       "category": "team-admin",
-      "url": "https://docs.cursor.com/account/teams/admin",
+      "url": "https://cursor.com/docs/enterprise.md",
       "notes": "Watch for managed team, admin, and policy enforcement changes."
     },
     {
       "id": "cursor-rules",
       "tool": "Cursor",
       "category": "rules",
-      "url": "https://docs.cursor.com/context/rules",
+      "url": "https://cursor.com/docs/rules",
       "notes": "Watch for rules file behavior and project instruction changes."
     },
     {
       "id": "cursor-mcp",
       "tool": "Cursor",
       "category": "mcp",
-      "url": "https://docs.cursor.com/agent/mcp",
+      "url": "https://cursor.com/docs/mcp.md",
       "notes": "Watch for MCP approvals, server configuration, and trust model changes."
     },
     {
@@ -98,7 +98,7 @@
       "id": "github-copilot-policy",
       "tool": "GitHub Copilot",
       "category": "feature-policy",
-      "url": "https://docs.github.com/en/copilot/managing-copilot/managing-policies-for-copilot-in-your-organization",
+      "url": "https://docs.github.com/en/copilot/managing-copilot-business/managing-policies-for-copilot-business-in-your-organization",
       "notes": "Watch for feature toggles, coding agent controls, and enterprise settings."
     },
     {
@@ -119,21 +119,21 @@
       "id": "continue-config",
       "tool": "Continue.dev",
       "category": "config",
-      "url": "https://docs.continue.dev/customize/config",
+      "url": "https://docs.continue.dev/reference/",
       "notes": "Watch for config.yaml schema and model routing changes."
     },
     {
       "id": "continue-permissions",
       "tool": "Continue.dev",
       "category": "permissions",
-      "url": "https://docs.continue.dev/customize/deep-dives/permissions",
+      "url": "https://docs.continue.dev/cli/tool-permissions",
       "notes": "Watch for permission model and approval behavior changes."
     },
     {
       "id": "windsurf-enterprise",
       "tool": "Windsurf",
       "category": "enterprise-policy",
-      "url": "https://docs.windsurf.com/windsurf/enterprise",
+      "url": "https://docs.windsurf.com/windsurf/enterprise-policies",
       "notes": "Watch for enterprise policy, RBAC, and managed setting changes."
     },
     {
@@ -161,21 +161,21 @@
       "id": "amazon-q-security",
       "tool": "Amazon Q Developer",
       "category": "security",
-      "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security.html",
+      "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security.md",
       "notes": "Watch for IAM, encryption, audit, and data boundary changes."
     },
     {
       "id": "amazon-q-admin",
       "tool": "Amazon Q Developer",
       "category": "admin",
-      "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html",
+      "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin-setup-subscribe-general.md",
       "notes": "Watch for subscriptions, profiles, and administrative controls."
     },
     {
       "id": "gemini-cli-config",
       "tool": "Gemini CLI",
       "category": "config",
-      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/configuration.md",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/reference/configuration.md",
       "notes": "Watch for CLI settings, tool restrictions, sandbox, and MCP changes."
     },
     {
@@ -203,15 +203,15 @@
       "id": "openai-platform-production",
       "tool": "OpenAI Platform",
       "category": "production-best-practices",
-      "url": "https://platform.openai.com/docs/guides/production-best-practices",
+      "url": "https://developers.openai.com/api/docs/guides/production-best-practices",
       "notes": "Watch for API key, production deployment, and operational safety changes."
     },
     {
-      "id": "openai-platform-safety",
+      "id": "openai-platform-rbac",
       "tool": "OpenAI Platform",
-      "category": "safety-best-practices",
-      "url": "https://platform.openai.com/docs/guides/safety-best-practices",
-      "notes": "Watch for safety and content policy guidance changes."
+      "category": "rbac",
+      "url": "https://developers.openai.com/api/docs/guides/rbac",
+      "notes": "Watch for organization roles, project permissions, and service account controls."
     }
   ]
 }
