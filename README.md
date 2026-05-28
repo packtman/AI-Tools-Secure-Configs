@@ -29,6 +29,17 @@ A comprehensive collection of **security-hardened configurations** for popular A
 4. **Deploy** — Use your MDM, config management, or manual deployment to roll out.
 5. **Monitor** — Set up audit logging and review regularly.
 
+## Automated Config Discovery
+
+This repo includes a scheduled discovery agent that watches official vendor documentation and release feeds for changes that may affect hardened AI tool configs.
+
+- Workflow: [`.github/workflows/config-discovery.yml`](./.github/workflows/config-discovery.yml)
+- Source inventory: [`config-discovery/sources.json`](./config-discovery/sources.json)
+- Operator guide: [`config-discovery/README.md`](./config-discovery/README.md)
+- Agent handoff prompt: [`config-discovery/ROLLOUT_AGENT_PROMPT.md`](./config-discovery/ROLLOUT_AGENT_PROMPT.md)
+
+The agent opens pull requests with source fingerprints and a review report when monitored guidance changes. It does not blindly rewrite security configs, reviewers use the report and prompt to update the affected tiered files, rollout notes, and validation steps.
+
 ## Security Principles
 
 Every configuration in this repository follows these core principles:
@@ -60,6 +71,12 @@ Use MDM, server-managed settings, or admin consoles to deploy and enforce polici
 ```
 AI-Secure-Configs/
 ├── README.md                    # This file
+├── .github/
+│   └── workflows/
+│       └── config-discovery.yml # Scheduled official-source scanner
+├── config-discovery/            # Source inventory, scanner state, reports, agent prompt
+├── scripts/
+│   └── discover_config_updates.py
 ├── claude-api/                  # Anthropic Claude API Platform
 │   ├── README.md
 │   ├── secure-org-policy.md

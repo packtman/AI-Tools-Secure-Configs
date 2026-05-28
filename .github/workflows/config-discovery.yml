@@ -1,0 +1,88 @@
+name: Config Discovery Agent
+
+on:
+  schedule:
+    - cron: "17 13 * * *"
+  workflow_dispatch:
+    inputs:
+      write_no_change_report:
+        description: "Write a report even when no monitored source changed"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: config-discovery
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: Discover vendor config changes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate source inventory
+        run: python3 -m json.tool config-discovery/sources.json >/dev/null
+
+      - name: Run discovery scanner
+        id: discover
+        shell: bash
+        run: |
+          extra_args=()
+          if [[ "${{ github.event.inputs.write_no_change_report }}" == "true" ]]; then
+            extra_args+=(--write-no-change-report)
+          fi
+          python3 scripts/discover_config_updates.py \
+            --github-output "$GITHUB_OUTPUT" \
+            "${extra_args[@]}"
+
+      - name: Show latest report
+        if: steps.discover.outputs.report_path != ''
+        run: |
+          echo "Report: ${{ steps.discover.outputs.report_path }}"
+          sed -n '1,220p' "${{ steps.discover.outputs.report_path }}"
+
+      - name: Create config discovery pull request
+        if: steps.discover.outputs.changes_detected == 'true' || steps.discover.outputs.report_written == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/config-discovery-updates
+          delete-branch: true
+          commit-message: Update config discovery findings
+          title: "Update AI tool config discovery findings"
+          body: |
+            ## Summary
+
+            The config discovery agent found official vendor source changes or was manually asked to write a report.
+
+            Review `config-discovery/reports/latest.md` first. If the source change affects a tiered config, deployment path, validation command, or workflow-preservation note, use `config-discovery/ROLLOUT_AGENT_PROMPT.md` to update the affected docs and examples.
+
+            ## Safety notes
+
+            - This PR only records discovered source changes and scanner state.
+            - It does not automatically rewrite hardened configs.
+            - Human review is required before merging.
+
+            ## Validation
+
+            - `python3 -m json.tool config-discovery/sources.json`
+            - `python3 scripts/discover_config_updates.py`
+          add-paths: |
+            config-discovery/source-state.json
+            config-discovery/reports/*.md

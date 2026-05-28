@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "description": "Official vendor documentation, policy, and release sources monitored by the config discovery agent.",
+  "default_timeout_seconds": 25,
+  "sources": [
+    {
+      "id": "claude-code-settings",
+      "tool": "Claude Code",
+      "category": "managed-settings",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+      "notes": "Watch for managed settings, permissions, hooks, and enterprise policy changes."
+    },
+    {
+      "id": "claude-code-iam",
+      "tool": "Claude Code",
+      "category": "identity-access",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/iam",
+      "notes": "Watch for organization login, managed account, and access enforcement changes."
+    },
+    {
+      "id": "claude-code-hooks",
+      "tool": "Claude Code",
+      "category": "audit-hooks",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+      "notes": "Watch for lifecycle hook, audit logging, and deny rule behavior changes."
+    },
+    {
+      "id": "claude-code-mcp",
+      "tool": "Claude Code",
+      "category": "mcp",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+      "notes": "Watch for MCP server allowlist, transport, and approval model changes."
+    },
+    {
+      "id": "claude-api-overview",
+      "tool": "Claude API",
+      "category": "platform-api",
+      "url": "https://platform.claude.com/docs/en/api/overview.md",
+      "notes": "Watch for API platform behavior that can affect org policy examples."
+    },
+    {
+      "id": "claude-api-admin",
+      "tool": "Claude API",
+      "category": "admin-api",
+      "url": "https://platform.claude.com/docs/en/admin-api/overview.md",
+      "notes": "Watch for workspace, user, and admin automation changes."
+    },
+    {
+      "id": "claude-desktop-mcp-user",
+      "tool": "Claude Desktop",
+      "category": "desktop-mcp",
+      "url": "https://modelcontextprotocol.io/quickstart/user",
+      "notes": "Watch for desktop MCP configuration and transport changes."
+    },
+    {
+      "id": "claude-desktop-install",
+      "tool": "Claude Desktop",
+      "category": "desktop-admin",
+      "url": "https://support.anthropic.com/en/articles/10065433-installing-claude-for-desktop",
+      "notes": "Watch for install, update, and managed desktop behavior changes."
+    },
+    {
+      "id": "cursor-admin",
+      "tool": "Cursor",
+      "category": "team-admin",
+      "url": "https://docs.cursor.com/account/teams/admin",
+      "notes": "Watch for managed team, admin, and policy enforcement changes."
+    },
+    {
+      "id": "cursor-rules",
+      "tool": "Cursor",
+      "category": "rules",
+      "url": "https://docs.cursor.com/context/rules",
+      "notes": "Watch for rules file behavior and project instruction changes."
+    },
+    {
+      "id": "cursor-mcp",
+      "tool": "Cursor",
+      "category": "mcp",
+      "url": "https://docs.cursor.com/agent/mcp",
+      "notes": "Watch for MCP approvals, server configuration, and trust model changes."
+    },
+    {
+      "id": "github-copilot-org-admin",
+      "tool": "GitHub Copilot",
+      "category": "org-policy",
+      "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+      "notes": "Watch for organization policy and seat management changes."
+    },
+    {
+      "id": "github-copilot-content-exclusion",
+      "tool": "GitHub Copilot",
+      "category": "content-exclusion",
+      "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+      "notes": "Watch for content exclusion path, pattern, and audit behavior changes."
+    },
+    {
+      "id": "github-copilot-policy",
+      "tool": "GitHub Copilot",
+      "category": "feature-policy",
+      "url": "https://docs.github.com/en/copilot/managing-copilot/managing-policies-for-copilot-in-your-organization",
+      "notes": "Watch for feature toggles, coding agent controls, and enterprise settings."
+    },
+    {
+      "id": "codex-cli-config",
+      "tool": "Codex CLI",
+      "category": "config",
+      "url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md",
+      "notes": "Watch for sandbox, approval, and config file changes."
+    },
+    {
+      "id": "codex-cli-releases",
+      "tool": "Codex CLI",
+      "category": "release-feed",
+      "url": "https://api.github.com/repos/openai/codex/releases?per_page=10",
+      "notes": "Watch for release notes that mention security, config, sandbox, or policy changes."
+    },
+    {
+      "id": "continue-config",
+      "tool": "Continue.dev",
+      "category": "config",
+      "url": "https://docs.continue.dev/customize/config",
+      "notes": "Watch for config.yaml schema and model routing changes."
+    },
+    {
+      "id": "continue-permissions",
+      "tool": "Continue.dev",
+      "category": "permissions",
+      "url": "https://docs.continue.dev/customize/deep-dives/permissions",
+      "notes": "Watch for permission model and approval behavior changes."
+    },
+    {
+      "id": "windsurf-enterprise",
+      "tool": "Windsurf",
+      "category": "enterprise-policy",
+      "url": "https://docs.windsurf.com/windsurf/enterprise",
+      "notes": "Watch for enterprise policy, RBAC, and managed setting changes."
+    },
+    {
+      "id": "windsurf-mcp",
+      "tool": "Windsurf",
+      "category": "mcp",
+      "url": "https://docs.windsurf.com/windsurf/cascade/mcp",
+      "notes": "Watch for Cascade MCP security and server changes."
+    },
+    {
+      "id": "tabnine-admin",
+      "tool": "Tabnine",
+      "category": "admin-console",
+      "url": "https://docs.tabnine.com/main/admin-console",
+      "notes": "Watch for enterprise admin policy and deployment changes."
+    },
+    {
+      "id": "tabnine-security",
+      "tool": "Tabnine",
+      "category": "security-privacy",
+      "url": "https://docs.tabnine.com/main/security-and-privacy",
+      "notes": "Watch for privacy, model, and data control changes."
+    },
+    {
+      "id": "amazon-q-security",
+      "tool": "Amazon Q Developer",
+      "category": "security",
+      "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security.html",
+      "notes": "Watch for IAM, encryption, audit, and data boundary changes."
+    },
+    {
+      "id": "amazon-q-admin",
+      "tool": "Amazon Q Developer",
+      "category": "admin",
+      "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html",
+      "notes": "Watch for subscriptions, profiles, and administrative controls."
+    },
+    {
+      "id": "gemini-cli-config",
+      "tool": "Gemini CLI",
+      "category": "config",
+      "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/configuration.md",
+      "notes": "Watch for CLI settings, tool restrictions, sandbox, and MCP changes."
+    },
+    {
+      "id": "gemini-cli-releases",
+      "tool": "Gemini CLI",
+      "category": "release-feed",
+      "url": "https://api.github.com/repos/google-gemini/gemini-cli/releases?per_page=10",
+      "notes": "Watch for release notes that mention security, config, sandbox, or policy changes."
+    },
+    {
+      "id": "google-gemini-safety",
+      "tool": "Google Gemini",
+      "category": "safety-settings",
+      "url": "https://ai.google.dev/gemini-api/docs/safety-settings",
+      "notes": "Watch for safety setting, threshold, and policy control changes."
+    },
+    {
+      "id": "google-gemini-vertex-responsible-ai",
+      "tool": "Google Gemini",
+      "category": "responsible-ai",
+      "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/learn/responsible-ai",
+      "notes": "Watch for enterprise safety, governance, and responsible AI guidance changes."
+    },
+    {
+      "id": "openai-platform-production",
+      "tool": "OpenAI Platform",
+      "category": "production-best-practices",
+      "url": "https://platform.openai.com/docs/guides/production-best-practices",
+      "notes": "Watch for API key, production deployment, and operational safety changes."
+    },
+    {
+      "id": "openai-platform-safety",
+      "tool": "OpenAI Platform",
+      "category": "safety-best-practices",
+      "url": "https://platform.openai.com/docs/guides/safety-best-practices",
+      "notes": "Watch for safety and content policy guidance changes."
+    }
+  ]
+}
