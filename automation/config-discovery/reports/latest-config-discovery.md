@@ -7,40 +7,29 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 
 | Tool | Source | Change | Status | URL |
 |------|--------|--------|--------|-----|
-| Claude Code | Managed settings documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
-| Claude Code | Hooks documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
-| Cursor | Team administration documentation | new-source-baseline | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
-| Cursor | MCP documentation | new-source-baseline | 200 | https://docs.cursor.com/en/tools/mcp |
-| GitHub Copilot | Organization policy documentation | new-source-baseline | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
-| GitHub Copilot | Content exclusion documentation | new-source-baseline | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
-| Codex CLI | OpenAI Codex repository | new-source-baseline | 200 | https://github.com/openai/codex |
-| Codex CLI | OpenAI Codex releases | new-source-baseline | 200 | https://github.com/openai/codex/releases |
-| Codex Desktop | OpenAI Codex repository | new-source-baseline | 200 | https://github.com/openai/codex |
-| Codex Desktop | OpenAI Codex config reference | new-source-baseline | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
-| Continue.dev | Configuration reference | new-source-baseline | 200 | https://docs.continue.dev/reference |
-| Continue.dev | Continue repository | new-source-baseline | 200 | https://github.com/continuedev/continue |
-| Windsurf | Windsurf documentation | new-source-baseline | 200 | https://docs.windsurf.com/ |
-| Windsurf | Windsurf changelog | new-source-baseline | 200 | https://windsurf.com/changelog |
-| Tabnine | Tabnine admin documentation | new-source-baseline | 200 | https://docs.tabnine.com/ |
-| Tabnine | Tabnine enterprise documentation | new-source-baseline | 200 | https://www.tabnine.com/enterprise |
-| Amazon Q Developer | Amazon Q Developer administration guide | new-source-baseline | 200 | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html |
-| Amazon Q Developer | Amazon Q Developer IAM reference | new-source-baseline | 200 | https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html |
-| Gemini CLI | Gemini CLI repository | new-source-baseline | 200 | https://github.com/google-gemini/gemini-cli |
-| Gemini CLI | Gemini CLI documentation | new-source-baseline | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
-| Google Gemini | Vertex AI Gemini safety settings | new-source-baseline | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
-| Google Gemini | Google Cloud organization policies | new-source-baseline | 200 | https://cloud.google.com/resource-manager/docs/organization-policy/overview |
-| Claude Desktop | Claude Desktop MCP documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/mcp |
-| Claude Desktop | Claude Desktop support documentation | new-source-baseline | 200 | https://support.anthropic.com/en/ |
-| OpenAI Platform | OpenAI OpenAPI repository | new-source-baseline | 200 | https://github.com/openai/openai-openapi |
-| OpenAI Platform | OpenAI OpenAPI schema | new-source-baseline | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
-| Claude API | Anthropic admin API documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/api/admin-api |
-| Claude API | Anthropic API release notes | new-source-baseline | 200 | https://docs.anthropic.com/en/release-notes/api |
+| Claude Code | Managed settings documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
+| Claude Code | Hooks documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
+| Codex CLI | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
+| Codex CLI | OpenAI Codex releases | content-changed | 200 | https://github.com/openai/codex/releases |
+| Codex Desktop | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
+| Continue.dev | Continue repository | content-changed | 200 | https://github.com/continuedev/continue |
+| Windsurf | Windsurf changelog | content-changed | 200 | https://windsurf.com/changelog |
+| Tabnine | Tabnine enterprise documentation | content-changed | 200 | https://www.tabnine.com/enterprise |
+| Gemini CLI | Gemini CLI repository | content-changed | 200 | https://github.com/google-gemini/gemini-cli |
+| Gemini CLI | Gemini CLI documentation | content-changed | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
+| Google Gemini | Vertex AI Gemini safety settings | content-changed | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
+| Google Gemini | Google Cloud organization policies | content-changed | 200 | https://cloud.google.com/resource-manager/docs/organization-policy/overview |
+| Claude Desktop | Claude Desktop MCP documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/mcp |
+| Claude Desktop | Claude Desktop support documentation | content-changed | 200 | https://support.anthropic.com/en/ |
+| OpenAI Platform | OpenAI OpenAPI repository | content-changed | 200 | https://github.com/openai/openai-openapi |
+| Claude API | Anthropic admin API documentation | content-changed | 200 | https://docs.anthropic.com/en/api/admin-api |
+| Claude API | Anthropic API release notes | content-changed | 200 | https://docs.anthropic.com/en/release-notes/api |
 
 ## Review Details
 
 ### Claude Code: Managed settings documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/settings
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -75,7 +64,7 @@ for: Personal overrides for a specific project Testing configurations be ...
 
 ### Claude Code: Hooks documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/hooks
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -109,94 +98,9 @@ bypass_permissions_disabled , other Notification notification type permission_pr
 auth_success , elicitation_dialog , elicitation_complete , elicitation_response SubagentStart age
 ...
 
-### Cursor: Team administration documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.cursor.com/en/account/teams/admin-dashboard
-- Status: `200`
-- Related repo paths: cursor/, rollout-guide/configs/cursor/
-
-No configured watch keywords were found in the fetched content.
-
-### Cursor: MCP documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.cursor.com/en/tools/mcp
-- Status: `200`
-- Related repo paths: cursor/, rollout-guide/configs/cursor/
-
-Keyword snippets:
-
-> Cursor Docs — Agent, Rules, MCP, Skills & CLI
-
-### GitHub Copilot: Organization policy documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization
-- Status: `200`
-- Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
-
-Keyword snippets:
-
-> ... LI command reference CLI plugin reference CLI programmatic reference ACP server CLI
-configuration directory Custom agents configuration Custom instructions support Hooks reference
-Policy conflicts Copilot allowlist reference MCP allowlist enforcement Metrics data Copilot billing
-Models and pricing Model multipliers for annual plans Billing cycle Seat assignment Li ...
-
-> Managing GitHub Copilot in your organization - GitHub Docs Skip to main content GitHub Docs Version:
-Free, Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is
-English Search or ask Co ...
-
-> ... stom agents Spaces Create Copilot Spaces Collaborate with others Copilot for GitHub tasks Use
-Copilot to create or update issues Create a PR summary Use the GitHub MCP Server from Copilot Chat
-Use Copilot agents Get started Kick off a task Research, plan, iterate Manage agent sessions Copilot
-code review Review Copilot output Set up Set up for self Install Copilot exten ...
-
-> ... lls Enterprise management Spark Copilot usage metrics All articles Copilot usage metrics
-Prompting Prompt engineering Response customization Context MCP Spaces Repository indexing Content
-exclusion Tools AI tools About Copilot integrations Models Utility models Auto model selection
-FedRAMP models Base and LTS models Usage limits Billing Usage-based billing for individuals Us ...
-
-> ... ions Code suggestions Code referencing Chat Agents Cloud agent About cloud agent Agent
-management Custom agents Access management MCP and cloud agent Risks and mitigations Copilot CLI
-About Copilot CLI Comparing CLI features Cancel and roll back About remote control Custom agents
-About CLI plugins Enterprise plugin standards Autonomous task completion Parallel ...
-
-### GitHub Copilot: Content exclusion documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion
-- Status: `200`
-- Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
-
-Keyword snippets:
-
-> Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
-Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is English
-Search or ask Co ...
-
-> ... pilot Learn how to prevent Copilot from accessing certain content. Reviewing changes to content
-exclusions for GitHub Copilot You can monitor changes to content exclusions in your repositories and
-organizations. Help and support Did you find what you needed? Yes No Privacy policy Help us make
-these docs great! All GitHub docs are open source. See something that's wrong ...
-
-> ... ons Analyze feedback Generate code Implement a feature Refactor code Improve code readability
-Fix lint errors Refactor for optimization Refactor for sustainability Refactor design patterns
-Refactor data access layers Decouple business logic Handle cross-cutting Simplify inheritance
-hierarchies Fix database deadlocks Translate code Document code File issues without b ...
-
-> ... lot billing Models and pricing Model multipliers for annual plans Billing cycle Seat assignment
-License changes Azure billing Agentic audit log events Agent session filters Review excluded files
-Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot usage
-metrics Copilot LoC metrics Team-level metrics Example schema Tutorials Al ...
-
-> Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
-Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
-...
-
 ### Codex CLI: OpenAI Codex repository
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/codex
 - Status: `200`
 - Related repo paths: codex-cli/
@@ -215,7 +119,7 @@ dev environments Issues Plan and track work Code Review Manage code chan ...
 
 ### Codex CLI: OpenAI Codex releases
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/codex/releases
 - Status: `200`
 - Related repo paths: codex-cli/
@@ -244,7 +148,7 @@ Codex builds can discover and use the bundled patched zsh helper across supp ...
 
 ### Codex Desktop: OpenAI Codex repository
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/codex
 - Status: `200`
 - Related repo paths: codex-desktop/
@@ -256,48 +160,9 @@ your code editor (VS Code, Cursor, Windsurf), install in your IDE. If you want t
 experience, run codex app or visit the Codex App page . If you are looking for the cloud-based agent
 from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 
-### Codex Desktop: OpenAI Codex config reference
-
-- Change type: `new-source-baseline`
-- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
-- Status: `200`
-- Related repo paths: codex-desktop/
-
-Keyword snippets:
-
-> # Configuration docs moved This file has moved. Please see the latest configuration documentation
-here: - Full config docs: [docs/config.md](../docs/config.md) - MCP servers section: [docs ...
-
-### Continue.dev: Configuration reference
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.continue.dev/reference
-- Status: `200`
-- Related repo paths: continue-dev/
-
-Keyword snippets:
-
-> config.yaml Reference | Continue Docs Search... ⌘ K Docs Blog Sign in Checks CLI IDE Extensions
-Getting Started Install Quick Start Customization Overview Features Agent Chat Autocomplet ...
-
-> ... . ⌘ K Docs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start
-Customization Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models
-MCP servers Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml
-Reference Migrating Config to YAML Continue Documentation MCP Server config.json R ...
-
-> ... mpts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference Migrating
-Config to YAML Continue Documentation MCP Server config.json Reference (Deprecated) Context
-Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand Hub vs
-Local Configuration Configuring Models, Rules, and Tools Codebase and Documentatio ...
-
-> ... ocs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start Customization
-Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models MCP servers
-Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference
-Migrating Config to YAML Continue Documentation MCP Server config.json Refer ...
-
 ### Continue.dev: Continue repository
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://github.com/continuedev/continue
 - Status: `200`
 - Related repo paths: continue-dev/
@@ -319,38 +184,9 @@ Review PR for basic security vulnerabilities --- Review this PR and check that :
 keys are hardcoded - All new API endpoints have input validation - Error responses use the standard
 error format Install CLI AI checks are powered by the open-source Contin ...
 
-### Windsurf: Windsurf documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.windsurf.com/
-- Status: `200`
-- Related repo paths: windsurf/
-
-Keyword snippets:
-
-> ... Mode Modes App Deploys Web and Docs Search Memories & Rules Skills AGENTS.md Workflows Worktrees
-Model Context Protocol (MCP) Cascade Hooks Accounts Usage Quota Analytics Teams & Enterprise Context
-Awareness Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration
-SSL Inspection Linux inotify Limits WSL Issues Gathering Logs Security Fe ...
-
-> ... mmand Code Lenses Terminal Browser Previews AI Commit Messages DeepWiki Codemaps Vibe and
-Replace Advanced Agent Command Center Agent Command Center Spaces Devin Devin Local Agent Cascade
-Overview Arena Mode Modes App Deploys Web and Docs Search Memories & Rules Skills AGENTS.md
-Workflows Worktrees Model Context Protocol (MCP) Cascade Hooks Accounts Usage Quota Ana ...
-
-> ... nter Spaces Devin Devin Local Agent Cascade Overview Arena Mode Modes App Deploys Web and Docs
-Search Memories & Rules Skills AGENTS.md Workflows Worktrees Model Context Protocol (MCP) Cascade
-Hooks Accounts Usage Quota Analytics Teams & Enterprise Context Awareness Overview Fast Context
-Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL Insp ...
-
-> ... ess Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL
-Inspection Linux inotify Limits WSL Issues Gathering Logs Security FedRAMP Security Admin Guide
-Reporting On this page Set Up Onboarding 1. Select setup flow 2. Choose editor theme 3. Sign up /
-Log in Having Trouble? 4. Let’s Surf! Update Windsurf Things to Try Forgot ...
-
 ### Windsurf: Windsurf changelog
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://windsurf.com/changelog
 - Status: `200`
 - Related repo paths: windsurf/
@@ -382,77 +218,18 @@ output Multiple fixes to the Model Context Protocol implementation Supports lowe
 Cascade's Web Fetch tool Fix race condition in the dedicated terminal implementation Support force
 killing commands in the dedicated terminal Improved markdown completion Fix ...
 
-### Tabnine: Tabnine admin documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.tabnine.com/
-- Status: `200`
-- Related repo paths: tabnine/
-
-Keyword snippets:
-
-> ... & Feedback Getting started Install Quickstart Guide Context Engine Tabnine Agent Tabnine Chat
-Tabnine Testing Tabnine CLI Code Completions Inline Actions Tabnine's Prompting Guide Administering
-Tabnine Private Installation Release Notes Powered by GitBook On this page Copy On this page Welcome
-Overview What is Tabnine? Tabnine is the AI code assistant that accele ...
-
-> Overview | Tabnine Docs ⌘ Ctrl k Tabnine website Contact Sales More Welcome Overview Architecture
-Security Privacy Protection Personalization AI Models Integrations System & Hardware Requirements
-Supported Languages Supported IDEs Tabnine Subscription Plans Support & Feedback Getting started I
-...
-
 ### Tabnine: Tabnine enterprise documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://www.tabnine.com/enterprise
 - Status: `200`
 - Related repo paths: tabnine/
 
 No configured watch keywords were found in the fetched content.
 
-### Amazon Q Developer: Amazon Q Developer administration guide
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html
-- Status: `200`
-- Related repo paths: amazon-q-developer/
-
-No configured watch keywords were found in the fetched content.
-
-### Amazon Q Developer: Amazon Q Developer IAM reference
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html
-- Status: `200`
-- Related repo paths: amazon-q-developer/
-
-Keyword snippets:
-
-> Actions, resources, and condition keys for Amazon Q Developer - Service Authorization Reference View
-a markdown version of this page Actions, resources, and condition keys for Amazon Q De ...
-
-> Actions, resources, and condition keys for Amazon Q Developer - Service Authorization Reference View
-a markdown version of this page Actions, resources, and condition keys for Amazon Q Developer -
-Service Authorization ...
-
-> ... ctions, resources, and condition keys for Amazon Q Developer - Service Authorization Reference
-Documentation Identity and Access Management Service Authorization Reference Actions Resource types
-Condition keys Actions, resources, and condition keys for Amazon Q Developer Amazon Q Developer
-(service prefix: qdeveloper ) provides the following service-specific resources, ac ...
-
-> ... ion keys for Amazon Q Developer Actions defined by Amazon Q Developer You can specify the
-following actions in the Action element of an IAM policy statement. Use policies to grant
-permissions to perform an operation in AWS. When you use an action in a policy, you usually allow or
-deny access to the API operation or CLI command with the same name. However, in some cases ...
-
-> ... pes defined by Amazon Q Developer Condition keys for Amazon Q Developer Actions defined by
-Amazon Q Developer You can specify the following actions in the Action element of an IAM policy
-statement. Use policies to grant permissions to perform an operation in AWS. When you use an action
-in a policy, you usually allow or deny access to the API operation or CLI comma ...
-
 ### Gemini CLI: Gemini CLI repository
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://github.com/google-gemini/gemini-cli
 - Status: `200`
 - Related repo paths: gemini-cli/
@@ -486,7 +263,7 @@ protection Stop leaks before they start EXPLORE Why GitHub Documentation B ...
 
 ### Gemini CLI: Gemini CLI documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://cloud.google.com/gemini/docs/codeassist/gemini-cli
 - Status: `200`
 - Related repo paths: gemini-cli/
@@ -505,7 +282,7 @@ languages, frameworks, and tools / Console English Deutsch Español Español –
 
 ### Google Gemini: Vertex AI Gemini safety settings
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters
 - Status: `200`
 - Related repo paths: google-gemini/
@@ -538,7 +315,7 @@ analytics ...
 
 ### Google Gemini: Google Cloud organization policies
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://cloud.google.com/resource-manager/docs/organization-policy/overview
 - Status: `200`
 - Related repo paths: google-gemini/
@@ -566,7 +343,7 @@ development Application hosting Compute Data analytics and pipelines Database ..
 
 ### Claude Desktop: Claude Desktop MCP documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/mcp
 - Status: `200`
 - Related repo paths: claude-desktop/
@@ -594,7 +371,7 @@ Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees Too
 
 ### Claude Desktop: Claude Desktop support documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://support.anthropic.com/en/
 - Status: `200`
 - Related repo paths: claude-desktop/
@@ -613,50 +390,16 @@ articles Claude Code 19 articles Claude Desktop 9 articles Claude Mobile apps 20
 
 ### OpenAI Platform: OpenAI OpenAPI repository
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/openai-openapi
 - Status: `200`
 - Related repo paths: openai-platform/
 
 No configured watch keywords were found in the fetched content.
 
-### OpenAI Platform: OpenAI OpenAPI schema
-
-- Change type: `new-source-baseline`
-- Source URL: https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml
-- Status: `200`
-- Related repo paths: openai-platform/
-
-Keyword snippets:
-
-> ... ng/checkpoints/{fine_tuned_model_checkpoint}/permissions: get: operationId:
-listFineTuningCheckpointPermissions tags: - Fine-tuning summary: > **NOTE:** This endpoint requires
-an [admin API key](../admin-api-keys). Organization owners can use this endpoint to view all
-permissions for a fine-tuned model checkpoint. parameters: - in: path name: fine_tuned_model_che ...
-
-> ... ion: >- Given text and/or image inputs, classifies if those inputs are potentially harmful. -
-name: Audit Logs description: List user actions and configuration changes within this organization.
-paths: /assistants: get: operationId: listAssistants tags: - Assistants summary: Returns a list of
-assistants. deprecated: true parameters: - name: limit in: query description: > ...
-
-> ... d describe the various models available in the API. - name: Moderations description: >- Given
-text and/or image inputs, classifies if those inputs are potentially harmful. - name: Audit Logs
-description: List user actions and configuration changes within this organization. paths:
-/assistants: get: operationId: listAssistants tags: - Assistants summary: Returns a ...
-
-> ... used in multi-turn conversations when using the Responses API statelessly (like when the `store`
-parameter is set to `false`, or when an organization is enrolled in the zero data retention
-program). responses: '200': description: OK content: application/json: schema: $ref:
-'#/components/schemas/ConversationItemList' x-oaiMeta: name: List items group: conversations p ...
-
-> ... type": "skill_reference", "skill_id": "skill_4db6f1a2c9e73508b41f9da06e2c7b5f" }, { "type":
-"skill_reference", "skill_id": "openai-spreadsheets", "version": "latest" } ], "network_policy": {
-"type": "allowlist", "allowed_domains": ["api.buildkite.com"] } }' node.js: >- import OpenAI from
-'openai'; const client = new OpenAI({ apiKey: process.env['OPENAI_API_KEY'], ...
-
 ### Claude API: Anthropic admin API documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/api/admin-api
 - Status: `200`
 - Related repo paths: claude-api/
@@ -665,7 +408,7 @@ No configured watch keywords were found in the fetched content.
 
 ### Claude API: Anthropic API release notes
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/release-notes/api
 - Status: `200`
 - Related repo paths: claude-api/
