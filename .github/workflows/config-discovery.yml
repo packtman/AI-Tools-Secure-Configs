@@ -30,6 +30,9 @@ jobs:
           PR_BRANCH: automation/config-maintenance
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git fetch origin "${BASE_BRANCH}"
           if git ls-remote --exit-code --heads origin "${PR_BRANCH}" >/dev/null 2>&1; then
             git fetch origin "${PR_BRANCH}"
