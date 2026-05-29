@@ -12,6 +12,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `discover_configs.py` | Dependency-free scanner that fingerprints sources, extracts likely config terms, and writes a PR report when a source changes. |
 | `agent-prompt.md` | Instructions for the config-maintenance agent that turns discovery reports into config and documentation updates. |
 | `CURSOR-AUTOMATION.md` | Copy/paste setup prompt for a Cursor Cloud scheduled automation that produces final config-update PRs. |
+| `COST-CONTROLS.md` | How scheduled vs manual runs spend API credits and how to tune caps. |
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
@@ -25,9 +26,10 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md` plus `reports/discovery-summary.json`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
 7. The config maintenance agent runs only when `discovery-summary.json` reports `agent_worthy_count > 0` (real content or fetch/status changes). Metadata-only changes such as `fingerprint-method-changed` refresh snapshots without calling the model.
-8. When the agent runs, it processes only sources listed under **Agent review queue** in the report (at most three per CI run).
+8. When the agent runs, it processes only sources listed under **Agent review queue** in the report (default: one source per run; extras are deferred).
+9. Scheduled cron runs are discovery-only by default. Enable the agent on schedule only via `CONFIG_AGENT_ON_SCHEDULE` (see `COST-CONTROLS.md`).
 
-GitHub Actions can detect source changes and apply focused config updates when vendor content changes. Use Cursor Cloud (`CURSOR-AUTOMATION.md`) for larger multi-tool maintenance batches.
+GitHub Actions can detect source changes and apply focused config updates when vendor content changes. Use Cursor Cloud (`CURSOR-AUTOMATION.md`) for larger multi-tool maintenance batches when you want more model budget than a capped CI run.
 
 ## Adding a Source
 

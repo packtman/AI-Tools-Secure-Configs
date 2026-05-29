@@ -5,11 +5,24 @@ on:
     - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
-      force_agent_review:
-        description: "Run the config-maintenance agent even when no upstream fingerprint changed"
+      run_config_agent:
+        description: "Run the config-maintenance agent (uses API credits; discovery always runs)"
         required: false
         default: false
         type: boolean
+      force_agent_review:
+        description: "Deprecated alias for run_config_agent when content-level changes exist"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  # Hard caps for a single agent invocation (see automation/config-discovery/COST-CONTROLS.md)
+  CONFIG_AGENT_MAX_BUDGET_USD: "0.75"
+  CONFIG_AGENT_MAX_TURNS: "12"
+  CONFIG_AGENT_MAX_SOURCES: "1"
+  # Scheduled runs only fingerprint upstream sources; they do not call the model.
+  CONFIG_AGENT_ON_SCHEDULE: "false"
 
 permissions:
   contents: write
@@ -48,7 +61,10 @@ jobs:
       - name: Run config discovery
         id: discovery
         env:
-          FORCE_AGENT_REVIEW: ${{ github.event_name == 'workflow_dispatch' && inputs.force_agent_review }}
+          RUN_CONFIG_AGENT: ${{ github.event_name == 'workflow_dispatch' && (inputs.run_config_agent || inputs.force_agent_review) }}
+          FORCE_AGENT_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.force_agent_review }}
+          AGENT_ON_SCHEDULE: ${{ vars.CONFIG_AGENT_ON_SCHEDULE || env.CONFIG_AGENT_ON_SCHEDULE }}
+          MAX_AGENT_SOURCES: ${{ vars.CONFIG_AGENT_MAX_SOURCES || env.CONFIG_AGENT_MAX_SOURCES }}
         run: |
           set -euo pipefail
           SUMMARY_PATH="automation/config-discovery/reports/discovery-summary.json"
@@ -57,7 +73,8 @@ jobs:
             --sources automation/config-discovery/tool-sources.json \
             --state automation/config-discovery/state/source-snapshots.json \
             --report automation/config-discovery/reports/latest-config-discovery.md \
-            --summary "${SUMMARY_PATH}"
+            --summary "${SUMMARY_PATH}" \
+            --max-agent-sources "${MAX_AGENT_SOURCES}"
 
           AGENT_WORTHY_COUNT="$(python3 -c "import json; print(json.load(open('${SUMMARY_PATH}'))['agent_worthy_count'])")"
           echo "agent_worthy_count=${AGENT_WORTHY_COUNT}" >> "${GITHUB_OUTPUT}"
@@ -74,15 +91,28 @@ jobs:
             echo "discovery_changed=true" >> "${GITHUB_OUTPUT}"
           fi
 
-          if [ "${AGENT_WORTHY_COUNT}" -gt 0 ]; then
+          WANT_AGENT="false"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "${AGENT_ON_SCHEDULE}" = "true" ] && [ "${AGENT_WORTHY_COUNT}" -gt 0 ]; then
+              WANT_AGENT="true"
+            fi
+          elif [ "${RUN_CONFIG_AGENT}" = "true" ] && [ "${AGENT_WORTHY_COUNT}" -gt 0 ]; then
+            WANT_AGENT="true"
+          elif [ "${RUN_CONFIG_AGENT}" = "true" ] || [ "${FORCE_AGENT_REQUESTED}" = "true" ]; then
+            echo "::warning::Agent was requested, but no content-level upstream changes were detected. Skipping to avoid API spend."
+          fi
+
+          if [ "${WANT_AGENT}" = "true" ]; then
             echo "run_agent=true" >> "${GITHUB_OUTPUT}"
-            echo "Config agent will review ${AGENT_WORTHY_COUNT} upstream source(s)."
-          elif [ "${FORCE_AGENT_REVIEW}" = "true" ]; then
-            echo "run_agent=false" >> "${GITHUB_OUTPUT}"
-            echo "::warning::force_agent_review was set, but no content-level upstream changes were detected. Skipping agent to avoid expensive no-op runs."
+            QUEUED="$(python3 -c "import json; print(json.load(open('${SUMMARY_PATH}'))['agent_queue_count'])")"
+            echo "Config agent will review up to ${QUEUED} queued source(s) (cap: ${MAX_AGENT_SOURCES})."
           else
             echo "run_agent=false" >> "${GITHUB_OUTPUT}"
-            echo "Only metadata-only discovery changes; skipping config agent."
+            if [ "${AGENT_WORTHY_COUNT}" -gt 0 ] && [ "${{ github.event_name }}" = "schedule" ]; then
+              echo "Content changes detected; scheduled run is discovery-only. Re-run workflow manually with run_config_agent enabled."
+            elif [ "${AGENT_WORTHY_COUNT}" -eq 0 ]; then
+              echo "No content-level upstream changes; discovery-only run."
+            fi
           fi
 
       - name: Commit discovery signal
@@ -111,9 +141,10 @@ jobs:
         if: steps.discovery.outputs.run_agent == 'true'
         continue-on-error: true
         id: config-agent
-        uses: anthropics/claude-code-action@v1
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AGENT_MAX_BUDGET_USD: ${{ vars.CONFIG_AGENT_MAX_BUDGET_USD || env.CONFIG_AGENT_MAX_BUDGET_USD }}
+          AGENT_MAX_TURNS: ${{ vars.CONFIG_AGENT_MAX_TURNS || env.CONFIG_AGENT_MAX_TURNS }}
+        uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
@@ -122,24 +153,23 @@ jobs:
 
             Read `automation/config-discovery/reports/discovery-summary.json` first.
             Read `automation/config-discovery/reports/latest-config-discovery.md`.
-            Follow `automation/config-discovery/agent-prompt.md` only for sources listed under "## Agent review queue".
+            Use only the "## Agent review queue" section. Do not read full tool trees unless editing a specific file.
 
-            Hard limits for this CI run:
-            1. Process at most 3 sources from the Agent review queue, starting with the highest-risk admin or security controls.
-            2. Ignore sources whose change type is `fingerprint-method-changed` unless they also appear in the Agent review queue.
-            3. Do not WebFetch sources that are not in the Agent review queue.
-            4. If a source needs no config change, add a short "No config update needed" note to the discovery report and move on.
-            5. Keep deployable JSON valid. Use JSONC plus `.comments.md` rationale where comments are needed.
-            6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
-            7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, TOML, or shell file using the commands in `AGENTS.md`.
-            9. Stop as soon as the queued sources are handled or no real control change exists.
+            Cost controls (mandatory):
+            1. Process only sources listed in the Agent review queue, in order.
+            2. Do not WebFetch or browse the web. Use keyword snippets and missing-term lists already in the report.
+            3. If snippets are enough to conclude "No config update needed", write that note and stop.
+            4. Prefer the smallest diff: one tool directory, only tiers that need a new or changed control.
+            5. Do not regenerate rollout guides unless a setting meaningfully changed for admins.
+            6. Validate only files you edited (python3 JSON check, yamllint, bash -n per AGENTS.md).
+            7. Stop immediately when the queue is done or budget/turn limits approach.
 
-            Leave the resulting file changes unstaged. The workflow will commit and open the PR after you finish.
+            Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
-            --max-turns 45
+            --max-turns ${{ env.AGENT_MAX_TURNS }}
+            --max-budget-usd ${{ env.AGENT_MAX_BUDGET_USD }}
             --model claude-sonnet-4-20250514
-            --allowedTools "Read,Edit,Write,MultiEdit,Glob,Grep,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
+            --allowedTools "Read,Edit,Write,MultiEdit,Glob,Grep,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Note config agent failure
         if: steps.discovery.outputs.run_agent == 'true' && steps.config-agent.outcome == 'failure'
