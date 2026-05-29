@@ -17,6 +17,7 @@ This directory contains security-hardened configurations for **Continue.dev** (t
 | `examples/config-enterprise.yaml` | Enterprise configuration with proxy |
 | `examples/continuerc-secure.json` | Workspace-level `.continuerc.json` |
 | `examples/secrets-management.md` | Secrets management guide |
+| `examples/mcp-servers-moderate.yaml` | **Moderate** — IT-approved MCP server allowlist |
 
 ## Key Security Concepts
 

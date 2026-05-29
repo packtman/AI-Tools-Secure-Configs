@@ -92,6 +92,30 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 
 **What it does:** Disables dynamic workflows and bundled workflow commands. When enabled, workflow commands are unavailable, the `workflow` keyword does not trigger a workflow run, and `ultracode` is removed from the effort menu. Equivalent environment control: `CLAUDE_CODE_DISABLE_WORKFLOWS=1`.
 
+### `env.CLAUDE_CODE_DISABLE_AGENT_VIEW`
+
+**What it does:** Hides the agent team view UI that surfaces parallel subagent activity.
+
+**Why it matters:** In regulated environments, multi-agent visibility can encourage broader autonomous scope than policy allows. Pair with `disableWorkflows` until a pilot defines monitoring and repository boundaries.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"1"` | Reduce temptation to run wide parallel agent teams without controls. |
+| Standard enterprise | `"1"` | Keep until dynamic workflows and agent teams have an exception process. |
+| Developer | Not set | Allow power users to inspect agent teams locally. |
+
+### `env.ANTHROPIC_MODEL`
+
+**What it does:** Pins the default model for all Claude Code sessions when set in managed `env`.
+
+**Why it matters:** Prevents developers from selecting unaudited or higher-cost models via local overrides.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Approved Sonnet or Haiku ID | Enforce model allowlist at the client. |
+| Standard enterprise | Optional pin | Use API-side allowlists if client pin is too rigid. |
+| Developer | Not set | Maximum flexibility. |
+
 **Why it matters:** Dynamic workflows are a research preview for long-running, parallel agent work. They can consume more usage and execute broader plans than a normal interactive session, so organizations should pilot them before enabling broadly.
 
 | Environment | Recommended | Reasoning |

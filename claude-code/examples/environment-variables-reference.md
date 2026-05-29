@@ -34,10 +34,16 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 
 | Variable | Description | Secure value |
 |----------|-------------|-------------|
+| `ANTHROPIC_MODEL` | Pin the default model for all sessions | Approved model ID from your org allowlist |
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
+| `CLAUDE_CODE_DISABLE_WORKFLOWS` | Disable dynamic workflows (mirrors `disableWorkflows`) | `1` for Moderate and Strict tiers |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | Hide the agent team view UI | `1` in regulated environments |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Enable away-mode session summaries | `0` when prompt history is restricted |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Auto-connect to a detected IDE companion | `0` when IDE pairing is not approved |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Block automatic IDE extension installs | `1` when extensions are MDM-controlled |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
 ## MCP & Tools

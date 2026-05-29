@@ -6,5 +6,14 @@ approval_policy = "on-request"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 
+# Named permission profiles (Codex /permissions). IT defines profiles; users pick from the list.
+[permission_profiles.enterprise-readonly]
+sandbox_mode = "read-only"
+approval_policy = "on-request"
+
+[permission_profiles.enterprise-standard]
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
 [sandbox_workspace_write]
 network_access = false

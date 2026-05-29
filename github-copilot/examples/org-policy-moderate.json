@@ -24,7 +24,21 @@
     "copilot_pull_request_summaries": "enabled",
     "copilot_docset_management": "disabled",
     "copilot_bing_search": "disabled",
-    "copilot_web_search": "disabled"
+    "copilot_web_search": "disabled",
+    "copilot_cloud_agent": "disabled",
+    "copilot_spaces": "enabled"
+  },
+
+  "mcp_policies": {
+    "mcp_allowlist_enforcement": true,
+    "allowed_mcp_servers": [],
+    "require_mcp_approval_in_chat": true,
+    "block_github_mcp_server_in_untrusted_repos": true
+  },
+
+  "hooks_policies": {
+    "allow_org_hooks_only": false,
+    "audit_hook_configuration_changes": true
   },
 
   "content_exclusions": {

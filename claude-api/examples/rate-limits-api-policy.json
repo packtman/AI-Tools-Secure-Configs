@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/rate-limits-api-policy.json",
+  "_comment": "Workspace rate limit and model governance policy aligned with the Anthropic Rate Limits API and 2026 API release notes (fast mode, model groups).",
+
+  "rate_limits_api": {
+    "enabled": true,
+    "poll_interval_minutes": 60,
+    "alert_on_workspace_override": true
+  },
+
+  "workspace_defaults": {
+    "requests_per_minute": 500,
+    "input_tokens_per_minute": 200000,
+    "output_tokens_per_minute": 100000
+  },
+
+  "model_groups": {
+    "standard": [
+      "claude-sonnet-4-20250514",
+      "claude-haiku-4-20250414"
+    ],
+    "elevated": [
+      "claude-opus-4-20250514"
+    ]
+  },
+
+  "fast_mode": {
+    "enabled": false,
+    "beta_header": "fast-mode-2026-02-01",
+    "require_finops_approval": true,
+    "allowed_workspaces": []
+  },
+
+  "invite_roles": {
+    "default": "workspace_user",
+    "allowed_roles": [
+      "user",
+      "developer",
+      "billing",
+      "claude_code_user"
+    ],
+    "block_admin_via_api": true
+  },
+
+  "managed_agents": {
+    "memory_enabled": false,
+    "beta_header": "managed-agents-2026-04-01"
+  }
+}

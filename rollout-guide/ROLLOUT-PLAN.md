@@ -244,6 +244,9 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
+| `env.CLAUDE_CODE_DISABLE_WORKFLOWS` | `"0"` | `"1"` | `"1"` | Mirrors `disableWorkflows`; blocks dynamic workflow research preview |
+| `env.CLAUDE_CODE_DISABLE_AGENT_VIEW` | Not set | `"1"` | `"1"` | Hides multi-agent team UI until pilot controls exist |
+| `env.ANTHROPIC_MODEL` | Not set | Not set | Pinned model ID | Strict pins approved model; prevents shadow model usage |
 
 ### 3.2 Cursor
 
@@ -253,6 +256,8 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `npm install` / `pip install` / `docker` in allowlist | Yes | No | No | Moderate requires approval for package installs (supply chain risk) |
 | `npm run dev` / `npm run build` in allowlist | Yes | `npm run build` yes, `npm run dev` no | No | Strict requires approval for all non-trivial commands |
 | `mcpAllowlist` | Empty (all MCP prompts) | Empty (all MCP prompts) | Empty (all MCP prompts) | Cursor MCP approval is always prompted; allowlist would auto-approve |
+| `mcpPolicies.requireApprovalPerTool` | Not set | `true` | `true` | See `cursor/examples/mcp-governance-moderate.json` |
+| `mcpPolicies.allowPermanentServerApproval` | Not set | `false` | `false` | Blocks "always trust this MCP server" shortcuts |
 | `workspace.trust.enabled` | `true` | `true` (MDM enforced) | `true` (MDM enforced) | All tiers enable; Moderate/Strict enforce via MDM so users cannot disable |
 | `workspace.trust.startupPrompt` | `"once"` | `"always"` | `"always"` | Enterprise tiers force trust decision every session |
 | `extensions.autoUpdate` | Not set | `false` | `false` | Prevents unreviewed extension updates |

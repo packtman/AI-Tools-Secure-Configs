@@ -34,3 +34,6 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: true
+
+# MCP servers: empty in strict tier. Users cannot add unvetted external tool connectors.
+mcpServers: []

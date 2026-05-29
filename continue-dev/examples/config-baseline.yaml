@@ -33,3 +33,6 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: false
+
+# Baseline: no centrally managed MCP servers. Teams may add project-scoped servers with review.
+mcpServers: {}
