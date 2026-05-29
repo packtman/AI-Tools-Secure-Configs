@@ -110,6 +110,8 @@
 
   "disableDeepLinkRegistration": "disable",
 
+  "disableWorkflows": true,
+
   "autoUpdatesChannel": "stable",
 
   "minimumVersion": "2.1.38",

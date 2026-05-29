@@ -19,7 +19,29 @@ from typing import Any
 
 USER_AGENT = "AI-Secure-Configs config discovery bot"
 MAX_SNIPPETS_PER_SOURCE = 5
+MAX_CONFIG_CANDIDATES = 25
 SNIPPET_RADIUS = 180
+CONFIG_HINTS = (
+    "allow",
+    "auto",
+    "block",
+    "channel",
+    "disable",
+    "enable",
+    "force",
+    "mcp",
+    "mode",
+    "permission",
+    "policy",
+    "retention",
+    "sandbox",
+    "setting",
+    "telemetry",
+    "workflow",
+)
+ENV_PREFIXES = ("ANTHROPIC_", "AWS_", "CLAUDE_", "CODEIUM_", "CONTINUE_", "CURSOR_", "GEMINI_", "GITHUB_", "GOOGLE_", "OPENAI_", "Q_", "TABNINE_")
+CONFIG_TERM_RE = re.compile(r"`([A-Za-z_][A-Za-z0-9_.-]{2,})`")
+ENV_VAR_RE = re.compile(r"\b([A-Z][A-Z0-9_]{6,})\b")
 
 
 def utc_now() -> str:
@@ -182,12 +204,53 @@ def extract_snippets(text: str, terms: list[str]) -> list[str]:
     return snippets
 
 
+def extract_config_candidates(text: str) -> list[str]:
+    candidates: set[str] = set()
+    for match in CONFIG_TERM_RE.finditer(text):
+        candidate = match.group(1)
+        lower_candidate = candidate.lower()
+        if any(hint in lower_candidate for hint in CONFIG_HINTS):
+            candidates.add(candidate)
+    for match in ENV_VAR_RE.finditer(text):
+        candidate = match.group(1)
+        lower_candidate = candidate.lower()
+        if "_" in candidate and candidate.startswith(ENV_PREFIXES) and any(hint in lower_candidate for hint in CONFIG_HINTS):
+            candidates.add(candidate)
+    return sorted(candidates)[:MAX_CONFIG_CANDIDATES]
+
+
+def load_local_tool_text(tool: dict[str, Any], repo_root: pathlib.Path) -> str:
+    chunks: list[str] = []
+    for repo_path in tool.get("repo_paths", []):
+        path = repo_root / repo_path
+        if path.is_file():
+            paths = [path]
+        elif path.is_dir():
+            paths = [
+                candidate
+                for candidate in path.rglob("*")
+                if candidate.is_file()
+                and candidate.suffix.lower()
+                in {".json", ".jsonc", ".yaml", ".yml", ".toml", ".md", ".mdc"}
+            ]
+        else:
+            continue
+
+        for candidate in paths:
+            try:
+                chunks.append(candidate.read_text(encoding="utf-8", errors="ignore"))
+            except OSError:
+                continue
+    return "\n".join(chunks)
+
+
 def source_snapshot(
     source: dict[str, Any],
     metadata: dict[str, Any],
     body: bytes | None,
     previous: dict[str, Any],
     changed_at: str,
+    local_tool_text: str,
 ) -> dict[str, Any]:
     base = {
         "tool_id": source["tool_id"],
@@ -208,6 +271,8 @@ def source_snapshot(
 
     text = normalize_text(body)
     content_hash = hashlib.sha256(body).hexdigest()
+    candidates = extract_config_candidates(text)
+    missing_candidates = [candidate for candidate in candidates if candidate not in local_tool_text]
     base.update(
         {
             "sha256": content_hash,
@@ -217,6 +282,8 @@ def source_snapshot(
             "content_type": metadata.get("content_type"),
             "title_or_prefix": extract_title(text),
             "watch_snippets": extract_snippets(text, source.get("watch_for", [])),
+            "config_candidates": candidates,
+            "config_candidates_missing_locally": missing_candidates,
         }
     )
     return base
@@ -263,12 +330,14 @@ def run_discovery(args: argparse.Namespace) -> int:
     new_sources = dict(previous_sources)
     changes: list[dict[str, Any]] = []
     changed_at = utc_now()
+    repo_root = registry_path.resolve().parents[2]
+    local_text_by_tool = {tool["id"]: load_local_tool_text(tool, repo_root) for tool in registry["tools"]}
 
     for source in iter_sources(registry):
         source_id = source["source_id"]
         previous = previous_sources.get(source_id, {})
         metadata, body = fetch_source(source, previous, args.timeout)
-        current = source_snapshot(source, metadata, body, previous, changed_at)
+        current = source_snapshot(source, metadata, body, previous, changed_at, local_text_by_tool[source["tool_id"]])
         change_type = classify_change(previous or None, current)
 
         if change_type:
@@ -351,6 +420,25 @@ def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> st
         else:
             lines.append("No configured watch keywords were found in the fetched content.")
             lines.append("")
+
+        if snapshot.get("config_candidates_missing_locally"):
+            lines.extend(
+                [
+                    "Potential config terms not found in local tool files:",
+                    "",
+                    ", ".join(f"`{term}`" for term in snapshot["config_candidates_missing_locally"]),
+                    "",
+                    "Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.",
+                    "",
+                ]
+            )
+        elif snapshot.get("config_candidates"):
+            lines.extend(
+                [
+                    "Potential config terms found upstream are already present in local tool files.",
+                    "",
+                ]
+            )
 
     lines.extend(
         [
