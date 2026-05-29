@@ -22,6 +22,19 @@ MAX_SNIPPETS_PER_SOURCE = 5
 MAX_CONFIG_CANDIDATES = 25
 SNIPPET_RADIUS = 180
 HASH_BASIS = "normalized-source-v1"
+ASCII_REPLACEMENTS = str.maketrans(
+    {
+        "\u00a0": " ",
+        "\u200b": "",
+        "\u2018": "'",
+        "\u2019": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2013": "-",
+        "\u2014": "-",
+        "\u2026": "...",
+    }
+)
 VOLATILE_JSON_KEYS = {
     "archive_download_url",
     "assets_url",
@@ -443,7 +456,12 @@ def run_discovery(args: argparse.Namespace) -> int:
 
 def markdown_escape(value: Any) -> str:
     text = str(value) if value is not None else ""
-    return text.replace("|", "\\|").replace("\n", " ")
+    return ascii_safe(text).replace("|", "\\|").replace("\n", " ")
+
+
+def ascii_safe(text: str) -> str:
+    translated = text.translate(ASCII_REPLACEMENTS)
+    return translated.encode("ascii", errors="ignore").decode("ascii")
 
 
 def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> str:
@@ -489,11 +507,11 @@ def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> st
             ]
         )
         if snapshot.get("error"):
-            lines.extend(["Fetch error:", "", f"```text\n{snapshot['error']}\n```", ""])
+            lines.extend(["Fetch error:", "", f"```text\n{ascii_safe(snapshot['error'])}\n```", ""])
         elif snapshot.get("watch_snippets"):
             lines.extend(["Keyword snippets:", ""])
             for snippet in snapshot["watch_snippets"]:
-                wrapped = textwrap.fill(snippet, width=100)
+                wrapped = textwrap.fill(ascii_safe(snippet), width=100)
                 lines.extend([f"> {wrapped}", ""])
         else:
             lines.append("No configured watch keywords were found in the fetched content.")
