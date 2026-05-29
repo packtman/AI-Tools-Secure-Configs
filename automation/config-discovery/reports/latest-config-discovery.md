@@ -7,41 +7,41 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 
 | Tool | Source | Change | Status | URL |
 |------|--------|--------|--------|-----|
-| Claude Code | Managed settings documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
-| Claude Code | Hooks documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
-| Claude Code | Dynamic workflows documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
-| Cursor | Team administration documentation | new-source-baseline | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
-| Cursor | MCP documentation | new-source-baseline | 200 | https://docs.cursor.com/en/tools/mcp |
-| GitHub Copilot | Organization policy documentation | new-source-baseline | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
-| GitHub Copilot | Content exclusion documentation | new-source-baseline | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
-| Codex CLI | OpenAI Codex repository | new-source-baseline | 200 | https://github.com/openai/codex |
-| Codex CLI | OpenAI Codex releases | new-source-baseline | 200 | https://github.com/openai/codex/releases |
-| Codex Desktop | OpenAI Codex repository | new-source-baseline | 200 | https://github.com/openai/codex |
-| Codex Desktop | OpenAI Codex config reference | new-source-baseline | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
-| Continue.dev | Configuration reference | new-source-baseline | 200 | https://docs.continue.dev/reference |
-| Continue.dev | Continue repository | new-source-baseline | 200 | https://github.com/continuedev/continue |
-| Windsurf | Windsurf documentation | new-source-baseline | 200 | https://docs.windsurf.com/ |
-| Windsurf | Windsurf changelog | new-source-baseline | 200 | https://windsurf.com/changelog |
-| Tabnine | Tabnine admin documentation | new-source-baseline | 200 | https://docs.tabnine.com/ |
-| Tabnine | Tabnine enterprise documentation | new-source-baseline | 200 | https://www.tabnine.com/enterprise |
-| Amazon Q Developer | Amazon Q Developer administration guide | new-source-baseline | 200 | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html |
-| Amazon Q Developer | Amazon Q Developer IAM reference | new-source-baseline | 200 | https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html |
-| Gemini CLI | Gemini CLI repository | new-source-baseline | 200 | https://github.com/google-gemini/gemini-cli |
-| Gemini CLI | Gemini CLI documentation | new-source-baseline | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
-| Google Gemini | Vertex AI Gemini safety settings | new-source-baseline | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
-| Google Gemini | Google Cloud organization policies | new-source-baseline | 200 | https://cloud.google.com/resource-manager/docs/organization-policy/overview |
-| Claude Desktop | Claude Desktop MCP documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/docs/claude-code/mcp |
-| Claude Desktop | Claude Desktop support documentation | new-source-baseline | 200 | https://support.anthropic.com/en/ |
-| OpenAI Platform | OpenAI OpenAPI repository | new-source-baseline | 200 | https://github.com/openai/openai-openapi |
-| OpenAI Platform | OpenAI OpenAPI schema | new-source-baseline | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
-| Claude API | Anthropic admin API documentation | new-source-baseline | 200 | https://docs.anthropic.com/en/api/admin-api |
-| Claude API | Anthropic API release notes | new-source-baseline | 200 | https://docs.anthropic.com/en/release-notes/api |
+| Claude Code | Managed settings documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
+| Claude Code | Hooks documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
+| Claude Code | Dynamic workflows documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
+| Cursor | Team administration documentation | fingerprint-method-changed | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
+| Cursor | MCP documentation | fingerprint-method-changed | 200 | https://docs.cursor.com/en/tools/mcp |
+| GitHub Copilot | Organization policy documentation | fingerprint-method-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
+| GitHub Copilot | Content exclusion documentation | fingerprint-method-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
+| Codex CLI | OpenAI Codex repository | fingerprint-method-changed | 200 | https://github.com/openai/codex |
+| Codex CLI | OpenAI Codex releases | fingerprint-method-changed | 200 | https://api.github.com/repos/openai/codex/releases?per_page=10 |
+| Codex Desktop | OpenAI Codex repository | fingerprint-method-changed | 200 | https://github.com/openai/codex |
+| Codex Desktop | OpenAI Codex config reference | fingerprint-method-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
+| Continue.dev | Configuration reference | fingerprint-method-changed | 200 | https://docs.continue.dev/reference |
+| Continue.dev | Continue repository | fingerprint-method-changed | 200 | https://github.com/continuedev/continue |
+| Windsurf | Windsurf documentation | fingerprint-method-changed | 200 | https://docs.windsurf.com/ |
+| Windsurf | Windsurf changelog | fingerprint-method-changed | 200 | https://windsurf.com/changelog |
+| Tabnine | Tabnine admin documentation | fingerprint-method-changed | 200 | https://docs.tabnine.com/ |
+| Tabnine | Tabnine enterprise documentation | fingerprint-method-changed | 200 | https://www.tabnine.com/enterprise |
+| Amazon Q Developer | Amazon Q Developer administration guide | fingerprint-method-changed | 200 | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html |
+| Amazon Q Developer | Amazon Q Developer IAM reference | fingerprint-method-changed | 200 | https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html |
+| Gemini CLI | Gemini CLI repository | fingerprint-method-changed | 200 | https://github.com/google-gemini/gemini-cli |
+| Gemini CLI | Gemini CLI documentation | fingerprint-method-changed | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
+| Google Gemini | Vertex AI Gemini safety settings | fingerprint-method-changed | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
+| Google Gemini | Google Cloud organization policies | fingerprint-method-changed | 200 | https://cloud.google.com/resource-manager/docs/organization-policy/overview |
+| Claude Desktop | Claude Desktop MCP documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/mcp |
+| Claude Desktop | Claude Desktop support documentation | fingerprint-method-changed | 200 | https://support.anthropic.com/en/ |
+| OpenAI Platform | OpenAI OpenAPI repository | fingerprint-method-changed | 200 | https://github.com/openai/openai-openapi |
+| OpenAI Platform | OpenAI OpenAPI schema | fingerprint-method-changed | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
+| Claude API | Anthropic admin API documentation | fingerprint-method-changed | 200 | https://platform.claude.com/docs/en/api/admin.md |
+| Claude API | Anthropic API release notes | fingerprint-method-changed | 200 | https://platform.claude.com/docs/en/release-notes/api.md |
 
 ## Review Details
 
 ### Claude Code: Managed settings documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/settings
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -53,7 +53,7 @@ path prefixes Attribution settings File suggestion settings Hook configuration C
 settings with a policy helper Settings precedence Verify active settings Key points about the
 configuration system System prompt Excluding sensitive files Subagent configuration Plugin con ...
 
-> ... in content Claude Code Docs home page English Search... ⌘ K Ask Assistant Claude Developer
+> ... in content Claude Code Docs home page English Search...  K Ask Assistant Claude Developer
 Platform Claude Code on the Web Claude Code on the Web Search... Navigation Settings and permissions
 Claude Code settings Getting started Build with Claude Code Administration Configuration Reference
 Agent SDK What's New Resources Settings and permissions Settings Permissions San ...
@@ -82,7 +82,7 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ### Claude Code: Hooks documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/hooks
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -105,10 +105,10 @@ StopFailure StopFailure input TeammateIdle TeammateIdle input TeammateIdle decis
 ConfigChange ConfigChange input ConfigChange decision control CwdChanged CwdChanged input CwdChanged
 output FileChanged FileChanged input FileChanged output WorktreeCreate WorktreeCreate input ...
 
-> ... n" : "session_start" } ​ InstructionsLoaded decision control InstructionsLoaded hooks have no
+> ... n" : "session_start" }  InstructionsLoaded decision control InstructionsLoaded hooks have no
 decision control. They cannot block or modify instruction loading. Use this event for audit logging,
-compliance tracking, or observability. ​ UserPromptSubmit Runs when the user submits a prompt,
-before Claude processes it. This allows you to add additional context based ...
+compliance tracking, or observability.  UserPromptSubmit Runs when the user submits a prompt, before
+Claude processes it. This allows you to add additional context based ...
 
 > ... ed startup , resume , clear , compact Setup which CLI flag triggered setup init , maintenance
 SessionEnd why the session ended clear , resume , logout , prompt_input_exit ,
@@ -124,7 +124,7 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ### Claude Code: Dynamic workflows documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/workflows
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -132,7 +132,7 @@ Review these terms first. If any are real admin controls, update the affected ti
 Keyword snippets:
 
 > Orchestrate subagents at scale with dynamic workflows - Claude Code Docs Skip to main content Claude
-Code Docs home page English Search... ⌘ K Ask Assistant Claude Developer Platform Claude Code on the
+Code Docs home page English Search...  K Ask Assistant Claude Developer Platform Claude Code on the
 Web Claude Code on the Web Sear ...
 
 > ... and the Agent SDK . The same disable settings apply on every surface. To turn workflows off for
@@ -161,7 +161,7 @@ Potential config terms found upstream are already present in local tool files.
 
 ### Cursor: Team administration documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.cursor.com/en/account/teams/admin-dashboard
 - Status: `200`
 - Related repo paths: cursor/, rollout-guide/configs/cursor/
@@ -170,18 +170,18 @@ No configured watch keywords were found in the fetched content.
 
 ### Cursor: MCP documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.cursor.com/en/tools/mcp
 - Status: `200`
 - Related repo paths: cursor/, rollout-guide/configs/cursor/
 
 Keyword snippets:
 
-> Cursor Docs — Agent, Rules, MCP, Skills & CLI
+> Cursor Docs - Agent, Rules, MCP, Skills & CLI
 
 ### GitHub Copilot: Organization policy documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization
 - Status: `200`
 - Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
@@ -214,7 +214,7 @@ About CLI plugins Enterprise plugin standards Autonomous task completion Paralle
 
 ### GitHub Copilot: Content exclusion documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion
 - Status: `200`
 - Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
@@ -246,7 +246,7 @@ Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current
 
 ### Codex CLI: OpenAI Codex repository
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://github.com/openai/codex
 - Status: `200`
 - Related repo paths: codex-cli/
@@ -265,36 +265,34 @@ dev environments Issues Plan and track work Code Review Manage code chan ...
 
 ### Codex CLI: OpenAI Codex releases
 
-- Change type: `new-source-baseline`
-- Source URL: https://github.com/openai/codex/releases
+- Change type: `fingerprint-method-changed`
+- Source URL: https://api.github.com/repos/openai/codex/releases?per_page=10
 - Status: `200`
 - Related repo paths: codex-cli/
 
 Keyword snippets:
 
-> ... tegrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant dev
-environments Issues Plan and track work Code Review Manage code changes APPLICATION SECURITY GitHub
-Advanced Security Find and fix vulnerabilities Code security Secure your code as you build Secret
-protection Stop leaks before they start EXPLORE Why GitHub Documentation B ...
+> ... type": "application/octet-stream",         "digest":
+"sha256:2a3e6b764ae1f7317dd548530ada3a118c7c0485aeb0689b7820238e5f2e53fc",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1389,         "state": "uploaded"       },
+{         "content_type": "application/x-msdos-program",         "digest":
+"sha256:66bc2f3f20079bad73fde1d ...
 
-> ... 21559 ) Packaged Codex builds can discover and use the bundled patched zsh helper across
-supported macOS and Linux targets. ( #23756 , #24171 ) The Python SDK now exposes friendly Sandbox
-presets for thread and turn APIs. ( #24772 ) install.sh / install.ps1 supports a non-interactive
-installation mode when CODEX_NON_INTERACTIVE=1 is set. ( #21567 ) Bug Fixes Markdo ...
+> ... ostics @fcoury-oai\r\n- #24474 Log rollout writer OS errors @etraut-openai\r\n- #24076 chore:
+stop consuming legacy config profiles @jif-oai\r\n- #24131 centralize Responses retry policy @rhan-
+oai\r\n- #23858 [wip] goal shift @jif-oai\r\n- #24555 chore: drop orphaned codex memories MCP crate
+@jif-oai\r\n- #24558 chore: move memory prompt builder into extension @ji ...
 
-> ... os malloc diagnostics @fcoury-oai #24474 Log rollout writer OS errors @etraut-openai #24076
-chore: stop consuming legacy config profiles @jif-oai #24131 centralize Responses retry policy
-@rhan-oai #23858 [wip] goal shift @jif-oai #24555 chore: drop orphaned codex memories MCP crate
-@jif-oai #24558 chore: move memory prompt builder into extension @jif-oai #24562 Ad ...
+> ... a remote transport. (#24420)\r\n- Vim mode gained text-object editing, improved word/line-end
+behavior, and a configurable interrupt-turn binding. (#24382, #24380, #24766)\r\n- `/permissions`
+now understands named permission profiles and displays configured custom profiles. (#21559)\r\n-
+Packaged Codex builds can discover and use the bundled patched zsh helper across ...
 
-> ... over a remote transport. ( #24420 ) Vim mode gained text-object editing, improved word/line-end
-behavior, and a configurable interrupt-turn binding. ( #24382 , #24380 , #24766 ) /permissions now
-understands named permission profiles and displays configured custom profiles. ( #21559 ) Packaged
-Codex builds can discover and use the bundled patched zsh helper across supp ...
+Potential config terms found upstream are already present in local tool files.
 
 ### Codex Desktop: OpenAI Codex repository
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://github.com/openai/codex
 - Status: `200`
 - Related repo paths: codex-desktop/
@@ -308,7 +306,7 @@ from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 
 ### Codex Desktop: OpenAI Codex config reference
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
 - Status: `200`
 - Related repo paths: codex-desktop/
@@ -320,17 +318,17 @@ here: - Full config docs: [docs/config.md](../docs/config.md) - MCP servers sect
 
 ### Continue.dev: Configuration reference
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.continue.dev/reference
 - Status: `200`
 - Related repo paths: continue-dev/
 
 Keyword snippets:
 
-> config.yaml Reference | Continue Docs Search... ⌘ K Docs Blog Sign in Checks CLI IDE Extensions
+> config.yaml Reference | Continue Docs Search...  K Docs Blog Sign in Checks CLI IDE Extensions
 Getting Started Install Quick Start Customization Overview Features Agent Chat Autocomplet ...
 
-> ... . ⌘ K Docs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start
+> ... .  K Docs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start
 Customization Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models
 MCP servers Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml
 Reference Migrating Config to YAML Continue Documentation MCP Server config.json R ...
@@ -353,7 +351,7 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ### Continue.dev: Continue repository
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://github.com/continuedev/continue
 - Status: `200`
 - Related repo paths: continue-dev/
@@ -377,7 +375,7 @@ error format Install CLI AI checks are powered by the open-source Contin ...
 
 ### Windsurf: Windsurf documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.windsurf.com/
 - Status: `200`
 - Related repo paths: windsurf/
@@ -402,11 +400,11 @@ Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL Insp ...
 > ... ess Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL
 Inspection Linux inotify Limits WSL Issues Gathering Logs Security FedRAMP Security Admin Guide
 Reporting On this page Set Up Onboarding 1. Select setup flow 2. Choose editor theme 3. Sign up /
-Log in Having Trouble? 4. Let’s Surf! Update Windsurf Things to Try Forgot ...
+Log in Having Trouble? 4. Let's Surf! Update Windsurf Things to Try Forgot ...
 
 ### Windsurf: Windsurf changelog
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://windsurf.com/changelog
 - Status: `200`
 - Related repo paths: windsurf/
@@ -440,7 +438,7 @@ killing commands in the dedicated terminal Improved markdown completion Fix ...
 
 ### Tabnine: Tabnine admin documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.tabnine.com/
 - Status: `200`
 - Related repo paths: tabnine/
@@ -452,14 +450,14 @@ Tabnine Testing Tabnine CLI Code Completions Inline Actions Tabnine's Prompting 
 Tabnine Private Installation Release Notes Powered by GitBook On this page Copy On this page Welcome
 Overview What is Tabnine? Tabnine is the AI code assistant that accele ...
 
-> Overview | Tabnine Docs ⌘ Ctrl k Tabnine website Contact Sales More Welcome Overview Architecture
+> Overview | Tabnine Docs  Ctrl k Tabnine website Contact Sales More Welcome Overview Architecture
 Security Privacy Protection Personalization AI Models Integrations System & Hardware Requirements
 Supported Languages Supported IDEs Tabnine Subscription Plans Support & Feedback Getting started I
 ...
 
 ### Tabnine: Tabnine enterprise documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://www.tabnine.com/enterprise
 - Status: `200`
 - Related repo paths: tabnine/
@@ -468,7 +466,7 @@ No configured watch keywords were found in the fetched content.
 
 ### Amazon Q Developer: Amazon Q Developer administration guide
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html
 - Status: `200`
 - Related repo paths: amazon-q-developer/
@@ -477,7 +475,7 @@ No configured watch keywords were found in the fetched content.
 
 ### Amazon Q Developer: Amazon Q Developer IAM reference
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html
 - Status: `200`
 - Related repo paths: amazon-q-developer/
@@ -508,7 +506,7 @@ in a policy, you usually allow or deny access to the API operation or CLI comma 
 
 ### Gemini CLI: Gemini CLI repository
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://github.com/google-gemini/gemini-cli
 - Status: `200`
 - Related repo paths: gemini-cli/
@@ -542,7 +540,7 @@ protection Stop leaks before they start EXPLORE Why GitHub Documentation B ...
 
 ### Gemini CLI: Gemini CLI documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://cloud.google.com/gemini/docs/codeassist/gemini-cli
 - Status: `200`
 - Related repo paths: gemini-cli/
@@ -557,11 +555,11 @@ Gemini Code Assist release channels Keyboard shortcuts Exclude files f ...
 > ... pute Data analytics and pipelines Databases Distributed, hybrid, and multicloud Industry
 solutions Migration Networking Observability and monitoring Security Storage Cross-product tools
 close Access and resources management Costs and usage management Infrastructure as code SDK,
-languages, frameworks, and tools / Console English Deutsch Español Español – América L ...
+languages, frameworks, and tools / Console English Deutsch Espaol Espaol - Amrica L ...
 
 ### Google Gemini: Vertex AI Gemini safety settings
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters
 - Status: `200`
 - Related repo paths: google-gemini/
@@ -594,7 +592,7 @@ analytics ...
 
 ### Google Gemini: Google Cloud organization policies
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://cloud.google.com/resource-manager/docs/organization-policy/overview
 - Status: `200`
 - Related repo paths: google-gemini/
@@ -622,7 +620,7 @@ development Application hosting Compute Data analytics and pipelines Database ..
 
 ### Claude Desktop: Claude Desktop MCP documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/mcp
 - Status: `200`
 - Related repo paths: claude-desktop/
@@ -635,8 +633,8 @@ Use MCP servers from Claude.ai Use Claude Code as an MCP server MCP output limit
 the limit for a specific tool Respond to MCP elicitation requests Use MCP reso ...
 
 > Connect Claude Code to tools via MCP - Claude Code Docs Skip to main content Claude Code Docs home
-page English Search... ⌘ K Ask Assistant Claude Developer Platform Claude Code on the Web Claude
-Code on the Web Sear ...
+page English Search...  K Ask Assistant Claude Developer Platform Claude Code on the Web Claude Code
+on the Web Sear ...
 
 > ... bleshooting Troubleshoot installation and login Troubleshoot performance and stability Debug
 configuration Error reference On this page What you can do with MCP Find and build MCP servers
@@ -656,7 +654,7 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ### Claude Desktop: Claude Desktop support documentation
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://support.anthropic.com/en/
 - Status: `200`
 - Related repo paths: claude-desktop/
@@ -668,14 +666,14 @@ Keyword snippets:
 9 articles Claude Mobile apps 20 articles Connectors 20 articles Claude in Chrome 5 articles Claude
 for Education 4 articles Claude for Nonprofits 6 articles Privacy and legal 20 ...
 
-> ... Italiano 日本語 한국어 Português Pусский 简体中文 Español 繁體中文 English Search for answers or browse by
-topic Search for articles... Claude 84 articles Pro and Max plans 15 articles Team and Enterprise
-plans 55 articles Claude API and Console 40 articles Identity management (SSO, JIT, SCIM) 15
-articles Claude Code 19 articles Claude Desktop 9 articles Claude Mobile apps 20 artic ...
+> ... Italiano   Portugus P  Espaol  English Search for answers or browse by topic Search for
+articles... Claude 84 articles Pro and Max plans 15 articles Team and Enterprise plans 55 articles
+Claude API and Console 40 articles Identity management (SSO, JIT, SCIM) 15 articles Claude Code 19
+articles Claude Desktop 9 articles Claude Mobile apps 20 artic ...
 
 ### OpenAI Platform: OpenAI OpenAPI repository
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://github.com/openai/openai-openapi
 - Status: `200`
 - Related repo paths: openai-platform/
@@ -684,7 +682,7 @@ No configured watch keywords were found in the fetched content.
 
 ### OpenAI Platform: OpenAI OpenAPI schema
 
-- Change type: `new-source-baseline`
+- Change type: `fingerprint-method-changed`
 - Source URL: https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml
 - Status: `200`
 - Related repo paths: openai-platform/
@@ -724,41 +722,77 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ### Claude API: Anthropic admin API documentation
 
-- Change type: `new-source-baseline`
-- Source URL: https://docs.anthropic.com/en/api/admin-api
-- Status: `200`
-- Related repo paths: claude-api/
-
-No configured watch keywords were found in the fetched content.
-
-### Claude API: Anthropic API release notes
-
-- Change type: `new-source-baseline`
-- Source URL: https://docs.anthropic.com/en/release-notes/api
+- Change type: `fingerprint-method-changed`
+- Source URL: https://platform.claude.com/docs/en/api/admin.md
 - Status: `200`
 - Related repo paths: claude-api/
 
 Keyword snippets:
 
-> ... de Opus 4.7. Set speed: "fast" with model: "claude-opus-4-7" and the fast-mode-2026-02-01 beta
+> ... erDeleteResponse object { id, type }` - `id: string` ID of the User. - `type: "user_deleted"`
+Deleted object type. For Users, this is always `"user_deleted"`. - `"user_deleted"` # Workspaces ##
+Create Workspace **post** `/v1/organizations/workspaces` Create Workspace ### Header Parameters -
+`"anthropic-beta": optional array of string` Optional header to specify the b ...
+
+> ... ways `"organization"`. - `"organization"` # Invites ## Create Invite **post**
+`/v1/organizations/invites` Create Invite ### Body Parameters - `email: string` Email of the User. -
+`role: "user" or "developer" or "billing" or "claude_code_user"` Role for the invited User. Cannot
+be "admin". - `"user"` - `"developer"` - `"billing"` - `"claude_code_user"` ### Return ...
+
+> # Admin # Organizations ## Get Current Organization **get** `/v1/organizations/me` Retrieve
+information about the organization associated with the authenticated API key. ### Returns -
+`Organization object { id, name, type }` - `id: string` ID of the Organization. - `name: string`
+Name of the Organization. - `type: "organization"` Object type. For ...
+
+> ... Workspace Members, this is always `"workspace_member_deleted"`. - `"workspace_member_deleted"` -
+`user_id: string` ID of the User. - `workspace_id: string` ID of the Workspace. # Rate Limits ##
+List Workspace Rate Limits **get** `/v1/organizations/workspaces/{workspace_id}/rate_limits` List
+rate-limit overrides configured for a workspace. Returns only the groups and ...
+
+> # Admin # Organizations ## Get Current Organization **get** `/v1/organizations/me` Retrieve
+information about the organization associated with the authenticated API key. ### Returns - `Or ...
+
+Potential config terms not found in local tool files:
+
+`fast-mode-2026-02-01`, `model_group`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+### Claude API: Anthropic API release notes
+
+- Change type: `fingerprint-method-changed`
+- Source URL: https://platform.claude.com/docs/en/release-notes/api.md
+- Status: `200`
+- Related repo paths: claude-api/
+
+Keyword snippets:
+
+> ... s 4.7. Set `speed: "fast"` with `model: "claude-opus-4-7"` and the `fast-mode-2026-02-01` beta
 header for significantly faster output token generation at premium pricing. Pricing, rate limits,
-and access are the same as for Opus 4.6 fast mode; interested customers should join the waitlist .
-May 11, 2026 We've launched Claude Platform on AWS , bringing the Claude API t ...
+and access are the same as for Opus 4.6 fast mode; interested customers should join the
+[waitlist](https://claude.com/fast-mode). ### May 11, 2026 - We've launched **Claude Plat ...
 
-> ... o beta header required. April 24, 2026 We've released the Rate Limits API , allowing
+> ... 've released the [Rate Limits API](/docs/en/manage-claude/rate-limits-api), allowing
 administrators to programmatically query the rate limits configured for their organization and
-workspaces. April 23, 2026 Memory for Claude Managed Agents is now in public beta under the standard
-managed-agents-2026-04-01 header. See Using agent memory for the full integration guide. ...
+workspaces. ### April 23, 2026 - Memory for Claude Managed Agents is now in public beta under the
+standard `managed-agents-2026-04-01` header. See [Using agent memory](/docs/en/managed-agen ...
 
-> ... to provide any tools when including tool_use and tool_result blocks. We've launched an OpenAI-
+> ... de any `tools` when including `tool_use` and `tool_result` blocks. - We've launched an OpenAI-
 compatible API endpoint, allowing you to test Claude models by changing just your API key, base URL,
 and model name in existing OpenAI integrations. This compatibility layer supports core chat
-completions functionality. Learn more in OpenAI SDK compatibility . February ...
+completions functionality. Learn more in [OpenAI SDK compatibility](/docs/en ...
 
-> ... mer stories Engineering at Anthropic Events Powered by Claude Service partners Startups program
-Company Anthropic Careers Economic Futures Research News Responsible Scaling Policy Security and
-compliance Transparency Learn Blog Courses Use cases Connectors Customer stories Engineering at
-Anthropic Events Powered by Claude Service partners Startups program Help and s ...
+> ... ence](/docs/en/api/sdks/cli). ### April 7, 2026 - We announced [Claude Mythos
+Preview](https://anthropic.com/glasswing) is available as a gated research preview for defensive
+cybersecurity work as part of [Project Glasswing](https://anthropic.com/glasswing). Access is
+invitation-only. - The [Messages API](/docs/en/api/messages) is now available on Amazon Bedrock as
+...
+
+Potential config terms not found in local tool files:
+
+`fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ## Required Follow-Up
 
