@@ -5,11 +5,25 @@ on:
     - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
-      force_agent_review:
-        description: "Run the config-maintenance agent even when no upstream fingerprint changed"
+      run_config_agent:
+        description: "Run the config-maintenance agent (uses API credits; discovery always runs)"
         required: false
         default: false
         type: boolean
+      force_agent_review:
+        description: "Deprecated alias for run_config_agent when content-level changes exist"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  # Fallback caps if dynamic sizing is disabled (see COST-CONTROLS.md)
+  CONFIG_AGENT_MAX_BUDGET_USD: "12.00"
+  CONFIG_AGENT_MAX_TURNS: "80"
+  CONFIG_AGENT_MAX_SOURCES: "0"
+  CONFIG_AGENT_BUDGET_CEILING_USD: "15.00"
+  # Scheduled runs only fingerprint upstream sources; they do not call the model.
+  CONFIG_AGENT_ON_SCHEDULE: "false"
 
 permissions:
   contents: write
@@ -48,30 +62,62 @@ jobs:
       - name: Run config discovery
         id: discovery
         env:
-          FORCE_AGENT_REVIEW: ${{ github.event_name == 'workflow_dispatch' && inputs.force_agent_review }}
+          RUN_CONFIG_AGENT: ${{ github.event_name == 'workflow_dispatch' && (inputs.run_config_agent || inputs.force_agent_review) }}
+          FORCE_AGENT_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.force_agent_review }}
+          AGENT_ON_SCHEDULE: ${{ vars.CONFIG_AGENT_ON_SCHEDULE || env.CONFIG_AGENT_ON_SCHEDULE }}
+          MAX_AGENT_SOURCES: ${{ vars.CONFIG_AGENT_MAX_SOURCES || env.CONFIG_AGENT_MAX_SOURCES }}
         run: |
           set -euo pipefail
+          SUMMARY_PATH="automation/config-discovery/reports/discovery-summary.json"
+
           python3 automation/config-discovery/discover_configs.py \
             --sources automation/config-discovery/tool-sources.json \
             --state automation/config-discovery/state/source-snapshots.json \
-            --report automation/config-discovery/reports/latest-config-discovery.md
+            --report automation/config-discovery/reports/latest-config-discovery.md \
+            --summary "${SUMMARY_PATH}" \
+            --max-agent-sources "${MAX_AGENT_SOURCES}"
+
+          AGENT_WORTHY_COUNT="$(python3 -c "import json; print(json.load(open('${SUMMARY_PATH}'))['agent_worthy_count'])")"
+          echo "agent_worthy_count=${AGENT_WORTHY_COUNT}" >> "${GITHUB_OUTPUT}"
 
           git add \
             automation/config-discovery/state/source-snapshots.json \
-            automation/config-discovery/reports/latest-config-discovery.md
+            automation/config-discovery/reports/latest-config-discovery.md \
+            "${SUMMARY_PATH}"
 
           if git diff --cached --quiet; then
             echo "discovery_changed=false" >> "${GITHUB_OUTPUT}"
             echo "No discovery changes to commit."
-            if [ "${FORCE_AGENT_REVIEW}" = "true" ]; then
-              echo "run_agent=true" >> "${GITHUB_OUTPUT}"
-              echo "Force agent review requested."
-            else
-              echo "run_agent=false" >> "${GITHUB_OUTPUT}"
-            fi
           else
             echo "discovery_changed=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+          WANT_AGENT="false"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "${AGENT_ON_SCHEDULE}" = "true" ] && [ "${AGENT_WORTHY_COUNT}" -gt 0 ]; then
+              WANT_AGENT="true"
+            fi
+          elif [ "${RUN_CONFIG_AGENT}" = "true" ] && [ "${AGENT_WORTHY_COUNT}" -gt 0 ]; then
+            WANT_AGENT="true"
+          elif [ "${RUN_CONFIG_AGENT}" = "true" ] || [ "${FORCE_AGENT_REQUESTED}" = "true" ]; then
+            echo "::warning::Agent was requested, but no content-level upstream changes were detected. Skipping to avoid API spend."
+          fi
+
+          if [ "${WANT_AGENT}" = "true" ]; then
             echo "run_agent=true" >> "${GITHUB_OUTPUT}"
+            QUEUED="$(python3 -c "import json; print(json.load(open('${SUMMARY_PATH}'))['agent_queue_count'])")"
+            if [ "${MAX_AGENT_SOURCES}" = "0" ] || [ -z "${MAX_AGENT_SOURCES}" ]; then
+              echo "Config agent will review all ${QUEUED} queued source(s)."
+            else
+              echo "Config agent will review up to ${QUEUED} queued source(s) (cap: ${MAX_AGENT_SOURCES})."
+            fi
+          else
+            echo "run_agent=false" >> "${GITHUB_OUTPUT}"
+            if [ "${AGENT_WORTHY_COUNT}" -gt 0 ] && [ "${{ github.event_name }}" = "schedule" ]; then
+              echo "Content changes detected; scheduled run is discovery-only. Re-run workflow manually with run_config_agent enabled."
+            elif [ "${AGENT_WORTHY_COUNT}" -eq 0 ]; then
+              echo "No content-level upstream changes; discovery-only run."
+            fi
           fi
 
       - name: Commit discovery signal
@@ -96,39 +142,64 @@ jobs:
             exit 1
           fi
 
+      - name: Set agent limits from queue size
+        if: steps.discovery.outputs.run_agent == 'true'
+        env:
+          BUDGET_CEILING: ${{ vars.CONFIG_AGENT_BUDGET_CEILING_USD || env.CONFIG_AGENT_BUDGET_CEILING_USD }}
+          STATIC_BUDGET: ${{ vars.CONFIG_AGENT_MAX_BUDGET_USD || env.CONFIG_AGENT_MAX_BUDGET_USD }}
+          STATIC_TURNS: ${{ vars.CONFIG_AGENT_MAX_TURNS || env.CONFIG_AGENT_MAX_TURNS }}
+          USE_STATIC_LIMITS: ${{ vars.CONFIG_AGENT_STATIC_LIMITS || 'false' }}
+        run: |
+          set -euo pipefail
+          if [ "${USE_STATIC_LIMITS}" = "true" ]; then
+            echo "AGENT_MAX_BUDGET_USD=${STATIC_BUDGET}" >> "${GITHUB_ENV}"
+            echo "AGENT_MAX_TURNS=${STATIC_TURNS}" >> "${GITHUB_ENV}"
+          else
+            python3 automation/config-discovery/compute_agent_limits.py \
+              --summary automation/config-discovery/reports/discovery-summary.json \
+              --ceiling-usd "${BUDGET_CEILING}" >> "${GITHUB_ENV}"
+          fi
+          echo "::notice::Agent run ceiling: \$${AGENT_MAX_BUDGET_USD} and ${AGENT_MAX_TURNS} turns for ${AGENT_QUEUE_COUNT:-?} source(s). See COST-CONTROLS.md."
+
       - name: Run config maintenance agent
         if: steps.discovery.outputs.run_agent == 'true'
-        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        id: config-agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
           prompt: |
             You are maintaining this repository's hardened AI tool configs.
 
-            Read and follow `automation/config-discovery/agent-prompt.md`.
+            Read `automation/config-discovery/reports/discovery-summary.json` first.
             Read `automation/config-discovery/reports/latest-config-discovery.md`.
+            Use only the "## Agent review queue" section. Do not read full tool trees unless editing a specific file.
 
-            Goal: turn this discovery branch into a real config-update PR.
+            Requirements:
+            1. Process every source in the Agent review queue, in order, before finishing.
+            2. Do not WebFetch or browse the web. Use keyword snippets and missing-term lists already in the report.
+            3. If snippets are enough to conclude "No config update needed", add that note for that source and continue to the next.
+            4. Prefer the smallest diff: one tool directory, only tiers that need a new or changed control.
+            5. Do not regenerate rollout guides unless a setting meaningfully changed for admins.
+            6. Validate only files you edited (python3 JSON check, yamllint, bash -n per AGENTS.md).
 
-            Required behavior:
-            1. Review every changed upstream source in the report.
-            2. Decide whether each upstream change introduces, removes, renames, or changes the meaning of a real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion control.
-            3. If a real control changed, update the affected tiered config files, rationale docs, rollout docs, deployment paths, validation steps, and workflow-preservation notes.
-            4. If no config update is needed for a changed source, add a concise "No config update needed" note to the discovery report explaining why.
-            5. Keep deployable JSON valid. Use JSONC plus `.comments.md` rationale where comments are needed.
-            6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
-            7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, TOML, or shell file using the commands in `AGENTS.md`.
-
-            Leave the resulting file changes unstaged. The workflow will commit and open the PR after you finish.
+            Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
-            --max-turns 30
-            --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
+            --max-turns ${{ env.AGENT_MAX_TURNS }}
+            --max-budget-usd ${{ env.AGENT_MAX_BUDGET_USD }}
+            --model claude-sonnet-4-20250514
+            --allowedTools "Read,Edit,Write,MultiEdit,Glob,Grep,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
+
+      - name: Note config agent failure
+        if: steps.discovery.outputs.run_agent == 'true' && steps.config-agent.outcome == 'failure'
+        run: |
+          echo "::warning::Config maintenance agent failed (for example max turns). Committing any partial file changes."
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.config-agent.outcome != 'skipped'
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance

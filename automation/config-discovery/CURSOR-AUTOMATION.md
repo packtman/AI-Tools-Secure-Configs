@@ -6,9 +6,10 @@ GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance a
 
 ## Recommended Trigger
 
-- Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
+- Schedule: daily, after `.github/workflows/config-discovery.yml` has run (discovery-only on GitHub; no API spend).
 - Repository: this repo.
-- Branch: default branch, unless your automation service creates a working branch automatically.
+- Branch: `automation/config-maintenance` when the discovery PR lists deferred or queued sources.
+- Use Cursor for multi-tool updates; keep GitHub Actions agent runs capped (see `COST-CONTROLS.md`).
 
 ## Prompt
 

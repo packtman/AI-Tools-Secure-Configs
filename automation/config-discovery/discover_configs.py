@@ -22,6 +22,15 @@ MAX_SNIPPETS_PER_SOURCE = 5
 MAX_CONFIG_CANDIDATES = 25
 SNIPPET_RADIUS = 180
 HASH_BASIS = "normalized-source-v1"
+# Changes that may affect hardened configs. Metadata-only migrations are excluded.
+AGENT_REVIEW_CHANGE_TYPES = frozenset(
+    {
+        "content-changed",
+        "new-source-baseline",
+        "fetch-status-changed",
+        "http-status-changed",
+    }
+)
 ASCII_REPLACEMENTS = str.maketrans(
     {
         "\u00a0": " ",
@@ -379,6 +388,29 @@ def source_snapshot(
     return base
 
 
+def agent_review_changes(changes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [change for change in changes if change["change_type"] in AGENT_REVIEW_CHANGE_TYPES]
+
+
+def agent_queue_priority(change: dict[str, Any]) -> tuple[int, int, str]:
+    change_type = change["change_type"]
+    type_rank = {
+        "content-changed": 0,
+        "new-source-baseline": 1,
+        "fetch-status-changed": 2,
+        "http-status-changed": 3,
+    }.get(change_type, 9)
+    missing = len(change["snapshot"].get("config_candidates_missing_locally") or [])
+    return (type_rank, -missing, change["source_id"])
+
+
+def build_agent_queue(agent_worthy: list[dict[str, Any]], max_sources: int) -> list[dict[str, Any]]:
+    ordered = sorted(agent_worthy, key=agent_queue_priority)
+    if max_sources < 1:
+        return ordered
+    return ordered[:max_sources]
+
+
 def classify_change(previous: dict[str, Any] | None, current: dict[str, Any]) -> str | None:
     if not previous:
         return "new-source-baseline"
@@ -440,7 +472,18 @@ def run_discovery(args: argparse.Namespace) -> int:
 
     if not changes:
         print("no upstream source changes detected")
+        if args.summary:
+            write_discovery_summary(
+                pathlib.Path(args.summary),
+                changes=[],
+                agent_worthy=[],
+                agent_queue=[],
+            )
         return 0
+
+    worthy = agent_review_changes(changes)
+    queue = build_agent_queue(worthy, args.max_agent_sources)
+    deferred = worthy[len(queue) :]
 
     new_state = {
         "schema_version": 1,
@@ -449,8 +492,18 @@ def run_discovery(args: argparse.Namespace) -> int:
     }
     write_json(state_path, new_state)
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(render_report(changes, registry), encoding="utf-8")
-    print(f"detected {len(changes)} changed sources")
+    report_path.write_text(render_report(changes, queue, deferred, registry), encoding="utf-8")
+    if args.summary:
+        write_discovery_summary(
+            pathlib.Path(args.summary),
+            changes=changes,
+            agent_worthy=worthy,
+            agent_queue=queue,
+        )
+    print(
+        f"detected {len(changes)} changed sources "
+        f"({len(worthy)} agent-worthy, {len(queue)} queued, {len(deferred)} deferred)"
+    )
     return 0
 
 
@@ -464,7 +517,31 @@ def ascii_safe(text: str) -> str:
     return translated.encode("ascii", errors="ignore").decode("ascii")
 
 
-def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> str:
+def write_discovery_summary(
+    summary_path: pathlib.Path,
+    changes: list[dict[str, Any]],
+    agent_worthy: list[dict[str, Any]],
+    agent_queue: list[dict[str, Any]],
+) -> None:
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "total_changes": len(changes),
+        "agent_worthy_count": len(agent_worthy),
+        "agent_queue_count": len(agent_queue),
+        "deferred_agent_count": max(0, len(agent_worthy) - len(agent_queue)),
+        "agent_worthy_source_ids": [change["source_id"] for change in agent_worthy],
+        "agent_queue_source_ids": [change["source_id"] for change in agent_queue],
+        "change_types": sorted({change["change_type"] for change in changes}),
+    }
+    summary_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def render_report(
+    changes: list[dict[str, Any]],
+    agent_queue: list[dict[str, Any]],
+    deferred_agent: list[dict[str, Any]],
+    registry: dict[str, Any],
+) -> str:
     by_tool = {tool["id"]: tool for tool in registry["tools"]}
     lines: list[str] = [
         "# Config Discovery Report",
@@ -472,11 +549,29 @@ def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> st
         "This report was generated because one or more watched upstream sources changed.",
         "Use `automation/config-discovery/agent-prompt.md` to turn these signals into a focused config update PR.",
         "",
+    ]
+
+    agent_worthy = agent_queue + deferred_agent
+    if changes and not agent_worthy:
+        lines.extend(
+            [
+                "## Automation note",
+                "",
+                "All detected changes are metadata-only (for example `fingerprint-method-changed`).",
+                "No vendor content change was detected. Refresh snapshots and close this PR unless you are repairing the scanner.",
+                "The config maintenance agent should not run for this report.",
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
         "## Summary",
         "",
         "| Tool | Source | Change | Status | URL |",
         "|------|--------|--------|--------|-----|",
-    ]
+        ]
+    )
 
     for change in changes:
         snapshot = change["snapshot"]
@@ -489,6 +584,50 @@ def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> st
                 url=markdown_escape(snapshot.get("url")),
             )
         )
+
+    if agent_queue:
+        lines.extend(
+            [
+                "",
+                "## Agent review queue",
+                "",
+                "Process only these sources during automated config maintenance (one CI batch):",
+                "",
+            ]
+        )
+        for change in agent_queue:
+            snapshot = change["snapshot"]
+            lines.append(
+                "- {tool}: {source} (`{change_type}`) - {url}".format(
+                    tool=snapshot.get("tool_display_name"),
+                    source=snapshot.get("name"),
+                    change_type=change["change_type"],
+                    url=snapshot.get("url"),
+                )
+            )
+        lines.append("")
+
+    if deferred_agent:
+        lines.extend(
+            [
+                "## Deferred to a later run",
+                "",
+                "Additional content-level changes were detected but not queued for this run to limit API cost.",
+                "Re-run the workflow with `run_config_agent` after the queue below is handled.",
+                "",
+            ]
+        )
+        for change in deferred_agent:
+            snapshot = change["snapshot"]
+            lines.append(
+                "- {tool}: {source} (`{change_type}`) - {url}".format(
+                    tool=snapshot.get("tool_display_name"),
+                    source=snapshot.get("name"),
+                    change_type=change["change_type"],
+                    url=snapshot.get("url"),
+                )
+            )
+        lines.append("")
 
     lines.extend(["", "## Review Details", ""])
 
@@ -557,6 +696,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sources", required=True, help="Path to tool source registry JSON")
     parser.add_argument("--state", required=True, help="Path to persisted source snapshot JSON")
     parser.add_argument("--report", required=True, help="Path to markdown report output")
+    parser.add_argument(
+        "--summary",
+        help="Path to JSON summary for CI (agent_worthy_count, change types)",
+    )
+    parser.add_argument(
+        "--max-agent-sources",
+        type=int,
+        default=0,
+        help="Maximum sources in the agent queue (0 = all agent-worthy sources, default)",
+    )
     parser.add_argument("--timeout", type=int, default=30, help="HTTP timeout per source in seconds")
     parser.add_argument("--check", action="store_true", help="Validate source registry only")
     parser.add_argument("--offline", action="store_true", help="Validate without network access or file writes")
