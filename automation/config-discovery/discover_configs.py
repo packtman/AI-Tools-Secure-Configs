@@ -405,9 +405,9 @@ def agent_queue_priority(change: dict[str, Any]) -> tuple[int, int, str]:
 
 
 def build_agent_queue(agent_worthy: list[dict[str, Any]], max_sources: int) -> list[dict[str, Any]]:
-    if max_sources < 1:
-        return []
     ordered = sorted(agent_worthy, key=agent_queue_priority)
+    if max_sources < 1:
+        return ordered
     return ordered[:max_sources]
 
 
@@ -703,8 +703,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-agent-sources",
         type=int,
-        default=1,
-        help="Maximum sources to include in the agent review queue per run (default: 1)",
+        default=0,
+        help="Maximum sources in the agent queue (0 = all agent-worthy sources, default)",
     )
     parser.add_argument("--timeout", type=int, default=30, help="HTTP timeout per source in seconds")
     parser.add_argument("--check", action="store_true", help="Validate source registry only")
