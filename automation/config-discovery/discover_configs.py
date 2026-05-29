@@ -21,6 +21,38 @@ USER_AGENT = "AI-Secure-Configs config discovery bot"
 MAX_SNIPPETS_PER_SOURCE = 5
 MAX_CONFIG_CANDIDATES = 25
 SNIPPET_RADIUS = 180
+HASH_BASIS = "normalized-source-v1"
+VOLATILE_JSON_KEYS = {
+    "archive_download_url",
+    "assets_url",
+    "author",
+    "avatar_url",
+    "browser_download_url",
+    "created_at",
+    "download_count",
+    "events_url",
+    "followers_url",
+    "following_url",
+    "gists_url",
+    "gravatar_id",
+    "html_url",
+    "id",
+    "node_id",
+    "organizations_url",
+    "published_at",
+    "received_events_url",
+    "reactions",
+    "repos_url",
+    "site_admin",
+    "starred_url",
+    "subscriptions_url",
+    "tarball_url",
+    "updated_at",
+    "upload_url",
+    "uploader",
+    "url",
+    "zipball_url",
+}
 CONFIG_HINTS = (
     "allow",
     "auto",
@@ -76,7 +108,7 @@ def iter_sources(registry: dict[str, Any]) -> list[dict[str, Any]]:
     return sources
 
 
-def validate_registry(registry: dict[str, Any]) -> list[str]:
+def validate_registry(registry: dict[str, Any], repo_root: pathlib.Path | None = None) -> list[str]:
     errors: list[str] = []
     seen_tool_ids: set[str] = set()
     seen_source_ids: set[str] = set()
@@ -103,6 +135,23 @@ def validate_registry(registry: dict[str, Any]) -> list[str]:
             if key not in tool:
                 errors.append(f"{prefix}.{key} is required")
 
+        for repo_path in tool.get("repo_paths", []):
+            if repo_root and not (repo_root / repo_path).exists():
+                errors.append(f"{prefix}.repo_paths entry does not exist: {repo_path}")
+
+        tier_files = tool.get("tier_files", {})
+        if not isinstance(tier_files, dict) or not tier_files:
+            errors.append(f"{prefix}.tier_files must be a non-empty object")
+        for tier_name, paths in tier_files.items():
+            if tier_name not in {"baseline", "moderate", "strict"}:
+                errors.append(f"{prefix}.tier_files has unsupported tier: {tier_name}")
+            if not isinstance(paths, list) or not paths:
+                errors.append(f"{prefix}.tier_files.{tier_name} must be a non-empty list")
+                continue
+            for path_value in paths:
+                if repo_root and not (repo_root / path_value).is_file():
+                    errors.append(f"{prefix}.tier_files.{tier_name} entry does not exist: {path_value}")
+
         for source_index, source in enumerate(tool.get("sources", [])):
             source_prefix = f"{prefix}.sources[{source_index}]"
             source_name = source.get("name")
@@ -118,6 +167,9 @@ def validate_registry(registry: dict[str, Any]) -> list[str]:
                 if source_id in seen_source_ids:
                     errors.append(f"duplicate source id: {source_id}")
                 seen_source_ids.add(source_id)
+            watch_for = source.get("watch_for")
+            if not isinstance(watch_for, list) or not watch_for:
+                errors.append(f"{source_prefix}.watch_for must be a non-empty list")
 
     return errors
 
@@ -175,6 +227,29 @@ def normalize_text(body: bytes) -> str:
     text = re.sub(r"<[^>]+>", " ", text)
     text = html.unescape(text)
     return re.sub(r"\s+", " ", text).strip()
+
+
+def strip_volatile_json(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: strip_volatile_json(child)
+            for key, child in sorted(value.items())
+            if key not in VOLATILE_JSON_KEYS
+        }
+    if isinstance(value, list):
+        return [strip_volatile_json(child) for child in value]
+    return value
+
+
+def canonical_source_text(body: bytes, content_type: str | None) -> str:
+    media_type = (content_type or "").split(";", 1)[0].strip().lower()
+    if media_type == "application/json":
+        try:
+            payload = json.loads(body.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            return normalize_text(body)
+        return json.dumps(strip_volatile_json(payload), indent=2, sort_keys=True)
+    return normalize_text(body)
 
 
 def extract_title(text: str) -> str | None:
@@ -269,13 +344,14 @@ def source_snapshot(
         base["error"] = metadata.get("error", "No response body returned")
         return base
 
-    text = normalize_text(body)
-    content_hash = hashlib.sha256(body).hexdigest()
+    text = canonical_source_text(body, metadata.get("content_type"))
+    content_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
     candidates = extract_config_candidates(text)
     missing_candidates = [candidate for candidate in candidates if candidate not in local_tool_text]
     base.update(
         {
             "sha256": content_hash,
+            "hash_basis": HASH_BASIS,
             "content_length": len(body),
             "etag": metadata.get("etag"),
             "last_modified": metadata.get("last_modified"),
@@ -292,6 +368,8 @@ def source_snapshot(
 def classify_change(previous: dict[str, Any] | None, current: dict[str, Any]) -> str | None:
     if not previous:
         return "new-source-baseline"
+    if current.get("hash_basis") != previous.get("hash_basis"):
+        return "fingerprint-method-changed"
     if current.get("error") != previous.get("error"):
         return "fetch-status-changed"
     if current.get("status") != previous.get("status"):
@@ -305,9 +383,10 @@ def run_discovery(args: argparse.Namespace) -> int:
     registry_path = pathlib.Path(args.sources)
     state_path = pathlib.Path(args.state)
     report_path = pathlib.Path(args.report)
+    repo_root = registry_path.resolve().parents[2]
 
     registry = load_json(registry_path, {})
-    errors = validate_registry(registry)
+    errors = validate_registry(registry, repo_root)
     if errors:
         for error in errors:
             print(f"registry error: {error}", file=sys.stderr)
@@ -330,7 +409,6 @@ def run_discovery(args: argparse.Namespace) -> int:
     new_sources = dict(previous_sources)
     changes: list[dict[str, Any]] = []
     changed_at = utc_now()
-    repo_root = registry_path.resolve().parents[2]
     local_text_by_tool = {tool["id"]: load_local_tool_text(tool, repo_root) for tool in registry["tools"]}
 
     for source in iter_sources(registry):
@@ -341,7 +419,6 @@ def run_discovery(args: argparse.Namespace) -> int:
         change_type = classify_change(previous or None, current)
 
         if change_type:
-            current["change_type"] = change_type
             new_sources[source_id] = current
             changes.append({"source_id": source_id, "change_type": change_type, "snapshot": current})
         else:
