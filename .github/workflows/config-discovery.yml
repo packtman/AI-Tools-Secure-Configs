@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "0 13 * * *"
   workflow_dispatch:
+    inputs:
+      force_agent_review:
+        description: "Run the config-maintenance agent even when no upstream fingerprint changed"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -36,14 +42,13 @@ jobs:
           git fetch origin "${BASE_BRANCH}"
           if git ls-remote --exit-code --heads origin "${PR_BRANCH}" >/dev/null 2>&1; then
             git fetch origin "${PR_BRANCH}"
-            git checkout -B "${PR_BRANCH}" "origin/${PR_BRANCH}"
-            git merge --ff-only "origin/${BASE_BRANCH}" || git merge --no-edit "origin/${BASE_BRANCH}"
-          else
-            git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
           fi
+          git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
 
       - name: Run config discovery
         id: discovery
+        env:
+          FORCE_AGENT_REVIEW: ${{ github.event_name == 'workflow_dispatch' && inputs.force_agent_review }}
         run: |
           set -euo pipefail
           python3 automation/config-discovery/discover_configs.py \
@@ -56,15 +61,21 @@ jobs:
             automation/config-discovery/reports/latest-config-discovery.md
 
           if git diff --cached --quiet; then
-            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "discovery_changed=false" >> "${GITHUB_OUTPUT}"
             echo "No discovery changes to commit."
-            exit 0
+            if [ "${FORCE_AGENT_REVIEW}" = "true" ]; then
+              echo "run_agent=true" >> "${GITHUB_OUTPUT}"
+              echo "Force agent review requested."
+            else
+              echo "run_agent=false" >> "${GITHUB_OUTPUT}"
+            fi
+          else
+            echo "discovery_changed=true" >> "${GITHUB_OUTPUT}"
+            echo "run_agent=true" >> "${GITHUB_OUTPUT}"
           fi
 
-          echo "changed=true" >> "${GITHUB_OUTPUT}"
-
       - name: Commit discovery signal
-        if: steps.discovery.outputs.changed == 'true'
+        if: steps.discovery.outputs.discovery_changed == 'true'
         env:
           PR_BRANCH: automation/config-maintenance
         run: |
@@ -72,10 +83,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Update config discovery source snapshots"
-          git push -u origin "${PR_BRANCH}"
+          git push --force-with-lease -u origin "${PR_BRANCH}"
 
       - name: Run config maintenance agent
-        if: steps.discovery.outputs.changed == 'true'
+        if: steps.discovery.outputs.run_agent == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -104,7 +115,7 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.changed == 'true'
+        if: steps.discovery.outputs.run_agent == 'true'
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -121,11 +132,11 @@ jobs:
 
           git add .
           git commit -m "Apply config maintenance updates"
-          git push -u origin "${PR_BRANCH}"
+          git push --force-with-lease -u origin "${PR_BRANCH}"
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
 
       - name: Open or update pull request
-        if: steps.discovery.outputs.changed == 'true'
+        if: steps.discovery.outputs.discovery_changed == 'true' || steps.agent-changes.outputs.agent_changed == 'true'
         env:
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
           GH_TOKEN: ${{ github.token }}
