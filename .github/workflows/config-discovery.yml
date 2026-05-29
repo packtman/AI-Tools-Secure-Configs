@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   discover:
-    name: Watch upstream config sources
+    name: Maintain upstream config coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +40,7 @@ jobs:
           fi
 
       - name: Run config discovery
+        id: discovery
         run: |
           set -euo pipefail
           python3 automation/config-discovery/discover_configs.py \
@@ -47,59 +48,125 @@ jobs:
             --state automation/config-discovery/state/source-snapshots.json \
             --report automation/config-discovery/reports/latest-config-discovery.md
 
-      - name: Commit changes and open pull request
+          git add \
+            automation/config-discovery/state/source-snapshots.json \
+            automation/config-discovery/reports/latest-config-discovery.md
+
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "No discovery changes to commit."
+            exit 0
+          fi
+
+          echo "changed=true" >> "${GITHUB_OUTPUT}"
+
+      - name: Commit discovery signal
+        if: steps.discovery.outputs.changed == 'true'
         env:
-          BASE_BRANCH: ${{ github.event.repository.default_branch }}
-          GH_TOKEN: ${{ github.token }}
+          PR_BRANCH: automation/config-maintenance
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update config discovery source snapshots"
+          git push -u origin "${PR_BRANCH}"
+
+      - name: Run config maintenance agent
+        if: steps.discovery.outputs.changed == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+          prompt: |
+            You are maintaining this repository's hardened AI tool configs.
+
+            Read and follow `automation/config-discovery/agent-prompt.md`.
+            Read `automation/config-discovery/reports/latest-config-discovery.md`.
+
+            Goal: turn this discovery branch into a real config-update PR.
+
+            Required behavior:
+            1. Review every changed upstream source in the report.
+            2. Decide whether each upstream change introduces, removes, renames, or changes the meaning of a real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion control.
+            3. If a real control changed, update the affected tiered config files, rationale docs, rollout docs, deployment paths, validation steps, and workflow-preservation notes.
+            4. If no config update is needed for a changed source, add a concise "No config update needed" note to the discovery report explaining why.
+            5. Keep deployable JSON valid. Use JSONC plus `.comments.md` rationale where comments are needed.
+            6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
+            7. Do not use em dash characters in prose or comments.
+            8. Validate every edited JSON, YAML, TOML, or shell file using the commands in `AGENTS.md`.
+
+            Leave the resulting file changes unstaged. The workflow will commit and open the PR after you finish.
+          claude_args: |
+            --max-turns 30
+            --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
+
+      - name: Commit agent changes
+        if: steps.discovery.outputs.changed == 'true'
+        id: agent-changes
+        env:
           PR_BRANCH: automation/config-maintenance
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add \
-            automation/config-discovery/state/source-snapshots.json \
-            automation/config-discovery/reports/latest-config-discovery.md
-
-          if git diff --cached --quiet; then
-            echo "No discovery changes to commit."
+          if git diff --quiet; then
+            echo "agent_changed=false" >> "${GITHUB_OUTPUT}"
+            echo "Config maintenance agent made no file changes."
             exit 0
           fi
 
-          git commit -m "Update config discovery source snapshots"
+          git add .
+          git commit -m "Apply config maintenance updates"
           git push -u origin "${PR_BRANCH}"
+          echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
+
+      - name: Open or update pull request
+        if: steps.discovery.outputs.changed == 'true'
+        env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          GH_TOKEN: ${{ github.token }}
+          PR_BRANCH: automation/config-maintenance
+          AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+        run: |
+          set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
-          ## Config maintenance update
+          ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
 
           Review:
 
           - `automation/config-discovery/reports/latest-config-discovery.md`
           - `automation/config-discovery/agent-prompt.md`
 
-          Expected agent follow-up:
+          Expected reviewer checks:
 
-          1. Read the upstream sources that changed.
-          2. Review the "Potential config terms not found in local tool files" section.
-          3. Update affected hardened configs and rollout docs when a real admin control changed.
-          4. Keep edits scoped to the affected tool and tier files.
-          5. Validate edited JSON, YAML, TOML, or shell files before merge.
+          1. Confirm any config changes are scoped to real admin or security controls.
+          2. Confirm no secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames were added.
+          3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
+          4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
-          This PR should become the actual config-update PR after the config-maintenance agent has applied relevant changes. Do not merge it with only source snapshots unless the agent has confirmed no config updates are needed.
+          If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
+
+          if [ "${AGENT_CHANGED:-false}" = "true" ]; then
+            TITLE="Config maintenance: apply upstream config updates"
+          else
+            TITLE="Config maintenance: upstream changes reviewed"
+          fi
 
           OPEN_PR="$(gh pr list --head "${PR_BRANCH}" --state open --json number --jq '.[0].number // empty')"
 
           if [ -n "${OPEN_PR}" ]; then
             gh pr edit "${OPEN_PR}" \
-              --title "Config maintenance: upstream source changes detected" \
+              --title "${TITLE}" \
               --body-file pr-body.md
           else
             gh pr create \
               --base "${BASE_BRANCH}" \
               --head "${PR_BRANCH}" \
-              --title "Config maintenance: upstream source changes detected" \
+              --title "${TITLE}" \
               --body-file pr-body.md
           fi
