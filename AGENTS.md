@@ -46,4 +46,4 @@ bash -n path/to/script.sh
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- Scheduled config discovery runs via `.github/workflows/config-discovery.yml`. The maintenance agent runs only for content-level upstream changes, not metadata-only snapshot migrations.
