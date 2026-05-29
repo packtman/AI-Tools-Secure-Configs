@@ -182,9 +182,10 @@ def fetch_source(source: dict[str, Any], previous: dict[str, Any], timeout: int)
             "Accept": "text/html,application/json,text/plain,*/*",
         },
     )
-    if previous.get("etag"):
+    can_revalidate = previous.get("hash_basis") == HASH_BASIS and previous.get("url") == source["url"]
+    if can_revalidate and previous.get("etag"):
         request.add_header("If-None-Match", previous["etag"])
-    if previous.get("last_modified"):
+    if can_revalidate and previous.get("last_modified"):
         request.add_header("If-Modified-Since", previous["last_modified"])
 
     try:
