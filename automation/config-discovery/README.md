@@ -23,7 +23,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 3. It compares the response hash, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
-6. The workflow commits those files to `automation/config-discovery` and opens or updates a discovery branch.
+6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
 7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
 
 GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.

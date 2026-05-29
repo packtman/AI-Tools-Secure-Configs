@@ -19,7 +19,7 @@ Goal: keep hardened AI tool configs current across Claude Code, Cursor, GitHub C
 
 Process:
 
-1. Check for an open config maintenance PR or branch named automation/config-discovery.
+1. Check for an open config maintenance PR or branch named automation/config-maintenance.
 2. Read automation/config-discovery/reports/latest-config-discovery.md.
 3. For each changed upstream source, open the upstream source and identify real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion controls.
 4. Pay special attention to "Potential config terms not found in local tool files."
