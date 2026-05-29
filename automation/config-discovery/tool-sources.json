@@ -185,7 +185,7 @@
         {
           "name": "OpenAI Codex releases",
           "kind": "releases",
-          "url": "https://github.com/openai/codex/releases",
+          "url": "https://api.github.com/repos/openai/codex/releases?per_page=10",
           "watch_for": [
             "configuration",
             "security",
@@ -620,7 +620,7 @@
         {
           "name": "Anthropic admin API documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/api/admin-api",
+          "url": "https://platform.claude.com/docs/en/api/admin.md",
           "watch_for": [
             "workspace",
             "role",
@@ -632,7 +632,7 @@
         {
           "name": "Anthropic API release notes",
           "kind": "changelog",
-          "url": "https://docs.anthropic.com/en/release-notes/api",
+          "url": "https://platform.claude.com/docs/en/release-notes/api.md",
           "watch_for": [
             "rate limit",
             "workspace",

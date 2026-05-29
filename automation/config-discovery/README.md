@@ -20,7 +20,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 
 1. The workflow runs on the daily schedule or by manual dispatch.
 2. The scanner fetches each URL in `tool-sources.json`.
-3. It compares the response hash, HTTP status, and fetch error state with `state/source-snapshots.json`.
+3. It compares the normalized response fingerprint, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
@@ -45,7 +45,7 @@ Add an entry to `tool-sources.json` under the relevant tool:
 }
 ```
 
-Use official vendor sources when possible. Prefer pages that are specific to configuration, admin policy, managed settings, MCP, permissions, sandboxing, network controls, privacy, audit logs, or content exclusion.
+Use official vendor sources when possible. Prefer stable markdown, raw files, API endpoints, or pages that are specific to configuration, admin policy, managed settings, MCP, permissions, sandboxing, network controls, privacy, audit logs, or content exclusion. Avoid generic marketing pages when a reference page exists, because page chrome changes can create noisy PRs.
 
 ## Local Validation
 
