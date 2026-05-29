@@ -151,6 +151,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableWorkflows`
+
+**Value:** `true`
+
+**What:** Disables dynamic workflows and bundled workflow commands. Equivalent environment control: `CLAUDE_CODE_DISABLE_WORKFLOWS=1`.
+
+**Why (Moderate tier):** Dynamic workflows are a research preview for long-running, parallel agent work. Moderate tier keeps normal Claude Code use available but blocks this higher-autonomy mode until admins have a pilot, usage monitoring, and exception process.
+
+**What breaks if set to true:** Developers cannot use workflow commands, the `workflow` keyword will not trigger runs, and `ultracode` is removed from the effort menu.
+
+**Strict difference:** Also `true`, because Strict blocks research-preview autonomous workflows by default.
+
+**Baseline difference:** `false`, allowing teams to use dynamic workflows after local confirmation prompts.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

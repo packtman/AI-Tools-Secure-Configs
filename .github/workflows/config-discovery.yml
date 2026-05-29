@@ -70,7 +70,7 @@ jobs:
           git push -u origin "${PR_BRANCH}"
 
           cat > pr-body.md <<'PR_BODY'
-          ## Config discovery update
+          ## Config maintenance update
 
           The scheduled config discovery workflow detected changes in one or more watched upstream sources.
 
@@ -79,24 +79,25 @@ jobs:
           - `automation/config-discovery/reports/latest-config-discovery.md`
           - `automation/config-discovery/agent-prompt.md`
 
-          Expected follow-up:
+          Expected agent follow-up:
 
           1. Read the upstream sources that changed.
-          2. Decide whether the repo's hardened configs or rollout docs need updates.
-          3. If updates are needed, keep the PR scoped to the affected tool and tier files.
-          4. Validate edited JSON, YAML, TOML, or shell files before merge.
+          2. Review the "Potential config terms not found in local tool files" section.
+          3. Update affected hardened configs and rollout docs when a real admin control changed.
+          4. Keep edits scoped to the affected tool and tier files.
+          5. Validate edited JSON, YAML, TOML, or shell files before merge.
 
-          This PR should not be merged as a config update without review. It is an intake signal for the config-maintenance agent and repo maintainers.
+          This PR should become the actual config-update PR after the config-maintenance agent has applied relevant changes. Do not merge it with only source snapshots unless the agent has confirmed no config updates are needed.
           PR_BODY
 
           if gh pr view "${PR_BRANCH}" --json url >/dev/null 2>&1; then
             gh pr edit "${PR_BRANCH}" \
-              --title "Config discovery: upstream source changes detected" \
+              --title "Config maintenance: upstream source changes detected" \
               --body-file pr-body.md
           else
             gh pr create \
               --base "${BASE_BRANCH}" \
               --head "${PR_BRANCH}" \
-              --title "Config discovery: upstream source changes detected" \
+              --title "Config maintenance: upstream source changes detected" \
               --body-file pr-body.md
           fi

@@ -44,6 +44,18 @@
             "audit",
             "permissions"
           ]
+        },
+        {
+          "name": "Dynamic workflows documentation",
+          "kind": "docs",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
+          "watch_for": [
+            "dynamic workflows",
+            "disableWorkflows",
+            "CLAUDE_CODE_DISABLE_WORKFLOWS",
+            "ultracode",
+            "managed settings"
+          ]
         }
       ]
     },
