@@ -1,0 +1,102 @@
+name: Config Discovery
+
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: config-discovery
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: Watch upstream config sources
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare discovery branch
+        env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          PR_BRANCH: automation/config-discovery
+        run: |
+          set -euo pipefail
+          git fetch origin "${BASE_BRANCH}"
+          if git ls-remote --exit-code --heads origin "${PR_BRANCH}" >/dev/null 2>&1; then
+            git fetch origin "${PR_BRANCH}"
+            git checkout -B "${PR_BRANCH}" "origin/${PR_BRANCH}"
+            git merge --ff-only "origin/${BASE_BRANCH}" || git merge --no-edit "origin/${BASE_BRANCH}"
+          else
+            git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
+          fi
+
+      - name: Run config discovery
+        run: |
+          set -euo pipefail
+          python3 automation/config-discovery/discover_configs.py \
+            --sources automation/config-discovery/tool-sources.json \
+            --state automation/config-discovery/state/source-snapshots.json \
+            --report automation/config-discovery/reports/latest-config-discovery.md
+
+      - name: Commit changes and open pull request
+        env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          GH_TOKEN: ${{ github.token }}
+          PR_BRANCH: automation/config-discovery
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            automation/config-discovery/state/source-snapshots.json \
+            automation/config-discovery/reports/latest-config-discovery.md
+
+          if git diff --cached --quiet; then
+            echo "No discovery changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update config discovery source snapshots"
+          git push -u origin "${PR_BRANCH}"
+
+          cat > pr-body.md <<'PR_BODY'
+          ## Config discovery update
+
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources.
+
+          Review:
+
+          - `automation/config-discovery/reports/latest-config-discovery.md`
+          - `automation/config-discovery/agent-prompt.md`
+
+          Expected follow-up:
+
+          1. Read the upstream sources that changed.
+          2. Decide whether the repo's hardened configs or rollout docs need updates.
+          3. If updates are needed, keep the PR scoped to the affected tool and tier files.
+          4. Validate edited JSON, YAML, TOML, or shell files before merge.
+
+          This PR should not be merged as a config update without review. It is an intake signal for the config-maintenance agent and repo maintainers.
+          PR_BODY
+
+          if gh pr view "${PR_BRANCH}" --json url >/dev/null 2>&1; then
+            gh pr edit "${PR_BRANCH}" \
+              --title "Config discovery: upstream source changes detected" \
+              --body-file pr-body.md
+          else
+            gh pr create \
+              --base "${BASE_BRANCH}" \
+              --head "${PR_BRANCH}" \
+              --title "Config discovery: upstream source changes detected" \
+              --body-file pr-body.md
+          fi

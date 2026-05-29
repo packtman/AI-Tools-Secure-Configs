@@ -1,0 +1,635 @@
+{
+  "schema_version": 1,
+  "tools": [
+    {
+      "id": "claude-code",
+      "display_name": "Claude Code",
+      "repo_paths": [
+        "claude-code/",
+        "rollout-guide/configs/claude-code/"
+      ],
+      "tier_files": {
+        "strict": [
+          "claude-code/examples/managed-settings-strict.json"
+        ],
+        "moderate": [
+          "claude-code/examples/managed-settings-moderate.json",
+          "rollout-guide/configs/claude-code/managed-settings-moderate.json"
+        ],
+        "baseline": [
+          "claude-code/examples/managed-settings-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Managed settings documentation",
+          "kind": "docs",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+          "watch_for": [
+            "managed settings",
+            "permissions",
+            "disableBypassPermissionsMode",
+            "sandbox",
+            "MCP"
+          ]
+        },
+        {
+          "name": "Hooks documentation",
+          "kind": "docs",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+          "watch_for": [
+            "PreToolUse",
+            "PostToolUse",
+            "ConfigChange",
+            "audit",
+            "permissions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cursor",
+      "display_name": "Cursor",
+      "repo_paths": [
+        "cursor/",
+        "rollout-guide/configs/cursor/"
+      ],
+      "tier_files": {
+        "strict": [
+          "cursor/examples/permissions-strict.json"
+        ],
+        "moderate": [
+          "cursor/examples/permissions-moderate.json",
+          "rollout-guide/configs/cursor/permissions-moderate.json",
+          "rollout-guide/configs/cursor/settings.json"
+        ],
+        "baseline": [
+          "cursor/examples/permissions-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Team administration documentation",
+          "kind": "docs",
+          "url": "https://docs.cursor.com/en/account/teams/admin-dashboard",
+          "watch_for": [
+            "admin",
+            "team",
+            "policy",
+            "audit",
+            "privacy"
+          ]
+        },
+        {
+          "name": "MCP documentation",
+          "kind": "docs",
+          "url": "https://docs.cursor.com/en/tools/mcp",
+          "watch_for": [
+            "MCP",
+            "server",
+            "tools",
+            "approval",
+            "allowlist"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "github-copilot",
+      "display_name": "GitHub Copilot",
+      "repo_paths": [
+        "github-copilot/",
+        "rollout-guide/configs/github-copilot/"
+      ],
+      "tier_files": {
+        "strict": [
+          "github-copilot/examples/org-policy-strict.json"
+        ],
+        "moderate": [
+          "github-copilot/examples/org-policy-moderate.json",
+          "rollout-guide/configs/github-copilot/org-policy-moderate.json"
+        ],
+        "baseline": [
+          "github-copilot/examples/org-policy-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Organization policy documentation",
+          "kind": "docs",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "watch_for": [
+            "policy",
+            "organization",
+            "Copilot Chat",
+            "content exclusion",
+            "CLI"
+          ]
+        },
+        {
+          "name": "Content exclusion documentation",
+          "kind": "docs",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "watch_for": [
+            "content exclusion",
+            "repositories",
+            "patterns",
+            "excluded",
+            "audit"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "codex-cli",
+      "display_name": "Codex CLI",
+      "repo_paths": [
+        "codex-cli/"
+      ],
+      "tier_files": {
+        "strict": [
+          "codex-cli/examples/config-strict.toml"
+        ],
+        "moderate": [
+          "codex-cli/examples/config-moderate.toml"
+        ],
+        "baseline": [
+          "codex-cli/examples/config-baseline.toml"
+        ]
+      },
+      "sources": [
+        {
+          "name": "OpenAI Codex repository",
+          "kind": "repository",
+          "url": "https://github.com/openai/codex",
+          "watch_for": [
+            "config",
+            "sandbox",
+            "approval",
+            "model",
+            "MCP"
+          ]
+        },
+        {
+          "name": "OpenAI Codex releases",
+          "kind": "releases",
+          "url": "https://github.com/openai/codex/releases",
+          "watch_for": [
+            "configuration",
+            "security",
+            "sandbox",
+            "policy",
+            "permissions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "codex-desktop",
+      "display_name": "Codex Desktop",
+      "repo_paths": [
+        "codex-desktop/"
+      ],
+      "tier_files": {
+        "strict": [
+          "codex-desktop/examples/config-strict.toml",
+          "codex-desktop/examples/requirements-strict.toml"
+        ],
+        "moderate": [
+          "codex-desktop/examples/config-moderate.toml",
+          "codex-desktop/examples/requirements-moderate.toml"
+        ],
+        "baseline": [
+          "codex-desktop/examples/config-baseline.toml",
+          "codex-desktop/examples/requirements-baseline.toml"
+        ]
+      },
+      "sources": [
+        {
+          "name": "OpenAI Codex repository",
+          "kind": "repository",
+          "url": "https://github.com/openai/codex",
+          "watch_for": [
+            "desktop",
+            "managed",
+            "config",
+            "requirements",
+            "MDM"
+          ]
+        },
+        {
+          "name": "OpenAI Codex documentation",
+          "kind": "docs",
+          "url": "https://help.openai.com/en/collections/10227659-codex",
+          "watch_for": [
+            "Codex",
+            "settings",
+            "environment",
+            "security",
+            "connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "continue-dev",
+      "display_name": "Continue.dev",
+      "repo_paths": [
+        "continue-dev/"
+      ],
+      "tier_files": {
+        "strict": [
+          "continue-dev/examples/config-strict.yaml",
+          "continue-dev/examples/permissions-strict.yaml"
+        ],
+        "moderate": [
+          "continue-dev/examples/config-moderate.yaml",
+          "continue-dev/examples/permissions-moderate.yaml"
+        ],
+        "baseline": [
+          "continue-dev/examples/config-baseline.yaml",
+          "continue-dev/examples/permissions-baseline.yaml"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Configuration reference",
+          "kind": "docs",
+          "url": "https://docs.continue.dev/reference",
+          "watch_for": [
+            "config",
+            "permissions",
+            "models",
+            "context",
+            "MCP"
+          ]
+        },
+        {
+          "name": "Continue repository",
+          "kind": "repository",
+          "url": "https://github.com/continuedev/continue",
+          "watch_for": [
+            "config.yaml",
+            "policy",
+            "secrets",
+            "permissions",
+            "telemetry"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "windsurf",
+      "display_name": "Windsurf",
+      "repo_paths": [
+        "windsurf/"
+      ],
+      "tier_files": {
+        "strict": [
+          "windsurf/examples/enterprise-policy-strict.json"
+        ],
+        "moderate": [
+          "windsurf/examples/enterprise-policy-moderate.json"
+        ],
+        "baseline": [
+          "windsurf/examples/enterprise-policy-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Windsurf documentation",
+          "kind": "docs",
+          "url": "https://docs.windsurf.com/",
+          "watch_for": [
+            "enterprise",
+            "policy",
+            "Cascade",
+            "MCP",
+            "admin"
+          ]
+        },
+        {
+          "name": "Windsurf changelog",
+          "kind": "changelog",
+          "url": "https://docs.windsurf.com/changelog",
+          "watch_for": [
+            "policy",
+            "admin",
+            "security",
+            "MCP",
+            "permissions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tabnine",
+      "display_name": "Tabnine",
+      "repo_paths": [
+        "tabnine/"
+      ],
+      "tier_files": {
+        "strict": [
+          "tabnine/examples/command-permissions-strict.json"
+        ],
+        "moderate": [
+          "tabnine/examples/command-permissions-moderate.json"
+        ],
+        "baseline": [
+          "tabnine/examples/command-permissions-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Tabnine admin documentation",
+          "kind": "docs",
+          "url": "https://docs.tabnine.com/",
+          "watch_for": [
+            "admin",
+            "policy",
+            "command",
+            "workspace",
+            "privacy"
+          ]
+        },
+        {
+          "name": "Tabnine enterprise documentation",
+          "kind": "docs",
+          "url": "https://docs.tabnine.com/main/getting-started/enterprise",
+          "watch_for": [
+            "enterprise",
+            "private",
+            "deployment",
+            "security",
+            "policy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "amazon-q-developer",
+      "display_name": "Amazon Q Developer",
+      "repo_paths": [
+        "amazon-q-developer/"
+      ],
+      "tier_files": {
+        "strict": [
+          "amazon-q-developer/examples/iam-policy-strict.json",
+          "amazon-q-developer/examples/iam-scp-restrict.json"
+        ],
+        "moderate": [
+          "amazon-q-developer/examples/iam-policy-moderate.json"
+        ],
+        "baseline": [
+          "amazon-q-developer/examples/iam-policy-full-access.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Amazon Q Developer administration guide",
+          "kind": "docs",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html",
+          "watch_for": [
+            "administrator",
+            "policy",
+            "IAM",
+            "pro",
+            "settings"
+          ]
+        },
+        {
+          "name": "Amazon Q Developer IAM reference",
+          "kind": "docs",
+          "url": "https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html",
+          "watch_for": [
+            "Actions",
+            "Condition keys",
+            "Resource types",
+            "permissions",
+            "policy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gemini-cli",
+      "display_name": "Gemini CLI",
+      "repo_paths": [
+        "gemini-cli/"
+      ],
+      "tier_files": {
+        "strict": [
+          "gemini-cli/examples/settings-strict.json"
+        ],
+        "moderate": [
+          "gemini-cli/examples/settings-moderate.json"
+        ],
+        "baseline": [
+          "gemini-cli/examples/settings-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Gemini CLI repository",
+          "kind": "repository",
+          "url": "https://github.com/google-gemini/gemini-cli",
+          "watch_for": [
+            "settings.json",
+            "sandbox",
+            "MCP",
+            "telemetry",
+            "security"
+          ]
+        },
+        {
+          "name": "Gemini CLI documentation",
+          "kind": "docs",
+          "url": "https://cloud.google.com/gemini/docs/codeassist/gemini-cli",
+          "watch_for": [
+            "configuration",
+            "settings",
+            "tools",
+            "sandbox",
+            "authentication"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "google-gemini",
+      "display_name": "Google Gemini",
+      "repo_paths": [
+        "google-gemini/"
+      ],
+      "tier_files": {
+        "strict": [
+          "google-gemini/examples/safety-settings-strict.json"
+        ],
+        "moderate": [
+          "google-gemini/examples/safety-settings-moderate.json"
+        ],
+        "baseline": [
+          "google-gemini/examples/safety-settings-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Vertex AI Gemini safety settings",
+          "kind": "docs",
+          "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters",
+          "watch_for": [
+            "safety settings",
+            "harm category",
+            "threshold",
+            "blocked",
+            "filters"
+          ]
+        },
+        {
+          "name": "Google Cloud organization policies",
+          "kind": "docs",
+          "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview",
+          "watch_for": [
+            "organization policy",
+            "constraints",
+            "VPC Service Controls",
+            "locations",
+            "audit"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "claude-desktop",
+      "display_name": "Claude Desktop",
+      "repo_paths": [
+        "claude-desktop/"
+      ],
+      "tier_files": {
+        "strict": [
+          "claude-desktop/examples/config-strict.json"
+        ],
+        "moderate": [
+          "claude-desktop/examples/config-moderate.json"
+        ],
+        "baseline": [
+          "claude-desktop/examples/config-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Claude Desktop MCP documentation",
+          "kind": "docs",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+          "watch_for": [
+            "Claude Desktop",
+            "MCP",
+            "server",
+            "configuration",
+            "allowlist"
+          ]
+        },
+        {
+          "name": "Claude Desktop support documentation",
+          "kind": "docs",
+          "url": "https://support.anthropic.com/en/",
+          "watch_for": [
+            "Claude Desktop",
+            "settings",
+            "enterprise",
+            "admin",
+            "data"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "openai-platform",
+      "display_name": "OpenAI Platform",
+      "repo_paths": [
+        "openai-platform/"
+      ],
+      "tier_files": {
+        "strict": [
+          "openai-platform/examples/org-policy-strict.json"
+        ],
+        "moderate": [
+          "openai-platform/examples/org-policy-moderate.json"
+        ],
+        "baseline": [
+          "openai-platform/examples/org-policy-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "OpenAI platform administration",
+          "kind": "docs",
+          "url": "https://platform.openai.com/docs/guides/administration",
+          "watch_for": [
+            "organization",
+            "project",
+            "service account",
+            "roles",
+            "API keys"
+          ]
+        },
+        {
+          "name": "OpenAI platform changelog",
+          "kind": "changelog",
+          "url": "https://platform.openai.com/docs/changelog",
+          "watch_for": [
+            "admin",
+            "organization",
+            "audit",
+            "retention",
+            "policy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "claude-api",
+      "display_name": "Claude API",
+      "repo_paths": [
+        "claude-api/"
+      ],
+      "tier_files": {
+        "strict": [
+          "claude-api/examples/org-policy-strict.json"
+        ],
+        "moderate": [
+          "claude-api/examples/org-policy-moderate.json"
+        ],
+        "baseline": [
+          "claude-api/examples/org-policy-baseline.json"
+        ]
+      },
+      "sources": [
+        {
+          "name": "Anthropic admin API documentation",
+          "kind": "docs",
+          "url": "https://docs.anthropic.com/en/api/admin-api",
+          "watch_for": [
+            "workspace",
+            "role",
+            "API key",
+            "rate limit",
+            "admin"
+          ]
+        },
+        {
+          "name": "Anthropic API release notes",
+          "kind": "changelog",
+          "url": "https://docs.anthropic.com/en/release-notes/api",
+          "watch_for": [
+            "rate limit",
+            "workspace",
+            "key",
+            "audit",
+            "security"
+          ]
+        }
+      ]
+    }
+  ]
+}
