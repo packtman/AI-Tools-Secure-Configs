@@ -110,7 +110,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet; then
+          if git diff --quiet && git diff --cached --quiet; then
             echo "agent_changed=false" >> "${GITHUB_OUTPUT}"
             echo "Config maintenance agent made no file changes."
             exit 0
