@@ -218,15 +218,15 @@
           ]
         },
         {
-          "name": "OpenAI Codex documentation",
-          "kind": "docs",
-          "url": "https://help.openai.com/en/collections/10227659-codex",
+          "name": "OpenAI Codex config reference",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
           "watch_for": [
-            "Codex",
-            "settings",
-            "environment",
-            "security",
-            "connectors"
+            "config",
+            "sandbox",
+            "approval",
+            "model",
+            "profiles"
           ]
         }
       ]
@@ -311,7 +311,7 @@
         {
           "name": "Windsurf changelog",
           "kind": "changelog",
-          "url": "https://docs.windsurf.com/changelog",
+          "url": "https://windsurf.com/changelog",
           "watch_for": [
             "policy",
             "admin",
@@ -355,7 +355,7 @@
         {
           "name": "Tabnine enterprise documentation",
           "kind": "docs",
-          "url": "https://docs.tabnine.com/main/getting-started/enterprise",
+          "url": "https://www.tabnine.com/enterprise",
           "watch_for": [
             "enterprise",
             "private",
@@ -562,9 +562,9 @@
       },
       "sources": [
         {
-          "name": "OpenAI platform administration",
-          "kind": "docs",
-          "url": "https://platform.openai.com/docs/guides/administration",
+          "name": "OpenAI OpenAPI repository",
+          "kind": "repository",
+          "url": "https://github.com/openai/openai-openapi",
           "watch_for": [
             "organization",
             "project",
@@ -574,9 +574,9 @@
           ]
         },
         {
-          "name": "OpenAI platform changelog",
-          "kind": "changelog",
-          "url": "https://platform.openai.com/docs/changelog",
+          "name": "OpenAI OpenAPI schema",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml",
           "watch_for": [
             "admin",
             "organization",
