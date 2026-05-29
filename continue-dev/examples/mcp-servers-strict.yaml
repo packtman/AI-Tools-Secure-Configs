@@ -1,0 +1,6 @@
+# Continue.dev — MCP server allowlist (Strict tier)
+# Empty allowlist: no MCP servers in regulated deployments.
+
+schema: v1
+
+mcpServers: []

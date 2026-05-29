@@ -6,5 +6,9 @@ approval_policy = "on-request"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 
+[permission_profiles.enterprise-readonly]
+sandbox_mode = "read-only"
+approval_policy = "on-request"
+
 [sandbox_workspace_write]
 network_access = false

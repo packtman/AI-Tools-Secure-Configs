@@ -1,0 +1,15 @@
+{
+  "_comment": "BASELINE Amazon Q Developer agent controls. Complements iam-policy-full-access.json or baseline IAM.",
+
+  "agent_tool_governance": {
+    "block_third_party_plugins": false,
+    "require_admin_approved_transformations": false,
+    "mcp_integrations": "allowed_with_review",
+    "audit_conversation_exports": false
+  },
+
+  "iam_condition_keys": {
+    "enforce_mfa_for_qdeveloper": false,
+    "restrict_regions": []
+  }
+}

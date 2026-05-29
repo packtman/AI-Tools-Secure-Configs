@@ -3,6 +3,8 @@
 # macOS MDM, or system file (/etc/codex/requirements.toml).
 # For regulated environments (finance, healthcare, government).
 
+allow_managed_hooks_only = true
+
 allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []

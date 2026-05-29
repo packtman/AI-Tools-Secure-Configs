@@ -3,6 +3,8 @@
 # macOS MDM, or system file (/etc/codex/requirements.toml).
 # For startups and individual developers — essential guardrails only.
 
+allow_managed_hooks_only = false
+
 # Block the most dangerous sandbox mode
 allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]

@@ -1,0 +1,15 @@
+{
+  "_comment": "MODERATE Amazon Q Developer agent and plugin controls. Complements iam-policy-moderate.json.",
+
+  "agent_tool_governance": {
+    "block_third_party_plugins": true,
+    "require_admin_approved_transformations": true,
+    "mcp_integrations": "approval_required",
+    "audit_conversation_exports": true
+  },
+
+  "iam_condition_keys": {
+    "enforce_mfa_for_qdeveloper": false,
+    "restrict_regions": ["us-east-1", "us-west-2"]
+  }
+}

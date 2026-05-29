@@ -279,6 +279,35 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `excluded_repositories` | None | 3 sensitive repos | 5+ sensitive repos | Strict excludes more repos from AI processing |
 | `block_individual_traffic` | `true` | `true` | `true` | All tiers block shadow AI via personal accounts |
 | `allow_business_traffic` | `true` | `true` | `false` | Strict limits to enterprise-only hostname |
+| `copilot_cloud_agent` | `enabled` | `disabled` | `disabled` | Cloud agents run autonomously on GitHub infrastructure |
+| `mcp_policies.mcp_allowlist_enforcement` | `false` | `true` | `true` | Enterprise tiers require IT-approved MCP servers |
+| `hooks_policies.allow_org_hooks_only` | `false` | `false` | `true` | Strict blocks repo-local Copilot hooks |
+
+### 3.4 Continue.dev, OpenAI Platform, Claude API
+
+| Setting | Baseline | Moderate | Strict | Reason |
+|---------|----------|----------|--------|--------|
+| `mcpServers` (Continue) | `{}` (open) | IT allowlist | `[]` (none) | Strict removes all MCP connectors |
+| `mcp_governance` (OpenAI org) | Optional | Approval required | Block all user MCP | Aligns with Responses API MCP events |
+| `fast_mode` (Claude API) | Enabled | Disabled | Disabled | Premium throughput needs FinOps control |
+
+### 3.5 Codex CLI / Desktop, Windsurf, Gemini
+
+| Setting | Baseline | Moderate | Strict | Reason |
+|---------|----------|----------|--------|--------|
+| `allow_managed_hooks_only` (Codex) | `false` | `false` | `true` | Strict: only IT hooks run |
+| `requireCascadeMcpApproval` (Windsurf) | `true` | `true` | `true` | All tiers prompt before Cascade MCP |
+| `disableDevinCloud` (Windsurf) | `false` | `true` | `true` | Enterprise disables third-party cloud agents |
+| `trustedFolders.defaultAction` (Gemini CLI) | `prompt` | `prompt` | `deny` | Strict blocks execution in untrusted paths |
+| `mcp.allowed` (Gemini CLI) | Open | Named list | `[]` | Strict removes MCP tools |
+
+### 3.6 Tabnine, Amazon Q Developer, Google Gemini
+
+| Setting | Baseline | Moderate | Strict | Reason |
+|---------|----------|----------|--------|--------|
+| `integration_policies.mcp_servers` (Tabnine) | `allowed_with_review` | `approval_required` | `disabled` | Tiered external tool access |
+| `agent_tool_governance.mcp_integrations` (Amazon Q) | `allowed_with_review` | `approval_required` | `disabled` | See `agent-tool-policy-*.json` |
+| `agent_tool_governance` (Google Gemini) | Off | Audit on | Block plugins | Vertex/Code Assist tool surface |
 
 ---
 

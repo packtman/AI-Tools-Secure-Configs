@@ -1,0 +1,17 @@
+{
+  "_comment": "BASELINE Cursor MCP governance. Per-tool approval only; teams may expand allowlist locally after review.",
+
+  "mcpAllowlist": [],
+
+  "mcpPolicies": {
+    "requireApprovalPerTool": true,
+    "allowSessionScopedServerApproval": true,
+    "allowPermanentServerApproval": false,
+    "blockStdioServersInUntrustedWorkspaces": false
+  },
+
+  "teamPolicies": {
+    "privacyMode": "disabled",
+    "auditAgentActions": false
+  }
+}

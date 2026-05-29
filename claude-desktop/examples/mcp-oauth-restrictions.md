@@ -12,7 +12,13 @@ Deploy via MDM (macOS managed preferences or Windows registry), not in `claude_d
 | `isDesktopExtensionEnabled` | `false` | `false` | `true` |
 | `isClaudeCodeForDesktopEnabled` | `false` | `false` | `true` |
 
-## MCP server configuration
+## MCP server configuration (tier files)
+
+| Tier | Config file | `mcpServers` |
+|------|-------------|--------------|
+| Strict | `config-strict.json` | `{}` |
+| Moderate | `config-moderate.json` | IT allowlist only |
+| Baseline | `config-baseline.json` | Optional; review required |
 
 - Use an empty `mcpServers` object in Strict tier configs.
 - Moderate tier: allowlist only IT-vetted servers in `config-moderate.json`.

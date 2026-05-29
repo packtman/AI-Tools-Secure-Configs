@@ -68,15 +68,18 @@
       ],
       "tier_files": {
         "strict": [
-          "cursor/examples/permissions-strict.json"
+          "cursor/examples/permissions-strict.json",
+          "cursor/examples/mcp-governance-strict.json"
         ],
         "moderate": [
           "cursor/examples/permissions-moderate.json",
+          "cursor/examples/mcp-governance-moderate.json",
           "rollout-guide/configs/cursor/permissions-moderate.json",
           "rollout-guide/configs/cursor/settings.json"
         ],
         "baseline": [
-          "cursor/examples/permissions-baseline.json"
+          "cursor/examples/permissions-baseline.json",
+          "cursor/examples/mcp-governance-baseline.json"
         ]
       },
       "sources": [
@@ -160,13 +163,16 @@
       ],
       "tier_files": {
         "strict": [
-          "codex-cli/examples/config-strict.toml"
+          "codex-cli/examples/config-strict.toml",
+          "codex-cli/examples/requirements-strict.toml"
         ],
         "moderate": [
-          "codex-cli/examples/config-moderate.toml"
+          "codex-cli/examples/config-moderate.toml",
+          "codex-cli/examples/requirements-moderate.toml"
         ],
         "baseline": [
-          "codex-cli/examples/config-baseline.toml"
+          "codex-cli/examples/config-baseline.toml",
+          "codex-cli/examples/requirements-baseline.toml"
         ]
       },
       "sources": [
@@ -252,15 +258,18 @@
       "tier_files": {
         "strict": [
           "continue-dev/examples/config-strict.yaml",
-          "continue-dev/examples/permissions-strict.yaml"
+          "continue-dev/examples/permissions-strict.yaml",
+          "continue-dev/examples/mcp-servers-strict.yaml"
         ],
         "moderate": [
           "continue-dev/examples/config-moderate.yaml",
-          "continue-dev/examples/permissions-moderate.yaml"
+          "continue-dev/examples/permissions-moderate.yaml",
+          "continue-dev/examples/mcp-servers-moderate.yaml"
         ],
         "baseline": [
           "continue-dev/examples/config-baseline.yaml",
-          "continue-dev/examples/permissions-baseline.yaml"
+          "continue-dev/examples/permissions-baseline.yaml",
+          "continue-dev/examples/mcp-servers-baseline.yaml"
         ]
       },
       "sources": [
@@ -387,13 +396,16 @@
       "tier_files": {
         "strict": [
           "amazon-q-developer/examples/iam-policy-strict.json",
-          "amazon-q-developer/examples/iam-scp-restrict.json"
+          "amazon-q-developer/examples/iam-scp-restrict.json",
+          "amazon-q-developer/examples/agent-tool-policy-strict.json"
         ],
         "moderate": [
-          "amazon-q-developer/examples/iam-policy-moderate.json"
+          "amazon-q-developer/examples/iam-policy-moderate.json",
+          "amazon-q-developer/examples/agent-tool-policy-moderate.json"
         ],
         "baseline": [
-          "amazon-q-developer/examples/iam-policy-full-access.json"
+          "amazon-q-developer/examples/iam-policy-full-access.json",
+          "amazon-q-developer/examples/agent-tool-policy-baseline.json"
         ]
       },
       "sources": [
@@ -563,13 +575,16 @@
       ],
       "tier_files": {
         "strict": [
-          "openai-platform/examples/org-policy-strict.json"
+          "openai-platform/examples/org-policy-strict.json",
+          "openai-platform/examples/agent-mcp-governance-strict.json"
         ],
         "moderate": [
-          "openai-platform/examples/org-policy-moderate.json"
+          "openai-platform/examples/org-policy-moderate.json",
+          "openai-platform/examples/agent-mcp-governance-moderate.json"
         ],
         "baseline": [
-          "openai-platform/examples/org-policy-baseline.json"
+          "openai-platform/examples/org-policy-baseline.json",
+          "openai-platform/examples/agent-mcp-governance-baseline.json"
         ]
       },
       "sources": [
@@ -607,13 +622,16 @@
       ],
       "tier_files": {
         "strict": [
-          "claude-api/examples/org-policy-strict.json"
+          "claude-api/examples/org-policy-strict.json",
+          "claude-api/examples/rate-limits-api-policy-strict.json"
         ],
         "moderate": [
-          "claude-api/examples/org-policy-moderate.json"
+          "claude-api/examples/org-policy-moderate.json",
+          "claude-api/examples/rate-limits-api-policy.json"
         ],
         "baseline": [
-          "claude-api/examples/org-policy-baseline.json"
+          "claude-api/examples/org-policy-baseline.json",
+          "claude-api/examples/rate-limits-api-policy-baseline.json"
         ]
       },
       "sources": [

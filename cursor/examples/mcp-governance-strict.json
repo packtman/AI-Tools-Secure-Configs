@@ -1,0 +1,19 @@
+{
+  "_comment": "STRICT Cursor MCP governance. No server allowlist auto-approval; blocks permanent and session-wide MCP trust.",
+
+  "mcpAllowlist": [],
+
+  "mcpPolicies": {
+    "requireApprovalPerTool": true,
+    "allowSessionScopedServerApproval": false,
+    "allowPermanentServerApproval": false,
+    "blockStdioServersInUntrustedWorkspaces": true,
+    "blockRemoteMcpWithoutTeamAllowlist": true
+  },
+
+  "teamPolicies": {
+    "privacyMode": "enabled",
+    "auditAgentActions": true,
+    "blockMcpInCloudAgent": true
+  }
+}

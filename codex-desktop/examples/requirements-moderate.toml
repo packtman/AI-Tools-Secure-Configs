@@ -3,6 +3,8 @@
 # macOS MDM, or system file (/etc/codex/requirements.toml).
 # For standard enterprise development teams.
 
+allow_managed_hooks_only = false
+
 allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
