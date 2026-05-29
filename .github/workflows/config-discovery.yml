@@ -27,7 +27,7 @@ jobs:
       - name: Prepare discovery branch
         env:
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
-          PR_BRANCH: automation/config-discovery
+          PR_BRANCH: automation/config-maintenance
         run: |
           set -euo pipefail
           git fetch origin "${BASE_BRANCH}"
@@ -51,7 +51,7 @@ jobs:
         env:
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
           GH_TOKEN: ${{ github.token }}
-          PR_BRANCH: automation/config-discovery
+          PR_BRANCH: automation/config-maintenance
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -90,8 +90,10 @@ jobs:
           This PR should become the actual config-update PR after the config-maintenance agent has applied relevant changes. Do not merge it with only source snapshots unless the agent has confirmed no config updates are needed.
           PR_BODY
 
-          if gh pr view "${PR_BRANCH}" --json url >/dev/null 2>&1; then
-            gh pr edit "${PR_BRANCH}" \
+          OPEN_PR="$(gh pr list --head "${PR_BRANCH}" --state open --json number --jq '.[0].number // empty')"
+
+          if [ -n "${OPEN_PR}" ]; then
+            gh pr edit "${OPEN_PR}" \
               --title "Config maintenance: upstream source changes detected" \
               --body-file pr-body.md
           else
