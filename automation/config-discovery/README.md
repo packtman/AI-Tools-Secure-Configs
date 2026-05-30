@@ -11,7 +11,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `tool-sources.json` | Curated watch list of official docs, changelogs, and repositories for each supported tool. |
 | `discover_configs.py` | Dependency-free scanner that fingerprints sources, extracts likely config terms, and writes a PR report when a source changes. |
 | `agent-prompt.md` | Instructions for the config-maintenance agent that turns discovery reports into config and documentation updates. |
-| `CURSOR-AUTOMATION.md` | Copy/paste setup prompt for a Cursor Cloud scheduled automation that produces final config-update PRs. |
+| `CURSOR-AUTOMATION.md` | Optional Cursor Cloud setup prompt for teams that want a second scheduled agent or do not use the GitHub Actions model secret. |
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
@@ -23,10 +23,12 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 3. It compares the normalized response fingerprint, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
-6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+6. The workflow commits those files to `automation/config-maintenance`.
+7. If `ANTHROPIC_API_KEY` is available to GitHub Actions, the workflow runs the config-maintenance agent on that branch.
+8. The agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, and leaves the edits for the workflow to commit.
+9. The workflow opens or updates a PR from `automation/config-maintenance`.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+If the model API key is missing, the workflow still opens a discovery PR with the source-change report. A human reviewer can complete the review, or you can use the Cursor Cloud automation prompt in this directory as the final config-update agent.
 
 ## Adding a Source
 
@@ -48,6 +50,12 @@ Add an entry to `tool-sources.json` under the relevant tool:
 Use official vendor sources when possible. Prefer stable markdown, raw files, API endpoints, or pages that are specific to configuration, admin policy, managed settings, MCP, permissions, sandboxing, network controls, privacy, audit logs, or content exclusion. Avoid generic marketing pages when a reference page exists, because page chrome changes can create noisy PRs.
 
 ## Local Validation
+
+```bash
+python3 scripts/validate_config_files.py
+```
+
+Validate the discovery registry without fetching vendor sources:
 
 ```bash
 python3 automation/config-discovery/discover_configs.py \

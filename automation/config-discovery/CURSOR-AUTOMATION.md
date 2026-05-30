@@ -1,12 +1,12 @@
 # Cursor Automation Setup
 
-Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
+Use this prompt for an optional Cursor Cloud scheduled automation if you want a second agent to review discovery PRs, or if GitHub Actions does not have the `ANTHROPIC_API_KEY` secret needed to run the built-in config-maintenance agent.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor and, when configured with the model API key, also runs the config-maintenance agent. Cursor Cloud can act as a fallback or additional review agent on the same PR branch.
 
 ## Recommended Trigger
 
-- Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
+- Schedule: daily, after `.github/workflows/config-discovery.yml` has run, or manually after a discovery PR appears.
 - Repository: this repo.
 - Branch: default branch, unless your automation service creates a working branch automatically.
 
@@ -43,6 +43,12 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 - Update JSONC, deployable JSON, rationale docs, tier delta tables, and workflow-preservation notes.
 - Push a PR that reviewers can merge as an actual config update.
 
-## Why This Requires Cursor Automation
+## When to Use Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+Use Cursor automation when:
+
+- GitHub Actions cannot access `ANTHROPIC_API_KEY`.
+- You want a separate agent review before merging generated config changes.
+- A discovery PR contains only snapshots and a report, and a human wants an agent to complete the rollout-engineering review.
+
+The source-change signal alone is not enough to merge. A human or AI maintenance agent must decide whether the upstream change is a real admin control, then update tiered configs, rationale, rollout impact, deployment paths, validation steps, and workflow-preservation notes.

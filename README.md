@@ -60,6 +60,9 @@ Use MDM, server-managed settings, or admin consoles to deploy and enforce polici
 ```
 AI-Secure-Configs/
 ├── README.md                    # This file
+├── .github/workflows/           # Scheduled discovery and config validation workflows
+├── automation/config-discovery/ # Upstream source watcher, agent prompt, state, and reports
+├── rollout-guide/               # Cross-tool rollout plan and sample configs
 ├── claude-api/                  # Anthropic Claude API Platform
 │   ├── README.md
 │   ├── secure-org-policy.md
@@ -140,9 +143,11 @@ AI-Secure-Configs/
 
 ### Automated Config Discovery
 
-This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
+This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens or updates a PR when an upstream source changes.
 
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+When `ANTHROPIC_API_KEY` is configured for GitHub Actions, `.github/workflows/config-discovery.yml` runs the config-maintenance agent in the PR branch. The agent reviews the generated report, verifies upstream changes, updates the affected tiered config or rollout documentation when a real admin control changed, validates the repository, and commits those edits before the PR is opened or updated.
+
+If the model API key is not available, the workflow still opens a discovery PR with the source-change report so a human reviewer or the optional Cursor automation can complete the config review.
 
 ### For Security Teams
 

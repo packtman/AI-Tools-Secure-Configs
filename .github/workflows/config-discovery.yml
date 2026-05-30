@@ -85,19 +85,22 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check config agent availability
         if: steps.discovery.outputs.run_agent == 'true'
+        id: agent-auth
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow. Opening a discovery PR without agent edits."
+            echo "agent_available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "agent_available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-auth.outputs.agent_available == 'true'
         uses: anthropics/claude-code-action@v1
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -127,8 +130,20 @@ jobs:
             --max-turns 30
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
+      - name: Install validation dependencies
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-auth.outputs.agent_available == 'true'
+        run: |
+          set -euo pipefail
+          python3 -m pip install --upgrade PyYAML
+
+      - name: Validate config files
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-auth.outputs.agent_available == 'true'
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py
+
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-auth.outputs.agent_available == 'true'
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -155,13 +170,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          AGENT_AVAILABLE: ${{ steps.agent-auth.outputs.agent_available }}
         run: |
           set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When the config-maintenance agent is available, it reviews the generated report, updates affected tiered configs and rollout docs, validates the repository, and commits those changes to this PR branch.
 
           Review:
 
@@ -175,8 +191,18 @@ jobs:
           3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
           4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
-          If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
+          If this PR contains only discovery snapshot/report changes, either the agent was unavailable or it determined no config update was needed. Review the report before merging.
           PR_BODY
+
+          if [ "${AGENT_AVAILABLE:-false}" != "true" ]; then
+            cat >> pr-body.md <<'PR_BODY'
+
+          Agent status:
+
+          - The config-maintenance agent did not run because `ANTHROPIC_API_KEY` was not available to the workflow.
+          - Add that repository secret, or run the Cursor automation described in `automation/config-discovery/CURSOR-AUTOMATION.md`, then rerun the workflow.
+          PR_BODY
+          fi
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"
