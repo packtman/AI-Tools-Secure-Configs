@@ -59,7 +59,6 @@
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
-  "disableWorkflows": false,
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",

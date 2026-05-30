@@ -203,7 +203,6 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Deploy `managed-settings.json` with deny rules for dangerous patterns.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
-- [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

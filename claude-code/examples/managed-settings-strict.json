@@ -108,7 +108,6 @@
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
-  "disableWorkflows": true,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",

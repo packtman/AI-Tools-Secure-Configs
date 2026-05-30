@@ -88,18 +88,6 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `"disable"` | Until auto mode exits research preview and the classifier is proven reliable. |
 | Developer | Not set | Let developers opt in for personal productivity. |
 
-### `disableWorkflows`
-
-**What it does:** Disables dynamic workflows and bundled workflow commands. When enabled, workflow commands are unavailable, the `workflow` keyword does not trigger a workflow run, and `ultracode` is removed from the effort menu. Equivalent environment control: `CLAUDE_CODE_DISABLE_WORKFLOWS=1`.
-
-**Why it matters:** Dynamic workflows are a research preview for long-running, parallel agent work. They can consume more usage and execute broader plans than a normal interactive session, so organizations should pilot them before enabling broadly.
-
-| Environment | Recommended | Reasoning |
-|-------------|-------------|-----------|
-| Regulated | `true` | Long-running autonomous workflows need explicit approval, audit coverage, and defined repository scope. |
-| Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
-| Developer | `false` | Allow local experimentation after user confirmation prompts. |
-
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
