@@ -164,15 +164,6 @@
   //      Code and trigger actions.
   "disableDeepLinkRegistration": "disable",
 
-  // WHAT: Disables dynamic workflows and bundled workflow commands.
-  // WHY: Dynamic workflows are a research preview for long-running, parallel agent
-  //      work. Moderate tier keeps normal Claude Code workflows available, but blocks
-  //      this higher-autonomy mode until the admin has a pilot and usage controls.
-  //      Equivalent environment control: CLAUDE_CODE_DISABLE_WORKFLOWS=1.
-  // BREAKS IF SET TO TRUE: Developers cannot use workflow commands, the workflow
-  //      keyword will not trigger runs, and ultracode is removed from the effort menu.
-  "disableWorkflows": true,
-
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

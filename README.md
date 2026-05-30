@@ -138,12 +138,6 @@ AI-Secure-Configs/
 4. Deploy configurations via your MDM, config management tool, or admin console.
 5. Train your team on the security policies and provide the documentation.
 
-### Automated Config Discovery
-
-This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
-
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
-
 ### For Security Teams
 
 1. Use the deny lists and content exclusion patterns as a baseline.
