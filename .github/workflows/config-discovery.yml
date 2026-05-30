@@ -45,6 +45,12 @@ jobs:
           fi
           git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
 
+      - name: Install validation tools
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user pyyaml toml
+          pip install --user yamllint || true
+
       - name: Run config discovery
         id: discovery
         env:
@@ -56,9 +62,15 @@ jobs:
             --state automation/config-discovery/state/source-snapshots.json \
             --report automation/config-discovery/reports/latest-config-discovery.md
 
+          python3 automation/config-discovery/build_agent_scope.py \
+            --report automation/config-discovery/reports/latest-config-discovery.md \
+            --output automation/config-discovery/reports/agent-scope.md \
+            --max-tools 4
+
           git add \
             automation/config-discovery/state/source-snapshots.json \
-            automation/config-discovery/reports/latest-config-discovery.md
+            automation/config-discovery/reports/latest-config-discovery.md \
+            automation/config-discovery/reports/agent-scope.md
 
           if git diff --cached --quiet; then
             echo "discovery_changed=false" >> "${GITHUB_OUTPUT}"
@@ -97,7 +109,9 @@ jobs:
           fi
 
       - name: Run config maintenance agent
+        id: agent
         if: steps.discovery.outputs.run_agent == 'true'
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -108,30 +122,33 @@ jobs:
             You are maintaining this repository's hardened AI tool configs.
 
             Read and follow `automation/config-discovery/agent-prompt.md`.
-            Read `automation/config-discovery/reports/latest-config-discovery.md`.
+            Read `automation/config-discovery/reports/agent-scope.md` first (your work list for this run).
+            Use `automation/config-discovery/reports/latest-config-discovery.md` only for details on scoped tools.
 
-            Goal: turn this discovery branch into a real config-update PR.
+            Goal: apply focused config updates for scoped tools only, then stop.
 
             Required behavior:
-            1. Review every changed upstream source in the report.
-            2. Decide whether each upstream change introduces, removes, renames, or changes the meaning of a real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion control.
-            3. If a real control changed, update the affected tiered config files, rationale docs, rollout docs, deployment paths, validation steps, and workflow-preservation notes.
-            4. If no config update is needed for a changed source, add a concise "No config update needed" note to the discovery report explaining why.
-            5. Keep deployable JSON valid. Use JSONC plus `.comments.md` rationale where comments are needed.
+            1. Process only tools listed in `agent-scope.md`. Do not review all 14 tools in one run.
+            2. For each real admin or security control, update **strict, moderate, and baseline** tier files with tier-appropriate values.
+            3. Update rationale, README tables, rollout tier deltas, and `tool-sources.json` tier_files when you add paths.
+            4. If no config update is needed for a scoped tool, add a concise "No config update needed" note to the discovery report.
+            5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, TOML, or shell file using the commands in `AGENTS.md`.
+            8. Validate every edited JSON, YAML, and TOML using AGENTS.md commands before finishing.
 
-            Leave the resulting file changes unstaged. The workflow will commit and open the PR after you finish.
+            Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
-            --max-turns 30
+            --max-turns 60
+            --model claude-sonnet-4-20250514
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
+          AGENT_OUTCOME: ${{ steps.agent.outcome }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -140,13 +157,27 @@ jobs:
           if git diff --quiet && git diff --cached --quiet; then
             echo "agent_changed=false" >> "${GITHUB_OUTPUT}"
             echo "Config maintenance agent made no file changes."
+            if [ "${AGENT_OUTCOME}" = "failure" ]; then
+              echo "::error::Agent step failed (often error_max_turns). See the Claude Code action log. Re-run with workflow_dispatch or reduce scope in agent-scope.md."
+              exit 1
+            fi
             exit 0
           fi
 
           git add .
-          git commit -m "Apply config maintenance updates"
+          if [ "${AGENT_OUTCOME}" = "failure" ]; then
+            git commit -m "Apply partial config maintenance updates (agent hit turn limit)"
+          else
+            git commit -m "Apply config maintenance updates"
+          fi
           git push --force-with-lease -u origin "${PR_BRANCH}"
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
+
+      - name: Fail if agent errored with no usable diff
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
+        run: |
+          echo "::error::Config maintenance agent failed before producing file changes. Typical cause: error_max_turns (task too large for one run). Check agent-scope.md limits and re-run."
+          exit 1
 
       - name: Open or update pull request
         if: steps.discovery.outputs.discovery_changed == 'true' || steps.agent-changes.outputs.agent_changed == 'true'

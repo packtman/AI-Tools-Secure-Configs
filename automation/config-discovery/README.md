@@ -14,6 +14,8 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `CURSOR-AUTOMATION.md` | Copy/paste setup prompt for a Cursor Cloud scheduled automation that produces final config-update PRs. |
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
+| `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
+| `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
 
 ## How the Loop Works
@@ -85,4 +87,15 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+
+## Agent step failures (`error_max_turns`)
+
+If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow now:
+
+- Builds `reports/agent-scope.md` with at most four tools that have missing local terms.
+- Uses `--max-turns 60` and instructs the agent to mirror strict, moderate, and baseline per scoped tool.
+- Commits partial file changes if the agent edited files before hitting the limit.
+- Fails the job only when the agent errors and leaves no diff.
+
+Re-run with `workflow_dispatch` and `force_agent_review: true` to process deferred tools on a later run.
