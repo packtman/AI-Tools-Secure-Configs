@@ -16,7 +16,9 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
+| `scripts/validate_config_files.py` | Repo-wide validation helper used before agent changes are committed. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `.github/workflows/config-validation.yml` | Pull request validation for JSON, YAML, TOML, and shell examples. |
 
 ## How the Loop Works
 
@@ -26,9 +28,10 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+7. If `ANTHROPIC_API_KEY` is available, the workflow runs the config-maintenance agent on a focused scope, validates the edited files, commits real config changes, and opens or updates the PR.
+8. If the key is unavailable, the workflow still opens the discovery PR so a Cursor Cloud automation or human reviewer can run `agent-prompt.md` against the report.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+GitHub Actions can detect and stage the source-change signal. The model-backed maintenance step decides whether a brand-new vendor setting belongs in Baseline, Moderate, Strict, or no tier at all. Use the Cursor Cloud automation prompt in this directory as the fallback or preferred agent runner when you do not want the workflow to call a model API directly.
 
 ## Adding a Source
 
@@ -89,11 +92,13 @@ The workflow needs:
 
 No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
 
+If `ANTHROPIC_API_KEY` is missing, the workflow does not fail the discovery run. It opens a PR with the generated report and marks the PR as needing agent or human review.
+
 ## Agent step failures (`error_max_turns`)
 
 If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow now:
 
-- Builds `reports/agent-scope.md` with at most four tools that have missing local terms.
+- Builds `reports/agent-scope.md` with at most four unique tools that have missing local terms.
 - Uses `--max-turns 60` and instructs the agent to mirror strict, moderate, and baseline per scoped tool.
 - Commits partial file changes if the agent edited files before hitting the limit.
 - Fails the job only when the agent errors and leaves no diff.

@@ -9,27 +9,12 @@ import re
 import sys
 
 
-SECTION_RE = re.compile(r"^### (.+?): (.+)$", re.MULTILINE)
 MISSING_BLOCK = "Potential config terms not found in local tool files:"
+SOURCE_URL_RE = re.compile(r"^- Source URL: (.+)$", re.MULTILINE)
 
 
-def build_scope(report_text: str, max_tools: int) -> str:
-    lines = [
-        "# Agent scope for this run",
-        "",
-        "Process only the tools listed below. For each tool:",
-        "",
-        "1. Read the cited missing terms and the upstream URL from the full discovery report.",
-        "2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.",
-        "3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.",
-        "4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.",
-        "5. Validate edited JSON, YAML, and TOML before finishing.",
-        "",
-        "Do not attempt to review unchanged tools or sources with no missing local terms in this run.",
-        "",
-    ]
-
-    sections: list[tuple[str, str, list[str]]] = []
+def parse_missing_sections(report_text: str) -> list[tuple[str, str, str | None, list[str]]]:
+    sections: list[tuple[str, str, str | None, list[str]]] = []
     parts = report_text.split("### ")
     for part in parts[1:]:
         header_line, _, body = part.partition("\n")
@@ -44,7 +29,29 @@ def build_scope(report_text: str, max_tools: int) -> str:
         terms_block = after.split("\n\n", 1)[0]
         terms = re.findall(r"`([^`]+)`", terms_block)
         if terms:
-            sections.append((tool_name, source_name, terms))
+            source_url_match = SOURCE_URL_RE.search(body)
+            source_url = source_url_match.group(1).strip() if source_url_match else None
+            sections.append((tool_name, source_name, source_url, terms))
+    return sections
+
+
+def build_scope(report_text: str, max_tools: int) -> str:
+    lines = [
+        "# Agent scope for this run",
+        "",
+        "Process only the tools listed below. For each tool:",
+        "",
+        "1. Read the cited missing terms and the upstream URL from the full discovery report.",
+        "2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.",
+        "3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.",
+        "4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.",
+        "5. Validate edited JSON, YAML, TOML, and shell files before finishing.",
+        "",
+        "Do not attempt to review unchanged tools or sources with no missing local terms in this run.",
+        "",
+    ]
+
+    sections = parse_missing_sections(report_text)
 
     if not sections:
         lines.extend(
@@ -58,29 +65,38 @@ def build_scope(report_text: str, max_tools: int) -> str:
         )
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    grouped: dict[str, list[tuple[str, str | None, list[str]]]] = {}
+    for tool_name, source_name, source_url, terms in sections:
+        grouped.setdefault(tool_name, []).append((source_name, source_url, terms))
+
+    tool_items = list(grouped.items())
+    limited = tool_items[:max_tools]
+    lines.append(f"## Tools to process ({len(limited)} of {len(tool_items)} tools with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name, sources in limited:
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+        for source_name, source_url, terms in sources:
+            lines.append(f"- Source: {source_name}")
+            if source_url:
+                lines.append(f"  - Upstream URL: {source_url}")
+            lines.append(f"  - Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
+            if len(terms) > 15:
+                lines.append(f"  - ({len(terms) - 15} more terms in the full report)")
         lines.append("")
 
-    if len(sections) > max_tools:
+    if len(tool_items) > max_tools:
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(tool_items) - max_tools} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name, sources in tool_items[max_tools:]:
+            source_names = ", ".join(source_name for source_name, _, _ in sources)
+            lines.append(f"- {tool_name} ({source_names})")
         lines.append("")
 
     return "\n".join(lines)
