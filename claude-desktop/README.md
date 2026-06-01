@@ -77,6 +77,10 @@ Each MCP server entry in `claude_desktop_config.json` grants Claude the ability 
 - Review MCP server source code before deployment.
 - Deploy enterprise policies to block local MCP if not needed.
 
+### Claude Code MCP helper variables
+
+The upstream MCP documentation also mentions `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL`. These are runtime variables passed to Claude Code MCP `headersHelper` scripts so one helper can identify the server name and URL it is authenticating for. They are not Claude Desktop enterprise policy keys and should not be placed in `claude_desktop_config.json`.
+
 ---
 
 ## Deployment Checklist
