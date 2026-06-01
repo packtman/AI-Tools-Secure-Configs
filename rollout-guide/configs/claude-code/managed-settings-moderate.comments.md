@@ -141,6 +141,18 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Disables background agents and the agent view surface. Equivalent environment control: `CLAUDE_CODE_DISABLE_AGENT_VIEW=1`.
+
+**Why (Moderate tier):** Background agents can continue work while the developer is away from the terminal. Moderate tier should pilot that higher-autonomy surface before broad rollout.
+
+**What breaks if set to true:** Developers cannot use `claude agents`, `--bg`, `/background`, or the on-demand supervisor.
+
+---
+
 ## `disableDeepLinkRegistration`
 
 **Value:** `"disable"`

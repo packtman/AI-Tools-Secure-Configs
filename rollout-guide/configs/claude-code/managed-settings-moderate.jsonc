@@ -157,6 +157,14 @@
   //      Claude Code sessions.
   "disableRemoteControl": true,
 
+  // WHAT: Disables background agents and the agent view surface.
+  // WHY: Background agents can continue work while the developer is away from the
+  //      terminal. Moderate tier should pilot that autonomy before broad rollout.
+  //      Equivalent environment control: CLAUDE_CODE_DISABLE_AGENT_VIEW=1.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude agents, --bg,
+  //      /background, or the on-demand supervisor.
+  "disableAgentView": true,
+
   // WHAT: Prevents Claude Code from registering as a protocol handler for deep links.
   // WHY: Deep links (e.g., claude-code://) from untrusted websites could trigger
   //      Claude Code actions without the user's awareness.

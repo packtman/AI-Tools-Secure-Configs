@@ -31,5 +31,10 @@ contextProviders:
   - name: "codebase"
   - name: "web"
 
+# WHAT: MCP server list for optional developer integrations.
+# WHY: Baseline keeps no MCP servers by default, but provides the documented place for reviewed local additions.
+# BREAKS IF REMOVED OR POPULATED INCORRECTLY: Ad hoc MCP setup may move into undocumented files, or broad servers may expose the user's machine.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

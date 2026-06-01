@@ -183,6 +183,7 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
+| `disableAgentView` | Disable background agents and agent view |
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |

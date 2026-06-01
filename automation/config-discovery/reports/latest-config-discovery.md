@@ -80,6 +80,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+Agent review note: `CLAUDE_CODE_DISABLE_AGENT_VIEW` maps to managed setting `disableAgentView`, so the Claude Code tier files and rollout guidance were updated. `ANTHROPIC_MODEL` is a per-session model override and is documented in the environment variable reference, but no default `availableModels` allowlist was added because approved model lists are organization-specific. `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, and `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` were documented as optional environment controls, but not added to the tier templates because they are workflow preferences unless an org centrally manages IDE integration deployment.
+
 ### Claude Code: Hooks documentation
 
 - Change type: `fingerprint-method-changed`
@@ -121,6 +123,8 @@ Potential config terms not found in local tool files:
 `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Agent review note: these are model override variables surfaced in hook documentation. They do not introduce a new hook permission or managed policy control, so no tier config change was made. The variables are documented in `claude-code/examples/environment-variables-reference.md`.
 
 ### Claude Code: Dynamic workflows documentation
 
@@ -348,6 +352,8 @@ Potential config terms not found in local tool files:
 `mcpServers`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Agent review note: `mcpServers` is a real Continue.dev config surface for MCP tool integrations. The Continue.dev tier YAML files now include an explicit empty `mcpServers` list and rationale so admins can add only vetted servers with scoped directories and secret references.
 
 ### Continue.dev: Continue repository
 
@@ -651,6 +657,8 @@ Potential config terms not found in local tool files:
 `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Agent review note: these variables are context passed to Claude Code MCP `headersHelper` scripts. They are not Claude Desktop policy keys or deployable MCP server settings, so no Claude Desktop config change was made.
 
 ### Claude Desktop: Claude Desktop support documentation
 

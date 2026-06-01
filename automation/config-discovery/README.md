@@ -87,7 +87,7 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step uses repository secret `ANTHROPIC_API_KEY` when available. If the secret is absent, the workflow still opens a discovery PR and marks it for Cursor Cloud or human review.
 
 ## Agent step failures (`error_max_turns`)
 

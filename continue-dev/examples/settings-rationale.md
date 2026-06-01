@@ -149,6 +149,14 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | HTTP/API client | High | Allow only to approved internal APIs. Block external URLs. |
 | Shell execution | **Critical** | Block or require-confirmation for every invocation. |
 
+### Recommended Tier Values
+
+| Tier | `mcpServers` value | Why |
+|------|--------------------|-----|
+| Strict | `[]` | No MCP tool integrations until the server, package version, scope, and logs are approved. |
+| Moderate | `[]` by default, add vetted servers only | Standard enterprise teams can request approved MCP servers, but no server should ship implicitly. |
+| Baseline | `[]` by default | Developers can add local servers after review, but broad filesystem or shell servers remain risky. |
+
 ### Misconfiguration Risk
 
 An unscoped filesystem MCP server gives the agent access to the entire filesystem. A shell-execution MCP server gives the agent arbitrary command execution. A database MCP server with write access allows the agent to modify production data. Each unaudited MCP server is an additional attack surface.

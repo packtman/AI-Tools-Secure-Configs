@@ -41,6 +41,10 @@ Defaults:
 | `--readonly` | Only read-only tools are available |
 | Default | Respects per-tool permission settings |
 
+### MCP Servers
+
+MCP (Model Context Protocol) servers add external tools to Continue.dev agents. Treat each `mcpServers` entry like a new integration with file, network, or API access. Start with an empty list, then add only approved servers with scoped directories, pinned packages, and secrets referenced through org secrets.
+
 ### Configuration Hierarchy
 
 1. **Workspace** — `.continuerc.json` in project root

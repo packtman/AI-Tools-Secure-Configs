@@ -36,5 +36,10 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Explicit allowlist of MCP servers for enterprise deployments.
+# WHY: Add only IT-vetted MCP servers with scoped directories, pinned packages, and env-var secrets.
+# BREAKS IF REMOVED OR POPULATED INCORRECTLY: Unreviewed MCP tools may access code, credentials, APIs, or databases.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

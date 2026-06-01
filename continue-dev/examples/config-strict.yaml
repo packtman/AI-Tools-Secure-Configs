@@ -32,5 +32,10 @@ contextProviders:
   - name: "diff"
   - name: "tree"
 
+# WHAT: No MCP servers are configured in the Strict tier.
+# WHY: MCP servers add tool capabilities that can read files, call APIs, or execute commands.
+# BREAKS IF REMOVED OR POPULATED INCORRECTLY: Unvetted MCP tools may access sensitive data.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: true

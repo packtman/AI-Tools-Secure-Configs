@@ -29,11 +29,17 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable auto memory writes | `1` for sensitive environments |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Show a one-line recap when returning to the terminal | `0` for high-sensitivity terminals |
 
 ## Behavior Controls
 
 | Variable | Description | Secure value |
 |----------|-------------|-------------|
+| `ANTHROPIC_MODEL` | Override the model for a session | Prefer `availableModels` in managed settings if model choice must be restricted |
+| `CLAUDE_MODEL` | Legacy or compatibility model override for hooks and integrations | Prefer managed `model` or `availableModels` settings |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | Disable background agents and agent view | `1` for Moderate and Strict rollouts |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Auto-connect Claude Code to a supported IDE integration | `0` when IDE integrations are not centrally deployed |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Skip automatic IDE integration installation | `1` when IT deploys IDE extensions through MDM or endpoint management |
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |

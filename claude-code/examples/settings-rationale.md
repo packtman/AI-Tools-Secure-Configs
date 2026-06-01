@@ -213,6 +213,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | No external control of the agent. |
 | Standard enterprise | `true` | Unless specific remote control integrations are approved. |
 
+### `disableAgentView` / `CLAUDE_CODE_DISABLE_AGENT_VIEW`
+
+**What it does:** Disables background agents and the agent view surface, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can continue work while the developer is away from the terminal. That is useful for long tasks, but it increases the risk of unattended file edits, tool calls, and usage spend.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No unattended background agent work until audit logging and exception handling are proven. |
+| Standard enterprise | `true` | Pilot with selected teams before broad rollout. |
+| Developer | `false` | Allow local experimentation when the developer accepts the risk. |
+
 ### `disableSkillShellExecution`
 
 **What it does:** Blocks shell execution in skill files and custom commands from user/project sources.

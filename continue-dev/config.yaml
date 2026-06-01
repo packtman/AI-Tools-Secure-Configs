@@ -35,6 +35,9 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# MCP servers: keep empty until IT approves a specific server, package version, and scope.
+mcpServers: []
+
 # Disable telemetry
 allowAnonymousTelemetry: false
 

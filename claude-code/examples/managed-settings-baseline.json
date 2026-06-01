@@ -58,6 +58,7 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": false,
+  "disableAgentView": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
 

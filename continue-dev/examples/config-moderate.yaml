@@ -35,5 +35,10 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Explicit allowlist of MCP servers for this config.
+# WHY: Moderate tier should start with no MCP tools, then add only IT-vetted servers.
+# BREAKS IF REMOVED OR POPULATED INCORRECTLY: Developers may not know where MCP is governed, or unscoped servers may expose files and APIs.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false
