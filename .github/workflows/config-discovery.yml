@@ -97,20 +97,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check maintenance agent credentials
+        id: agent-credentials
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "agent_available=false" >> "${GITHUB_OUTPUT}"
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery PR for Cursor automation or human review."
+          else
+            echo "agent_available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-credentials.outputs.agent_available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -143,8 +146,14 @@ jobs:
             --model claude-sonnet-4-20250514
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
+      - name: Validate config files after agent edits
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-credentials.outputs.agent_available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py
+
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-credentials.outputs.agent_available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -174,7 +183,7 @@ jobs:
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
 
       - name: Fail if agent errored with no usable diff
-        if: steps.discovery.outputs.run_agent == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-credentials.outputs.agent_available == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
         run: |
           echo "::error::Config maintenance agent failed before producing file changes. Typical cause: error_max_turns (task too large for one run). Check agent-scope.md limits and re-run."
           exit 1
@@ -185,6 +194,8 @@ jobs:
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
+          RUN_AGENT: ${{ steps.discovery.outputs.run_agent }}
+          AGENT_AVAILABLE: ${{ steps.agent-credentials.outputs.agent_available }}
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
         run: |
           set -euo pipefail
@@ -192,7 +203,7 @@ jobs:
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When credentials are available, it also runs the config-maintenance agent against the generated report.
 
           Review:
 
@@ -209,8 +220,25 @@ jobs:
           If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
 
+          {
+            echo ""
+            echo "Agent status:"
+            if [ "${RUN_AGENT:-false}" != "true" ]; then
+              echo "- Config maintenance agent was not needed because no upstream source changed."
+            elif [ "${AGENT_AVAILABLE:-false}" != "true" ]; then
+              echo "- Config maintenance agent did not run because repository secret ANTHROPIC_API_KEY is not configured or unavailable."
+              echo "- Next step: run the Cursor Cloud automation prompt in automation/config-discovery/CURSOR-AUTOMATION.md, or have a reviewer apply automation/config-discovery/agent-prompt.md manually."
+            elif [ "${AGENT_CHANGED:-false}" = "true" ]; then
+              echo "- Config maintenance agent ran and committed config or documentation updates."
+            else
+              echo "- Config maintenance agent ran without file changes."
+            fi
+          } >> pr-body.md
+
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"
+          elif [ "${RUN_AGENT:-false}" = "true" ] && [ "${AGENT_AVAILABLE:-false}" != "true" ]; then
+            TITLE="Config maintenance: upstream changes need agent review"
           else
             TITLE="Config maintenance: upstream changes reviewed"
           fi

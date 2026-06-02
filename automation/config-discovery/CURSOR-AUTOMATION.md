@@ -4,11 +4,13 @@ Use this prompt for a Cursor Cloud scheduled automation if you want the end resu
 
 GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
 
+If the GitHub workflow has `ANTHROPIC_API_KEY`, it can run the maintenance agent itself. Keep this Cursor automation as a fallback for report-only PRs, for repositories that do not want to store a model API key in GitHub, or for follow-up review when the built-in agent reaches its scoped tool limit.
+
 ## Recommended Trigger
 
 - Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
 - Repository: this repo.
-- Branch: default branch, unless your automation service creates a working branch automatically.
+- Branch: `automation/config-maintenance` when a report-only PR exists, otherwise the default branch unless your automation service creates a working branch automatically.
 
 ## Prompt
 
