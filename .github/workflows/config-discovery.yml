@@ -42,8 +42,10 @@ jobs:
           git fetch origin "${BASE_BRANCH}"
           if git ls-remote --exit-code --heads origin "${PR_BRANCH}" >/dev/null 2>&1; then
             git fetch origin "${PR_BRANCH}"
+            git checkout -B "${PR_BRANCH}" "origin/${PR_BRANCH}"
+          else
+            git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
           fi
-          git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
 
       - name: Install validation tools
         run: |
@@ -95,22 +97,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Update config discovery source snapshots"
-          git push --force-with-lease -u origin "${PR_BRANCH}"
+          git push -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check optional Claude API key
+        id: agent-secret
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery PR without running the config-maintenance agent."
+          else
+            echo "available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-secret.outputs.available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -135,7 +140,7 @@ jobs:
             5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, and TOML using AGENTS.md commands before finishing.
+            8. Validate edited files with `python3 automation/config-discovery/validate_repo_configs.py` before finishing.
 
             Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
@@ -143,8 +148,14 @@ jobs:
             --model claude-sonnet-4-20250514
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
+      - name: Validate config files
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-secret.outputs.available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        run: |
+          set -euo pipefail
+          python3 automation/config-discovery/validate_repo_configs.py
+
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-secret.outputs.available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -170,7 +181,7 @@ jobs:
           else
             git commit -m "Apply config maintenance updates"
           fi
-          git push --force-with-lease -u origin "${PR_BRANCH}"
+          git push -u origin "${PR_BRANCH}"
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
 
       - name: Fail if agent errored with no usable diff
@@ -180,19 +191,28 @@ jobs:
           exit 1
 
       - name: Open or update pull request
-        if: steps.discovery.outputs.discovery_changed == 'true' || steps.agent-changes.outputs.agent_changed == 'true'
+        if: always() && (steps.discovery.outputs.discovery_changed == 'true' || steps.agent-changes.outputs.agent_changed == 'true')
         env:
           BASE_BRANCH: ${{ github.event.repository.default_branch }}
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          AGENT_AVAILABLE: ${{ steps.agent-secret.outputs.available }}
         run: |
           set -euo pipefail
 
-          cat > pr-body.md <<'PR_BODY'
+          if [ "${AGENT_AVAILABLE:-false}" = "true" ]; then
+            AGENT_NOTE="The workflow ran the config-maintenance agent against the generated scope."
+          else
+            AGENT_NOTE="The workflow did not run the config-maintenance agent because repository secret ANTHROPIC_API_KEY is not configured. Treat this PR as a discovery intake PR, or configure the secret and re-run with workflow_dispatch."
+          fi
+
+          cat > pr-body.md <<PR_BODY
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources.
+
+          ${AGENT_NOTE}
 
           Review:
 
@@ -206,7 +226,7 @@ jobs:
           3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
           4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
-          If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
+          If this PR contains only discovery snapshot/report changes, run the config-maintenance agent or add a "No config update needed" explanation for each changed source before merging.
           PR_BODY
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then

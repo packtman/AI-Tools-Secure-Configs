@@ -23,13 +23,13 @@ def build_scope(report_text: str, max_tools: int) -> str:
         "2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.",
         "3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.",
         "4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.",
-        "5. Validate edited JSON, YAML, and TOML before finishing.",
+        "5. Validate edited config and shell files with `python3 automation/config-discovery/validate_repo_configs.py` before finishing.",
         "",
         "Do not attempt to review unchanged tools or sources with no missing local terms in this run.",
         "",
     ]
 
-    sections: list[tuple[str, str, list[str]]] = []
+    tools: dict[str, list[tuple[str, list[str]]]] = {}
     parts = report_text.split("### ")
     for part in parts[1:]:
         header_line, _, body = part.partition("\n")
@@ -44,9 +44,9 @@ def build_scope(report_text: str, max_tools: int) -> str:
         terms_block = after.split("\n\n", 1)[0]
         terms = re.findall(r"`([^`]+)`", terms_block)
         if terms:
-            sections.append((tool_name, source_name, terms))
+            tools.setdefault(tool_name, []).append((source_name, terms))
 
-    if not sections:
+    if not tools:
         lines.extend(
             [
                 "## No scoped tools",
@@ -58,29 +58,38 @@ def build_scope(report_text: str, max_tools: int) -> str:
         )
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    tool_names = list(tools)
+    limited = tool_names[:max_tools]
+    lines.append(f"## Tools to process ({len(limited)} of {len(tool_names)} with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name in limited:
+        source_entries = tools[tool_name]
+        combined_terms = sorted({term for _, terms in source_entries for term in terms})
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+        lines.append(f"- Combined missing terms: {', '.join(f'`{term}`' for term in combined_terms[:15])}")
+        if len(combined_terms) > 15:
+            lines.append(f"- ({len(combined_terms) - 15} more combined terms in the full report)")
+        lines.append("- Changed sources:")
+        for source_name, terms in source_entries:
+            source_terms = ", ".join(f"`{term}`" for term in terms[:15])
+            lines.append(f"  - {source_name}: {source_terms}")
+            if len(terms) > 15:
+                lines.append(f"    - ({len(terms) - 15} more terms in the full report)")
         lines.append("")
 
-    if len(sections) > max_tools:
+    if len(tool_names) > max_tools:
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(tool_names) - max_tools} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name in tool_names[max_tools:]:
+            sources = ", ".join(source_name for source_name, _ in tools[tool_name])
+            lines.append(f"- {tool_name} ({sources})")
         lines.append("")
 
     return "\n".join(lines)
