@@ -28,10 +28,12 @@ Process:
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
 8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
 9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
-11. Commit and push the branch.
+10. If a vendor moved a config reference, update automation/config-discovery/tool-sources.json to the canonical vendor URL.
+11. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
+12. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
+Use automation/config-discovery/MAINTENANCE-RUNBOOK.md for setup and review expectations.
 ```
 
 ## Expected Result

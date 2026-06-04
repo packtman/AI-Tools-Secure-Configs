@@ -193,6 +193,30 @@
             "policy",
             "permissions"
           ]
+        },
+        {
+          "name": "OpenAI Codex config reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
+          "watch_for": [
+            "approval_policy",
+            "sandbox_mode",
+            "mcp_servers",
+            "features",
+            "shell_environment_policy"
+          ]
+        },
+        {
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "watch_for": [
+            "requirements.toml",
+            "allow_managed_hooks_only",
+            "managed hooks",
+            "permissions",
+            "MCP"
+          ]
         }
       ]
     },
@@ -231,14 +255,26 @@
         },
         {
           "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "profiles"
+            "approval_policy",
+            "sandbox_mode",
+            "mcp_servers",
+            "features",
+            "shell_environment_policy"
+          ]
+        },
+        {
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "watch_for": [
+            "requirements.toml",
+            "allow_managed_hooks_only",
+            "managed hooks",
+            "MDM",
+            "MCP"
           ]
         }
       ]

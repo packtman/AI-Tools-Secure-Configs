@@ -126,6 +126,22 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `allow_managed_hooks_only` (in requirements.toml)
+
+**What it does:** Makes Codex ignore user, project, session, and plugin hook configs while still allowing hooks delivered through managed requirements or managed config layers.
+
+**Why it matters:** Lifecycle hooks can run commands before or after tool use. In enterprise deployments, audit and safety hooks should come from an admin-controlled layer so a repository cannot replace or bypass them.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only managed hook policy runs, which supports audit evidence and prevents project-controlled hook execution. |
+| Standard enterprise | `true` | Keeps central audit hooks reliable while preserving normal workspace-write development. |
+| Individual developers | Unset/default | Avoids breaking personal or repo-local hook workflows when no central hook policy exists. |
+
+**What goes wrong:** If this is removed in Strict or Moderate deployments, local or project hooks can conflict with managed controls. If set before managed hook scripts are deployed, expected audit or safety checks may not run and developers may lose useful project hooks.
+
+---
+
 ## `deny_read` (in requirements.toml)
 
 **What it does:** Prevents the agent from reading specified file paths or patterns, even in writable sandbox modes.
@@ -168,7 +184,7 @@ web_search = "cached"
 browser_use = false
 computer_use = false
 memories = false
-codex_hooks = true
+hooks = true
 ```
 
 ### Developer Teams
@@ -183,6 +199,6 @@ browser_use = true
 in_app_browser = true
 computer_use = false
 memories = true
-codex_hooks = true
+hooks = true
 multi_agent = true
 ```

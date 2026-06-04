@@ -12,6 +12,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `discover_configs.py` | Dependency-free scanner that fingerprints sources, extracts likely config terms, and writes a PR report when a source changes. |
 | `agent-prompt.md` | Instructions for the config-maintenance agent that turns discovery reports into config and documentation updates. |
 | `CURSOR-AUTOMATION.md` | Copy/paste setup prompt for a Cursor Cloud scheduled automation that produces final config-update PRs. |
+| `MAINTENANCE-RUNBOOK.md` | Operator runbook for setup, PR review, source repair, and failure handling. |
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
@@ -74,6 +75,7 @@ python3 automation/config-discovery/discover_configs.py \
 Treat the initial discovery commit as an intake signal. The final PR should include actual config updates when the upstream change is relevant. Before changing a config:
 
 - Read the upstream source that changed.
+- Repair `tool-sources.json` when a vendor moves a config reference to a new canonical URL.
 - Confirm the vendor setting is real and relevant to one of this repo's supported tiers.
 - Update only the affected tool files.
 - Keep deployable JSON valid. If rationale comments are needed, use JSONC plus stripped JSON or a `.comments.md` companion.

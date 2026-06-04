@@ -38,11 +38,12 @@ Define jargon the first time it appears. Examples:
 1. Read the generated discovery report.
 2. Open the upstream source that changed.
 3. Compare the vendor change with existing files under the affected tool directory.
-4. Review the report section named "Potential config terms not found in local tool files." Treat those terms as the first candidates for missing repo coverage.
-5. Decide whether each candidate is a real admin/security control, a developer-only preference, or unrelated documentation noise.
-6. If it is a real admin/security control, edit the affected tool files and shared rollout files.
-7. If no config update is needed, add a short "No config update needed" note to the report or PR body explaining the upstream change and why it does not affect this repo.
-8. Validate every edited JSON, YAML, TOML, or shell file with the commands in `AGENTS.md`.
+4. If the upstream page moved or became a redirect notice, repair `tool-sources.json` to point at the canonical vendor page before deciding policy.
+5. Review the report section named "Potential config terms not found in local tool files." Treat those terms as the first candidates for missing repo coverage.
+6. Decide whether each candidate is a real admin/security control, a developer-only preference, or unrelated documentation noise.
+7. If it is a real admin/security control, edit the affected tool files and shared rollout files.
+8. If no config update is needed, add a short "No config update needed" note to the report or PR body explaining the upstream change and why it does not affect this repo.
+9. Validate every edited JSON, YAML, TOML, or shell file with the commands in `AGENTS.md`.
 
 Example: if Claude Code documentation introduces `disableWorkflows`, add that setting to the Claude Code tier files, update JSONC and deployable JSON, add rationale, add the tier delta row, and add workflow-preservation guidance for the blocked workflow commands.
 
@@ -138,3 +139,7 @@ If two tools overlap, such as Claude Code and Cursor both running shell commands
 - Do not add dependencies unless necessary.
 - Do not edit generated discovery state by hand unless you are repairing a scanner issue.
 - Commit and push changes to the current feature branch.
+
+## Operator Runbook
+
+Use `automation/config-discovery/MAINTENANCE-RUNBOOK.md` for setup, PR review, source repair, and failure handling.

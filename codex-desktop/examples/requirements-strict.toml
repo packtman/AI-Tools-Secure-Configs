@@ -8,12 +8,18 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
+# Only managed hook layers may run.
+# Why: Strict environments need hook policy controlled by admins, not user, project, session, or plugin configs.
+# Breaks if removed: repository-local or user hooks can run outside the managed audit policy.
+allow_managed_hooks_only = true
+
 # Disable all extended features
 [features]
 browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
+hooks = true
 multi_agent = false
 
 # Deny reads to sensitive directories

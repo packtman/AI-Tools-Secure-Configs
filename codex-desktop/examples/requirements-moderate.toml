@@ -7,11 +7,16 @@ allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
+# Only managed hook layers may run.
+# Why: Moderate keeps enterprise audit hooks reliable while allowing normal workspace-write development.
+# Breaks if removed: project or personal hooks can bypass or conflict with the managed hook policy.
+allow_managed_hooks_only = true
+
 # Disable high-risk features but allow core development
 [features]
 browser_use = false
 computer_use = false
-codex_hooks = true
+hooks = true
 
 # Deny reads to credential files
 [permissions.filesystem]

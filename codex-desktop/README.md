@@ -51,6 +51,7 @@ Requirements are constraints that **users cannot override**. They control securi
 - Web search mode restrictions
 - MCP server allowlists
 - Feature flag pins
+- Managed-only lifecycle hooks
 - Command rules (prompt/forbidden)
 - Filesystem deny-read rules
 
@@ -109,7 +110,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `browser_use` | Browser Use and Browser Agent |
 | `in_app_browser` | In-app browser pane |
 | `computer_use` | Computer Use (macOS only) |
-| `codex_hooks` | Lifecycle hooks |
+| `hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
 
@@ -140,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Set `allow_managed_hooks_only = true` when audit hooks must come only from managed policy
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

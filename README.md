@@ -144,6 +144,8 @@ This repo includes a scheduled config discovery loop under [`automation/config-d
 
 Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
 
+See [`automation/config-discovery/MAINTENANCE-RUNBOOK.md`](./automation/config-discovery/MAINTENANCE-RUNBOOK.md) for setup requirements, scope control, reviewer checks, and failure handling.
+
 ### For Security Teams
 
 1. Use the deny lists and content exclusion patterns as a baseline.
