@@ -10,7 +10,7 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (4 of 4 with missing terms)
 
 ### Claude Code
 
@@ -22,18 +22,12 @@ Do not attempt to review unchanged tools or sources with no missing local terms 
 - Source: Hooks documentation
 - Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
 
-### Continue.dev
+### Codex CLI
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
+- Source: OpenAI Codex releases
+- Missing terms: `rmcp`
 
 ### Claude Desktop
 
 - Source: Claude Desktop MCP documentation
 - Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
