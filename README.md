@@ -142,7 +142,9 @@ AI-Secure-Configs/
 
 This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
 
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed. If the GitHub workflow does not have an AI provider secret, it still opens a report PR so Cursor Cloud or a human reviewer can complete the config update.
+
+Use `python3 scripts/validate_config_files.py` before merging automated changes. The same validator runs in CI for JSON, YAML, TOML, and shell syntax.
 
 ### For Security Teams
 

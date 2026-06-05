@@ -8,7 +8,8 @@ GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance a
 
 - Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
 - Repository: this repo.
-- Branch: default branch, unless your automation service creates a working branch automatically.
+- Branch: `automation/config-maintenance` when it exists, otherwise the default branch.
+- Run condition: there is an open config-maintenance PR, or `automation/config-discovery/reports/latest-config-discovery.md` changed since the last run.
 
 ## Prompt
 
@@ -28,7 +29,7 @@ Process:
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
 8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
 9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
+10. Validate edited JSON, YAML, TOML, and shell files with `python3 scripts/validate_config_files.py` and the targeted AGENTS.md commands for edited files.
 11. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
@@ -46,3 +47,5 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 ## Why This Requires Cursor Automation
 
 The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+
+If the GitHub workflow has repository secret `ANTHROPIC_API_KEY`, it can run the Claude Code action before opening the PR. If the secret is absent, the workflow opens a discovery PR and this Cursor automation should complete the review and config edits.

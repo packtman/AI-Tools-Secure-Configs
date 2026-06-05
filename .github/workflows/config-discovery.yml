@@ -97,20 +97,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check Claude API key
+        id: agent-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "has_key=false" >> "${GITHUB_OUTPUT}"
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. The workflow will open a discovery PR for Cursor Cloud or human review."
+          else
+            echo "has_key=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.has_key == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -143,8 +146,14 @@ jobs:
             --model claude-sonnet-4-20250514
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
+      - name: Validate agent-edited config files
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.has_key == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py
+
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.has_key == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -174,7 +183,7 @@ jobs:
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
 
       - name: Fail if agent errored with no usable diff
-        if: steps.discovery.outputs.run_agent == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.has_key == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
         run: |
           echo "::error::Config maintenance agent failed before producing file changes. Typical cause: error_max_turns (task too large for one run). Check agent-scope.md limits and re-run."
           exit 1
