@@ -38,25 +38,12 @@
         "Read(~/.ssh/*)",
         "Read(~/.aws/*)",
         "Read(**/.env)"
-      ]
+      ],
+      "disableBypassPermissionsMode": "disable",
+      "disableAutoMode": "disable"
     },
-    "allowBypassPermissions": false,
-    "allowAutoPermissions": false,
+    "allowManagedPermissionRulesOnly": true,
     "channelsEnabled": false,
-    "allowedTools": [
-      "Bash",
-      "Read",
-      "Write",
-      "Edit",
-      "MultiEdit",
-      "Grep",
-      "Glob",
-      "LS"
-    ],
-    "disabledTools": [
-      "WebFetch",
-      "WebSearch"
-    ],
     "allowedMcpServers": [
       {
         "name": "github",
@@ -67,8 +54,7 @@
         "url": "https://mcp.internal.acme.com/docs"
       }
     ],
-    "deniedMcpServers": [],
-    "terminalCommandTimeout": 120
+    "deniedMcpServers": []
   },
   "desktop_policy": {
     "_delivery": "MDM (plist/registry) or admin console",

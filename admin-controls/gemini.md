@@ -241,7 +241,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 | NotebookLM Plus | Add-on | Add-on | Add-on | ✓ | ✓ |
 | Advanced DLP | ✗ | ✗ | ✗ | ✓ | ✓ |
 | Google Vault | ✗ | ✗ | ✗ | ✓ | ✓ |
-| Context-Aware Access | ✗ | ✗ | ✓ | ✓ | ✓ |
+| Context-Aware Access | ✗ | ✗ | ✗ | ✓ | ✓ |
 | FedRAMP High | ✗ | ✗ | ✗ | ✗ | ✓ |
 | HIPAA (BAA) | ✗ | ✗ | ✗ | ✗ | ✓ |
 

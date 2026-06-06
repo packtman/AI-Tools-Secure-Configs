@@ -21,9 +21,8 @@ Admin controls cover identity management, security enforcement, spend governance
 
 | Role | Capabilities |
 |------|-------------|
-| **Owner** | Full access: billing, SSO, SCIM, all settings |
-| **Admin** | Manage members, settings, security (no billing) |
-| **Unpaid Admin** | Admin capabilities without consuming a paid seat |
+| **Admin** | Full access: billing, SSO, SCIM, invite/remove members, all settings |
+| **Unpaid Admin** | Same administrative capabilities without consuming a paid seat |
 | **Member** | Use Cursor within admin-defined policies |
 
 ---
@@ -189,7 +188,7 @@ Available endpoints for programmatic integration:
 | `AllowedTeamId` | String | Lock login to specific team(s); comma-separated for multiple |
 | `AllowedExtensions` | String (JSON) | Allowlist of permitted extension IDs |
 | `WorkspaceTrustEnabled` | Boolean | Enforce workspace trust prompts |
-| `UpdateMode` | String | Control updates: `"manual"` or `"auto"` |
+| `UpdateMode` | String | Control updates: `"none"`, `"manual"`, `"start"`, `"default"`, `"silentlyApplyOnQuit"` |
 | `NetworkDisableHttp2` | Boolean | Force HTTP/1.1 (for certain proxies) |
 
 ### macOS — Jamf / Kandji

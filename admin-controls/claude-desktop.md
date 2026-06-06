@@ -19,7 +19,7 @@ Claude Desktop inherits organizational policy from the admin console and can add
 | Role | Capabilities |
 |------|-------------|
 | **Primary Owner** | Full admin access including billing, SSO, org deletion |
-| **Admin** | Manage users, policies, audit logs (no billing) |
+| **Owner** | Manage users, policies, managed settings, audit logs |
 | **Member** | Use Claude within admin-defined policies |
 
 ---
@@ -64,14 +64,13 @@ These settings control Claude Code and Claude Desktop behavior:
 |-------------|------|--------|
 | `permissions.allow` | Array | Tools/commands always allowed without prompting |
 | `permissions.deny` | Array | Tools/commands permanently blocked |
-| `allowedTools` | Array | Restrict available tool categories |
-| `disabledTools` | Array | Specific tools to disable |
+| `permissions.disableBypassPermissionsMode` | String | Set to `"disable"` to prevent `--dangerously-skip-permissions` |
+| `permissions.disableAutoMode` | String | Set to `"disable"` to prevent auto mode activation |
+| `allowManagedPermissionRulesOnly` | Boolean | Only managed permission rules apply; user/project rules ignored |
 | `allowedMcpServers` | Array | MCP server allowlist (blocks all others) |
 | `deniedMcpServers` | Array | MCP server denylist |
-| `allowBypassPermissions` | Boolean | Allow `--dangerously-skip-permissions` flag |
-| `allowAutoPermissions` | Boolean | Allow auto-accept mode |
+| `allowManagedMcpServersOnly` | Boolean | Only managed MCP server lists apply |
 | `channelsEnabled` | Boolean | Allow Claude channels feature |
-| `terminalCommandTimeout` | Integer | Max seconds for terminal commands |
 
 ### Claude Desktop–Specific Policy Keys
 
@@ -213,8 +212,8 @@ Within the managed tier, the first source delivering a non-empty configuration w
 - [ ] Set `isLocalDevMcpEnabled: false` — block user-added MCP servers
 - [ ] Set `isDesktopExtensionEnabled: false` — disable all extensions
 - [ ] Set `secureVmFeaturesEnabled: false` — disable computer use sandbox
-- [ ] Set `allowBypassPermissions: false` — prevent permission bypass mode
-- [ ] Set `allowAutoPermissions: false` — require manual approval for each tool
+- [ ] Set `permissions.disableBypassPermissionsMode: "disable"` — prevent permission bypass mode
+- [ ] Set `permissions.disableAutoMode: "disable"` — require manual approval for each tool
 - [ ] Deploy approved MCP servers via `allowedMcpServers` list only
 - [ ] Configure data retention per compliance requirements
 - [ ] Route audit logs to SIEM
@@ -225,7 +224,7 @@ Within the managed tier, the first source delivering a non-empty configuration w
 - [ ] Enable SSO (enforce for all users)
 - [ ] Set `isDesktopExtensionEnabled: false` until extensions are vetted
 - [ ] Configure `allowedMcpServers` with approved servers
-- [ ] Set `allowBypassPermissions: false`
+- [ ] Set `permissions.disableBypassPermissionsMode: "disable"`
 - [ ] Review usage analytics monthly
 - [ ] Set `autoUpdaterEnforcementHours: 48`
 
@@ -233,7 +232,7 @@ Within the managed tier, the first source delivering a non-empty configuration w
 
 - [ ] Enable SSO (optional enforcement)
 - [ ] Allow MCP servers but deploy `deniedMcpServers` for known-risky packages
-- [ ] Set `allowBypassPermissions: false` (even for devs)
+- [ ] Set `permissions.disableBypassPermissionsMode: "disable"` (even for devs)
 - [ ] Enable usage analytics for cost management
 - [ ] Set `autoUpdaterEnforcementHours: 72`
 

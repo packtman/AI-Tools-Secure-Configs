@@ -13,7 +13,7 @@ Admins manage identity, RBAC, feature toggles, usage limits, data retention, and
 | Interface | URL | Plans |
 |-----------|-----|-------|
 | Workspace Admin | `chatgpt.com/admin` | Business, Enterprise |
-| Global Admin Console | `chatgpt.com/admin` (org-level) | Enterprise (multi-workspace) |
+| Global Admin Console | `admin.openai.com` | Enterprise (multi-workspace) |
 
 ### Roles
 
@@ -37,13 +37,15 @@ Users can hold one or both seat types. Default seat type is configured in Identi
 
 ## 1. Identity & Access Management
 
-### SSO (SAML)
+### SSO (SAML / OIDC)
 
 | Setting | Location | Notes |
 |---------|----------|-------|
-| Enable SSO | Identity & Provisioning | SAML-based; shared with OpenAI API Platform |
+| Enable SSO | Identity & Provisioning | SAML and OIDC; shared with OpenAI API Platform (Enterprise only) |
 | Enforce SSO | Identity & Provisioning | Disables password/social login for verified domain users |
 | IdP integration | Identity & Provisioning | Supports Okta, Azure AD, Google Workspace, OneLogin |
+
+> **Note:** ChatGPT Business supports SAML/OIDC SSO at no additional cost. Enterprise SSO optionally spans both ChatGPT and the OpenAI Platform.
 
 ### Domain Management
 
@@ -165,9 +167,15 @@ Location: `Settings and Permissions → Custom Roles` tab
 | Region | Availability |
 |--------|-------------|
 | United States | Default |
-| Europe (EU) | Available |
+| Europe (EEA + Switzerland) | Available |
 | United Kingdom | Available |
 | Japan | Available |
+| Canada | Available |
+| South Korea | Available |
+| Singapore | Available |
+| Australia | Available |
+| India | Available |
+| United Arab Emirates | Available |
 
 ---
 
@@ -270,7 +278,7 @@ For organizations with multiple ChatGPT workspaces:
 
 | Capability | Business | Enterprise |
 |------------|----------|------------|
-| SSO (SAML) | ✗ | ✓ |
+| SSO (SAML/OIDC) | ✓ | ✓ |
 | SCIM provisioning | ✗ | ✓ |
 | RBAC / Custom roles | ✗ | ✓ |
 | Usage limits | ✗ | ✓ |

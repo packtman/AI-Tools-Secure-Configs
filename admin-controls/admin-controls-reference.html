@@ -289,7 +289,7 @@
 
   <div class="tool-section">
     <h3>Admin Console: claude.ai → Admin Settings</h3>
-    <p><strong>Roles:</strong> Primary Owner (full access + billing) · Admin (users, policies, audit) · Member (use within policies)</p>
+    <p><strong>Roles:</strong> Primary Owner (full access + billing) · Owner (users, policies, managed settings) · Member (use within policies)</p>
   </div>
 
   <h3>Identity &amp; Access</h3>
@@ -306,13 +306,13 @@
   <div class="key-settings">
   <table>
     <tr><th>Setting Key</th><th>Type</th><th>Recommended (Enterprise)</th></tr>
-    <tr><td>allowBypassPermissions</td><td>Boolean</td><td><code>false</code></td></tr>
-    <tr><td>allowAutoPermissions</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>permissions.disableBypassPermissionsMode</td><td>String</td><td><code>"disable"</code></td></tr>
+    <tr><td>permissions.disableAutoMode</td><td>String</td><td><code>"disable"</code></td></tr>
+    <tr><td>allowManagedPermissionRulesOnly</td><td>Boolean</td><td><code>true</code></td></tr>
     <tr><td>channelsEnabled</td><td>Boolean</td><td><code>false</code> (regulated) / <code>true</code></td></tr>
     <tr><td>allowedMcpServers</td><td>Array</td><td>Explicit allowlist only</td></tr>
     <tr><td>deniedMcpServers</td><td>Array</td><td>Known-risky packages</td></tr>
     <tr><td>permissions.deny</td><td>Array</td><td>Block rm -rf, curl|bash, sudo, .env reads</td></tr>
-    <tr><td>terminalCommandTimeout</td><td>Integer</td><td><code>120</code> seconds</td></tr>
   </table>
   </div>
 
@@ -349,7 +349,7 @@
 
   <div class="tool-section">
     <h3>Admin Dashboard: cursor.com/settings</h3>
-    <p><strong>Roles:</strong> Owner (full + billing) · Admin (members, settings) · Unpaid Admin (admin without seat) · Member</p>
+    <p><strong>Roles:</strong> Admin (full + billing) · Unpaid Admin (admin without seat) · Member</p>
     <p><strong>Enterprise:</strong> Organizations layer — multi-team governance from one dashboard (June 2026)</p>
   </div>
 
@@ -423,8 +423,8 @@
   <h3>Identity &amp; Access</h3>
   <table>
     <tr><th>Setting</th><th>Location</th><th>Plan</th></tr>
-    <tr><td>SAML SSO</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
-    <tr><td>Enforce SSO</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+    <tr><td>SAML SSO</td><td>Identity & Provisioning</td><td>Business+</td></tr>
+    <tr><td>Enforce SSO</td><td>Identity & Provisioning</td><td>Business+</td></tr>
     <tr><td>Domain verification</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
     <tr><td>SCIM directory sync</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
     <tr><td>IP allowlisting</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
@@ -462,7 +462,7 @@
   <table>
     <tr><th>Policy</th><th>Status</th></tr>
     <tr><td>No training on data</td><td><span class="badge badge-yes">Business+</span></td></tr>
-    <tr><td>Data residency (US/EU/UK/JP)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>Data residency (10 regions)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
     <tr><td>Enterprise Key Management</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
     <tr><td>Retention policy (configurable)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
     <tr><td>Compliance API (export)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
@@ -550,7 +550,7 @@
       <td>SAML SSO</td>
       <td><span class="badge badge-enterprise">Enterprise</span></td>
       <td><span class="badge badge-enterprise">Enterprise</span></td>
-      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Business+</span></td>
       <td><span class="badge badge-yes">All Editions</span></td>
     </tr>
     <tr>

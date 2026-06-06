@@ -62,7 +62,7 @@ A unified checklist for deploying SSO across Claude, Cursor, ChatGPT, and Gemini
 
 ---
 
-## ChatGPT (Enterprise)
+## ChatGPT (Business / Enterprise)
 
 ### Setup
 

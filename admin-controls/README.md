@@ -31,7 +31,7 @@ This guide focuses on **admin-level controls** — settings managed by IT teams 
 
 | Capability | Claude | Cursor | ChatGPT | Gemini |
 |------------|--------|--------|---------|--------|
-| SAML SSO | Enterprise | Enterprise | Enterprise | All Workspace editions |
+| SAML SSO | Enterprise | Enterprise | Business+ | All Workspace editions |
 | SCIM provisioning | Enterprise | Enterprise | Enterprise | Via Google Cloud Identity |
 | Domain verification | Team+ | — | Enterprise | Workspace default |
 | IP allowlisting | Enterprise | — | Enterprise | Via Context-Aware Access |
@@ -44,7 +44,7 @@ This guide focuses on **admin-level controls** — settings managed by IT teams 
 |------------|--------|--------|---------|--------|
 | No training on data | Team+ | All plans | Business+ | All Workspace editions |
 | Data retention control | Enterprise | — | Enterprise | Admin console |
-| Data residency | Enterprise (US/EU) | — | Enterprise (US/EU/UK/JP) | Workspace data regions |
+| Data residency | Enterprise (US/EU) | — | Enterprise (10 regions) | Workspace data regions |
 | Customer-managed keys | Enterprise | — | Enterprise (EKM) | CMEK via GCP |
 | DLP integration | Via API | — | Compliance API | Native Workspace DLP |
 | Conversation export | Enterprise | — | Compliance API | Vault/BigQuery export |
