@@ -1,0 +1,82 @@
+{
+  "_meta": {
+    "tool": "Claude (Desktop & Web)",
+    "description": "Claude Team/Enterprise admin console policy reference",
+    "reference": "claude.ai → Admin Settings → Claude Code → Managed settings",
+    "notes": "Server-managed settings are configured in the admin console and delivered to clients at auth time. This template documents the recommended Enterprise configuration for change control purposes."
+  },
+  "organization": {
+    "plan": "enterprise",
+    "name": "Acme Corp"
+  },
+  "identity": {
+    "sso": {
+      "enabled": true,
+      "enforced": true,
+      "provider": "okta",
+      "protocol": "saml_2.0"
+    },
+    "scim": {
+      "enabled": true,
+      "auto_deprovision": true
+    },
+    "domain_verification": {
+      "verified_domains": ["acme.com", "acme.io"],
+      "domain_capture": true,
+      "restrict_external_invites": true
+    }
+  },
+  "managed_settings": {
+    "_delivery": "server-managed via admin console (highest precedence)",
+    "permissions": {
+      "allow": [],
+      "deny": [
+        "Bash(rm -rf *)",
+        "Bash(curl * | bash)",
+        "Bash(wget * | sh)",
+        "Bash(sudo *)",
+        "Read(~/.ssh/*)",
+        "Read(~/.aws/*)",
+        "Read(**/.env)"
+      ],
+      "disableBypassPermissionsMode": "disable",
+      "disableAutoMode": "disable"
+    },
+    "allowManagedPermissionRulesOnly": true,
+    "channelsEnabled": false,
+    "allowedMcpServers": [
+      {
+        "name": "github",
+        "url": "https://mcp.github.com"
+      },
+      {
+        "name": "internal-docs",
+        "url": "https://mcp.internal.acme.com/docs"
+      }
+    ],
+    "deniedMcpServers": []
+  },
+  "desktop_policy": {
+    "_delivery": "MDM (plist/registry) or admin console",
+    "isLocalDevMcpEnabled": false,
+    "isDesktopExtensionEnabled": false,
+    "isDesktopExtensionDirectoryEnabled": false,
+    "isClaudeCodeForDesktopEnabled": true,
+    "secureVmFeaturesEnabled": false,
+    "disableAutoUpdates": false,
+    "autoUpdaterEnforcementHours": 24
+  },
+  "data_governance": {
+    "training_on_data": false,
+    "data_residency": "us",
+    "retention_policy": "enterprise_default"
+  },
+  "monitoring": {
+    "audit_logs": true,
+    "usage_analytics": true,
+    "siem_export": {
+      "enabled": true,
+      "destination": "splunk"
+    }
+  }
+}

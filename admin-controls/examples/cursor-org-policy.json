@@ -1,0 +1,129 @@
+{
+  "_meta": {
+    "tool": "Cursor Enterprise",
+    "description": "Organization-level governance settings for Cursor Enterprise",
+    "reference": "cursor.com/settings → Organization dashboard",
+    "notes": "These are configured in the Cursor dashboard and enforced server-side. MDM policies (AllowedTeamId, AllowedExtensions) are deployed separately via device management."
+  },
+  "organization": {
+    "name": "Acme Corp",
+    "governance_level": "enterprise"
+  },
+  "security": {
+    "privacy_mode": {
+      "enforced": true,
+      "zero_data_retention": {
+        "openai": true,
+        "anthropic": true,
+        "google_vertex": true,
+        "xai_grok": true
+      }
+    },
+    "mcp_servers": {
+      "mode": "allowlist",
+      "allowed_servers": [
+        "github-mcp-server",
+        "postgres-mcp-server",
+        "jira-mcp-server"
+      ],
+      "denied_servers": []
+    },
+    "extensions": {
+      "mode": "allowlist",
+      "allowed": {
+        "esbenp.prettier-vscode": true,
+        "dbaeumer.vscode-eslint": true,
+        "ms-python.python": true,
+        "golang.go": true,
+        "rust-lang.rust-analyzer": true,
+        "eamodio.gitlens": true
+      }
+    },
+    "repository_blocklist": [
+      "internal-secrets-repo",
+      "compliance-audit-*"
+    ],
+    "sandbox": {
+      "require_for_agents": true,
+      "network_allowlist": [
+        "*.github.com",
+        "*.npmjs.org",
+        "*.pypi.org",
+        "registry.terraform.io"
+      ],
+      "network_denylist": [
+        "*.pastebin.com",
+        "*.transfer.sh"
+      ]
+    }
+  },
+  "access_controls": {
+    "sso": {
+      "enforced": true,
+      "provider": "okta",
+      "saml_metadata_url": "https://your-org.okta.com/app/abc123/sso/saml/metadata"
+    },
+    "scim": {
+      "enabled": true,
+      "endpoint": "https://cursor.com/scim/v2",
+      "groups_synced": true
+    },
+    "user_restrictions": {
+      "restrict_cli_access": false,
+      "restrict_cloud_agents": true,
+      "restrict_analytics_to_admins": true,
+      "disable_byok": true
+    }
+  },
+  "spending": {
+    "team_monthly_limit_usd": 5000,
+    "admin_only_limit_changes": true,
+    "per_member_default_limit_usd": 200,
+    "group_overrides": [
+      {
+        "group": "senior-engineers",
+        "monthly_limit_usd": 500
+      },
+      {
+        "group": "interns",
+        "monthly_limit_usd": 50
+      }
+    ]
+  },
+  "model_access": {
+    "mode": "allowlist",
+    "allowed_providers": ["anthropic", "openai"],
+    "blocked_providers": ["xai"],
+    "allowed_models": [
+      "claude-sonnet-4-*",
+      "claude-opus-4-*",
+      "gpt-4o",
+      "o3-*"
+    ],
+    "blocked_models": []
+  },
+  "rules_and_commands": {
+    "server_managed_rules": [
+      "Always follow security guidelines in @security.mdc",
+      "Never commit secrets or credentials",
+      "Use approved package registries only"
+    ]
+  },
+  "monitoring": {
+    "audit_logs_enabled": true,
+    "analytics_enabled": true,
+    "ai_code_tracking": true,
+    "conversation_analytics": true
+  },
+  "mdm_enforcement": {
+    "_note": "Deploy these via Jamf/Intune in addition to dashboard settings",
+    "macos_domain": "com.todesktop.230313mzl4w4u92",
+    "windows_registry_path": "HKLM\\SOFTWARE\\Policies\\Cursor",
+    "policies": {
+      "AllowedTeamId": "team_abc123,team_def456",
+      "WorkspaceTrustEnabled": true,
+      "UpdateMode": "manual",
+      "AllowedExtensions": "{\"esbenp.prettier-vscode\": true, \"dbaeumer.vscode-eslint\": true, \"ms-python.python\": true}"
+    }
+  }
+}
