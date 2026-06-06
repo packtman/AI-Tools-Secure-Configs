@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Tools Admin Controls — Quick Reference Guide</title>
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --secondary: #16213e;
+      --accent: #0f3460;
+      --highlight: #e94560;
+      --text: #2d2d2d;
+      --light-bg: #f8f9fa;
+      --border: #dee2e6;
+      --success: #28a745;
+      --warning: #ffc107;
+      --info: #17a2b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+      padding: 48px 0;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    header .meta {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin: 48px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--highlight);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--secondary);
+      margin: 32px 0 12px;
+    }
+
+    h4 {
+      font-size: 1rem;
+      color: var(--accent);
+      margin: 20px 0 8px;
+    }
+
+    p { margin-bottom: 12px; }
+
+    .tool-section {
+      background: var(--light-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 24px 0;
+      border-left: 4px solid var(--accent);
+    }
+
+    .tool-section h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--secondary);
+      color: #fff;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    tr:nth-child(even) { background: var(--light-bg); }
+    tr:hover { background: #e8f4fd; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-yes { background: #d4edda; color: #155724; }
+    .badge-no { background: #f8d7da; color: #721c24; }
+    .badge-partial { background: #fff3cd; color: #856404; }
+    .badge-enterprise { background: #d1ecf1; color: #0c5460; }
+
+    .toc {
+      background: var(--light-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+
+    .toc h3 { margin-top: 0; }
+
+    .toc ol {
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 6px 0;
+    }
+
+    .toc a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .toc a:hover { text-decoration: underline; }
+
+    .comparison-matrix {
+      overflow-x: auto;
+    }
+
+    .comparison-matrix table th:first-child {
+      min-width: 200px;
+    }
+
+    .key-settings table td:first-child {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+
+    .checklist li {
+      padding: 6px 0 6px 28px;
+      position: relative;
+    }
+
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 4px;
+      font-size: 1.1rem;
+    }
+
+    .summary-box {
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+
+    .summary-box h4 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    footer {
+      margin-top: 60px;
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+
+    @media print {
+      header { padding: 24px 0; }
+      h2 { page-break-before: always; }
+      h2:first-of-type { page-break-before: avoid; }
+      .tool-section { page-break-inside: avoid; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 6px 8px; }
+    }
+
+    @page {
+      size: A4;
+      margin: 20mm 15mm;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>AI Tools Admin Controls</h1>
+    <p>Quick Reference Guide for IT Administrators</p>
+    <p class="meta">Claude Desktop &bull; Cursor &bull; ChatGPT &bull; Gemini &bull; Last updated: June 2026</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#overview">Overview &amp; Scope</a></li>
+      <li><a href="#claude">Claude (Desktop &amp; Web) — Admin Settings</a></li>
+      <li><a href="#cursor">Cursor — Admin Settings</a></li>
+      <li><a href="#chatgpt">ChatGPT — Admin Settings</a></li>
+      <li><a href="#gemini">Gemini (Google Workspace) — Admin Settings</a></li>
+      <li><a href="#comparison">Cross-Tool Comparison Matrix</a></li>
+      <li><a href="#sso">Unified SSO Quick Reference</a></li>
+      <li><a href="#priority">Implementation Priority</a></li>
+    </ol>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="overview">1. Overview &amp; Scope</h2>
+
+  <p>This document provides a consolidated reference of <strong>admin-level controls</strong> for the four most common AI assistant tools deployed in enterprise environments. These are settings configured by IT teams through admin consoles, MDM systems, and APIs — not end-user preferences.</p>
+
+  <table>
+    <tr>
+      <th>Tool</th>
+      <th>Admin Interface</th>
+      <th>Plans with Admin Controls</th>
+      <th>Enforcement Mechanism</th>
+    </tr>
+    <tr>
+      <td><strong>Claude</strong></td>
+      <td>claude.ai Admin Console</td>
+      <td>Team, Enterprise</td>
+      <td>Server-managed settings + MDM</td>
+    </tr>
+    <tr>
+      <td><strong>Cursor</strong></td>
+      <td>cursor.com Dashboard</td>
+      <td>Business, Enterprise</td>
+      <td>Dashboard push + MDM</td>
+    </tr>
+    <tr>
+      <td><strong>ChatGPT</strong></td>
+      <td>chatgpt.com/admin</td>
+      <td>Business, Enterprise</td>
+      <td>Admin console (web-only)</td>
+    </tr>
+    <tr>
+      <td><strong>Gemini</strong></td>
+      <td>admin.google.com</td>
+      <td>Workspace Business+, Enterprise</td>
+      <td>Admin console + Chrome policies</td>
+    </tr>
+  </table>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="claude">2. Claude (Desktop &amp; Web)</h2>
+
+  <div class="tool-section">
+    <h3>Admin Console: claude.ai → Admin Settings</h3>
+    <p><strong>Roles:</strong> Primary Owner (full access + billing) · Admin (users, policies, audit) · Member (use within policies)</p>
+  </div>
+
+  <h3>Identity &amp; Access</h3>
+  <table>
+    <tr><th>Setting</th><th>Location</th><th>Plan</th></tr>
+    <tr><td>SAML 2.0 / OIDC SSO</td><td>Security → SSO</td><td>Enterprise</td></tr>
+    <tr><td>Enforce SSO</td><td>Security → SSO</td><td>Enterprise</td></tr>
+    <tr><td>Domain verification</td><td>Security → Domains</td><td>Team+</td></tr>
+    <tr><td>Domain capture</td><td>Security → Domains</td><td>Team+</td></tr>
+    <tr><td>SCIM provisioning</td><td>Security → SCIM</td><td>Enterprise</td></tr>
+  </table>
+
+  <h3>Key Managed Settings (Server-Managed)</h3>
+  <div class="key-settings">
+  <table>
+    <tr><th>Setting Key</th><th>Type</th><th>Recommended (Enterprise)</th></tr>
+    <tr><td>allowBypassPermissions</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>allowAutoPermissions</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>channelsEnabled</td><td>Boolean</td><td><code>false</code> (regulated) / <code>true</code></td></tr>
+    <tr><td>allowedMcpServers</td><td>Array</td><td>Explicit allowlist only</td></tr>
+    <tr><td>deniedMcpServers</td><td>Array</td><td>Known-risky packages</td></tr>
+    <tr><td>permissions.deny</td><td>Array</td><td>Block rm -rf, curl|bash, sudo, .env reads</td></tr>
+    <tr><td>terminalCommandTimeout</td><td>Integer</td><td><code>120</code> seconds</td></tr>
+  </table>
+  </div>
+
+  <h3>Desktop Policy Keys (MDM)</h3>
+  <table>
+    <tr><th>Key</th><th>Type</th><th>Lockdown Value</th></tr>
+    <tr><td>isLocalDevMcpEnabled</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>isDesktopExtensionEnabled</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>isDesktopExtensionDirectoryEnabled</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>isClaudeCodeForDesktopEnabled</td><td>Boolean</td><td><code>true</code> (or <code>false</code> if not needed)</td></tr>
+    <tr><td>secureVmFeaturesEnabled</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>disableAutoUpdates</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>autoUpdaterEnforcementHours</td><td>Integer</td><td><code>24</code></td></tr>
+  </table>
+
+  <h3>MDM Deployment</h3>
+  <table>
+    <tr><th>Platform</th><th>Mechanism</th><th>Identifier</th></tr>
+    <tr><td>macOS</td><td>Configuration Profile (plist)</td><td><code>com.anthropic.claudefordesktop</code></td></tr>
+    <tr><td>Windows</td><td>Registry (Intune/GPO)</td><td><code>HKLM\SOFTWARE\Policies\Claude</code></td></tr>
+  </table>
+
+  <h3>Data Governance</h3>
+  <table>
+    <tr><th>Policy</th><th>Status</th></tr>
+    <tr><td>No training on data</td><td><span class="badge badge-yes">Team+</span></td></tr>
+    <tr><td>Data residency (US/EU)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>SOC 2 Type II</td><td><span class="badge badge-yes">Yes</span></td></tr>
+    <tr><td>HIPAA (BAA)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+  </table>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="cursor">3. Cursor</h2>
+
+  <div class="tool-section">
+    <h3>Admin Dashboard: cursor.com/settings</h3>
+    <p><strong>Roles:</strong> Owner (full + billing) · Admin (members, settings) · Unpaid Admin (admin without seat) · Member</p>
+    <p><strong>Enterprise:</strong> Organizations layer — multi-team governance from one dashboard (June 2026)</p>
+  </div>
+
+  <h3>Identity &amp; Access</h3>
+  <table>
+    <tr><th>Setting</th><th>Location</th><th>Plan</th></tr>
+    <tr><td>SAML SSO</td><td>Security & Identity → SSO</td><td>Enterprise</td></tr>
+    <tr><td>SCIM 2.0 provisioning</td><td>Security & Identity → SCIM</td><td>Enterprise</td></tr>
+    <tr><td>AllowedTeamId (MDM)</td><td>MDM policy</td><td>Enterprise</td></tr>
+    <tr><td>Restrict CLI access</td><td>Dashboard → User Access</td><td>Enterprise</td></tr>
+    <tr><td>Restrict Cloud Agents</td><td>Dashboard → User Access</td><td>Enterprise</td></tr>
+    <tr><td>Disable BYOK</td><td>Dashboard → User Access</td><td>Enterprise</td></tr>
+  </table>
+
+  <h3>Security Settings</h3>
+  <table>
+    <tr><th>Setting</th><th>Location</th><th>Effect</th></tr>
+    <tr><td>Privacy Mode (enforced)</td><td>Settings → Privacy</td><td>Zero data retention with all AI providers</td></tr>
+    <tr><td>MCP server allowlist</td><td>Security → MCP Servers</td><td>Only approved MCP servers</td></tr>
+    <tr><td>Extension allowlist</td><td>Security & Identity</td><td>Restrict to approved extensions</td></tr>
+    <tr><td>Repository blocklist</td><td>Security</td><td>Block specific repos from AI access</td></tr>
+    <tr><td>Require sandbox</td><td>Security</td><td>Force sandbox for agent sessions</td></tr>
+    <tr><td>Network allow/denylist</td><td>Security</td><td>Control outbound access from sandbox</td></tr>
+  </table>
+
+  <h3>Spend Governance</h3>
+  <table>
+    <tr><th>Setting</th><th>Scope</th><th>Plan</th></tr>
+    <tr><td>Team monthly spending limit</td><td>Whole team</td><td>Business+</td></tr>
+    <tr><td>Per-member spending limit</td><td>Individual users</td><td>Enterprise</td></tr>
+    <tr><td>Group-based limits</td><td>SCIM directory groups</td><td>Enterprise</td></tr>
+    <tr><td>Model allowlist/blocklist</td><td>Provider or model level</td><td>Enterprise</td></tr>
+    <tr><td>Admin-only limit changes</td><td>Prevents member override</td><td>Business+</td></tr>
+  </table>
+
+  <h3>MDM Deployment</h3>
+  <table>
+    <tr><th>Policy Key</th><th>Type</th><th>Recommended</th></tr>
+    <tr><td>AllowedTeamId</td><td>String</td><td>Your team ID(s)</td></tr>
+    <tr><td>AllowedExtensions</td><td>String (JSON)</td><td>Approved extension IDs</td></tr>
+    <tr><td>WorkspaceTrustEnabled</td><td>Boolean</td><td><code>true</code></td></tr>
+    <tr><td>UpdateMode</td><td>String</td><td><code>"manual"</code></td></tr>
+  </table>
+
+  <table>
+    <tr><th>Platform</th><th>Identifier</th></tr>
+    <tr><td>macOS</td><td><code>com.todesktop.230313mzl4w4u92</code></td></tr>
+    <tr><td>Windows</td><td><code>HKLM\SOFTWARE\Policies\Cursor</code></td></tr>
+    <tr><td>Linux</td><td><code>~/.cursor/policy.json</code></td></tr>
+  </table>
+
+  <h3>Monitoring</h3>
+  <table>
+    <tr><th>Capability</th><th>Plan</th></tr>
+    <tr><td>Usage analytics</td><td>Business+</td></tr>
+    <tr><td>Audit logs (tamper-proof)</td><td>Enterprise</td></tr>
+    <tr><td>AI code tracking (per-commit)</td><td>Enterprise</td></tr>
+    <tr><td>Admin REST API</td><td>Business+</td></tr>
+  </table>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="chatgpt">4. ChatGPT</h2>
+
+  <div class="tool-section">
+    <h3>Admin Console: chatgpt.com/admin</h3>
+    <p><strong>Roles:</strong> Owner (full + billing + identity) · Admin (users, groups, routine admin) · Member · Analytics Viewer</p>
+    <p><strong>Seat Types:</strong> ChatGPT seat · Codex seat (can hold both)</p>
+    <p><strong>Enterprise:</strong> Global Admin Console for multi-workspace management</p>
+  </div>
+
+  <h3>Identity &amp; Access</h3>
+  <table>
+    <tr><th>Setting</th><th>Location</th><th>Plan</th></tr>
+    <tr><td>SAML SSO</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+    <tr><td>Enforce SSO</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+    <tr><td>Domain verification</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+    <tr><td>SCIM directory sync</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+    <tr><td>IP allowlisting</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+    <tr><td>Restrict to verified domains</td><td>Identity & Provisioning</td><td>Enterprise</td></tr>
+  </table>
+
+  <h3>Feature Permissions (RBAC)</h3>
+  <p>Workspace defaults apply to all users; custom roles override per group.</p>
+  <table>
+    <tr><th>Feature Toggle</th><th>Default (Recommended)</th><th>Notes</th></tr>
+    <tr><td>ChatGPT Agent</td><td>Off</td><td>Autonomous agent — high risk</td></tr>
+    <tr><td>Canvas</td><td>On</td><td>Collaborative editing</td></tr>
+    <tr><td>Codex</td><td>Off</td><td>Code assistant — separate seat</td></tr>
+    <tr><td>Custom GPTs — Create</td><td>Off</td><td>Require approval workflow</td></tr>
+    <tr><td>Custom GPTs — Use</td><td>On</td><td>Internal GPTs only</td></tr>
+    <tr><td>Third-party GPTs</td><td>Off</td><td>GPT Store access</td></tr>
+    <tr><td>Memory</td><td>Off</td><td>Cross-conversation data persistence</td></tr>
+    <tr><td>Web search</td><td>On</td><td>Real-time internet access</td></tr>
+    <tr><td>File uploads</td><td>On</td><td>Document attachment</td></tr>
+    <tr><td>Image generation</td><td>On</td><td>DALL-E</td></tr>
+    <tr><td>Voice mode</td><td>Off</td><td>Audio interaction</td></tr>
+    <tr><td>Apps & actions</td><td>Off</td><td>Connected integrations (email, calendar)</td></tr>
+    <tr><td>Data analysis</td><td>On</td><td>Code interpreter</td></tr>
+  </table>
+
+  <h3>Usage Limits (Enterprise RBAC)</h3>
+  <table>
+    <tr><th>Setting</th><th>Options</th><th>Effect</th></tr>
+    <tr><td>Limit level</td><td>None / Low / Standard / High / Custom</td><td>Weekly per-user credit cap</td></tr>
+    <tr><td>Enforcement</td><td>Admin Alert / Hard Cap</td><td>Notify vs. block at limit</td></tr>
+    <tr><td>Multi-role inheritance</td><td>Most permissive wins</td><td>Watch for unintended escalation</td></tr>
+  </table>
+
+  <h3>Data Governance</h3>
+  <table>
+    <tr><th>Policy</th><th>Status</th></tr>
+    <tr><td>No training on data</td><td><span class="badge badge-yes">Business+</span></td></tr>
+    <tr><td>Data residency (US/EU/UK/JP)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>Enterprise Key Management</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>Retention policy (configurable)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>Compliance API (export)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>SOC 2 Type II, ISO 27001</td><td><span class="badge badge-yes">Yes</span></td></tr>
+    <tr><td>HIPAA (BAA)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+  </table>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="gemini">5. Gemini (Google Workspace)</h2>
+
+  <div class="tool-section">
+    <h3>Admin Console: admin.google.com → Generative AI</h3>
+    <p><strong>Roles:</strong> Super Admin · Gemini Settings Admin · Groups Admin · Custom Roles</p>
+    <p><strong>Scoping:</strong> Per Organizational Unit (OU) or per Group</p>
+  </div>
+
+  <h3>Service Controls</h3>
+  <table>
+    <tr><th>Service</th><th>Location</th><th>Scoping</th></tr>
+    <tr><td>Gemini app (gemini.google.com)</td><td>Generative AI → Gemini app</td><td>OU / Group</td></tr>
+    <tr><td>Gemini Enterprise (agents, CLI)</td><td>Generative AI → Gemini Enterprise</td><td>OU / Group</td></tr>
+    <tr><td>Gemini in Gmail</td><td>Gemini for Workspace → Feature access</td><td>OU / Group</td></tr>
+    <tr><td>Gemini in Docs/Sheets/Slides/Drive</td><td>Gemini for Workspace → Feature access</td><td>OU / Group</td></tr>
+    <tr><td>Gemini in Meet</td><td>Gemini for Workspace → Feature access</td><td>OU / Group</td></tr>
+    <tr><td>Gemini in Chat</td><td>Gemini for Workspace → Feature access</td><td>OU / Group</td></tr>
+    <tr><td>NotebookLM / NotebookLM Plus</td><td>Generative AI → NotebookLM</td><td>OU / Group</td></tr>
+    <tr><td>Workspace Studio</td><td>Generative AI → Workspace Studio</td><td>OU / Group</td></tr>
+    <tr><td>Google Vids</td><td>Generative AI → Google Vids</td><td>OU / Group</td></tr>
+  </table>
+
+  <h3>Workspace Intelligence (Data Sources)</h3>
+  <table>
+    <tr><th>Source</th><th>What It Controls</th><th>Recommended</th></tr>
+    <tr><td>Gmail</td><td>Gemini can reference email content</td><td>Evaluate per OU</td></tr>
+    <tr><td>Drive</td><td>Gemini can reference Drive files</td><td>On (with DLP)</td></tr>
+    <tr><td>Calendar</td><td>Gemini can reference calendar events</td><td>On</td></tr>
+    <tr><td>Chat</td><td>Gemini can reference Chat messages</td><td>Off (sensitive)</td></tr>
+  </table>
+
+  <h3>Security Controls</h3>
+  <table>
+    <tr><th>Control</th><th>Location</th><th>Effect</th></tr>
+    <tr><td>2-Step Verification</td><td>Security → 2SV</td><td>Enforce MFA for all users</td></tr>
+    <tr><td>Context-Aware Access</td><td>Security → CAA</td><td>IP, device, OS, location restrictions</td></tr>
+    <tr><td>DLP rules</td><td>Security → DLP</td><td>Block PII/sensitive data in AI prompts</td></tr>
+    <tr><td>API controls</td><td>Security → API Controls</td><td>Restrict third-party app access</td></tr>
+    <tr><td>Session control</td><td>Security → Session</td><td>Configure session duration</td></tr>
+  </table>
+
+  <h3>Data Governance</h3>
+  <table>
+    <tr><th>Policy</th><th>Status</th></tr>
+    <tr><td>No training on customer data</td><td><span class="badge badge-yes">All Editions</span></td></tr>
+    <tr><td>Data residency</td><td><span class="badge badge-yes">Workspace data regions</span></td></tr>
+    <tr><td>Google Vault (retention + eDiscovery)</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>DLP integration</td><td><span class="badge badge-enterprise">Enterprise</span></td></tr>
+    <tr><td>SOC 2/3, ISO 27001, FedRAMP High</td><td><span class="badge badge-yes">Yes</span></td></tr>
+    <tr><td>HIPAA (BAA)</td><td><span class="badge badge-enterprise">Enterprise Plus</span></td></tr>
+  </table>
+
+  <h3>Monitoring</h3>
+  <table>
+    <tr><th>Capability</th><th>Location</th></tr>
+    <tr><td>Gemini usage reports</td><td>Reporting → Gemini</td></tr>
+    <tr><td>Admin audit logs</td><td>Security → Investigation</td></tr>
+    <tr><td>Gemini activity logs</td><td>Security → Investigation → Gemini</td></tr>
+    <tr><td>BigQuery export</td><td>Reporting → BigQuery Export</td></tr>
+    <tr><td>Custom alerts</td><td>Security → Alert Center</td></tr>
+  </table>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="comparison">6. Cross-Tool Comparison Matrix</h2>
+
+  <h3>Identity &amp; Access Management</h3>
+  <div class="comparison-matrix">
+  <table>
+    <tr>
+      <th>Capability</th>
+      <th>Claude</th>
+      <th>Cursor</th>
+      <th>ChatGPT</th>
+      <th>Gemini</th>
+    </tr>
+    <tr>
+      <td>SAML SSO</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">All Editions</span></td>
+    </tr>
+    <tr>
+      <td>SCIM provisioning</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Cloud Identity</span></td>
+    </tr>
+    <tr>
+      <td>Domain verification</td>
+      <td><span class="badge badge-yes">Team+</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Default</span></td>
+    </tr>
+    <tr>
+      <td>IP allowlisting</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Context-Aware</span></td>
+    </tr>
+    <tr>
+      <td>MFA enforcement</td>
+      <td><span class="badge badge-partial">Via IdP</span></td>
+      <td><span class="badge badge-partial">Via IdP</span></td>
+      <td><span class="badge badge-partial">Via IdP</span></td>
+      <td><span class="badge badge-yes">Native</span></td>
+    </tr>
+    <tr>
+      <td>Custom RBAC roles</td>
+      <td><span class="badge badge-no">3 fixed roles</span></td>
+      <td><span class="badge badge-no">3 fixed roles</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Custom roles</span></td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>Data Governance</h3>
+  <div class="comparison-matrix">
+  <table>
+    <tr>
+      <th>Capability</th>
+      <th>Claude</th>
+      <th>Cursor</th>
+      <th>ChatGPT</th>
+      <th>Gemini</th>
+    </tr>
+    <tr>
+      <td>No training on data</td>
+      <td><span class="badge badge-yes">Team+</span></td>
+      <td><span class="badge badge-yes">All Plans</span></td>
+      <td><span class="badge badge-yes">Business+</span></td>
+      <td><span class="badge badge-yes">All Editions</span></td>
+    </tr>
+    <tr>
+      <td>Data retention control</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Admin Console</span></td>
+    </tr>
+    <tr>
+      <td>Data residency</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Data Regions</span></td>
+    </tr>
+    <tr>
+      <td>Customer-managed keys</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">EKM</span></td>
+      <td><span class="badge badge-enterprise">CMEK (GCP)</span></td>
+    </tr>
+    <tr>
+      <td>DLP integration</td>
+      <td><span class="badge badge-partial">Via API</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Compliance API</span></td>
+      <td><span class="badge badge-yes">Native DLP</span></td>
+    </tr>
+    <tr>
+      <td>Compliance export</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Compliance API</span></td>
+      <td><span class="badge badge-yes">Vault/BigQuery</span></td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>Feature Governance</h3>
+  <div class="comparison-matrix">
+  <table>
+    <tr>
+      <th>Capability</th>
+      <th>Claude</th>
+      <th>Cursor</th>
+      <th>ChatGPT</th>
+      <th>Gemini</th>
+    </tr>
+    <tr>
+      <td>Disable specific features</td>
+      <td><span class="badge badge-yes">Managed settings</span></td>
+      <td><span class="badge badge-yes">Dashboard + MDM</span></td>
+      <td><span class="badge badge-yes">RBAC per feature</span></td>
+      <td><span class="badge badge-yes">Per service/OU</span></td>
+    </tr>
+    <tr>
+      <td>Extension/plugin control</td>
+      <td><span class="badge badge-yes">MDM policy</span></td>
+      <td><span class="badge badge-yes">Allowlist</span></td>
+      <td><span class="badge badge-yes">App governance</span></td>
+      <td><span class="badge badge-yes">Marketplace</span></td>
+    </tr>
+    <tr>
+      <td>Model access restrictions</td>
+      <td><span class="badge badge-partial">Plan tier</span></td>
+      <td><span class="badge badge-yes">Allow/blocklist</span></td>
+      <td><span class="badge badge-enterprise">Per-role limits</span></td>
+      <td><span class="badge badge-partial">Edition-based</span></td>
+    </tr>
+    <tr>
+      <td>Usage/spend limits</td>
+      <td><span class="badge badge-partial">Plan limits</span></td>
+      <td><span class="badge badge-yes">Per-user caps</span></td>
+      <td><span class="badge badge-enterprise">Per-role weekly</span></td>
+      <td><span class="badge badge-partial">Quota-based</span></td>
+    </tr>
+    <tr>
+      <td>MCP/tool server control</td>
+      <td><span class="badge badge-yes">Allow/denylist</span></td>
+      <td><span class="badge badge-yes">Allow/denylist</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>Monitoring &amp; Compliance</h3>
+  <div class="comparison-matrix">
+  <table>
+    <tr>
+      <th>Capability</th>
+      <th>Claude</th>
+      <th>Cursor</th>
+      <th>ChatGPT</th>
+      <th>Gemini</th>
+    </tr>
+    <tr>
+      <td>Audit logs</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Cloud Audit Logs</span></td>
+    </tr>
+    <tr>
+      <td>Usage analytics</td>
+      <td><span class="badge badge-yes">Team+</span></td>
+      <td><span class="badge badge-yes">Business+</span></td>
+      <td><span class="badge badge-yes">Business+</span></td>
+      <td><span class="badge badge-yes">Admin Reports</span></td>
+    </tr>
+    <tr>
+      <td>Admin API</td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-yes">REST API</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-yes">Admin SDK</span></td>
+    </tr>
+    <tr>
+      <td>SOC 2 Type II</td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-yes">Yes</span></td>
+    </tr>
+    <tr>
+      <td>HIPAA (BAA)</td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Ent. Plus</span></td>
+    </tr>
+    <tr>
+      <td>FedRAMP</td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Ent. Plus</span></td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>Deployment &amp; Enforcement</h3>
+  <div class="comparison-matrix">
+  <table>
+    <tr>
+      <th>Capability</th>
+      <th>Claude</th>
+      <th>Cursor</th>
+      <th>ChatGPT</th>
+      <th>Gemini</th>
+    </tr>
+    <tr>
+      <td>MDM (macOS plist)</td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-no">Web only</span></td>
+      <td><span class="badge badge-partial">Chrome policy</span></td>
+    </tr>
+    <tr>
+      <td>MDM (Windows registry)</td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-yes">Yes</span></td>
+      <td><span class="badge badge-no">Web only</span></td>
+      <td><span class="badge badge-partial">Chrome policy</span></td>
+    </tr>
+    <tr>
+      <td>Server-managed push</td>
+      <td><span class="badge badge-yes">Admin Console</span></td>
+      <td><span class="badge badge-yes">Dashboard</span></td>
+      <td><span class="badge badge-yes">Admin Console</span></td>
+      <td><span class="badge badge-yes">Admin Console</span></td>
+    </tr>
+    <tr>
+      <td>Update enforcement</td>
+      <td><span class="badge badge-yes">Force-restart</span></td>
+      <td><span class="badge badge-yes">UpdateMode</span></td>
+      <td><span class="badge badge-partial">SaaS (auto)</span></td>
+      <td><span class="badge badge-partial">SaaS (auto)</span></td>
+    </tr>
+    <tr>
+      <td>Multi-team/workspace</td>
+      <td><span class="badge badge-no">Single org</span></td>
+      <td><span class="badge badge-enterprise">Organizations</span></td>
+      <td><span class="badge badge-enterprise">Global Admin</span></td>
+      <td><span class="badge badge-yes">OU hierarchy</span></td>
+    </tr>
+  </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="sso">7. Unified SSO Quick Reference</h2>
+
+  <table>
+    <tr>
+      <th>Tool</th>
+      <th>Protocol</th>
+      <th>IdP Setup Location</th>
+      <th>Enforcement Option</th>
+      <th>Shared Config?</th>
+    </tr>
+    <tr>
+      <td>Claude</td>
+      <td>SAML 2.0 / OIDC</td>
+      <td>claude.ai → Admin → Security → SSO</td>
+      <td>Enforce SSO toggle</td>
+      <td>No (independent)</td>
+    </tr>
+    <tr>
+      <td>Cursor</td>
+      <td>SAML</td>
+      <td>cursor.com/settings → Security & Identity</td>
+      <td>Require SSO for all</td>
+      <td>No (independent)</td>
+    </tr>
+    <tr>
+      <td>ChatGPT</td>
+      <td>SAML</td>
+      <td>chatgpt.com/admin → Identity & Provisioning</td>
+      <td>Enforce SSO toggle</td>
+      <td><strong>Yes</strong> — shared with OpenAI API Platform</td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td>SAML 2.0 (or native Google auth)</td>
+      <td>admin.google.com → Security → SSO</td>
+      <td>2SV enforcement + CAA</td>
+      <td>Inherits Workspace auth</td>
+    </tr>
+  </table>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <h2 id="priority">8. Implementation Priority</h2>
+
+  <div class="summary-box">
+    <h4>Phase 1: Identity &amp; Access (Highest Priority)</h4>
+    <ul class="checklist">
+      <li>Deploy SSO across all four tools</li>
+      <li>Enable SCIM where available for automated provisioning</li>
+      <li>Verify domains and restrict external invites</li>
+      <li>Configure MFA (native or via IdP)</li>
+    </ul>
+  </div>
+
+  <div class="summary-box">
+    <h4>Phase 2: Data Governance</h4>
+    <ul class="checklist">
+      <li>Verify training opt-out on all tools</li>
+      <li>Set retention policies aligned with data classification</li>
+      <li>Configure DLP rules (especially Gemini native DLP)</li>
+      <li>Select data residency regions where available</li>
+    </ul>
+  </div>
+
+  <div class="summary-box">
+    <h4>Phase 3: Feature Governance</h4>
+    <ul class="checklist">
+      <li>Audit enabled features per tool — disable unused high-risk features</li>
+      <li>Configure RBAC roles (ChatGPT) and managed settings (Claude)</li>
+      <li>Set extension/MCP allowlists (Cursor, Claude)</li>
+      <li>Establish spending limits (Cursor, ChatGPT)</li>
+    </ul>
+  </div>
+
+  <div class="summary-box">
+    <h4>Phase 4: Monitoring &amp; Compliance</h4>
+    <ul class="checklist">
+      <li>Enable audit logs on all tools and route to SIEM</li>
+      <li>Set up usage analytics dashboards</li>
+      <li>Configure alerts for anomalous usage patterns</li>
+      <li>Document controls for compliance frameworks (SOC 2, ISO 27001)</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>AI Tools Admin Controls Reference — Generated from <strong>AI-Secure-Configs</strong> repository</p>
+    <p>Last updated: June 2026 · For detailed configurations, see the full <code>admin-controls/</code> directory</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

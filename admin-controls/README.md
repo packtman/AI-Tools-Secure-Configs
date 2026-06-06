@@ -112,6 +112,19 @@ For organizations deploying multiple AI tools, this recommended sequence address
 
 ---
 
+## Quick Reference (HTML / PDF)
+
+For a printable, single-document summary of all admin controls with comparison matrices:
+
+| Format | File | Use Case |
+|--------|------|----------|
+| HTML | [`admin-controls-reference.html`](./admin-controls-reference.html) | Open in browser, searchable, interactive |
+| PDF | [`admin-controls-reference.pdf`](./admin-controls-reference.pdf) | Print, share with stakeholders, offline reference |
+
+Both files contain the same content: per-tool admin settings summaries followed by cross-tool comparison matrices covering identity, data governance, feature governance, monitoring, and deployment.
+
+---
+
 ## Examples
 
 The [`examples/`](./examples/) directory contains ready-to-use admin configuration templates:
