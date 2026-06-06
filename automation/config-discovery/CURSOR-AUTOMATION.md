@@ -1,8 +1,8 @@
 # Cursor Automation Setup
 
-Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
+Use this prompt for a Cursor Cloud scheduled automation only if you prefer Cursor Cloud to perform the maintenance step instead of the GitHub workflow's built-in Claude Code action.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+By default, `.github/workflows/config-discovery.yml` acts as the sensor, runs the config-maintenance agent, commits changes, and opens or updates the PR. This file is an optional fallback for teams that want the scanner and the agent runner separated.
 
 ## Recommended Trigger
 
@@ -43,6 +43,6 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 - Update JSONC, deployable JSON, rationale docs, tier delta tables, and workflow-preservation notes.
 - Push a PR that reviewers can merge as an actual config update.
 
-## Why This Requires Cursor Automation
+## When To Use Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+Use this approach when your GitHub Actions environment cannot access the required model API secret, or when you want a human to review the discovery branch before the maintenance agent edits config files.
