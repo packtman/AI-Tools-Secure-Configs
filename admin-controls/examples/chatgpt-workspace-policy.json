@@ -1,0 +1,89 @@
+{
+  "_meta": {
+    "tool": "ChatGPT Enterprise",
+    "description": "Workspace default permissions template for ChatGPT Enterprise RBAC",
+    "reference": "chatgpt.com/admin → Settings and Permissions → Workspace tab",
+    "notes": "These are NOT deployed as a file — they are configured in the admin console. This template documents the recommended settings for reference and change control."
+  },
+  "workspace_defaults": {
+    "features": {
+      "chatgpt_agent": false,
+      "canvas": true,
+      "codex": false,
+      "codex_internet_access": false,
+      "custom_gpts_create": false,
+      "custom_gpts_use": true,
+      "custom_gpts_publish_internal": false,
+      "custom_gpts_publish_external": false,
+      "third_party_gpts": false,
+      "memory": false,
+      "web_search": true,
+      "file_uploads": true,
+      "image_generation": true,
+      "voice_mode": false,
+      "advanced_voice_mode": false,
+      "apps_and_actions": false,
+      "data_analysis": true,
+      "record_audio": false
+    },
+    "sharing": {
+      "share_conversations_internal": true,
+      "share_conversations_external": false,
+      "share_canvas_internal": true,
+      "share_canvas_external": false
+    },
+    "usage_limits": {
+      "enforcement": "admin_alert",
+      "level": "standard"
+    }
+  },
+  "custom_roles": [
+    {
+      "name": "Power User",
+      "description": "Advanced features for vetted users",
+      "assigned_to_groups": ["engineering-leads", "data-science"],
+      "permissions_override": {
+        "chatgpt_agent": true,
+        "codex": true,
+        "codex_internet_access": false,
+        "custom_gpts_create": true,
+        "custom_gpts_publish_internal": true,
+        "memory": true,
+        "apps_and_actions": true,
+        "voice_mode": true
+      },
+      "usage_limits": {
+        "enforcement": "hard_cap",
+        "level": "high"
+      }
+    },
+    {
+      "name": "Restricted",
+      "description": "Minimal access for compliance-sensitive roles",
+      "assigned_to_groups": ["finance", "legal", "hr"],
+      "permissions_override": {
+        "web_search": false,
+        "file_uploads": false,
+        "image_generation": false,
+        "data_analysis": false,
+        "apps_and_actions": false
+      },
+      "usage_limits": {
+        "enforcement": "hard_cap",
+        "level": "low"
+      }
+    }
+  ],
+  "identity": {
+    "sso_enforced": true,
+    "scim_enabled": true,
+    "restrict_to_verified_domains": true,
+    "ip_allowlist": ["10.0.0.0/8", "172.16.0.0/12"],
+    "default_seat_type": "chatgpt"
+  },
+  "data_governance": {
+    "retention_days": 90,
+    "allow_user_deletion": false,
+    "data_residency": "us"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "_meta": {
+    "tool": "Google Gemini (Workspace)",
+    "description": "Google Admin Console Gemini feature access matrix",
+    "reference": "admin.google.com → Generative AI → Gemini for Workspace / Gemini Enterprise",
+    "notes": "These are NOT deployed as a file — they are configured in the Google Admin Console. This template documents the recommended settings for reference and change control."
+  },
+  "gemini_app": {
+    "service_status": "on_for_specific_ous",
+    "enabled_ous": ["Engineering", "Product", "Marketing"],
+    "disabled_ous": ["Finance", "Legal", "HR-Sensitive"]
+  },
+  "gemini_enterprise": {
+    "service_status": "on_for_specific_groups",
+    "enabled_groups": ["ai-power-users", "agent-builders"],
+    "workspace_data_access": {
+      "business_edition": true,
+      "standard_plus_edition": true
+    }
+  },
+  "gemini_for_workspace": {
+    "feature_access": {
+      "gmail": {
+        "enabled": true,
+        "scope": "all_users"
+      },
+      "drive_docs_sheets_slides": {
+        "enabled": true,
+        "scope": "all_users"
+      },
+      "meet": {
+        "enabled": true,
+        "scope": "all_users",
+        "ai_meeting_notes": false
+      },
+      "chat": {
+        "enabled": true,
+        "scope": "all_users"
+      },
+      "calendar": {
+        "enabled": true,
+        "scope": "all_users"
+      },
+      "forms_drawings_vids": {
+        "enabled": false,
+        "scope": "none"
+      },
+      "workspace_studio": {
+        "enabled": false,
+        "scope": "none"
+      }
+    },
+    "workspace_intelligence": {
+      "gmail": true,
+      "drive": true,
+      "calendar": true,
+      "chat": false,
+      "vids": false
+    }
+  },
+  "additional_services": {
+    "notebooklm": {
+      "enabled": true,
+      "scope": "specific_groups",
+      "enabled_groups": ["research-team", "documentation"]
+    },
+    "google_vids": {
+      "enabled": false
+    },
+    "gemini_in_appsheet": {
+      "enabled": false
+    }
+  },
+  "security": {
+    "two_step_verification": "enforced",
+    "context_aware_access": {
+      "enabled": true,
+      "require_managed_device": true,
+      "allowed_ip_ranges": ["10.0.0.0/8", "192.168.0.0/16"]
+    },
+    "dlp_rules": {
+      "scan_gemini_prompts": true,
+      "block_pii": true,
+      "block_financial_data": true,
+      "block_source_code": false
+    }
+  },
+  "data_governance": {
+    "training_on_customer_data": false,
+    "data_residency": "us",
+    "conversation_retention": {
+      "policy": "vault_managed",
+      "default_retention_days": 365
+    },
+    "user_self_deletion": true
+  },
+  "monitoring": {
+    "audit_log_export": "bigquery",
+    "bigquery_dataset": "workspace_logs.gemini_audit",
+    "siem_integration": "chronicle",
+    "alert_rules": [
+      {
+        "name": "high_volume_ai_usage",
+        "condition": "user_prompts_per_day > 500",
+        "action": "notify_admin"
+      },
+      {
+        "name": "dlp_violation",
+        "condition": "dlp_rule_triggered",
+        "action": "block_and_notify"
+      }
+    ]
+  }
+}

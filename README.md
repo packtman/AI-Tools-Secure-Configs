@@ -21,6 +21,12 @@ A comprehensive collection of **security-hardened configurations** for popular A
 | [`tabnine/`](./tabnine/) | Tabnine Enterprise | Command permissions, workspace restrictions |
 | [`continue-dev/`](./continue-dev/) | Continue.dev | `config.yaml`, permissions, secrets management |
 
+### Cross-Tool Admin Controls
+
+| Directory | Purpose | Key Content |
+|-----------|---------|-------------|
+| [`admin-controls/`](./admin-controls/) | Centralized IT admin reference | Cross-tool comparison matrix, per-tool admin console guides, SSO checklist |
+
 ## Quick Start
 
 1. **Choose your tool** — Navigate to the directory for the AI tool you want to secure.
@@ -60,6 +66,13 @@ Use MDM, server-managed settings, or admin consoles to deploy and enforce polici
 ```
 AI-Secure-Configs/
 ├── README.md                    # This file
+├── admin-controls/              # Cross-tool admin controls for IT teams
+│   ├── README.md
+│   ├── claude-desktop.md
+│   ├── cursor.md
+│   ├── chatgpt.md
+│   ├── gemini.md
+│   └── examples/
 ├── claude-api/                  # Anthropic Claude API Platform
 │   ├── README.md
 │   ├── secure-org-policy.md
@@ -132,11 +145,12 @@ AI-Secure-Configs/
 
 ### For Organization Admins
 
-1. Start with the **secure-org-policy.md** or **secure-admin-policy.md** in each tool directory — these are deployment checklists.
-2. Read the **settings-rationale.md** in each tool's `examples/` directory — this explains *why* each setting should be enabled or disabled, with per-environment recommendations.
-3. Review the example configurations and adapt to your organization's risk profile.
-4. Deploy configurations via your MDM, config management tool, or admin console.
-5. Train your team on the security policies and provide the documentation.
+1. Start with [`admin-controls/`](./admin-controls/) for a **cross-tool comparison** of admin capabilities and a unified deployment strategy.
+2. Review the **secure-org-policy.md** or **secure-admin-policy.md** in each tool directory — these are deployment checklists.
+3. Read the **settings-rationale.md** in each tool's `examples/` directory — this explains *why* each setting should be enabled or disabled, with per-environment recommendations.
+4. Review the example configurations and adapt to your organization's risk profile.
+5. Deploy configurations via your MDM, config management tool, or admin console.
+6. Train your team on the security policies and provide the documentation.
 
 ### Automated Config Discovery
 
