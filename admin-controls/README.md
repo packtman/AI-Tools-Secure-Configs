@@ -125,16 +125,16 @@ For organizations deploying multiple AI tools, this recommended sequence address
 
 ---
 
-## Quick Reference (HTML / PDF)
+## Quick Reference (HTML)
 
 For a printable, single-document summary of all admin controls with comparison matrices:
 
 | Format | File | Use Case |
 |--------|------|----------|
 | HTML | [`admin-controls-reference.html`](./admin-controls-reference.html) | Open in browser, searchable, interactive |
-| PDF | [`admin-controls-reference.pdf`](./admin-controls-reference.pdf) | Print, share with stakeholders, offline reference |
+| PDF | Use browser Print → Save as PDF | Print, share with stakeholders, offline reference |
 
-Both files contain the same content: per-tool admin settings summaries followed by cross-tool comparison matrices covering identity, data governance, feature governance, monitoring, and deployment.
+The HTML file includes print-optimized CSS (`@media print`) for A4 output. Open in any browser and use Print (Ctrl/Cmd+P) to generate a PDF.
 
 ---
 
