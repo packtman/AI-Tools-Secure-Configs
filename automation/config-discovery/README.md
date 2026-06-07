@@ -16,7 +16,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
-| `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner, scopes agent work, runs the maintenance agent when configured, and opens or updates a PR. |
 
 ## How the Loop Works
 
@@ -25,10 +25,12 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 3. It compares the normalized response fingerprint, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
-6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+6. The workflow commits those files to `automation/config-maintenance` and opens or updates a PR branch.
+7. If repository secret `ANTHROPIC_API_KEY` is configured, the workflow runs the config-maintenance agent against `reports/agent-scope.md`.
+8. If the secret is not configured, the workflow still opens a discovery-only PR so Cursor Cloud or a human reviewer can run `agent-prompt.md` on the branch.
+9. The maintenance agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+The scanner only detects and stages the source-change signal. A maintenance agent or human reviewer must still decide the security posture for a brand-new vendor setting. Use either the in-workflow agent or the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
 
 ## Adding a Source
 
@@ -80,20 +82,20 @@ Treat the initial discovery commit as an intake signal. The final PR should incl
 - Include rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes when behavior changes.
 - Do not add secrets, tokens, API keys, or organization-specific identifiers.
 
-## GitHub Permissions
+## GitHub Permissions and Secrets
 
 The workflow needs:
 
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The in-workflow maintenance agent step requires repository secret `ANTHROPIC_API_KEY`. If that secret is missing, the workflow opens a discovery-only PR instead of failing before PR creation.
 
 ## Agent step failures (`error_max_turns`)
 
 If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow now:
 
-- Builds `reports/agent-scope.md` with at most four tools that have missing local terms.
+- Builds `reports/agent-scope.md` with at most four unique tools that have missing local terms.
 - Uses `--max-turns 60` and instructs the agent to mirror strict, moderate, and baseline per scoped tool.
 - Commits partial file changes if the agent edited files before hitting the limit.
 - Fails the job only when the agent errors and leaves no diff.

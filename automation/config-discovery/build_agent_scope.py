@@ -4,13 +4,28 @@
 from __future__ import annotations
 
 import argparse
+from collections import OrderedDict
+from dataclasses import dataclass, field
 import pathlib
 import re
 import sys
 
 
-SECTION_RE = re.compile(r"^### (.+?): (.+)$", re.MULTILINE)
 MISSING_BLOCK = "Potential config terms not found in local tool files:"
+
+
+@dataclass
+class ToolScope:
+    sources: list[tuple[str, list[str]]] = field(default_factory=list)
+    terms: OrderedDict[str, None] = field(default_factory=OrderedDict)
+
+
+def format_terms(terms: list[str], limit: int = 15) -> str:
+    visible_terms = terms[:limit]
+    rendered = ", ".join(f"`{term}`" for term in visible_terms)
+    if len(terms) > limit:
+        rendered = f"{rendered} ({len(terms) - limit} more in the full report)"
+    return rendered
 
 
 def build_scope(report_text: str, max_tools: int) -> str:
@@ -29,7 +44,7 @@ def build_scope(report_text: str, max_tools: int) -> str:
         "",
     ]
 
-    sections: list[tuple[str, str, list[str]]] = []
+    tools: OrderedDict[str, ToolScope] = OrderedDict()
     parts = report_text.split("### ")
     for part in parts[1:]:
         header_line, _, body = part.partition("\n")
@@ -44,9 +59,12 @@ def build_scope(report_text: str, max_tools: int) -> str:
         terms_block = after.split("\n\n", 1)[0]
         terms = re.findall(r"`([^`]+)`", terms_block)
         if terms:
-            sections.append((tool_name, source_name, terms))
+            tool_scope = tools.setdefault(tool_name, ToolScope())
+            tool_scope.sources.append((source_name, terms))
+            for term in terms:
+                tool_scope.terms.setdefault(term, None)
 
-    if not sections:
+    if not tools:
         lines.extend(
             [
                 "## No scoped tools",
@@ -58,29 +76,32 @@ def build_scope(report_text: str, max_tools: int) -> str:
         )
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    tool_items = list(tools.items())
+    limited = tool_items[:max_tools]
+    lines.append(f"## Tools to process ({len(limited)} of {len(tool_items)} tools with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name, tool_scope in limited:
+        combined_terms = list(tool_scope.terms.keys())
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+        lines.append(f"- Combined missing terms: {format_terms(combined_terms)}")
+        lines.append("- Sources:")
+        for source_name, terms in tool_scope.sources:
+            lines.append(f"  - {source_name}: {format_terms(terms)}")
         lines.append("")
 
-    if len(sections) > max_tools:
+    if len(tool_items) > max_tools:
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(tool_items) - max_tools} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name, tool_scope in tool_items[max_tools:]:
+            source_names = ", ".join(source_name for source_name, _ in tool_scope.sources)
+            lines.append(f"- {tool_name} ({source_names})")
         lines.append("")
 
     return "\n".join(lines)
