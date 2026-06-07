@@ -3,7 +3,8 @@
     "tool": "Claude (Desktop & Web)",
     "description": "Claude Team/Enterprise admin console policy reference",
     "reference": "claude.ai → Admin Settings → Claude Code → Managed settings",
-    "notes": "Server-managed settings are configured in the admin console and delivered to clients at auth time. This template documents the recommended Enterprise configuration for change control purposes."
+    "notes": "Server-managed settings are configured in the admin console and delivered to clients at auth time. This template documents the recommended Enterprise configuration for change control purposes.",
+    "last_updated": "2026-06-07"
   },
   "organization": {
     "plan": "enterprise",
@@ -43,7 +44,32 @@
       "disableAutoMode": "disable"
     },
     "allowManagedPermissionRulesOnly": true,
+    "forceRemoteSettingsRefresh": true,
     "channelsEnabled": false,
+    "sandbox": {
+      "enabled": true,
+      "failIfUnavailable": true,
+      "allowUnsandboxedCommands": false,
+      "allowManagedReadPathsOnly": true,
+      "allowManagedDomainsOnly": true,
+      "network": {
+        "allowedDomains": [
+          "github.com",
+          "*.github.com",
+          "npmjs.org",
+          "*.npmjs.org",
+          "pypi.org",
+          "*.pypi.org"
+        ]
+      }
+    },
+    "allowManagedHooksOnly": true,
+    "allowedHttpHookUrls": [
+      "https://hooks.internal.acme.com/*"
+    ],
+    "strictKnownMarketplaces": true,
+    "blockedMarketplaces": [],
+    "allowPluginOnlyCustomization": false,
     "allowedMcpServers": [
       {
         "name": "github",
@@ -54,7 +80,8 @@
         "url": "https://mcp.internal.acme.com/docs"
       }
     ],
-    "deniedMcpServers": []
+    "deniedMcpServers": [],
+    "allowManagedMcpServersOnly": true
   },
   "desktop_policy": {
     "_delivery": "MDM (plist/registry) or admin console",
@@ -64,7 +91,14 @@
     "isClaudeCodeForDesktopEnabled": true,
     "secureVmFeaturesEnabled": false,
     "disableAutoUpdates": false,
-    "autoUpdaterEnforcementHours": 24
+    "autoUpdaterEnforcementHours": 24,
+    "forceLoginOrgUUID": "org_acme_uuid_here"
+  },
+  "spend_controls": {
+    "organization_monthly_budget_usd": 10000,
+    "per_user_monthly_cap_usd": 500,
+    "extra_usage_enabled": true,
+    "extra_usage_max_per_user_usd": 200
   },
   "data_governance": {
     "training_on_data": false,
@@ -74,6 +108,11 @@
   "monitoring": {
     "audit_logs": true,
     "usage_analytics": true,
+    "compliance_api": {
+      "enabled": true,
+      "automated_flagging": true,
+      "selective_deletion": true
+    },
     "siem_export": {
       "enabled": true,
       "destination": "splunk"

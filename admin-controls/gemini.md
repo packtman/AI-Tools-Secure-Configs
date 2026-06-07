@@ -14,12 +14,13 @@ Gemini in Google Workspace encompasses multiple surfaces: the standalone **Gemin
 |-----------|-----|-------------------|
 | Google Admin Console | `admin.google.com` | Super Admin or Gemini Settings administrator |
 | Generative AI section | Admin Console → Generative AI | Gemini Settings privilege |
+| AI Control Center | Admin Console → Generative AI → AI control center | Super Admin (Enterprise Standard/Plus) |
 
 ### Admin Roles
 
 | Role | Capabilities |
 |------|-------------|
-| **Super Admin** | Full access to all admin settings |
+| **Super Admin** | Full access to all admin settings including AI Control Center |
 | **Gemini Settings Admin** | Manage Gemini-specific feature access and policies |
 | **Groups Admin** | Manage group membership for Gemini access control |
 | **Custom Roles** | Granular privilege assignment via Admin SDK |
@@ -77,10 +78,57 @@ Controls which Workspace services can be actively searched to power generative A
 | Gemini in AppSheet | Generative AI → App Creation | Enable AI-assisted app creation |
 | Gemini CLI | Generative AI → Gemini Enterprise | Included with Enterprise access |
 | AI meeting notes | Generative AI → Meet | Allow Gemini to take meeting notes |
+| Workspace MCP Server (Preview) | Generative AI → Integrations | Allow third-party AI apps to access Workspace data via MCP |
 
 ---
 
-## 2. Identity & Access Management
+## 2. AI Control Center (Enterprise Standard/Plus)
+
+Launched May 4, 2026, the AI Control Center provides a unified governance dashboard for all generative AI and agent activity.
+
+**Location:** Admin Console → Generative AI → AI control center
+
+### Modules
+
+| Module | Function |
+|--------|----------|
+| Monitor and control AI access | View AI usage across all services; manage opt-in settings |
+| Manage security for AI products | Granular authority over how Gemini and agents access Workspace data |
+| Manage fundamental security | Surface existing protections (classification labels, DLP rules, trust domains) |
+| Review privacy, abuse, and compliance | Data privacy, abuse prevention, and compliance standards |
+
+### Monitored Services
+
+The AI Control Center tracks usage across:
+
+- Gmail, Drive, Docs, Sheets, Slides
+- Meet, Calendar, Chat
+- Gemini App (gemini.google.com)
+
+### Agent Governance
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Agent access to Workspace data | AI Control Center → Manage security | Control how AI agents interact with organizational data |
+| Classification labels | AI Control Center → Manage fundamental security | Label files to restrict AI access based on sensitivity |
+| Trust rules | AI Control Center → Manage fundamental security | Prevent oversharing when using AI |
+| Data protection rules | AI Control Center → Manage fundamental security | DLP enforcement for AI interactions |
+| Trusted domains | AI Control Center → Manage fundamental security | Restrict external sharing in AI contexts |
+
+### Third-Party AI App Controls
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Third-party AI app access | Security → API Controls | Control OAuth-based third-party AI app access |
+| Workspace MCP Server access | Generative AI → Integrations | Govern third-party apps accessing Workspace via MCP |
+| App allowlist/blocklist | Security → API Controls | Approve/block specific third-party AI applications |
+| Context-Aware Access for AI | Security → Access → CAA | Conditional policies for AI service access |
+
+> **Note:** Third-party apps connected via individual OAuth grants are managed through the existing API Controls section under Security, not the AI Control Center.
+
+---
+
+## 3. Identity & Access Management
 
 Google Workspace provides identity management at the platform level (not Gemini-specific):
 
@@ -111,7 +159,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 
 ---
 
-## 3. Data Governance
+## 4. Data Governance
 
 ### Privacy Guarantees
 
@@ -146,7 +194,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 
 ---
 
-## 4. Security Controls
+## 5. Security Controls
 
 ### Network & Access
 
@@ -167,7 +215,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 
 ---
 
-## 5. Monitoring & Audit
+## 6. Monitoring & Audit
 
 ### Admin Reports
 
@@ -203,7 +251,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 
 ---
 
-## 6. Compliance
+## 7. Compliance
 
 ### Certifications
 
@@ -230,7 +278,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 
 ---
 
-## 7. Supported Editions
+## 8. Supported Editions
 
 | Feature | Business Starter | Business Standard | Business Plus | Enterprise Standard | Enterprise Plus |
 |---------|-----------------|-------------------|---------------|--------------------|-----------------| 
@@ -239,6 +287,8 @@ Google Workspace provides identity management at the platform level (not Gemini-
 | Workspace Intelligence | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Gemini Enterprise (agents) | Add-on | Add-on | Add-on | ✓ | ✓ |
 | NotebookLM Plus | Add-on | Add-on | Add-on | ✓ | ✓ |
+| AI Control Center | ✗ | ✗ | ✗ | ✓ | ✓ |
+| Workspace MCP Server | ✗ | ✗ | ✗ | ✓ | ✓ |
 | Advanced DLP | ✗ | ✗ | ✗ | ✓ | ✓ |
 | Google Vault | ✗ | ✗ | ✗ | ✓ | ✓ |
 | Context-Aware Access | ✗ | ✗ | ✗ | ✓ | ✓ |
@@ -247,7 +297,7 @@ Google Workspace provides identity management at the platform level (not Gemini-
 
 ---
 
-## 8. Recommended Admin Configuration
+## 9. Recommended Admin Configuration
 
 ### For regulated environments (finance, healthcare, government)
 
@@ -265,6 +315,10 @@ Google Workspace provides identity management at the platform level (not Gemini-
 - [ ] Request BAA for HIPAA coverage (Enterprise Plus)
 - [ ] Review and approve any third-party integrations via API controls
 - [ ] Disable NotebookLM unless specifically approved
+- [ ] Configure AI Control Center — review all security modules
+- [ ] Apply classification labels to sensitive files to restrict AI access
+- [ ] Configure trust rules to prevent AI-mediated oversharing
+- [ ] Block Workspace MCP Server access for external AI agents (unless vetted)
 
 ### For standard enterprise teams
 
@@ -278,6 +332,9 @@ Google Workspace provides identity management at the platform level (not Gemini-
 - [ ] Configure Google Vault retention per data policy
 - [ ] Allow Gemini Enterprise to access Workspace data (with appropriate DLP)
 - [ ] Review Gemini usage reports quarterly
+- [ ] Review AI Control Center dashboard monthly
+- [ ] Apply classification labels to confidential documents
+- [ ] Vet and approve third-party AI apps via API controls before Workspace MCP access
 
 ### For smaller business teams
 

@@ -46,8 +46,9 @@ This guide focuses on **admin-level controls** — settings managed by IT teams 
 | Data retention control | Enterprise | — | Enterprise | Admin console |
 | Data residency | Enterprise (US/EU) | — | Enterprise (10 regions) | Workspace data regions |
 | Customer-managed keys | Enterprise | — | Enterprise (EKM) | CMEK via GCP |
-| DLP integration | Via API | — | Compliance API | Native Workspace DLP |
-| Conversation export | Enterprise | — | Compliance API | Vault/BigQuery export |
+| DLP integration | Compliance API | — | Compliance API | Native Workspace DLP + AI Control Center |
+| Conversation export | Compliance API (Enterprise) | — | Compliance API | Vault/BigQuery export |
+| Spend controls | Org + per-user caps | Team + per-member + billing groups | Credit pool + per-role caps | Edition-based |
 
 ### Feature Governance
 
@@ -55,10 +56,15 @@ This guide focuses on **admin-level controls** — settings managed by IT teams 
 |------------|--------|--------|---------|--------|
 | Disable specific features | Managed settings | Dashboard + MDM | RBAC per feature | Admin console per service |
 | Extension/plugin control | MDM policy keys | Allowlist (dashboard/MDM) | App governance | Workspace Marketplace |
-| Model access restrictions | Via plan tier | Model allow/blocklist | Per-role usage limits | Edition-based |
+| Model access restrictions | Via plan tier | Model allow/blocklist (provider + model level) | Per-role usage limits | Edition-based |
 | File upload controls | Managed settings | — | Per-role toggle | Admin console |
 | Web browsing control | — | — | Per-role toggle | Admin console |
-| Custom GPT/agent governance | — | Team Rules | GPT publishing controls | Gems governance |
+| Custom GPT/agent governance | — | Team Rules | GPT publishing + agent RBAC | Gems governance |
+| Workspace agents | — | Cloud Agent restrictions | Agent build/share/monitor via RBAC | Agent governance via AI Control Center |
+| Sandbox enforcement | `sandbox.enabled` + `failIfUnavailable` | Require sandbox for agents | — | — |
+| Sites/app deployment | — | — | Sites (RBAC-controlled) | — |
+| Plugin/marketplace control | `strictKnownMarketplaces`, `blockedMarketplaces` | Team Marketplaces | Codex plugins (per-role) | Workspace Marketplace |
+| Fail-closed enforcement | `forceRemoteSettingsRefresh` | — | — | — |
 
 ### Monitoring & Compliance
 
@@ -68,17 +74,24 @@ This guide focuses on **admin-level controls** — settings managed by IT teams 
 | Usage analytics | Team+ | Team+ | Business+ | Admin console reports |
 | Compliance certifications | SOC 2 Type II | SOC 2 Type II | SOC 2 Type II | SOC 2/3, ISO 27001, FedRAMP |
 | HIPAA eligible | Enterprise (BAA) | — | Enterprise (BAA) | Enterprise Plus |
-| Admin API | — | Enterprise | — | Google Admin SDK |
+| Admin API | Compliance API (Enterprise) | Admin API + Analytics API | Compliance API + Analytics API | Google Admin SDK |
+| AI code attribution | — | Cursor Blame + AI Code Tracking API | Codex analytics | — |
+| AI governance dashboard | — | — | — | AI Control Center |
+| Service accounts | — | Enterprise | — | Service accounts (GCP) |
+| Billing groups | — | Enterprise | — | — |
 
 ### Deployment & Enforcement
 
 | Capability | Claude | Cursor | ChatGPT | Gemini |
 |------------|--------|--------|---------|--------|
-| MDM (macOS) | plist profiles | plist profiles | — | Chrome/device policy |
-| MDM (Windows) | Registry/Intune | Registry/Intune | — | Chrome/device policy |
-| Server-managed settings | Admin console push | Dashboard push | — | Admin console |
+| MDM (macOS) | plist profiles (Desktop + Code) | plist profiles | — | Chrome/device policy |
+| MDM (Windows) | Registry/Intune (Desktop + Code) | Registry/Intune | — | Chrome/device policy |
+| Server-managed settings | Admin console push (highest precedence) | Dashboard push | — | Admin console |
 | Update control | `autoUpdaterEnforcementHours` | `UpdateMode` MDM key | Managed by OpenAI | Chrome/OS updates |
 | Managed browser | — | — | — | Chrome Enterprise |
+| Org-pinned login | `forceLoginOrgUUID` | `AllowedTeamId` | SSO enforcement | Workspace login |
+| File-based policy | `managed-settings.json` + drop-in directory | — | — | — |
+| Multi-team / multi-workspace | Workspace segmentation | Organizations (multi-team) | Global Admin Console | Organizational Units |
 
 ---
 

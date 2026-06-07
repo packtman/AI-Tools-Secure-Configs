@@ -3,12 +3,15 @@
     "tool": "ChatGPT Enterprise",
     "description": "Workspace default permissions template for ChatGPT Enterprise RBAC",
     "reference": "chatgpt.com/admin → Settings and Permissions → Workspace tab",
-    "notes": "These are NOT deployed as a file — they are configured in the admin console. This template documents the recommended settings for reference and change control."
+    "notes": "These are NOT deployed as a file — they are configured in the admin console. This template documents the recommended settings for reference and change control.",
+    "last_updated": "2026-06-07"
   },
   "workspace_defaults": {
     "features": {
       "chatgpt_agent": false,
       "canvas": true,
+      "canvas_code_execution": true,
+      "canvas_network_access": false,
       "codex": false,
       "codex_internet_access": false,
       "custom_gpts_create": false,
@@ -24,7 +27,10 @@
       "advanced_voice_mode": false,
       "apps_and_actions": false,
       "data_analysis": true,
-      "record_audio": false
+      "record_audio": false,
+      "chatgpt_sites": false,
+      "projects_create": true,
+      "shared_projects": true
     },
     "sharing": {
       "share_conversations_internal": true,
@@ -35,6 +41,35 @@
     "usage_limits": {
       "enforcement": "admin_alert",
       "level": "standard"
+    }
+  },
+  "workspace_agents": {
+    "enabled": true,
+    "governance": {
+      "build_access": "rbac_controlled",
+      "share_access": "rbac_controlled",
+      "approval_gates_required": true,
+      "admin_can_suspend": true
+    },
+    "monitoring": {
+      "activity_dashboard": true,
+      "compliance_api_visibility": true
+    }
+  },
+  "chatgpt_sites": {
+    "enabled": false,
+    "access_scope": "owners_and_admins",
+    "admin_can_disable_published": true
+  },
+  "codex_governance": {
+    "codex_admin_role": {
+      "enabled": true,
+      "assigned_to_groups": ["platform-engineering"]
+    },
+    "managed_policies": true,
+    "plugins": {
+      "enabled": true,
+      "role_specific": true
     }
   },
   "custom_roles": [
@@ -50,7 +85,8 @@
         "custom_gpts_publish_internal": true,
         "memory": true,
         "apps_and_actions": true,
-        "voice_mode": true
+        "voice_mode": true,
+        "chatgpt_sites": true
       },
       "usage_limits": {
         "enforcement": "hard_cap",
@@ -66,7 +102,9 @@
         "file_uploads": false,
         "image_generation": false,
         "data_analysis": false,
-        "apps_and_actions": false
+        "apps_and_actions": false,
+        "chatgpt_agent": false,
+        "chatgpt_sites": false
       },
       "usage_limits": {
         "enforcement": "hard_cap",
