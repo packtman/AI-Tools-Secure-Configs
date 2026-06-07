@@ -3,11 +3,18 @@
     "tool": "Cursor Enterprise",
     "description": "Organization-level governance settings for Cursor Enterprise",
     "reference": "cursor.com/settings → Organization dashboard",
-    "notes": "These are configured in the Cursor dashboard and enforced server-side. MDM policies (AllowedTeamId, AllowedExtensions) are deployed separately via device management."
+    "notes": "These are configured in the Cursor dashboard and enforced server-side. MDM policies (AllowedTeamId, AllowedExtensions) are deployed separately via device management.",
+    "last_updated": "2026-06-07"
   },
   "organization": {
     "name": "Acme Corp",
-    "governance_level": "enterprise"
+    "governance_level": "enterprise",
+    "multi_team": {
+      "enabled": true,
+      "org_level_idp": true,
+      "org_level_analytics": true,
+      "settings_inheritance": true
+    }
   },
   "security": {
     "privacy_mode": {
@@ -77,6 +84,11 @@
   },
   "spending": {
     "team_monthly_limit_usd": 5000,
+    "limit_type": "soft",
+    "automated_alerts": {
+      "thresholds": [50, 80, 100],
+      "notify_users": true
+    },
     "admin_only_limit_changes": true,
     "per_member_default_limit_usd": 200,
     "group_overrides": [
@@ -90,6 +102,34 @@
       }
     ]
   },
+  "billing_groups": [
+    {
+      "name": "Engineering",
+      "assignment_method": "scim",
+      "scim_group": "engineering"
+    },
+    {
+      "name": "Product",
+      "assignment_method": "scim",
+      "scim_group": "product-team"
+    },
+    {
+      "name": "Data Science",
+      "assignment_method": "manual"
+    }
+  ],
+  "service_accounts": [
+    {
+      "name": "CI/CD Pipeline",
+      "purpose": "Automated code review and cloud agent invocation",
+      "key_rotation_days": 90
+    },
+    {
+      "name": "Linear Integration",
+      "purpose": "Issue tracking automation",
+      "key_rotation_days": 90
+    }
+  ],
   "model_access": {
     "mode": "allowlist",
     "allowed_providers": ["anthropic", "openai"],
@@ -100,7 +140,9 @@
       "gpt-4o",
       "o3-*"
     ],
-    "blocked_models": []
+    "blocked_models": [],
+    "block_new_providers_by_default": true,
+    "block_new_versions_by_default": false
   },
   "rules_and_commands": {
     "server_managed_rules": [
@@ -113,7 +155,9 @@
     "audit_logs_enabled": true,
     "analytics_enabled": true,
     "ai_code_tracking": true,
-    "conversation_analytics": true
+    "conversation_insights": true,
+    "cursor_blame": true,
+    "analytics_api_enabled": true
   },
   "mdm_enforcement": {
     "_note": "Deploy these via Jamf/Intune in addition to dashboard settings",

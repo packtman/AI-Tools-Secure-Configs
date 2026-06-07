@@ -309,10 +309,19 @@
     <tr><td>permissions.disableBypassPermissionsMode</td><td>String</td><td><code>"disable"</code></td></tr>
     <tr><td>permissions.disableAutoMode</td><td>String</td><td><code>"disable"</code></td></tr>
     <tr><td>allowManagedPermissionRulesOnly</td><td>Boolean</td><td><code>true</code></td></tr>
+    <tr><td>forceRemoteSettingsRefresh</td><td>Boolean</td><td><code>true</code> (fail-closed enforcement)</td></tr>
     <tr><td>channelsEnabled</td><td>Boolean</td><td><code>false</code> (regulated) / <code>true</code></td></tr>
     <tr><td>allowedMcpServers</td><td>Array</td><td>Explicit allowlist only</td></tr>
+    <tr><td>allowManagedMcpServersOnly</td><td>Boolean</td><td><code>true</code></td></tr>
     <tr><td>deniedMcpServers</td><td>Array</td><td>Known-risky packages</td></tr>
     <tr><td>permissions.deny</td><td>Array</td><td>Block rm -rf, curl|bash, sudo, .env reads</td></tr>
+    <tr><td>sandbox.enabled</td><td>Boolean</td><td><code>true</code> (with failIfUnavailable)</td></tr>
+    <tr><td>sandbox.failIfUnavailable</td><td>Boolean</td><td><code>true</code></td></tr>
+    <tr><td>sandbox.allowUnsandboxedCommands</td><td>Boolean</td><td><code>false</code></td></tr>
+    <tr><td>sandbox.network.allowedDomains</td><td>Array</td><td>Approved domains only</td></tr>
+    <tr><td>allowManagedHooksOnly</td><td>Boolean</td><td><code>true</code></td></tr>
+    <tr><td>strictKnownMarketplaces</td><td>Boolean</td><td><code>true</code></td></tr>
+    <tr><td>allowPluginOnlyCustomization</td><td>Boolean</td><td><code>false</code> (block user customizations)</td></tr>
   </table>
   </div>
 
@@ -326,13 +335,27 @@
     <tr><td>secureVmFeaturesEnabled</td><td>Boolean</td><td><code>false</code></td></tr>
     <tr><td>disableAutoUpdates</td><td>Boolean</td><td><code>false</code></td></tr>
     <tr><td>autoUpdaterEnforcementHours</td><td>Integer</td><td><code>24</code></td></tr>
+    <tr><td>forceLoginOrgUUID</td><td>String</td><td>Your org UUID (pin sign-in)</td></tr>
   </table>
 
   <h3>MDM Deployment</h3>
   <table>
     <tr><th>Platform</th><th>Mechanism</th><th>Identifier</th></tr>
-    <tr><td>macOS</td><td>Configuration Profile (plist)</td><td><code>com.anthropic.claudefordesktop</code></td></tr>
-    <tr><td>Windows</td><td>Registry (Intune/GPO)</td><td><code>HKLM\SOFTWARE\Policies\Claude</code></td></tr>
+    <tr><td>macOS (Desktop)</td><td>Configuration Profile (plist)</td><td><code>com.anthropic.claudefordesktop</code></td></tr>
+    <tr><td>macOS (Code)</td><td>Configuration Profile (plist)</td><td><code>com.anthropic.claudecode</code></td></tr>
+    <tr><td>Windows (Desktop)</td><td>Registry (Intune/GPO)</td><td><code>HKLM\SOFTWARE\Policies\Claude</code></td></tr>
+    <tr><td>Windows (Code)</td><td>Registry (Intune/GPO)</td><td><code>HKLM\SOFTWARE\Policies\ClaudeCode</code></td></tr>
+    <tr><td>Linux/WSL (Code)</td><td>File</td><td><code>/etc/claude-code/managed-settings.json</code></td></tr>
+  </table>
+
+  <h3>Spend Controls &amp; Compliance</h3>
+  <table>
+    <tr><th>Capability</th><th>Plan</th><th>Description</th></tr>
+    <tr><td>Organization budget cap</td><td>Team+</td><td>Hard monthly ceiling for total spend</td></tr>
+    <tr><td>Per-user spending caps</td><td>Team+</td><td>Individual user spending limits</td></tr>
+    <tr><td>Extra usage (API rates)</td><td>Team+</td><td>Admin-controlled overflow at standard rates</td></tr>
+    <tr><td>Compliance API</td><td>Enterprise</td><td>Real-time usage data, selective deletion, SIEM export</td></tr>
+    <tr><td>Workspace segmentation</td><td>Enterprise</td><td>Up to 100 workspaces with isolated controls</td></tr>
   </table>
 
   <h3>Data Governance</h3>
@@ -356,7 +379,7 @@
   <h3>Identity &amp; Access</h3>
   <table>
     <tr><th>Setting</th><th>Location</th><th>Plan</th></tr>
-    <tr><td>SAML SSO</td><td>Security & Identity → SSO</td><td>Enterprise</td></tr>
+    <tr><td>SAML/OIDC SSO</td><td>Security & Identity → SSO</td><td>Teams+</td></tr>
     <tr><td>SCIM 2.0 provisioning</td><td>Security & Identity → SCIM</td><td>Enterprise</td></tr>
     <tr><td>AllowedTeamId (MDM)</td><td>MDM policy</td><td>Enterprise</td></tr>
     <tr><td>Restrict CLI access</td><td>Dashboard → User Access</td><td>Enterprise</td></tr>
@@ -378,10 +401,13 @@
   <h3>Spend Governance</h3>
   <table>
     <tr><th>Setting</th><th>Scope</th><th>Plan</th></tr>
-    <tr><td>Team monthly spending limit</td><td>Whole team</td><td>Business+</td></tr>
+    <tr><td>Team monthly spending limit (hard/soft)</td><td>Whole team</td><td>Business+</td></tr>
+    <tr><td>Automated alerts (50%, 80%, 100%)</td><td>Per-user notifications</td><td>Business+</td></tr>
     <tr><td>Per-member spending limit</td><td>Individual users</td><td>Enterprise</td></tr>
     <tr><td>Group-based limits</td><td>SCIM directory groups</td><td>Enterprise</td></tr>
+    <tr><td>Billing Groups (cost attribution)</td><td>Departments/teams</td><td>Enterprise</td></tr>
     <tr><td>Model allowlist/blocklist</td><td>Provider or model level</td><td>Enterprise</td></tr>
+    <tr><td>Block new providers by default</td><td>Auto-block until reviewed</td><td>Enterprise</td></tr>
     <tr><td>Admin-only limit changes</td><td>Prevents member override</td><td>Business+</td></tr>
   </table>
 
@@ -404,10 +430,14 @@
   <h3>Monitoring</h3>
   <table>
     <tr><th>Capability</th><th>Plan</th></tr>
-    <tr><td>Usage analytics</td><td>Business+</td></tr>
+    <tr><td>Usage analytics (by product surface)</td><td>Business+</td></tr>
     <tr><td>Audit logs (tamper-proof)</td><td>Enterprise</td></tr>
     <tr><td>AI code tracking (per-commit)</td><td>Enterprise</td></tr>
+    <tr><td>Cursor Blame (AI vs. human attribution)</td><td>Enterprise</td></tr>
+    <tr><td>Conversation Insights</td><td>Enterprise</td></tr>
+    <tr><td>Service Accounts (non-human automation)</td><td>Enterprise</td></tr>
     <tr><td>Admin REST API</td><td>Business+</td></tr>
+    <tr><td>Analytics API</td><td>Enterprise</td></tr>
   </table>
 
   <!-- ═══════════════════════════════════════════ -->
@@ -436,7 +466,7 @@
   <table>
     <tr><th>Feature Toggle</th><th>Default (Recommended)</th><th>Notes</th></tr>
     <tr><td>ChatGPT Agent</td><td>Off</td><td>Autonomous agent — high risk</td></tr>
-    <tr><td>Canvas</td><td>On</td><td>Collaborative editing</td></tr>
+    <tr><td>Canvas</td><td>On</td><td>Collaborative editing (code execution + network access)</td></tr>
     <tr><td>Codex</td><td>Off</td><td>Code assistant — separate seat</td></tr>
     <tr><td>Custom GPTs — Create</td><td>Off</td><td>Require approval workflow</td></tr>
     <tr><td>Custom GPTs — Use</td><td>On</td><td>Internal GPTs only</td></tr>
@@ -448,6 +478,29 @@
     <tr><td>Voice mode</td><td>Off</td><td>Audio interaction</td></tr>
     <tr><td>Apps & actions</td><td>Off</td><td>Connected integrations (email, calendar)</td></tr>
     <tr><td>Data analysis</td><td>On</td><td>Code interpreter</td></tr>
+    <tr><td>ChatGPT Sites</td><td>Off (Enterprise)</td><td>Site creation/deployment — On by default for Business</td></tr>
+    <tr><td>Projects — Create/Edit</td><td>On</td><td>Shared project management</td></tr>
+  </table>
+
+  <h3>Workspace Agents Governance</h3>
+  <table>
+    <tr><th>Control</th><th>Location</th><th>Effect</th></tr>
+    <tr><td>Agent mode enablement</td><td>Permissions & Roles</td><td>Control per workspace default or custom role</td></tr>
+    <tr><td>Agent building/sharing</td><td>Permissions & Roles</td><td>Control who can create and share agents</td></tr>
+    <tr><td>Agent suspension</td><td>Admin Console → Agents</td><td>Suspend individual agents</td></tr>
+    <tr><td>Approval gates</td><td>Per-agent configuration</td><td>Require human approval for sensitive actions</td></tr>
+    <tr><td>Activity monitoring</td><td>Admin Console</td><td>View agent runs and usage</td></tr>
+    <tr><td>Compliance API visibility</td><td>Compliance API</td><td>Full audit of agent configs, updates, runs</td></tr>
+  </table>
+
+  <h3>ChatGPT Sites &amp; Codex Plugins</h3>
+  <table>
+    <tr><th>Control</th><th>Location</th><th>Effect</th></tr>
+    <tr><td>Sites enablement</td><td>Permissions & Roles</td><td>Off by default (Enterprise); On (Business)</td></tr>
+    <tr><td>Disable published sites</td><td>Workspace settings → Sites</td><td>Admin can disable specific sites</td></tr>
+    <tr><td>Codex plugin availability</td><td>Workspace settings</td><td>Control which plugins are enabled</td></tr>
+    <tr><td>Role-specific plugins</td><td>RBAC</td><td>Plugins per custom role</td></tr>
+    <tr><td>Active sessions</td><td>Settings → Security</td><td>Review/revoke first-party sessions</td></tr>
   </table>
 
   <h3>Usage Limits (Enterprise RBAC)</h3>
@@ -477,7 +530,18 @@
     <h3>Admin Console: admin.google.com → Generative AI</h3>
     <p><strong>Roles:</strong> Super Admin · Gemini Settings Admin · Groups Admin · Custom Roles</p>
     <p><strong>Scoping:</strong> Per Organizational Unit (OU) or per Group</p>
+    <p><strong>Enterprise:</strong> AI Control Center — unified AI governance dashboard (May 2026)</p>
   </div>
+
+  <h3>AI Control Center (Enterprise Standard/Plus)</h3>
+  <p>Launched May 4, 2026. Located at Admin Console → Generative AI → AI control center.</p>
+  <table>
+    <tr><th>Module</th><th>Function</th></tr>
+    <tr><td>Monitor and control AI access</td><td>View usage across all services; manage opt-in settings</td></tr>
+    <tr><td>Manage security for AI products</td><td>Granular authority over Gemini and agent data access</td></tr>
+    <tr><td>Manage fundamental security</td><td>Classification labels, DLP rules, trust domains</td></tr>
+    <tr><td>Privacy, abuse &amp; compliance</td><td>Review safeguards and standards</td></tr>
+  </table>
 
   <h3>Service Controls</h3>
   <table>
@@ -491,6 +555,17 @@
     <tr><td>NotebookLM / NotebookLM Plus</td><td>Generative AI → NotebookLM</td><td>OU / Group</td></tr>
     <tr><td>Workspace Studio</td><td>Generative AI → Workspace Studio</td><td>OU / Group</td></tr>
     <tr><td>Google Vids</td><td>Generative AI → Google Vids</td><td>OU / Group</td></tr>
+    <tr><td>Workspace MCP Server (Preview)</td><td>Generative AI → Integrations</td><td>Enterprise</td></tr>
+  </table>
+
+  <h3>Agent &amp; Third-Party AI Governance</h3>
+  <table>
+    <tr><th>Control</th><th>Location</th><th>Effect</th></tr>
+    <tr><td>Agent access to Workspace data</td><td>AI Control Center</td><td>Govern how AI agents interact with org data</td></tr>
+    <tr><td>Classification labels</td><td>AI Control Center → Fundamental Security</td><td>Restrict AI access by file sensitivity</td></tr>
+    <tr><td>Trust rules</td><td>AI Control Center → Fundamental Security</td><td>Prevent AI-mediated oversharing</td></tr>
+    <tr><td>Third-party AI app access</td><td>Security → API Controls</td><td>Block/allow OAuth-based AI apps</td></tr>
+    <tr><td>Workspace MCP Server governance</td><td>Generative AI → Integrations</td><td>Control external AI access via MCP</td></tr>
   </table>
 
   <h3>Workspace Intelligence (Data Sources)</h3>
@@ -549,7 +624,7 @@
     <tr>
       <td>SAML SSO</td>
       <td><span class="badge badge-enterprise">Enterprise</span></td>
-      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-yes">Teams+</span></td>
       <td><span class="badge badge-yes">Business+</span></td>
       <td><span class="badge badge-yes">All Editions</span></td>
     </tr>
@@ -631,14 +706,14 @@
     </tr>
     <tr>
       <td>DLP integration</td>
-      <td><span class="badge badge-partial">Via API</span></td>
+      <td><span class="badge badge-enterprise">Compliance API</span></td>
       <td><span class="badge badge-no">N/A</span></td>
       <td><span class="badge badge-enterprise">Compliance API</span></td>
       <td><span class="badge badge-yes">Native DLP</span></td>
     </tr>
     <tr>
       <td>Compliance export</td>
-      <td><span class="badge badge-enterprise">Enterprise</span></td>
+      <td><span class="badge badge-enterprise">Compliance API</span></td>
       <td><span class="badge badge-no">N/A</span></td>
       <td><span class="badge badge-enterprise">Compliance API</span></td>
       <td><span class="badge badge-yes">Vault/BigQuery</span></td>
@@ -679,8 +754,8 @@
     </tr>
     <tr>
       <td>Usage/spend limits</td>
-      <td><span class="badge badge-partial">Plan limits</span></td>
-      <td><span class="badge badge-yes">Per-user caps</span></td>
+      <td><span class="badge badge-yes">Org + per-user</span></td>
+      <td><span class="badge badge-yes">Per-user + billing groups</span></td>
       <td><span class="badge badge-enterprise">Per-role weekly</span></td>
       <td><span class="badge badge-partial">Quota-based</span></td>
     </tr>
@@ -720,9 +795,9 @@
     </tr>
     <tr>
       <td>Admin API</td>
-      <td><span class="badge badge-no">N/A</span></td>
-      <td><span class="badge badge-yes">REST API</span></td>
-      <td><span class="badge badge-no">N/A</span></td>
+      <td><span class="badge badge-enterprise">Compliance API</span></td>
+      <td><span class="badge badge-yes">REST + Analytics API</span></td>
+      <td><span class="badge badge-enterprise">Compliance + Analytics API</span></td>
       <td><span class="badge badge-yes">Admin SDK</span></td>
     </tr>
     <tr>
@@ -789,7 +864,7 @@
     </tr>
     <tr>
       <td>Multi-team/workspace</td>
-      <td><span class="badge badge-no">Single org</span></td>
+      <td><span class="badge badge-enterprise">Workspaces (100)</span></td>
       <td><span class="badge badge-enterprise">Organizations</span></td>
       <td><span class="badge badge-enterprise">Global Admin</span></td>
       <td><span class="badge badge-yes">OU hierarchy</span></td>
@@ -867,7 +942,11 @@
       <li>Audit enabled features per tool — disable unused high-risk features</li>
       <li>Configure RBAC roles (ChatGPT) and managed settings (Claude)</li>
       <li>Set extension/MCP allowlists (Cursor, Claude)</li>
-      <li>Establish spending limits (Cursor, ChatGPT)</li>
+      <li>Establish spending limits (Cursor, ChatGPT, Claude)</li>
+      <li>Configure workspace agents governance and approval gates (ChatGPT)</li>
+      <li>Review ChatGPT Sites and Codex plugin policies</li>
+      <li>Enable sandbox enforcement for Claude Code and Cursor agents</li>
+      <li>Review AI Control Center security modules (Gemini)</li>
     </ul>
   </div>
 
@@ -876,7 +955,11 @@
     <ul class="checklist">
       <li>Enable audit logs on all tools and route to SIEM</li>
       <li>Set up usage analytics dashboards</li>
+      <li>Configure Compliance APIs (Claude, ChatGPT) for automated monitoring</li>
+      <li>Set up billing groups for cost attribution (Cursor)</li>
+      <li>Enable AI code tracking and Cursor Blame (Cursor Enterprise)</li>
       <li>Configure alerts for anomalous usage patterns</li>
+      <li>Review AI Control Center usage reports (Gemini)</li>
       <li>Document controls for compliance frameworks (SOC 2, ISO 27001)</li>
     </ul>
   </div>

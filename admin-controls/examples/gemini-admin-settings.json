@@ -2,8 +2,9 @@
   "_meta": {
     "tool": "Google Gemini (Workspace)",
     "description": "Google Admin Console Gemini feature access matrix",
-    "reference": "admin.google.com → Generative AI → Gemini for Workspace / Gemini Enterprise",
-    "notes": "These are NOT deployed as a file — they are configured in the Google Admin Console. This template documents the recommended settings for reference and change control."
+    "reference": "admin.google.com → Generative AI → Gemini for Workspace / Gemini Enterprise / AI control center",
+    "notes": "These are NOT deployed as a file — they are configured in the Google Admin Console. This template documents the recommended settings for reference and change control.",
+    "last_updated": "2026-06-07"
   },
   "gemini_app": {
     "service_status": "on_for_specific_ous",
@@ -69,6 +70,36 @@
     },
     "gemini_in_appsheet": {
       "enabled": false
+    },
+    "workspace_mcp_server": {
+      "enabled": false,
+      "notes": "Preview feature — enables third-party AI apps to access Workspace data via MCP protocol"
+    }
+  },
+  "ai_control_center": {
+    "_notes": "Available for Enterprise Standard/Plus. Enabled by default since May 4, 2026.",
+    "modules": {
+      "monitor_and_control_ai_access": {
+        "review_gemini_usage": true,
+        "manage_opt_in_settings": true
+      },
+      "manage_security_for_ai_products": {
+        "per_service_governance": true,
+        "agent_data_access_controls": true
+      },
+      "manage_fundamental_security": {
+        "classification_labels": true,
+        "data_protection_rules": true,
+        "trusted_domains": true,
+        "context_aware_access_for_ai": true
+      },
+      "privacy_and_compliance": {
+        "review_safeguards": true
+      }
+    },
+    "third_party_ai_apps": {
+      "api_controls_governance": true,
+      "block_unapproved_apps": true
     }
   },
   "security": {
@@ -108,6 +139,11 @@
         "name": "dlp_violation",
         "condition": "dlp_rule_triggered",
         "action": "block_and_notify"
+      },
+      {
+        "name": "third_party_ai_access",
+        "condition": "unapproved_ai_app_oauth_grant",
+        "action": "notify_admin"
       }
     ]
   }

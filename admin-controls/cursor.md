@@ -25,6 +25,20 @@ Admin controls cover identity management, security enforcement, spend governance
 | **Unpaid Admin** | Same administrative capabilities without consuming a paid seat |
 | **Member** | Use Cursor within admin-defined policies |
 
+### Plans
+
+| Capability | Teams (Business) | Enterprise |
+|------------|------------------|------------|
+| SSO (SAML/OIDC) | ✓ | ✓ |
+| SCIM Provisioning | — | ✓ |
+| Audit Logs | — | ✓ |
+| Service Accounts | — | ✓ |
+| Billing Groups | — | ✓ |
+| Cursor Blame | — | ✓ |
+| AI Code Tracking API | — | ✓ |
+| Conversation Insights | — | ✓ |
+| Organizations (multi-team) | — | ✓ |
+
 ---
 
 ## 1. Identity & Access Management
@@ -103,8 +117,11 @@ Admin controls cover identity management, security enforcement, spend governance
 | Setting | Location | Effect |
 |---------|----------|--------|
 | Monthly team spending limit | Dashboard → Usage & Billing | Hard cap on team-wide AI usage |
+| Soft spending limits | Dashboard → Usage & Billing | Warn but don't block users at limit |
+| Automated alerts | Dashboard → Usage & Billing | Notify users at 50%, 80%, and 100% of limits |
 | Admin-only limit changes | Dashboard → Usage & Billing | Prevent members from modifying limits |
 | Usage-based pricing | Dashboard → Usage & Billing | Enable pay-per-use beyond base allocation |
+| Pooled usage (Enterprise) | Dashboard → Usage & Billing | Shared pool with admin-only controls |
 
 ### Per-Member Spending (Enterprise)
 
@@ -114,6 +131,18 @@ Admin controls cover identity management, security enforcement, spend governance
 | Group-based limits | Via SCIM directory sync | Apply limits per IdP group |
 | Default per-member cap | Dashboard → Settings | Fallback limit for users without explicit assignment |
 
+### Billing Groups (Enterprise)
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Create billing groups | Dashboard → Members & Groups | Organize members into cost centers |
+| Assign via SCIM | Dashboard → Members & Groups | Sync billing groups with IdP groups |
+| Assign via API | Admin API | Programmatic group management |
+| Assign via CSV | Dashboard → Members & Groups | Bulk upload group assignments |
+| Manual assignment | Dashboard → Members & Groups | Select unassigned members to add |
+| Per-group spend tracking | Dashboard → Members & Groups | View spend per billing group |
+| Move members | Dashboard → Members & Groups | Reassign members between groups |
+
 ### Model Access Control
 
 | Setting | Location | Effect |
@@ -121,6 +150,9 @@ Admin controls cover identity management, security enforcement, spend governance
 | Model allowlist | Dashboard → Settings → Models | Restrict which AI models users can access |
 | Model blocklist | Dashboard → Settings → Models | Block specific models or providers |
 | Provider restrictions | Dashboard → Settings → Models | Limit to approved providers only |
+| Block new providers by default | Dashboard → Settings → Models | Auto-block newly added providers until admin review |
+| Block new model versions by default | Dashboard → Settings → Models | Auto-block new versions until admin approval |
+| Speed/context window restrictions | Dashboard → Settings → Models | Block specific model configurations by capability |
 
 ---
 
@@ -162,9 +194,33 @@ Audit logs are tamper-proof and available via the dashboard.
 |--------|------|
 | Team usage overview | Business+ |
 | Per-user usage breakdown | Business+ |
+| Usage breakdown by product surface | Business+ |
 | AI code tracking (per-commit) | Enterprise |
-| Conversation analytics | Enterprise |
+| Conversation Insights | Enterprise |
 | Accepted AI changes | Enterprise |
+| Cursor Blame (AI vs. human attribution) | Enterprise |
+
+### Product Surface Analytics
+
+Admins can filter usage by product surface:
+
+| Surface | Description |
+|---------|-------------|
+| Clients | IDE-based usage (completions, chat, composer) |
+| Cloud Agents | Background agent usage |
+| Automations | Automated workflow usage |
+| Bugbot | Automated bug detection runs |
+| Security Review | Security analysis runs |
+
+### Service Accounts (Enterprise)
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Create service accounts | Dashboard → Service Accounts | Non-human accounts for automation |
+| API key management | Dashboard → Service Accounts | Generate/rotate keys per account |
+| Usage attribution | Analytics | Service account usage tracked in team analytics |
+| Cloud Agent invocation | Via API | Service accounts can invoke cloud agents |
+| No seat consumption | — | Included at no extra cost, no seat license required |
 
 ### Admin REST API
 
@@ -176,6 +232,25 @@ Available endpoints for programmatic integration:
 | Usage | Retrieve usage metrics, spending data |
 | Settings | Read/write team configuration |
 | Audit | Query audit log entries |
+| Billing Groups | Create, manage, assign members |
+| Service Accounts | Create, manage, rotate keys |
+
+### Analytics API (Enterprise)
+
+| Capability | Description |
+|------------|-------------|
+| Usage metrics export | Programmatic access to all analytics data |
+| Per-user breakdown | Drill down to individual usage patterns |
+| Product surface filtering | Filter by clients, Cloud Agents, automations |
+| Integration support | Export to external analytics platforms |
+
+### AI Code Tracking API (Enterprise)
+
+| Capability | Description |
+|------------|-------------|
+| Per-commit attribution | Track AI-assisted vs. human-written code |
+| Repository-level metrics | AI adoption rate per repository |
+| Cursor Blame | AI-aware git blame in Cursor client |
 
 ---
 
@@ -243,6 +318,11 @@ Cursor Organizations (launched June 2026) provides a company-level governance co
 | Per-team governance | Separate security, budget, model access per team |
 | Centralized audit | Organization-wide audit log aggregation |
 | Feature settings per team | Enable/disable features independently per team |
+| Organization-level IDP management | Single SSO/SCIM configuration across all teams |
+| Organization-level analytics | Usage analytics with drill-down to each team |
+| Multi-team membership | Users can be on multiple teams at once |
+| Cross-team user management | Move users between teams via dashboard, API, or CSV |
+| Settings inheritance | New users joining a team inherit settings automatically |
 
 ---
 
@@ -257,30 +337,40 @@ Cursor Organizations (launched June 2026) provides a company-level governance co
 - [ ] Configure MCP server allowlist — block all unapproved servers
 - [ ] Set extension allowlist via dashboard and MDM
 - [ ] Require sandbox for all agent sessions
-- [ ] Set strict spending limits per user
+- [ ] Set strict spending limits per user (hard caps)
 - [ ] Block BYOK to prevent unauthorized model access
+- [ ] Block new providers and model versions by default
 - [ ] Enable audit logs and route to SIEM
 - [ ] Restrict Cloud Agent and CLI access to approved users
+- [ ] Create billing groups for cost attribution
+- [ ] Configure service accounts for CI/CD (no personal accounts for automation)
+- [ ] Enable AI Code Tracking for compliance reviews
+- [ ] Deploy repository blocklist for sensitive repos
 
 ### For standard enterprise teams
 
 - [ ] Enable SSO (enforce for all)
 - [ ] Configure Privacy Mode
-- [ ] Set team-level spending limits with admin-only modification
+- [ ] Set team-level spending limits with soft limits and automated alerts
 - [ ] Configure model allowlist (approved providers only)
 - [ ] Set extension allowlist via dashboard
 - [ ] Deploy MCP server allowlist for approved integrations
-- [ ] Review analytics monthly
+- [ ] Create billing groups for department-level cost tracking
+- [ ] Set up service accounts for automated workflows
+- [ ] Review analytics monthly (filter by product surface)
 - [ ] Deploy `WorkspaceTrustEnabled: true` via MDM
+- [ ] Enable Conversation Insights for development pattern analysis
+- [ ] Use Cursor Blame to track AI code attribution
 
 ### For developer-focused teams
 
 - [ ] Enable SSO (optional enforcement)
-- [ ] Set reasonable spending limits
+- [ ] Set reasonable spending limits (soft limits recommended)
 - [ ] Use model allowlist to control costs
 - [ ] Configure Team Rules for security guidelines
 - [ ] Import approved team marketplaces
 - [ ] Review usage analytics quarterly
+- [ ] Set up billing groups if tracking cost per project
 
 ---
 
