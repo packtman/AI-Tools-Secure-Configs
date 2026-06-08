@@ -18,6 +18,18 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
 
+## Operating Modes
+
+Use one of these modes:
+
+| Mode | What runs | Secret required | Result |
+|------|-----------|-----------------|--------|
+| Integrated GitHub workflow | GitHub Actions runs discovery, then `anthropics/claude-code-action` reviews scoped tools. | `ANTHROPIC_API_KEY` | One open PR from `automation/config-maintenance` with source snapshots, report updates, and config edits when needed. |
+| Cursor Cloud scheduled automation | GitHub Actions runs discovery, Cursor Cloud runs the prompt in `CURSOR-AUTOMATION.md`. | Cursor automation credentials, no repository model key required by this workflow | A Cursor-created branch or PR with the same config-maintenance policy. |
+| Discovery only | GitHub Actions runs discovery with `run_maintenance_agent: false`. | None | A report-only PR for human or separate agent review. |
+
+The integrated workflow is the simplest path when this repository is allowed to store an Anthropic API key as a GitHub secret. Use Cursor Cloud mode when you want Cursor to own the agent run or when model credentials are managed outside GitHub Actions.
+
 ## How the Loop Works
 
 1. The workflow runs on the daily schedule or by manual dispatch.
@@ -26,9 +38,34 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+7. If the integrated agent is enabled, the workflow runs the scoped maintenance agent in the same workflow. If Cursor Cloud mode is enabled instead, the Cursor automation should run `agent-prompt.md` on that branch.
+8. The agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use either the integrated agent step or the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+
+## Enable the Integrated GitHub Workflow
+
+1. In GitHub, enable Actions for this repository.
+2. Set workflow permissions to **Read and write permissions** and allow Actions to create pull requests.
+3. Add repository secret `ANTHROPIC_API_KEY`.
+4. Confirm `.github/workflows/config-discovery.yml` is on the default branch.
+5. Run **Config Discovery** from the Actions tab with:
+   - `force_agent_review: true`, to test the agent even when no source changed.
+   - `max_tools: 1`, to keep the first test PR small.
+   - `run_maintenance_agent: true`, to produce config edits when a real control changed.
+6. Review the PR from branch `automation/config-maintenance`.
+
+The workflow preserves the existing `automation/config-maintenance` branch when a PR is already open. New scheduled runs add commits to that branch instead of replacing reviewer-visible work.
+
+## Manual Dispatch Controls
+
+| Input | Default | Use when |
+|-------|---------|----------|
+| `force_agent_review` | `false` | You want the agent to re-check the current report even if source fingerprints did not change. |
+| `run_maintenance_agent` | `true` | Set to `false` for a report-only PR that a human or separate Cursor automation will review. |
+| `max_tools` | `4` | Lower this when the report contains many changed tools and you want smaller PRs. |
+
+Scheduled runs use `run_maintenance_agent: true` and `max_tools: 4`.
 
 ## Adding a Source
 

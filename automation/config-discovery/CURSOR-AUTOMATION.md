@@ -1,14 +1,18 @@
 # Cursor Automation Setup
 
-Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
+Use this prompt for a Cursor Cloud scheduled automation if you want Cursor to create the final PR with real config updates.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions can run the integrated maintenance agent itself, but Cursor Cloud is a good fit when you want Cursor to own the agent run, credentials, commits, and PR branch. In that mode, GitHub Actions acts as the sensor and Cursor Cloud acts as the config-maintenance agent.
 
 ## Recommended Trigger
 
 - Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
 - Repository: this repo.
-- Branch: default branch, unless your automation service creates a working branch automatically.
+- Branch: `automation/config-maintenance` when the GitHub workflow produced a discovery PR, otherwise the default branch.
+
+## GitHub Workflow Pairing
+
+If Cursor Cloud will be the only maintenance agent, run the GitHub workflow with `run_maintenance_agent: false`. That produces a report-only PR for Cursor to review. If the integrated GitHub agent is enabled, do not also schedule Cursor against the same branch unless you intentionally want a second review pass.
 
 ## Prompt
 
@@ -45,4 +49,4 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 
 ## Why This Requires Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+The discovery scanner is dependency-free and can identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer. Use this Cursor automation when you do not want the integrated GitHub workflow to run the maintenance agent.

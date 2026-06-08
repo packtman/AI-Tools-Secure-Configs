@@ -10,6 +10,16 @@ on:
         required: false
         default: false
         type: boolean
+      run_maintenance_agent:
+        description: "Run the config-maintenance agent after discovery"
+        required: false
+        default: true
+        type: boolean
+      max_tools:
+        description: "Maximum scoped tools for the maintenance agent to review in this run"
+        required: false
+        default: 4
+        type: number
 
 permissions:
   contents: write
@@ -42,19 +52,23 @@ jobs:
           git fetch origin "${BASE_BRANCH}"
           if git ls-remote --exit-code --heads origin "${PR_BRANCH}" >/dev/null 2>&1; then
             git fetch origin "${PR_BRANCH}"
+            git checkout -B "${PR_BRANCH}" "origin/${PR_BRANCH}"
+          else
+            git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
           fi
-          git checkout -B "${PR_BRANCH}" "origin/${BASE_BRANCH}"
 
       - name: Install validation tools
         run: |
           set -euo pipefail
           python3 -m pip install --user pyyaml toml
-          pip install --user yamllint || true
+          python3 -m pip install --user yamllint || true
 
       - name: Run config discovery
         id: discovery
         env:
           FORCE_AGENT_REVIEW: ${{ github.event_name == 'workflow_dispatch' && inputs.force_agent_review }}
+          RUN_MAINTENANCE_AGENT: ${{ github.event_name != 'workflow_dispatch' || inputs.run_maintenance_agent }}
+          MAX_TOOLS: ${{ github.event_name == 'workflow_dispatch' && inputs.max_tools || 4 }}
         run: |
           set -euo pipefail
           python3 automation/config-discovery/discover_configs.py \
@@ -65,7 +79,7 @@ jobs:
           python3 automation/config-discovery/build_agent_scope.py \
             --report automation/config-discovery/reports/latest-config-discovery.md \
             --output automation/config-discovery/reports/agent-scope.md \
-            --max-tools 4
+            --max-tools "${MAX_TOOLS}"
 
           git add \
             automation/config-discovery/state/source-snapshots.json \
@@ -75,7 +89,10 @@ jobs:
           if git diff --cached --quiet; then
             echo "discovery_changed=false" >> "${GITHUB_OUTPUT}"
             echo "No discovery changes to commit."
-            if [ "${FORCE_AGENT_REVIEW}" = "true" ]; then
+            if [ "${RUN_MAINTENANCE_AGENT}" != "true" ]; then
+              echo "run_agent=false" >> "${GITHUB_OUTPUT}"
+              echo "Maintenance agent disabled for this run."
+            elif [ "${FORCE_AGENT_REVIEW}" = "true" ]; then
               echo "run_agent=true" >> "${GITHUB_OUTPUT}"
               echo "Force agent review requested."
             else
@@ -83,7 +100,12 @@ jobs:
             fi
           else
             echo "discovery_changed=true" >> "${GITHUB_OUTPUT}"
-            echo "run_agent=true" >> "${GITHUB_OUTPUT}"
+            if [ "${RUN_MAINTENANCE_AGENT}" = "true" ]; then
+              echo "run_agent=true" >> "${GITHUB_OUTPUT}"
+            else
+              echo "run_agent=false" >> "${GITHUB_OUTPUT}"
+              echo "Maintenance agent disabled for this run."
+            fi
           fi
 
       - name: Commit discovery signal
@@ -95,7 +117,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Update config discovery source snapshots"
-          git push --force-with-lease -u origin "${PR_BRANCH}"
+          git push -u origin "${PR_BRANCH}"
 
       - name: Verify Claude API key
         if: steps.discovery.outputs.run_agent == 'true'
@@ -170,7 +192,7 @@ jobs:
           else
             git commit -m "Apply config maintenance updates"
           fi
-          git push --force-with-lease -u origin "${PR_BRANCH}"
+          git push -u origin "${PR_BRANCH}"
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
 
       - name: Fail if agent errored with no usable diff
@@ -192,7 +214,7 @@ jobs:
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When enabled, it also ran the config-maintenance agent against the generated report.
 
           Review:
 
