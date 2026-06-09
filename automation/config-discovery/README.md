@@ -17,6 +17,7 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `scripts/validate_config_files.py` | Repository-level validator for JSON, JSONC, YAML, TOML, and shell examples. |
 
 ## How the Loop Works
 
@@ -26,9 +27,10 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+7. If repository secret `ANTHROPIC_API_KEY` is available, the workflow runs the config-maintenance agent on the scoped tools, validates the edited files, commits the real config changes, and updates the PR.
+8. If the secret is not available, the workflow still opens a discovery PR with the report so a human reviewer or Cursor Cloud automation can complete the config review.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+The scanner can detect and stage the source-change signal. It should not decide the security posture for a brand-new vendor setting without an AI or human review step. Use the Cursor Cloud automation prompt in this directory if you prefer Cursor Cloud to produce the final config-update PR.
 
 ## Adding a Source
 
@@ -52,6 +54,8 @@ Use official vendor sources when possible. Prefer stable markdown, raw files, AP
 ## Local Validation
 
 ```bash
+python3 scripts/validate_config_files.py
+
 python3 automation/config-discovery/discover_configs.py \
   --sources automation/config-discovery/tool-sources.json \
   --state automation/config-discovery/state/source-snapshots.json \
@@ -87,7 +91,7 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`; if that secret is missing, the workflow skips the agent and still opens a report PR.
 
 ## Agent step failures (`error_max_turns`)
 

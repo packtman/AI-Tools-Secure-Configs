@@ -1,0 +1,36 @@
+name: Config Validation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate config examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install validation tools
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user pyyaml toml
+
+      - name: Validate JSON, JSONC, YAML, TOML, and shell files
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py
+
+      - name: Validate config discovery registry
+        run: |
+          set -euo pipefail
+          python3 automation/config-discovery/discover_configs.py \
+            --sources automation/config-discovery/tool-sources.json \
+            --state automation/config-discovery/state/source-snapshots.json \
+            --report automation/config-discovery/reports/latest-config-discovery.md \
+            --check

@@ -28,7 +28,7 @@ Process:
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
 8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
 9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
+10. Validate edited JSON, JSONC, YAML, TOML, and shell files with `python3 scripts/validate_config_files.py`.
 11. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
@@ -45,4 +45,4 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 
 ## Why This Requires Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+The GitHub workflow detects source changes and can run the Claude Code action when `ANTHROPIC_API_KEY` is configured. If that secret is not available, it opens a discovery PR that this Cursor automation or a human reviewer can finish. The scanner can identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control without an AI maintenance agent or a human reviewer.
