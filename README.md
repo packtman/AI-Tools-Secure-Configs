@@ -158,6 +158,13 @@ This repo includes a scheduled config discovery loop under [`automation/config-d
 
 Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
 
+The GitHub workflow can run in two modes:
+
+- With repository secret `ANTHROPIC_API_KEY`, it runs the maintenance agent, validates edited config files, and opens a PR with focused config updates when relevant.
+- Without that secret, it still opens a discovery-only PR with the upstream change report and scoped work list, so a human reviewer or Cursor Cloud automation can complete the rollout-engineering review.
+
+Use `python3 scripts/validate_config_files.py` to validate JSON, YAML, TOML, and shell config syntax before merging automated updates.
+
 ### For Security Teams
 
 1. Use the deny lists and content exclusion patterns as a baseline.
