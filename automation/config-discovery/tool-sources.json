@@ -171,15 +171,17 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex config reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
+            "config.toml",
+            "requirements.toml",
+            "approval_policy",
+            "sandbox_mode",
             "model",
-            "MCP"
+            "MCP",
+            "permissions"
           ]
         },
         {
@@ -218,15 +220,17 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex config basics",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-basic",
           "watch_for": [
             "desktop",
-            "managed",
-            "config",
-            "requirements",
-            "MDM"
+            "IDE extension",
+            "managed machines",
+            "config.toml",
+            "requirements.toml",
+            "approval_policy",
+            "sandbox_mode"
           ]
         },
         {

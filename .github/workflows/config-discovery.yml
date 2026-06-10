@@ -48,8 +48,7 @@ jobs:
       - name: Install validation tools
         run: |
           set -euo pipefail
-          python3 -m pip install --user pyyaml toml
-          pip install --user yamllint || true
+          python3 -m pip install --user pyyaml toml yamllint
 
       - name: Run config discovery
         id: discovery
@@ -97,20 +96,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check config maintenance agent availability
+        id: agent_key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery-only PR for human or Cursor Cloud review."
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent_key.outputs.available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -135,7 +137,7 @@ jobs:
             5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, and TOML using AGENTS.md commands before finishing.
+            8. Validate edited files with `python3 scripts/validate_config_files.py --changed-only` before finishing.
 
             Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
@@ -144,7 +146,7 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent_key.outputs.available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -164,6 +166,7 @@ jobs:
             exit 0
           fi
 
+          python3 scripts/validate_config_files.py --changed-only
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
             git commit -m "Apply partial config maintenance updates (agent hit turn limit)"
@@ -192,12 +195,15 @@ jobs:
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then prepared the generated report for config-maintenance review.
 
           Review:
 
           - `automation/config-discovery/reports/latest-config-discovery.md`
+          - `automation/config-discovery/reports/agent-scope.md`
           - `automation/config-discovery/agent-prompt.md`
+
+          If this PR contains only discovery snapshot/report changes, the agent step either found no needed config edit or could not run because repository secret `ANTHROPIC_API_KEY` was unavailable. In that case, use the report and agent prompt for human review or for the Cursor Cloud fallback automation.
 
           Expected reviewer checks:
 
