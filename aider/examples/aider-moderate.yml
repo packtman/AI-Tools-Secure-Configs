@@ -1,0 +1,57 @@
+## MODERATE Aider configuration — Balanced for enterprise development teams.
+## Suitable for: standard corporate engineering teams, teams with code review processes,
+## environments where AI commits are reviewed before merging.
+##
+## Key characteristics:
+##   - No auto-commits (changes staged but not committed)
+##   - No auto-confirm
+##   - Auto-lint enabled for immediate feedback
+##   - Shell command suggestions shown but require manual execution
+##   - Attribution on all AI commits
+
+# --- Model ---
+model: claude-sonnet-4-6
+weak-model: claude-haiku-4-5-20251001
+
+# --- Safety Controls ---
+yes: false
+auto-commits: false
+dirty-commits: false
+
+# --- Git ---
+git: true
+gitignore: true
+aiderignore: .aiderignore
+attribute-author: true
+attribute-committer: false
+
+# --- History and Audit ---
+chat-history-file: .aider.chat.history.md
+input-history-file: .aider.input.history
+# Enable LLM history for teams that need full audit trails.
+# Ensure .aider.llm.history is in .gitignore and log rotation is configured.
+# llm-history-file: .aider.llm.history
+
+# --- Behavior ---
+show-diffs: true
+suggest-shell-commands: true
+
+# --- Linting ---
+# Auto-lint runs your linter after each change. Safe to enable.
+# Set lint-cmd to your project's linter.
+auto-lint: true
+# lint-cmd: npm run lint
+
+# --- Testing ---
+# Auto-test is disabled by default. Enable only if your test suite is fast,
+# idempotent, and does not have destructive side effects.
+auto-test: false
+# test-cmd: npm test
+
+# --- Analytics ---
+analytics: false
+analytics-disable: true
+
+# --- Display ---
+pretty: true
+stream: true

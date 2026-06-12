@@ -1,0 +1,60 @@
+{
+  "_comment": "Secure Cline MCP server configuration. Deploy to the Cline MCP settings file. All filesystem servers MUST be scoped to specific workspace directories. Never mount '/' or '~'.",
+
+  "mcpServers": {
+    "filesystem": {
+      "_comment": "Read-only filesystem access scoped to workspace only. Replace /path/to/workspace with the actual project directory.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/path/to/workspace"
+      ],
+      "env": {}
+    },
+
+    "git": {
+      "_comment": "Git operations on the workspace repository only. Does not provide shell access.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@cline/mcp-server-git",
+        "--repository",
+        "/path/to/workspace"
+      ],
+      "env": {}
+    }
+  },
+
+  "_disabled_examples": {
+    "_comment": "These server configurations are provided as reference but MUST NOT be enabled without security review.",
+
+    "filesystem-unrestricted": {
+      "_reason": "Mounts the entire home directory — exposes .ssh/, .aws/, .env files, and all personal data to the AI agent.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "~"]
+    },
+
+    "shell": {
+      "_reason": "Provides unrestricted shell execution to the AI agent. Equivalent to giving the agent a terminal with no restrictions.",
+      "command": "npx",
+      "args": ["-y", "@cline/mcp-server-shell"]
+    },
+
+    "browser": {
+      "_reason": "Allows the AI to browse arbitrary URLs including internal network addresses. Enables SSRF and data exfiltration via HTTP.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    }
+  },
+
+  "_security_notes": [
+    "Audit every MCP server's source code before enabling it — npm packages can be compromised.",
+    "Pin MCP server package versions (e.g., @modelcontextprotocol/server-filesystem@1.2.3) to prevent supply-chain updates.",
+    "Scope filesystem servers to the minimum required directory. Use separate servers for separate projects.",
+    "Never pass API keys, tokens, or credentials in the 'env' block — use OS-level environment variables instead.",
+    "Review the Cline MCP settings file in source control; secrets accidentally added there will be committed.",
+    "Disable MCP servers that are not actively needed. Remove entries rather than commenting them out.",
+    "All MCP tool calls appear in Cline's task history — review logs for unintended data exposure."
+  ]
+}

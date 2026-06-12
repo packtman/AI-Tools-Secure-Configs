@@ -1,0 +1,46 @@
+{
+  "_comment": "Cline VS Code extension settings — deploy to VS Code User or Workspace settings.json. Adjust to your environment tier. API keys must come from environment variables, never from this file.",
+
+  "cline.apiProvider": "anthropic",
+  "cline.apiModelId": "claude-sonnet-4-6",
+
+  "cline.alwaysAllowReadOnly": false,
+  "cline.alwaysAllowReadOnlyOutsideWorkspace": false,
+  "cline.alwaysAllowWrite": false,
+  "cline.alwaysAllowWriteOutsideWorkspace": false,
+  "cline.alwaysAllowExecute": false,
+  "cline.alwaysAllowBrowser": false,
+  "cline.alwaysAllowMcp": false,
+  "cline.alwaysAllowMcpTools": [],
+  "cline.alwaysApproveResubmit": false,
+
+  "cline.allowedCommands": [
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "ls",
+    "pwd",
+    "cat",
+    "grep",
+    "find",
+    "npm test",
+    "npm run lint",
+    "npx tsc --noEmit",
+    "python -m pytest",
+    "go test ./..."
+  ],
+
+  "cline.browserToolEnabled": false,
+
+  "cline.requestDelaySeconds": 0,
+  "cline.maxOpenTabsContext": 5,
+
+  "cline.diffEnabled": true,
+  "cline.enableCheckpoints": true,
+
+  "cline.telemetrySetting": "disabled",
+
+  "cline.autoCloseTerminal": true,
+  "cline.terminalOutputLineLimit": 500
+}

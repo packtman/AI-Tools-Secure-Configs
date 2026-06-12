@@ -1,0 +1,99 @@
+# .aiderignore — Controls which files Aider is allowed to read into AI context.
+# Follows .gitignore syntax. Place this file in your project root.
+#
+# PURPOSE: Prevent sensitive files from being sent to LLM APIs.
+# Even files that are in .gitignore may be in the filesystem and visible
+# to Aider — this file is the explicit block list for AI context.
+
+# --- Credentials and Secrets ---
+.env
+.env.*
+.envrc
+**/.env
+**/.env.*
+**/.envrc
+
+# --- API Keys and Tokens ---
+**/*secret*
+**/*credential*
+**/*token*
+**/*apikey*
+**/*api_key*
+**/*api-key*
+
+# --- Cryptographic Material ---
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+**/*.crt
+**/*.cer
+**/*.der
+**/*.p7b
+id_rsa
+id_ecdsa
+id_ed25519
+id_dsa
+**/*_rsa
+**/*_ecdsa
+**/*_ed25519
+
+# --- Cloud Provider Credentials ---
+**/.aws/credentials
+**/.aws/config
+**/.gcloud/
+**/.config/gcloud/
+**/.azure/
+**/.kube/config
+**/.docker/config.json
+
+# --- Password and Auth Files ---
+**/*.htpasswd
+**/.netrc
+**/.npmrc
+**/.pypirc
+**/.gem/credentials
+**/.ssh/
+
+# --- Private Configuration ---
+**/secrets/
+**/private/
+**/.private/
+
+# --- Infrastructure as Code Secrets ---
+**/terraform.tfvars
+**/*.tfvars
+**/*.tfstate
+**/*.tfstate.backup
+**/vault-*.json
+
+# --- Database Files (may contain sensitive data) ---
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+**/*.mdb
+
+# --- Certificate Stores ---
+**/*.p12
+**/*.pkcs12
+
+# --- Aider History Files (may contain sensitive prompts) ---
+.aider.chat.history.md
+.aider.input.history
+.aider.llm.history
+
+# --- IDE and Tool Configs That May Contain Secrets ---
+.vscode/settings.json
+.idea/
+
+# --- Build Artifacts (reduce noise, not secret-related) ---
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+dist/
+build/
+target/

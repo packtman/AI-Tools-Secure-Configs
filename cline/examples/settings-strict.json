@@ -1,0 +1,31 @@
+{
+  "_comment": "STRICT Cline settings — all agent actions require explicit approval. No auto-execution. Suitable for regulated environments (healthcare, finance, government) and shared/contractor workstations.",
+
+  "cline.apiProvider": "anthropic",
+  "cline.apiModelId": "claude-sonnet-4-6",
+
+  "cline.alwaysAllowReadOnly": false,
+  "cline.alwaysAllowReadOnlyOutsideWorkspace": false,
+  "cline.alwaysAllowWrite": false,
+  "cline.alwaysAllowWriteOutsideWorkspace": false,
+  "cline.alwaysAllowExecute": false,
+  "cline.alwaysAllowBrowser": false,
+  "cline.alwaysAllowMcp": false,
+  "cline.alwaysAllowMcpTools": [],
+  "cline.alwaysApproveResubmit": false,
+
+  "cline.allowedCommands": [],
+
+  "cline.browserToolEnabled": false,
+
+  "cline.requestDelaySeconds": 2,
+  "cline.maxOpenTabsContext": 3,
+
+  "cline.diffEnabled": true,
+  "cline.enableCheckpoints": true,
+
+  "cline.telemetrySetting": "disabled",
+
+  "cline.autoCloseTerminal": true,
+  "cline.terminalOutputLineLimit": 200
+}

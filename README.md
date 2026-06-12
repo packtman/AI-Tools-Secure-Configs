@@ -20,6 +20,8 @@ A comprehensive collection of **security-hardened configurations** for popular A
 | [`windsurf/`](./windsurf/) | Windsurf (Codeium) | Enterprise policies, Cascade Hooks, RBAC |
 | [`tabnine/`](./tabnine/) | Tabnine Enterprise | Command permissions, workspace restrictions |
 | [`continue-dev/`](./continue-dev/) | Continue.dev | `config.yaml`, permissions, secrets management |
+| [`cline/`](./cline/) | Cline (VS Code AI agent) | `settings.json`, MCP config, auto-approval controls |
+| [`aider/`](./aider/) | Aider (AI pair programming CLI) | `.aider.conf.yml`, `.aiderignore`, commit controls |
 
 ### Cross-Tool Admin Controls
 
@@ -134,7 +136,19 @@ AI-Secure-Configs/
 │   ├── README.md
 │   ├── secure-admin-policy.md
 │   └── examples/
-└── continue-dev/                # Continue.dev
+├── continue-dev/                # Continue.dev
+│   ├── README.md
+│   ├── config.yaml
+│   └── examples/
+├── cline/                       # Cline VS Code AI agent (added 2026-06-12)
+│   ├── README.md
+│   ├── settings.json
+│   └── examples/
+└── aider/                       # Aider AI pair programming CLI (added 2026-06-12)
+    ├── README.md
+    ├── aider.conf.yml
+    ├── aiderignore
+    └── examples/
     ├── README.md
     ├── config.yaml
     ├── permissions.yaml

@@ -1,0 +1,85 @@
+## Aider project configuration — .aider.conf.yml
+## Deploy to project root. Review each setting before committing.
+## NEVER store API keys here — use environment variables instead.
+##
+## Full settings reference: https://aider.chat/docs/config/options.html
+
+# --- Model Configuration ---
+# Specify the model explicitly. This prevents unexpected model changes when
+# Aider updates its defaults. Use org-approved models only.
+model: claude-sonnet-4-6
+
+# Weak model is used for lightweight tasks (commit messages, summaries).
+# Use a fast, inexpensive model here.
+weak-model: claude-haiku-4-5-20251001
+
+# Editor model is used for applying edits. Defaults to main model if unset.
+# editor-model: claude-sonnet-4-6
+
+# --- Safety Controls ---
+# CRITICAL: Never set 'yes' to true. It auto-confirms all prompts including
+# file writes, command execution, and destructive actions.
+yes: false
+
+# Do not auto-commit AI-generated changes. Always review diffs before committing.
+auto-commits: false
+
+# Do not commit when the working tree is dirty. Ensures clean provenance.
+dirty-commits: false
+
+# --- Git Integration ---
+git: true
+gitignore: true
+aiderignore: .aiderignore
+
+# Subtree-only mode restricts Aider to the current subdirectory in a monorepo.
+# Set to true if working in a subdirectory of a larger monorepo.
+# subtree-only: false
+
+# --- Audit and History ---
+# Chat history file: stores the conversation between you and Aider.
+# Ensure this file is in .gitignore — it may contain sensitive prompts.
+chat-history-file: .aider.chat.history.md
+
+# Input history: stores your CLI inputs.
+# Ensure this file is in .gitignore.
+input-history-file: .aider.input.history
+
+# LLM history file: stores full LLM API request/response pairs.
+# WARNING: This file contains all code sent to the LLM. It can be large
+# and may contain sensitive content. Disable in regulated environments.
+# llm-history-file: .aider.llm.history
+
+# --- Behavior Controls ---
+# Show diffs of proposed changes before applying.
+show-diffs: true
+
+# Notify when context is getting long (token budget awareness).
+# map-tokens: 1024
+
+# Attribute AI commits with [aider] in commit messages for auditability.
+attribute-author: true
+attribute-committer: false
+
+# --- Linting and Testing ---
+# Auto-lint after changes. Safe to enable; runs your configured linter.
+# auto-lint: true
+# lint-cmd: npm run lint
+
+# Auto-test after changes. Review before enabling — tests may have side effects.
+# auto-test: false
+# test-cmd: npm test
+
+# --- Shell Commands ---
+# Aider can suggest shell commands to run. Review suggestions carefully.
+# In regulated environments, disable suggestions entirely.
+# suggest-shell-commands: true
+
+# --- Verbosity ---
+# Show verbose output for debugging. Disable in production/CI.
+# verbose: false
+
+# --- Analytics ---
+# Disable analytics/telemetry data collection.
+analytics: false
+analytics-disable: true

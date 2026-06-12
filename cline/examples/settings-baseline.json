@@ -1,0 +1,78 @@
+{
+  "_comment": "BASELINE Cline settings — read-only auto-approved, common dev commands auto-approved. Writes and MCP still require approval. Suitable for trusted individual developers and startups.",
+
+  "cline.apiProvider": "anthropic",
+  "cline.apiModelId": "claude-sonnet-4-6",
+
+  "cline.alwaysAllowReadOnly": true,
+  "cline.alwaysAllowReadOnlyOutsideWorkspace": false,
+  "cline.alwaysAllowWrite": false,
+  "cline.alwaysAllowWriteOutsideWorkspace": false,
+  "cline.alwaysAllowExecute": false,
+  "cline.alwaysAllowBrowser": false,
+  "cline.alwaysAllowMcp": false,
+  "cline.alwaysAllowMcpTools": [
+    "mcp__filesystem__read_file",
+    "mcp__filesystem__read_multiple_files",
+    "mcp__filesystem__list_directory",
+    "mcp__filesystem__search_files",
+    "mcp__filesystem__get_file_info"
+  ],
+  "cline.alwaysApproveResubmit": true,
+
+  "cline.allowedCommands": [
+    "git status",
+    "git diff",
+    "git log",
+    "git log --oneline",
+    "git branch",
+    "git show",
+    "git stash list",
+    "ls",
+    "ls -la",
+    "ls -lah",
+    "pwd",
+    "cat",
+    "head",
+    "tail",
+    "grep",
+    "find",
+    "wc",
+    "echo",
+    "which",
+    "npm test",
+    "npm run lint",
+    "npm run build",
+    "npm run typecheck",
+    "npx tsc --noEmit",
+    "yarn test",
+    "yarn lint",
+    "yarn build",
+    "python -m pytest",
+    "python -m pytest -v",
+    "python -m pytest --tb=short",
+    "python -m mypy",
+    "go test ./...",
+    "go build ./...",
+    "go vet ./...",
+    "cargo test",
+    "cargo check",
+    "cargo clippy",
+    "make test",
+    "make lint",
+    "make build"
+  ],
+
+  "cline.browserToolEnabled": false,
+
+  "cline.requestDelaySeconds": 0,
+  "cline.maxOpenTabsContext": 20,
+
+  "cline.diffEnabled": true,
+  "cline.enableCheckpoints": true,
+
+  "cline.telemetrySetting": "disabled",
+
+  "cline.autoCloseTerminal": false,
+  "cline.terminalOutputLineLimit": 1000
+}

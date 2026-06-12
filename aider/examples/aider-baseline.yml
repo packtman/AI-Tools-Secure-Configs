@@ -1,0 +1,54 @@
+## BASELINE Aider configuration — Sensible defaults for individual developers and startups.
+## Suitable for: trusted individual developers, open-source projects, startups with
+## simple code review workflows.
+##
+## Key characteristics:
+##   - No auto-commits (still review before committing)
+##   - No auto-confirm (still approve all changes)
+##   - Auto-lint and auto-test enabled
+##   - Shell commands suggested (review before running)
+##   - Full history for context
+
+# --- Model ---
+model: claude-sonnet-4-6
+weak-model: claude-haiku-4-5-20251001
+
+# --- Safety Controls ---
+# Even for personal workstations, 'yes' should remain false.
+# Setting it to true means Aider can make unlimited changes without review.
+yes: false
+auto-commits: false
+dirty-commits: false
+
+# --- Git ---
+git: true
+gitignore: true
+aiderignore: .aiderignore
+attribute-author: true
+attribute-committer: false
+
+# --- History and Audit ---
+chat-history-file: .aider.chat.history.md
+input-history-file: .aider.input.history
+# llm-history-file: .aider.llm.history
+
+# --- Behavior ---
+show-diffs: true
+suggest-shell-commands: true
+
+# --- Linting ---
+auto-lint: true
+# lint-cmd: npm run lint
+
+# --- Testing ---
+auto-test: true
+# test-cmd: npm test
+
+# --- Analytics ---
+analytics: false
+analytics-disable: true
+
+# --- Display ---
+pretty: true
+stream: true
+dark-mode: false

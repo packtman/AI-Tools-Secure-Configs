@@ -1,0 +1,56 @@
+{
+  "_comment": "MODERATE Cline settings — read-only operations auto-approved; all writes, execution, browser, and MCP actions require approval. Suitable for most enterprise development teams.",
+
+  "cline.apiProvider": "anthropic",
+  "cline.apiModelId": "claude-sonnet-4-6",
+
+  "cline.alwaysAllowReadOnly": true,
+  "cline.alwaysAllowReadOnlyOutsideWorkspace": false,
+  "cline.alwaysAllowWrite": false,
+  "cline.alwaysAllowWriteOutsideWorkspace": false,
+  "cline.alwaysAllowExecute": false,
+  "cline.alwaysAllowBrowser": false,
+  "cline.alwaysAllowMcp": false,
+  "cline.alwaysAllowMcpTools": [],
+  "cline.alwaysApproveResubmit": false,
+
+  "cline.allowedCommands": [
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "git show",
+    "ls",
+    "ls -la",
+    "pwd",
+    "cat",
+    "head",
+    "tail",
+    "grep",
+    "find",
+    "wc",
+    "npm test",
+    "npm run lint",
+    "npm run build",
+    "npx tsc --noEmit",
+    "python -m pytest",
+    "python -m pytest --tb=short",
+    "go test ./...",
+    "go build ./...",
+    "cargo test",
+    "cargo check"
+  ],
+
+  "cline.browserToolEnabled": false,
+
+  "cline.requestDelaySeconds": 0,
+  "cline.maxOpenTabsContext": 10,
+
+  "cline.diffEnabled": true,
+  "cline.enableCheckpoints": true,
+
+  "cline.telemetrySetting": "disabled",
+
+  "cline.autoCloseTerminal": true,
+  "cline.terminalOutputLineLimit": 500
+}

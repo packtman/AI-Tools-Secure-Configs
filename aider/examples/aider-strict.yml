@@ -1,0 +1,50 @@
+## STRICT Aider configuration — Maximum safety controls.
+## Suitable for: regulated environments (HIPAA, PCI-DSS, FedRAMP), shared workstations,
+## contractor machines, or any environment where AI changes must be fully auditable.
+##
+## Key characteristics:
+##   - No auto-commits, no auto-confirm
+##   - No shell command suggestions
+##   - No LLM history logging (to minimize data at rest)
+##   - Minimal model context (token budget)
+##   - Analytics disabled
+
+# --- Model ---
+model: claude-sonnet-4-6
+weak-model: claude-haiku-4-5-20251001
+
+# --- Safety Controls ---
+yes: false
+auto-commits: false
+dirty-commits: false
+
+# --- Git ---
+git: true
+gitignore: true
+aiderignore: .aiderignore
+attribute-author: true
+attribute-committer: false
+
+# --- History and Audit ---
+chat-history-file: .aider.chat.history.md
+input-history-file: .aider.input.history
+# llm-history-file is intentionally disabled:
+# - LLM history contains full request/response pairs including code
+# - In regulated environments, minimizing sensitive data at rest is required
+# - If audit logging is needed, route via corporate LLM proxy instead
+
+# --- Behavior ---
+show-diffs: true
+suggest-shell-commands: false
+
+# --- Linting/Testing ---
+auto-lint: false
+auto-test: false
+
+# --- Analytics ---
+analytics: false
+analytics-disable: true
+
+# --- Display ---
+pretty: true
+stream: true
