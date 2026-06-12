@@ -16,5 +16,18 @@
     "go test ./..."
   ],
 
-  "mcpAllowlist": []
+  "mcpAllowlist": [],
+
+  "autoRun": {
+    "allow_instructions": [
+      "Read-only git inspection commands (git status, git diff, git log) are safe to run automatically.",
+      "Lint and type-check commands that only read files and report errors are safe."
+    ],
+    "block_instructions": [
+      "Hold all file write, delete, or overwrite operations for my review.",
+      "Hold all network requests that are not to approved package registries.",
+      "Hold all privilege escalation attempts (sudo, su) for review.",
+      "Hold any operation that modifies shell config files (.bashrc, .zshrc, .profile)."
+    ]
+  }
 }

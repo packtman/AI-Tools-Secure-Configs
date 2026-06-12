@@ -5,8 +5,11 @@
 
 allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only"]
+allowed_permission_profiles = ["read-only"]
+default_permissions = "read-only"
 allowed_web_search_modes = []
 enforce_residency = "us"
+allow_managed_hooks_only = true
 
 # Disable all extended features
 [features]

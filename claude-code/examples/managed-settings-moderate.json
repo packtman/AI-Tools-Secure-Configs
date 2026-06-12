@@ -89,6 +89,7 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": true,
+  "disableAgentView": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
 
@@ -96,7 +97,8 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.136",
+  "requiredMinimumVersion": "2.1.136",
 
   "sandbox": {
     "enabled": true,
@@ -124,6 +126,7 @@
   },
 
   "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
   }
 }

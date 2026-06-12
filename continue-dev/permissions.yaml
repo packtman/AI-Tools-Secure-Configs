@@ -1,23 +1,45 @@
 # Continue.dev — Tool permission configuration
 # Deploy to: ~/.continue/permissions.yaml
+# Updated 2026-06-12: added deny patterns for dangerous Bash operations.
+# Schema: https://docs.continue.dev/cli/tool-permissions
+# CLI session overrides: --allow <tool>, --ask <tool>, --exclude <tool>
 
 # Read-only tools — safe to auto-approve
 allow:
   - "Read(*)"
+  - "Grep(*)"
+  - "Glob(*)"
+  - "LS(*)"
   - "List(*)"
   - "Search(*)"
-  - "Fetch(*)"
   - "Diff(*)"
   - "AskQuestion(*)"
 
-# Write tools — require confirmation
+# Write tools — require confirmation before each execution
 ask:
   - "Edit"
   - "MultiEdit"
   - "Write"
   - "Bash"
+  - "mcp__*"
+  - "WebFetch"
 
-# Dangerous operations — completely excluded
-exclude: []
-# Uncomment to exclude specific tools:
-# - "Delete"
+# Dangerous operations — completely blocked
+# These patterns are never executed regardless of agent intent.
+# Remove only with a documented security exception.
+exclude:
+  - "Bash(sudo *)"
+  - "Bash(su *)"
+  - "Bash(eval *)"
+  - "Bash(exec *)"
+  - "Bash(curl * | bash)"
+  - "Bash(curl * | sh)"
+  - "Bash(wget * | bash)"
+  - "Bash(wget * | sh)"
+  - "Bash(rm -rf /)"
+  - "Bash(rm -rf /*)"
+  - "Bash(rm -rf ~)"
+  - "Bash(python* -m http.server*)"
+  - "Bash(nc *)"
+  - "Bash(ncat *)"
+  - "Bash(netcat *)"

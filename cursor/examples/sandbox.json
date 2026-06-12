@@ -1,0 +1,48 @@
+{
+  "_comment": "Cursor sandbox.json — controls network and filesystem access for agent (Background Agent / auto-run) sessions. Place at .cursor/sandbox.json in the repository root. Team-admin settings override workspace settings, which override user settings.",
+
+  "networkPolicy": {
+    "_comment": "default: deny blocks all outbound network unless explicitly allowed. Recommended for regulated environments. Use 'allow' only for low-sensitivity projects.",
+    "default": "deny",
+    "allow": [
+      "registry.npmjs.org",
+      "pypi.org",
+      "files.pythonhosted.org",
+      "api.github.com",
+      "github.com",
+      "objects.githubusercontent.com",
+      "proxy.golang.org",
+      "sum.golang.org",
+      "crates.io",
+      "static.crates.io"
+    ],
+    "deny": [
+      "169.254.169.254",
+      "metadata.google.internal",
+      "metadata.azure.com",
+      "*.ngrok.io",
+      "*.ngrok-free.app",
+      "pastebin.com",
+      "transfer.sh",
+      "*.onion"
+    ]
+  },
+
+  "additionalReadwritePaths": [],
+
+  "additionalReadonlyPaths": [
+    "/usr/lib",
+    "/usr/share",
+    "/etc/ssl/certs"
+  ],
+
+  "enableSharedBuildCache": false,
+
+  "_security_notes": [
+    "RFC 1918 private IP ranges, cloud metadata endpoints (169.254.169.254), and IPv6 private ranges are always blocked by Cursor and cannot be overridden here.",
+    "Set networkPolicy.default to 'deny' and explicitly allowlist only required package registries.",
+    "Never add 'deny' entries as the sole protection — always combine with a restrictive 'default: deny' posture.",
+    "The additionalReadwritePaths list grants the agent write access outside the workspace. Keep it empty unless you have a specific, reviewed use case.",
+    "This file should be committed to the repository. Review changes to it with the same rigor as CI/CD config changes."
+  ]
+}

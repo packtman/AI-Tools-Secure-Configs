@@ -45,6 +45,15 @@
       "Bash(perl -e *)",
       "Bash(php -r *)",
 
+      "Cd(~/)",
+      "Cd(//)",
+      "Cd(/tmp)",
+
+      "WebFetch(domain:169.254.169.254)",
+      "WebFetch(domain:metadata.google.internal)",
+      "WebFetch(domain:*.internal)",
+      "WebFetch(domain:*.local)",
+
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)",
@@ -104,18 +113,25 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [],
+  "deniedMcpServers": [{"serverName": "*"}],
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
+  "disableAgentView": true,
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
   "channelsEnabled": false,
+  "strictPluginOnlyCustomization": true,
 
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.136",
+  "requiredMinimumVersion": "2.1.136",
+
+  "availableModels": ["haiku", "sonnet"],
 
   "autoMemoryEnabled": false,
 
@@ -148,6 +164,7 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
-    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1"
+    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
   }
 }

@@ -10,7 +10,17 @@
   },
 
   "tools": {
-    "sandbox": "docker",
+    "sandbox": "restrictive-proxied",
+    "sandboxNetworkAccess": false,
+    "sandboxAccessPaths": ["."],
+    "autoApprove": [
+      "run_shell_command(git status)",
+      "run_shell_command(git diff)",
+      "run_shell_command(git log)",
+      "run_shell_command(ls)",
+      "run_shell_command(cat)",
+      "run_shell_command(grep)"
+    ],
     "core": [
       "ReadFileTool",
       "ReadManyFilesTool",
@@ -29,7 +39,8 @@
   },
 
   "mcp": {
-    "allowed": []
+    "allowed": [],
+    "excluded": []
   },
 
   "mcpServers": {},
@@ -42,7 +53,9 @@
 
   "telemetry": {
     "enabled": false,
-    "logPrompts": false
+    "logPrompts": false,
+    "traces": false,
+    "target": "local"
   },
 
   "model": {

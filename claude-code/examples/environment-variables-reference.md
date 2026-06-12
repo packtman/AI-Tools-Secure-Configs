@@ -29,6 +29,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable auto memory writes | `1` for sensitive environments |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments |
+| `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` | Strips Anthropic and cloud-provider credential env vars from subprocess environments before execution. Prevents sandboxed Bash commands from inheriting `ANTHROPIC_API_KEY`, `AWS_*`, `GOOGLE_*`, etc. | `1` — enable in all environments |
 
 ## Behavior Controls
 

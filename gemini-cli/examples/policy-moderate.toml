@@ -1,0 +1,61 @@
+# Gemini CLI Policy Engine — MODERATE rules
+# Place at: .gemini/policies/moderate.toml (workspace) or ~/.gemini/policies/moderate.toml (user).
+# Balances security with developer productivity.
+
+# --- MCP: ask before any MCP tool call ---
+[[rule]]
+mcpName = "*"
+decision = "ask_user"
+priority = 600
+
+# --- Deny dangerous command patterns ---
+[[rule]]
+commandRegex = "^(curl|wget).*(\\|\\s*(bash|sh|zsh|python|ruby|node))"
+decision = "deny"
+priority = 700
+
+[[rule]]
+commandRegex = "^(sudo|su|doas)\\b"
+decision = "deny"
+priority = 700
+
+[[rule]]
+commandRegex = "^rm\\s+(-rf?\\s+/|.*~[/\\s])"
+decision = "deny"
+priority = 700
+
+[[rule]]
+commandRegex = "^(nc|ncat|netcat)\\b"
+decision = "deny"
+priority = 700
+
+# --- Block credential file reads ---
+[[rule]]
+toolName = "ReadFileTool"
+argsPattern = "(\\.env|\\.pem|\\.key|\\.p12|\\.ssh|\\.aws|\\.kube|\\.docker)"
+decision = "deny"
+priority = 650
+
+# --- Block shell config writes ---
+[[rule]]
+toolName = ["WriteFileTool", "EditFileTool"]
+argsPattern = "(\\.bashrc|\\.zshrc|\\.profile|\\.bash_profile|\\.env)"
+decision = "deny"
+priority = 650
+
+# --- Ask for file writes ---
+[[rule]]
+toolName = ["WriteFileTool", "EditFileTool"]
+decision = "ask_user"
+priority = 200
+
+# --- Auto-allow safe reads and git inspection ---
+[[rule]]
+toolName = ["ReadFileTool", "ReadManyFilesTool", "GlobTool", "GrepTool", "ListDirectoryTool"]
+decision = "allow"
+priority = 50
+
+[[rule]]
+commandRegex = "^git (status|diff|log|branch|show|stash list)\\b"
+decision = "allow"
+priority = 50

@@ -36,5 +36,11 @@
     "**/.env.*": true,
     "**/secrets/**": true,
     "**/node_modules/**": true
-  }
+  },
+
+  "privacy.enabled": true,
+  "privacy.blockTelemetry": true,
+  "privacy.blockLocalIndexing": false,
+
+  "cursorAuth.allowedTeamId": "REPLACE_WITH_YOUR_TEAM_IDS"
 }

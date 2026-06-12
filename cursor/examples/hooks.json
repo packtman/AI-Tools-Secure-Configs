@@ -1,0 +1,52 @@
+{
+  "_comment": "Cursor hooks.json — intercepts agent lifecycle events for security enforcement and audit logging. Place at .cursor/hooks.json (workspace) or ~/.cursor/hooks.json (user). failClosed: true means the action is BLOCKED if the hook script errors.",
+
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "_comment": "Deny dangerous shell patterns before they execute. Exit code != 0 blocks the command.",
+        "command": ".cursor/hooks/check-shell-cmd.sh",
+        "failClosed": true
+      }
+    ],
+
+    "beforeMCPExecution": [
+      {
+        "_comment": "Enforce MCP tool allowlist. Block any MCP tool call not in the approved list.",
+        "command": ".cursor/hooks/check-mcp-tool.sh",
+        "failClosed": true
+      }
+    ],
+
+    "beforeReadFile": [
+      {
+        "_comment": "Block reads to sensitive credential files. Returns deny for .env, keys, cloud credentials.",
+        "command": ".cursor/hooks/check-file-read.sh",
+        "failClosed": true
+      }
+    ],
+
+    "afterFileEdit": [
+      {
+        "_comment": "Scan edits for accidentally written secrets. Async — does not block the write.",
+        "command": ".cursor/hooks/scan-for-secrets.sh",
+        "show_output": false
+      }
+    ],
+
+    "stop": [
+      {
+        "_comment": "Write session audit log entry when agent session ends.",
+        "command": ".cursor/hooks/session-audit-log.sh",
+        "show_output": false
+      }
+    ]
+  },
+
+  "_hook_scripts": {
+    "check-shell-cmd.sh": "#!/bin/bash\n# Block dangerous patterns\nCMD=\"$1\"\nfor PATTERN in 'curl.*|.*bash' 'wget.*|.*sh' 'eval' 'sudo' 'rm -rf /' 'nc -l' 'python.*-m http.server'; do\n  if echo \"$CMD\" | grep -qE \"$PATTERN\"; then\n    echo \"BLOCKED: Command matches dangerous pattern: $PATTERN\" >&2\n    exit 1\n  fi\ndone",
+
+    "check-file-read.sh": "#!/bin/bash\n# Block reads to credential files\nFILE=\"$1\"\nfor PATTERN in '\\.env$' '\\.env\\.' '\\.pem$' '\\.key$' '\\.aws' '\\.ssh' '\\.kube' '\\.docker'; do\n  if echo \"$FILE\" | grep -qE \"$PATTERN\"; then\n    echo \"BLOCKED: Read to sensitive path: $FILE\" >&2\n    exit 1\n  fi\ndone"
+  }
+}

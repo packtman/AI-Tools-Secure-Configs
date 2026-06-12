@@ -15,6 +15,11 @@ cli_auth_credentials_store = "keyring"
 # Model selection — pin to a specific model to prevent drift.
 model = "o4-mini"
 
+# Web search — "disabled" prevents the agent from issuing live web searches.
+# "cached" allows searches but only uses cached results (no live fetches).
+# Never set to "live" in regulated environments.
+web_search = "disabled"
+
 # Sandbox network settings — disabled by default for security.
 [sandbox_workspace_write]
 network_access = false

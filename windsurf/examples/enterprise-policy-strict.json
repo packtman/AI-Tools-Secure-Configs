@@ -21,6 +21,47 @@
     "enforceProxyStrictSSL": true,
     "blockExternalExtensions": true,
     "blockLocalMcpServers": true,
-    "disableWebSearch": true
-  }
+    "lockMcpServerInstallation": true,
+    "disableWebSearch": true,
+    "forcePrivacyMode": true
+  },
+
+  "windsurf.cascadeCommandsDenyList": [
+    "sudo",
+    "su",
+    "eval",
+    "exec",
+    "curl * | bash",
+    "curl * | sh",
+    "wget * | bash",
+    "wget * | sh",
+    "rm -rf /",
+    "rm -rf /*",
+    "rm -rf ~",
+    "chmod 777",
+    "nc -l",
+    "ncat",
+    "netcat",
+    "python -m http.server",
+    "node -e",
+    "ruby -e",
+    "perl -e"
+  ],
+
+  "windsurf.cascadeCommandsAllowList": [
+    "git status",
+    "git diff",
+    "git log",
+    "git branch",
+    "ls",
+    "pwd",
+    "cat",
+    "grep",
+    "find",
+    "npm test",
+    "npm run lint",
+    "npx tsc --noEmit",
+    "python -m pytest",
+    "go test ./..."
+  ]
 }

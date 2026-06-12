@@ -15,6 +15,9 @@ This directory contains security-hardened configurations for **Cursor** (the AI-
 | `examples/permissions-baseline.json` | **Baseline** — Essential restrictions only (startups, individual devs) |
 | `examples/settings-rationale.md` | Comprehensive security reasoning for every setting |
 | `examples/cloud-agent-security.json` | Cloud Agent dashboard security reference config |
+| `examples/sandbox.json` | `.cursor/sandbox.json` — agent network and filesystem sandbox policy |
+| `examples/hooks.json` | `.cursor/hooks.json` — agent lifecycle security hooks (Cursor 1.7+) |
+| `examples/environment.json` | `.cursor/environment.json` — Background Agent cloud environment spec |
 
 ## Configuration Files
 
@@ -61,6 +64,20 @@ Enterprise admins can enforce policies through MDM (Jamf, Intune, Kandji):
 | Admin API | Programmatic team and settings management |
 | Team Rules | Enforced or optional rules managed from the dashboard |
 | Compliance monitoring | Usage and policy adherence tracking |
+
+## Security Advisories
+
+Several high-severity CVEs were disclosed in 2025 and patched by Cursor 2.5+:
+
+| CVE | Severity | Description | Status |
+|-----|----------|-------------|--------|
+| CVE-2025-54135 "CurXecute" | Critical | Malicious MCP server rewrites `.cursor/mcp.json`, injects commands via Auto-Run | Patched ≥1.7 |
+| CVE-2025-54136 "MCPoison" | Critical | MCP config swapped after user approval; persistent RCE on every Cursor open | Patched ≥2.0 |
+| CVE-2025-59944 | High | Case-sensitivity bypass of `.cursorignore` allows agent to read protected files | Patched ≥1.7 |
+| CVE-2025-64110 | High (8.8) | Logic bug allows agent to read sensitive files in `.cursorignore` | Patched ≥1.7.24 |
+| CVE-2025-61591 | High | Command injection in Cursor code editor | Patched ≥2.0 |
+
+**Action required:** Pin Cursor version to 2.5+ via MDM. The `minimumVersion` MDM policy key enforces this.
 
 ## Deployment Checklist
 

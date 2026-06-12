@@ -20,7 +20,21 @@
     "copilot_pull_request_summaries": "disabled",
     "copilot_docset_management": "disabled",
     "copilot_bing_search": "disabled",
-    "copilot_web_search": "disabled"
+    "copilot_web_search": "disabled",
+    "copilot_coding_agent": "disabled",
+    "copilot_extensions": "disabled",
+    "mcp_servers_policy": "disabled",
+    "copilot_memory": "disabled",
+    "models_beyond_defaults": "disabled",
+    "preview_features": "disabled"
+  },
+
+  "ai_controls": {
+    "_comment": "Managed via Enterprise → AI Controls tab (GA February 2026). Policy behavior: any policy set to 'unconfigured' now defaults to DISABLED at org level since November 2025.",
+    "ai_manager_role": {
+      "_comment": "Delegate AI governance to a non-owner role. Grant 'Manage enterprise AI controls' permission to your security team.",
+      "assign_to": "security-team"
+    }
   },
 
   "content_exclusions": {

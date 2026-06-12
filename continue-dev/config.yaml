@@ -27,13 +27,28 @@ embeddingsProvider:
   apiKey: "${{ secrets.OPENAI_API_KEY }}"
 
 # Context providers — limit to safe, read-only providers
+# NOTE: @Docs context provider is deprecated as of 2025.
+# Use Context7 MCP for public docs, or a custom MCP server for internal docs.
 contextProviders:
   - name: "code"
-  - name: "docs"
   - name: "diff"
   - name: "terminal"
   - name: "tree"
   - name: "codebase"
+
+# Agent-mode security settings (2025)
+# Agent tools: by default agent runs in "Ask First" mode — requires approval for each tool.
+# Set individual tools to "automatic" only if the tool is safe and idempotent.
+# See ~/.continue/permissions.yaml for the full allow/ask/exclude rule set.
+
+# Security instructions injected into every agent interaction.
+# These apply on top of per-file rules scoped via 'globs'.
+rules:
+  - name: "security-baseline"
+    rule: "Never read .env files, private keys (.pem, .key), or cloud credential files (.aws, .ssh). Never write to shell config files (.bashrc, .zshrc). Never use eval or exec. Always use environment variables for secrets."
+
+# Base agent system message override — adds security framing to every agent session.
+baseAgentSystemMessage: "You are a secure coding assistant. Never access credential files, never execute destructive commands without explicit confirmation, and never write secrets to source files."
 
 # Disable telemetry
 allowAnonymousTelemetry: false

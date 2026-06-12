@@ -1,0 +1,102 @@
+# Gemini CLI Policy Engine — STRICT rules
+# Place at: ~/.gemini/policies/strict.toml (user), .gemini/policies/strict.toml (workspace),
+# or system path controlled by GEMINI_CLI_SYSTEM_SETTINGS_PATH.
+#
+# Policy engine priority: system > workspace > user. Higher 'priority' number wins on conflict.
+# 'decision' values: "allow", "deny", "ask_user"
+#
+# WARNING: These rules block tool calls at the policy layer — they are enforced even if the
+# tool is listed in settings.json tools.core. Use deny rules to establish hard boundaries.
+
+# --- Block all MCP tool calls (strict default) ---
+[[rule]]
+mcpName = "*"
+decision = "deny"
+priority = 900
+
+# --- Block destructive shell commands ---
+[[rule]]
+commandRegex = "^(rm|rmdir|del|format|mkfs|shred|wipe)\\b"
+decision = "deny"
+priority = 850
+
+[[rule]]
+commandRegex = "^(sudo|su|doas|pkexec)\\b"
+decision = "deny"
+priority = 850
+
+[[rule]]
+commandRegex = "^(curl|wget).*(\\|\\s*(bash|sh|zsh|python|ruby|node))"
+decision = "deny"
+priority = 850
+
+[[rule]]
+commandRegex = "^(nc|ncat|netcat|socat)\\b"
+decision = "deny"
+priority = 850
+
+[[rule]]
+commandRegex = "^(eval|exec)\\b"
+decision = "deny"
+priority = 850
+
+[[rule]]
+commandPrefix = "python -m http.server"
+decision = "deny"
+priority = 850
+
+[[rule]]
+commandRegex = "^(node|python|ruby|perl|php)\\s+-[ce]\\b"
+decision = "deny"
+priority = 850
+
+# --- Block reads to credential files ---
+[[rule]]
+toolName = "ReadFileTool"
+argsPattern = "(\\.env|\\.pem|\\.key|\\.p12|\\.ssh|\\.aws|\\.kube|\\.docker|credentials|token|secret)"
+decision = "deny"
+priority = 800
+
+[[rule]]
+toolName = "ReadManyFilesTool"
+argsPattern = "(\\.env|\\.pem|\\.key|\\.p12|\\.ssh|\\.aws|\\.kube|\\.docker|credentials|token|secret)"
+decision = "deny"
+priority = 800
+
+# --- Block writes to shell config and credential files ---
+[[rule]]
+toolName = "WriteFileTool"
+argsPattern = "(\\.bashrc|\\.zshrc|\\.profile|\\.bash_profile|\\.env|\\.pem|\\.key|\\.ssh|\\.aws)"
+decision = "deny"
+priority = 800
+
+[[rule]]
+toolName = "EditFileTool"
+argsPattern = "(\\.bashrc|\\.zshrc|\\.profile|\\.bash_profile|\\.env|\\.pem|\\.key)"
+decision = "deny"
+priority = 800
+
+# --- Block web fetches to cloud metadata endpoints ---
+[[rule]]
+toolName = "WebFetchTool"
+argsPattern = "(169\\.254\\.169\\.254|metadata\\.google\\.internal|metadata\\.azure\\.com)"
+decision = "deny"
+priority = 800
+
+# --- Require confirmation for all shell commands ---
+[[rule]]
+toolName = "ShellTool"
+decision = "ask_user"
+priority = 100
+
+# --- Require confirmation for all file writes ---
+[[rule]]
+toolName = ["WriteFileTool", "EditFileTool"]
+decision = "ask_user"
+priority = 100
+
+# --- Allow safe read-only tools automatically ---
+[[rule]]
+toolName = ["ReadFileTool", "ReadManyFilesTool", "GlobTool", "GrepTool", "ListDirectoryTool"]
+decision = "allow"
+priority = 50

@@ -1,0 +1,33 @@
+{
+  "_comment": "Cursor environment.json — defines the cloud environment for Background Agents. Commit this file to the repository root as .cursor/environment.json. Agents run in ephemeral containers using this spec.",
+
+  "baseImage": "ghcr.io/cursor-images/node-20:latest",
+
+  "persistedDirectories": [
+    "node_modules",
+    ".venv",
+    ".cache/pip",
+    ".npm/_cacache"
+  ],
+
+  "env": {
+    "_comment": "Non-secret environment variables only. Do NOT put credentials, API keys, or tokens here — use the 'secrets' block.",
+    "NODE_ENV": "development",
+    "CI": "true",
+    "LOG_LEVEL": "info"
+  },
+
+  "secrets": {
+    "_comment": "References to encrypted secrets stored in Cursor KMS. Configure secret values in Settings → Background Agents → Secrets. Keys here are the secret names; Cursor injects them as environment variables at runtime.",
+    "_example_npm_token": "NPM_TOKEN",
+    "_example_api_key": "INTERNAL_API_KEY"
+  },
+
+  "_security_notes": [
+    "Never put API keys, tokens, passwords, or credentials in the 'env' block — they will be visible to anyone with repo read access.",
+    "Use the 'secrets' block for all sensitive values. Cursor KMS encrypts them at rest and injects them at runtime.",
+    "Pin the baseImage to a specific digest (e.g., ghcr.io/cursor-images/node-20@sha256:...) for supply-chain security.",
+    "The persistedDirectories list controls what is cached between agent runs. Review it to avoid unintentionally caching sensitive files.",
+    "This file should be reviewed before merging — changes to it modify the agent execution environment."
+  ]
+}

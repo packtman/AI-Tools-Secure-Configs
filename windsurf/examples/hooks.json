@@ -1,0 +1,35 @@
+{
+  "_comment": "Windsurf Cascade Hooks — deployed at three levels (merged in order of precedence, lowest to highest): workspace (.windsurf/hooks.json), user (~/.codeium/windsurf/hooks.json), system (/Library/Application Support/Windsurf/hooks.json on macOS). System-level hooks cannot be disabled by end users without root. Deploy system hooks via MDM (Jamf, Intune) or config management.",
+
+  "post_tool_call": {
+    "_comment": "Fires after each Cascade tool call. Use for audit logging.",
+    "command": ".windsurf/hooks/audit-tool-call.sh",
+    "show_output": false,
+    "workingDirectory": "${workspaceRoot}"
+  },
+
+  "post_file_edit": {
+    "_comment": "Fires after Cascade edits a file. Scan for accidentally written secrets.",
+    "command": ".windsurf/hooks/scan-for-secrets.sh",
+    "show_output": false,
+    "workingDirectory": "${workspaceRoot}"
+  },
+
+  "post_setup_worktree": {
+    "_comment": "Fires when a new worktree is set up for an agent task. Log for audit trail.",
+    "command": ".windsurf/hooks/log-worktree.sh",
+    "show_output": false
+  },
+
+  "_hook_script_examples": {
+    "audit-tool-call.sh": "#!/bin/bash\necho \"$(date -u +%Y-%m-%dT%H:%M:%SZ) TOOL_CALL user=$(whoami) tool=$WINDSURF_TOOL_NAME\" >> /var/log/windsurf-audit.log",
+    "scan-for-secrets.sh": "#!/bin/bash\n# Scan the last modified file for secrets patterns\nFILE=\"$WINDSURF_MODIFIED_FILE\"\nif [ -f \"$FILE\" ]; then\n  if grep -qE '(AKIA[A-Z0-9]{16}|sk-ant-|sk-[a-zA-Z0-9]{48}|AIza[A-Za-z0-9_-]{35})' \"$FILE\"; then\n    echo \"WARNING: Potential secret detected in $FILE\" >&2\n  fi\nfi",
+    "log-worktree.sh": "#!/bin/bash\necho \"$(date -u) WORKTREE_CREATE path=$PWD\" >> /var/log/windsurf-audit.log"
+  },
+
+  "_deployment": {
+    "jamf": "Upload .windsurf/hooks.json as a managed file via Jamf Pro → Management Settings → Managed Software → Packages. Deploy to /Library/Application Support/Windsurf/hooks.json.",
+    "ansible": "Use the 'copy' module to write /Library/Application Support/Windsurf/hooks.json with mode '0644'. Run on all developer workstations.",
+    "admin_portal": "System-level hooks can also be configured via the Windsurf Admin Portal → Team Settings → Hooks, without managing local files."
+  }
+}
