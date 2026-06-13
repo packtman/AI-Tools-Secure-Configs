@@ -88,6 +88,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `"disable"` | Until auto mode exits research preview and the classifier is proven reliable. |
 | Developer | Not set | Let developers opt in for personal productivity. |
 
+### `disableAgentView`
+
+**What it does:** Turns off background agents and agent view commands, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can run longer-lived work with less direct user attention than a normal interactive session. Enterprises should pilot this with audit coverage before enabling it broadly.
+
+**What breaks if misconfigured:** If set to `true`, developers cannot use background agent sessions or the agent view UI. If omitted in enterprise tiers, teams may start longer-running agent work before audit and exception processes are ready.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Higher-autonomy agent surfaces need explicit approval and monitoring. |
+| Standard enterprise | `true` | Disable until IT has usage monitoring, audit events, and an exception process. |
+| Developer | `false` | Allow local experimentation on low-risk workspaces. |
+
 ### `disableWorkflows`
 
 **What it does:** Disables dynamic workflows and bundled workflow commands. When enabled, workflow commands are unavailable, the `workflow` keyword does not trigger a workflow run, and `ultracode` is removed from the effort menu. Equivalent environment control: `CLAUDE_CODE_DISABLE_WORKFLOWS=1`.
@@ -99,6 +113,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | Long-running autonomous workflows need explicit approval, audit coverage, and defined repository scope. |
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
+
+### `disableBundledSkills`
+
+**What it does:** Disables the skills and workflows that ship with Claude Code. User, project, and plugin skills are not disabled by this setting.
+
+**Why it matters:** Bundled skills add preloaded agent capabilities. Strict environments should minimize available capabilities and approve only the skills they need, while Moderate can preserve vendor-bundled skills for common developer workflows.
+
+**What breaks if misconfigured:** If set to `true`, bundled skills disappear from the model context and common coding or review assistance may be less effective. If omitted in Strict, bundled skills remain available before the security team has approved them.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Minimize preloaded skills and require explicit approval for needed capabilities. |
+| Standard enterprise | `false` | Preserve common developer workflows while dynamic workflows remain disabled separately. |
+| Developer | `false` | Preserve default Claude Code behavior. |
 
 ### `allowManagedHooksOnly`
 

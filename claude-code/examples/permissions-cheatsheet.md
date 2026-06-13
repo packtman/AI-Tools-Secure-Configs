@@ -195,10 +195,12 @@ These keys are **only** read from managed settings and have no effect in user/pr
 |-----|--------|
 | `disableBypassPermissionsMode` | Prevents `--dangerously-skip-permissions` |
 | `disableAutoMode` | Prevents auto mode activation |
+| `disableAgentView` | Blocks background agents and agent view commands |
 | `disableRemoteControl` | Blocks remote control feature |
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `disableBundledSkills` | Disables bundled skills and workflows shipped with Claude Code |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---

@@ -203,7 +203,9 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Deploy `managed-settings.json` with deny rules for dangerous patterns.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
+- [ ] Set `disableAgentView: true` until background agents have audit coverage and an exception process.
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableBundledSkills: true` in Strict environments if bundled skills have not been approved.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

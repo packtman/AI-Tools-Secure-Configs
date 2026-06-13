@@ -10,30 +10,23 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (3 of 3 with missing terms)
 
 ### Claude Code
 
 - Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
-
-### Claude Code
-
+  - Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
 - Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
-
-### Continue.dev
-
-- Source: Configuration reference
-- Missing terms: `mcpServers`
+  - Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
 
 ### Claude Desktop
 
 - Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+  - Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
 
-## Deferred (1 tools)
+### Claude API
 
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Source: Anthropic admin API documentation
+  - Missing terms: `fast-mode-2026-02-01`, `model_group`
+- Source: Anthropic API release notes
+  - Missing terms: `fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`
