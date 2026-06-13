@@ -106,9 +106,11 @@
   "allowManagedMcpServersOnly": true,
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
+  "disableAgentView": true,
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableBundledSkills": true,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",

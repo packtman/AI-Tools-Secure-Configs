@@ -141,6 +141,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Turns off background agents and agent view commands, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate tier):** Background agents can run longer-lived work with less direct user attention. Moderate tier blocks them until admins have audit coverage, usage monitoring, and an exception process.
+
+**What breaks if set to true:** Developers cannot use background agent sessions or the agent view UI. Use normal interactive Claude Code sessions, or approve a pilot exception for teams that need background agents.
+
+**Strict difference:** Also `true`, because Strict blocks higher-autonomy agent surfaces by default.
+
+**Baseline difference:** `false`, allowing local experimentation with background agents.
+
+---
+
 ## `disableDeepLinkRegistration`
 
 **Value:** `"disable"`
@@ -164,6 +180,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **Strict difference:** Also `true`, because Strict blocks research-preview autonomous workflows by default.
 
 **Baseline difference:** `false`, allowing teams to use dynamic workflows after local confirmation prompts.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `false`
+
+**What:** Controls whether skills and workflows that ship with Claude Code are available. User, project, and plugin skills are controlled separately.
+
+**Why (Moderate tier):** Moderate tier preserves vendor-bundled skills for common developer tasks while `disableWorkflows: true` separately blocks dynamic workflow execution.
+
+**What breaks if set to true:** Bundled skills disappear from the model context, which can reduce help for common coding, review, and planning tasks.
+
+**Strict difference:** `true`, because Strict minimizes preloaded agent capabilities and requires teams to approve only the skills they need.
+
+**Baseline difference:** `false`, preserving the default developer experience.
 
 ---
 

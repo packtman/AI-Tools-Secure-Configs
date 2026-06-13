@@ -157,6 +157,13 @@
   //      Claude Code sessions.
   "disableRemoteControl": true,
 
+  // WHAT: Turns off background agents and agent view commands.
+  // WHY: Background agents can run longer-lived work with less direct user attention.
+  //      Moderate tier blocks them until admins define audit and exception handling.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude agents, --bg, /background,
+  //      or the on-demand supervisor.
+  "disableAgentView": true,
+
   // WHAT: Prevents Claude Code from registering as a protocol handler for deep links.
   // WHY: Deep links (e.g., claude-code://) from untrusted websites could trigger
   //      Claude Code actions without the user's awareness.
@@ -172,6 +179,13 @@
   // BREAKS IF SET TO TRUE: Developers cannot use workflow commands, the workflow
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
+
+  // WHAT: Keeps vendor-bundled Claude Code skills available.
+  // WHY: Moderate tier preserves common developer workflows while disabling dynamic
+  //      workflows separately above. Strict tier disables bundled skills entirely.
+  // BREAKS IF SET TO TRUE: Built-in bundled skills disappear from the model context,
+  //      which can reduce help for common coding and review tasks.
+  "disableBundledSkills": false,
 
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.

@@ -58,8 +58,10 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": false,
+  "disableAgentView": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
+  "disableBundledSkills": false,
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",
