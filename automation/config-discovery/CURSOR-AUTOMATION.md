@@ -2,11 +2,12 @@
 
 Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent when the workflow cannot run the model-backed maintenance step, such as when repository secret `ANTHROPIC_API_KEY` is not configured.
 
 ## Recommended Trigger
 
 - Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
+- Also trigger when a PR from `automation/config-maintenance` contains only discovery report and snapshot changes.
 - Repository: this repo.
 - Branch: default branch, unless your automation service creates a working branch automatically.
 
