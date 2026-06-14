@@ -26,9 +26,11 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+7. If repository secret `ANTHROPIC_API_KEY` is configured, the workflow runs the Claude Code action as the config-maintenance agent.
+8. If the secret is missing, the workflow still opens a discovery-only PR for Cursor Automation or human review.
+9. The maintenance agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+GitHub Actions always acts as the sensor. With `ANTHROPIC_API_KEY`, it can also run the model-backed maintenance step. Without that secret, use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
 
 ## Adding a Source
 
@@ -69,6 +71,13 @@ python3 automation/config-discovery/discover_configs.py \
   --offline
 ```
 
+Validate deployable config syntax:
+
+```bash
+python3 scripts/validate_config_files.py
+python3 scripts/validate_config_files.py --changed origin/main
+```
+
 ## Review Standard for Generated PRs
 
 Treat the initial discovery commit as an intake signal. The final PR should include actual config updates when the upstream change is relevant. Before changing a config:
@@ -87,7 +96,7 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step uses repository secret `ANTHROPIC_API_KEY` when present. If it is absent, the workflow warns and opens a discovery-only PR instead of failing.
 
 ## Agent step failures (`error_max_turns`)
 
