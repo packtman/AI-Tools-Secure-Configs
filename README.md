@@ -156,7 +156,7 @@ AI-Secure-Configs/
 
 This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
 
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+Discovery PRs are intended for a config-maintenance agent. The GitHub workflow can run the Claude Code action when `ANTHROPIC_API_KEY` is configured, and otherwise opens a discovery-only handoff PR for Cursor Automation or human review. The agent reviews the generated report, verifies upstream changes, validates edited configs, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
 
 ### For Security Teams
 
