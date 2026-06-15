@@ -129,7 +129,7 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
           "watch_for": [
             "policy",
             "organization",
@@ -141,7 +141,7 @@
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",

@@ -97,20 +97,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check Claude API key availability
+        id: api-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery-only PR for Cursor Automation or human review."
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.api-key.outputs.available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -144,7 +147,7 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.api-key.outputs.available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -163,6 +166,8 @@ jobs:
             fi
             exit 0
           fi
+
+          python3 scripts/validate_config_files.py --changed
 
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
@@ -186,13 +191,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          API_KEY_AVAILABLE: ${{ steps.api-key.outputs.available }}
         run: |
           set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When `ANTHROPIC_API_KEY` is available, it also runs the config-maintenance agent against the generated report.
+
+          If the repository secret `ANTHROPIC_API_KEY` was unavailable, this PR is the handoff for Cursor Automation or a human reviewer. Use `automation/config-discovery/CURSOR-AUTOMATION.md` and `automation/config-discovery/agent-prompt.md` to finish the config-maintenance pass.
 
           Review:
 
@@ -211,6 +219,8 @@ jobs:
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"
+          elif [ "${API_KEY_AVAILABLE:-false}" != "true" ]; then
+            TITLE="Config maintenance: upstream changes need agent review"
           else
             TITLE="Config maintenance: upstream changes reviewed"
           fi
