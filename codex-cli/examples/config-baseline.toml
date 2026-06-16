@@ -6,5 +6,9 @@ approval_policy = "never"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 
+[permission_profiles.default]
+sandbox_mode = "workspace-write"
+approval_policy = "never"
+
 [sandbox_workspace_write]
 network_access = true

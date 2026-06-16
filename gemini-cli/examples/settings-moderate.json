@@ -44,6 +44,10 @@
     "folderTrust": {
       "enabled": true
     },
+    "trustedFolders": {
+      "enabled": true,
+      "defaultAction": "prompt"
+    },
     "auth": {
       "enforcedType": "oauth-personal"
     }

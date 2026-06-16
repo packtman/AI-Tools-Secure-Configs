@@ -1,0 +1,10 @@
+# Codex CLI — BASELINE admin requirements
+# Optional requirements file for teams that want a documented floor.
+
+allow_managed_hooks_only = false
+
+allowed_approval_policies = ["untrusted", "on-request", "never"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+
+[sandbox_workspace_write]
+network_access = true

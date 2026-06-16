@@ -1,0 +1,17 @@
+{
+  "_comment": "MODERATE Cursor MCP governance. Complements permissions-moderate.json. Deploy via team admin dashboard where supported; otherwise document as onboarding standard.",
+
+  "mcpAllowlist": [],
+
+  "mcpPolicies": {
+    "requireApprovalPerTool": true,
+    "allowSessionScopedServerApproval": false,
+    "allowPermanentServerApproval": false,
+    "blockStdioServersInUntrustedWorkspaces": true
+  },
+
+  "teamPolicies": {
+    "privacyMode": "enabled",
+    "auditAgentActions": true
+  }
+}

@@ -70,5 +70,11 @@
       "terraform destroy",
       "docker system prune -a"
     ]
+  },
+
+  "integration_policies": {
+    "mcp_servers": "approval_required",
+    "external_agents": "disabled",
+    "require_confirmation_for_new_integrations": true
   }
 }

@@ -1,0 +1,18 @@
+# Codex CLI — MODERATE admin requirements
+# allow_managed_hooks_only blocks user-defined hooks; IT publishes managed hooks.
+
+allow_managed_hooks_only = false
+
+allowed_approval_policies = ["untrusted", "on-request"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+browser_use = false
+computer_use = false
+memories = false
+multi_agent = false
+
+[mcp_servers]

@@ -21,6 +21,20 @@
     "enforceProxyStrictSSL": true,
     "blockExternalExtensions": true,
     "blockLocalMcpServers": true,
-    "disableWebSearch": true
+    "disableWebSearch": true,
+    "disableDevinCloud": true,
+    "disableDevinLocal": true,
+    "requireCascadeMcpApproval": true,
+    "lowerWebFetchPermissions": true
+  },
+
+  "CascadeSettings": {
+    "disableAgentCommandCenter": false,
+    "enforceManagedHooksOnly": true
+  },
+
+  "GroupPolicy": {
+    "_comment": "Windows Group Policy: deploy Windsurf restrictions via GPO per 2026.1 changelog.",
+    "manageRestrictionsViaGPO": true
   }
 }

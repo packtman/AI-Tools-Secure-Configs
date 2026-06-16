@@ -1,0 +1,6 @@
+# Continue.dev — MCP server allowlist (Baseline tier)
+# Teams add servers after local security review. No central allowlist required.
+
+schema: v1
+
+mcpServers: {}

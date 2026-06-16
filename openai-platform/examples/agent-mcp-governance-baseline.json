@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/agent-mcp-governance.json",
+  "_comment": "BASELINE OpenAI agent and MCP governance. Documents controls; teams enable MCP with local review.",
+
+  "agent_defaults": {
+    "store": true,
+    "parallel_tool_calls": true,
+    "truncation": "auto"
+  },
+
+  "mcp_governance": {
+    "mcp_approval_required": false,
+    "mcp_list_tools_before_call": false,
+    "allowed_mcp_servers": [],
+    "block_user_defined_mcp_in_production": false
+  },
+
+  "network_policy": {
+    "type": "open",
+    "allowed_domains": []
+  },
+
+  "checkpoint_permissions": {
+    "admin_api_required": false,
+    "default_access": "allow",
+    "audit_checkpoint_permission_changes": false
+  },
+
+  "skills_policy": {
+    "allow_org_skills_only": false,
+    "block_latest_unpinned_versions": false,
+    "approved_skill_ids": []
+  },
+
+  "data_controls": {
+    "zero_data_retention_enrollment": false,
+    "log_mcp_call_arguments": false,
+    "log_mcp_call_results": false
+  }
+}

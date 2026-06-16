@@ -33,6 +33,17 @@
 
   "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"],
 
+  "fast_mode": {
+    "enabled": false,
+    "beta_header": "fast-mode-2026-02-01",
+    "require_finops_approval": true
+  },
+
+  "rate_limits_api_monitoring": {
+    "enabled": true,
+    "poll_interval_minutes": 60
+  },
+
   "data_controls": {
     "zero_data_retention": true,
     "disable_training_on_data": true

@@ -26,6 +26,19 @@
     "enforceProxyStrictSSL": true,
     "blockExternalExtensions": false,
     "blockLocalMcpServers": false,
-    "disableWebSearch": false
+    "disableWebSearch": false,
+    "disableDevinCloud": false,
+    "disableDevinLocal": false,
+    "requireCascadeMcpApproval": true,
+    "lowerWebFetchPermissions": false
+  },
+
+  "CascadeSettings": {
+    "disableAgentCommandCenter": false,
+    "enforceManagedHooksOnly": false
+  },
+
+  "GroupPolicy": {
+    "manageRestrictionsViaGPO": false
   }
 }

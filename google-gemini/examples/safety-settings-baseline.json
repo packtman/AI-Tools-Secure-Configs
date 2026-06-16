@@ -44,5 +44,11 @@
   "quota_overrides": {
     "gemini_api_requests_per_minute": 300,
     "gemini_code_assist_requests_per_minute": 120
+  },
+
+  "agent_tool_governance": {
+    "require_tool_allowlist": false,
+    "block_external_mcp_without_review": false,
+    "audit_tool_invocations": false
   }
 }

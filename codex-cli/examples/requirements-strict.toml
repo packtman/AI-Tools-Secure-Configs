@@ -1,0 +1,19 @@
+# Codex CLI — STRICT admin requirements (requirements.toml)
+# Deploy to system-managed path. Users cannot override these constraints.
+# allow_managed_hooks_only must live in requirements.toml (not config.toml).
+
+allow_managed_hooks_only = true
+
+allowed_approval_policies = ["on-request", "untrusted"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+browser_use = false
+computer_use = false
+memories = false
+multi_agent = false
+
+[mcp_servers]

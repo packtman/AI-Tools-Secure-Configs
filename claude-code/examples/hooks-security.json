@@ -88,6 +88,47 @@
           }
         ]
       }
+    ],
+
+    "InstructionsLoaded": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-log.sh",
+            "async": true,
+            "statusMessage": "Logging instruction load for compliance..."
+          }
+        ]
+      }
+    ],
+
+    "PermissionRequest": [
+      {
+        "matcher": "Bash|mcp__*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-log.sh",
+            "async": true,
+            "statusMessage": "Logging permission request..."
+          }
+        ]
+      }
+    ],
+
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-log.sh",
+            "async": true
+          }
+        ]
+      }
     ]
   }
 }

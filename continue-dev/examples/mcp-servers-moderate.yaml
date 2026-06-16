@@ -1,0 +1,20 @@
+# Continue.dev — MCP server allowlist (Moderate tier)
+# Merge into ~/.continue/config.yaml or deploy via MDM/onboarding script.
+# Pin package versions. Never scope filesystem servers to ~ or /.
+
+schema: v1
+
+mcpServers:
+  corporate-docs:
+    command: npx
+    args:
+      - "-y"
+      - "@modelcontextprotocol/server-filesystem@0.6.2"
+      - "/mnt/corporate-docs"
+  internal-api:
+    command: npx
+    args:
+      - "-y"
+      - "@corp/mcp-internal-api@1.0.0"
+    env:
+      MCP_API_BASE: "https://api-gateway.corp.example.com"

@@ -48,5 +48,11 @@
     "log_prompts": false,
     "log_responses": false,
     "data_retention_days": 0
+  },
+
+  "mcp_governance": {
+    "mcp_approval_required": true,
+    "block_user_defined_mcp_in_production": true,
+    "block_all_mcp_in_production": true
   }
 }

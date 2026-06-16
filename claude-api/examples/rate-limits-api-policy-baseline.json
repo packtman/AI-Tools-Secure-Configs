@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/claude-api/rate-limits-api-policy.json",
+  "_comment": "BASELINE rate limits API monitoring. Fast mode allowed with FinOps review; broad model access.",
+
+  "rate_limits_api": {
+    "enabled": true,
+    "poll_interval_minutes": 1440,
+    "alert_on_workspace_override": false
+  },
+
+  "workspace_defaults": {
+    "requests_per_minute": 1000,
+    "input_tokens_per_minute": 400000,
+    "output_tokens_per_minute": 200000
+  },
+
+  "model_groups": {
+    "standard": [
+      "claude-sonnet-4-20250514",
+      "claude-haiku-4-20250414"
+    ],
+    "elevated": [
+      "claude-opus-4-20250514"
+    ]
+  },
+
+  "fast_mode": {
+    "enabled": true,
+    "beta_header": "fast-mode-2026-02-01",
+    "require_finops_approval": false,
+    "allowed_workspaces": []
+  },
+
+  "invite_roles": {
+    "default": "workspace_developer",
+    "allowed_roles": [
+      "user",
+      "developer",
+      "billing",
+      "claude_code_user"
+    ],
+    "block_admin_via_api": false
+  },
+
+  "managed_agents": {
+    "memory_enabled": true,
+    "beta_header": "managed-agents-2026-04-01"
+  }
+}

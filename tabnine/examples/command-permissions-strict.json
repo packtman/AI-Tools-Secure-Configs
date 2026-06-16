@@ -66,5 +66,11 @@
       "terraform destroy",
       "terraform apply"
     ]
+  },
+
+  "integration_policies": {
+    "mcp_servers": "disabled",
+    "external_agents": "disabled",
+    "require_confirmation_for_new_integrations": true
   }
 }

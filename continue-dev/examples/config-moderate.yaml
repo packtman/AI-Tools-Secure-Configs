@@ -37,3 +37,12 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: false
+
+# IT-approved MCP servers only. Use Continue Hub or org secrets for credentials.
+mcpServers:
+  corporate-docs:
+    command: npx
+    args:
+      - "-y"
+      - "@modelcontextprotocol/server-filesystem@0.6.2"
+      - "/mnt/corporate-docs"

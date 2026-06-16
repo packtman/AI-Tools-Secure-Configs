@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ai-secure-configs.example/schemas/openai/agent-mcp-governance.json",
+  "_comment": "STRICT OpenAI agent and MCP governance. Blocks user MCP, requires admin for checkpoints, deny-by-default network.",
+
+  "agent_defaults": {
+    "store": false,
+    "parallel_tool_calls": false,
+    "truncation": "disabled"
+  },
+
+  "mcp_governance": {
+    "mcp_approval_required": true,
+    "mcp_list_tools_before_call": true,
+    "allowed_mcp_servers": [],
+    "block_user_defined_mcp_in_production": true,
+    "block_all_mcp_in_production": true
+  },
+
+  "network_policy": {
+    "type": "allowlist",
+    "allowed_domains": [
+      "api.corp.example.com"
+    ]
+  },
+
+  "checkpoint_permissions": {
+    "admin_api_required": true,
+    "default_access": "deny",
+    "audit_checkpoint_permission_changes": true
+  },
+
+  "skills_policy": {
+    "allow_org_skills_only": true,
+    "block_latest_unpinned_versions": true,
+    "approved_skill_ids": []
+  },
+
+  "data_controls": {
+    "zero_data_retention_enrollment": true,
+    "log_mcp_call_arguments": false,
+    "log_mcp_call_results": false
+  }
+}
