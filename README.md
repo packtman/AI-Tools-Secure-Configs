@@ -158,6 +158,8 @@ This repo includes a scheduled config discovery loop under [`automation/config-d
 
 Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
 
+The loop is designed to keep creating useful maintenance PRs without blocking on a missing model secret. If `ANTHROPIC_API_KEY` is configured, the GitHub workflow runs the maintenance agent and validates edited configs before committing them. If the secret is unavailable, the workflow opens a discovery-only PR with the generated report so Cursor Automation or a human reviewer can run [`agent-prompt.md`](./automation/config-discovery/agent-prompt.md) against the same branch.
+
 ### For Security Teams
 
 1. Use the deny lists and content exclusion patterns as a baseline.

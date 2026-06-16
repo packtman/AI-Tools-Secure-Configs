@@ -15,7 +15,8 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
-| `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
+| `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report, grouped by unique tool. |
+| `../../scripts/validate_config_files.py` | Validates deployable JSON, YAML, TOML, and shell files before commits or PR review. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
 
 ## How the Loop Works
@@ -26,9 +27,10 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+7. If `ANTHROPIC_API_KEY` is available, the workflow runs the maintenance agent against `agent-prompt.md`, validates edited configs, commits real config changes, and opens or updates the final PR branch.
+8. If `ANTHROPIC_API_KEY` is unavailable, the workflow still opens or updates the discovery PR. Use Cursor Cloud automation with `CURSOR-AUTOMATION.md`, or a human reviewer, to apply the maintenance prompt on that branch.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+The dependency-free scanner can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the configured GitHub agent step, or the Cursor Cloud automation prompt in this directory, for the final config-update PR behavior.
 
 ## Adding a Source
 
@@ -69,6 +71,18 @@ python3 automation/config-discovery/discover_configs.py \
   --offline
 ```
 
+Validate deployable config files and workflow YAML:
+
+```bash
+python3 scripts/validate_config_files.py
+```
+
+Validate only files changed from a base branch plus staged and unstaged edits:
+
+```bash
+python3 scripts/validate_config_files.py --changed origin/main
+```
+
 ## Review Standard for Generated PRs
 
 Treat the initial discovery commit as an intake signal. The final PR should include actual config updates when the upstream change is relevant. Before changing a config:
@@ -87,13 +101,13 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step uses repository secret `ANTHROPIC_API_KEY` when it is available. If the secret is missing, the workflow opens a discovery-only PR instead of failing before review.
 
 ## Agent step failures (`error_max_turns`)
 
 If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow now:
 
-- Builds `reports/agent-scope.md` with at most four tools that have missing local terms.
+- Builds `reports/agent-scope.md` with at most four unique tools that have missing local terms.
 - Uses `--max-turns 60` and instructs the agent to mirror strict, moderate, and baseline per scoped tool.
 - Commits partial file changes if the agent edited files before hitting the limit.
 - Fails the job only when the agent errors and leaves no diff.
