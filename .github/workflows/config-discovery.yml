@@ -49,7 +49,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m pip install --user pyyaml toml
-          pip install --user yamllint || true
+          python3 -m pip install --user yamllint || true
 
       - name: Run config discovery
         id: discovery
@@ -197,6 +197,7 @@ jobs:
           Review:
 
           - `automation/config-discovery/reports/latest-config-discovery.md`
+          - `automation/config-discovery/reports/agent-scope.md`
           - `automation/config-discovery/agent-prompt.md`
 
           Expected reviewer checks:
@@ -204,7 +205,8 @@ jobs:
           1. Confirm any config changes are scoped to real admin or security controls.
           2. Confirm no secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames were added.
           3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
-          4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
+          4. Confirm the update stayed within the scoped tool list unless the report required a direct cross-tool rollout note.
+          5. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
           If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY

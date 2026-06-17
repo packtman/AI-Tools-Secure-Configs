@@ -2,11 +2,11 @@
 
 ## Cursor Cloud specific instructions
 
-This is a **documentation and configuration reference repository** (AI-Secure-Configs). It contains security-hardened configuration templates and deployment guides for AI coding tools. There is no runnable application, no build system, and no package dependencies.
+This is a **documentation and configuration reference repository** (AI-Secure-Configs). It contains security-hardened configuration templates, deployment guides, and a scheduled config-discovery automation for AI coding tools. There is no runnable application, no build system, and no package dependencies.
 
 ### Repository structure
 
-Each top-level directory (e.g. `claude-code/`, `cursor/`, `github-copilot/`) provides config templates and markdown guides for a specific AI tool. The `rollout-guide/` directory contains a cross-tool deployment plan.
+Each top-level directory (e.g. `claude-code/`, `cursor/`, `github-copilot/`) provides config templates and markdown guides for a specific AI tool. The `rollout-guide/` directory contains a cross-tool deployment plan. The `automation/config-discovery/` directory and `.github/workflows/config-discovery.yml` keep the repo aware of upstream vendor config changes.
 
 ### File types
 
@@ -33,6 +33,16 @@ python3 -c "import toml; toml.load('path/to/file.toml')"
 
 # Validate shell scripts
 bash -n path/to/script.sh
+
+# Validate config-discovery source registry
+python3 automation/config-discovery/discover_configs.py \
+  --sources automation/config-discovery/tool-sources.json \
+  --state automation/config-discovery/state/source-snapshots.json \
+  --report automation/config-discovery/reports/latest-config-discovery.md \
+  --check
+
+# Run config-discovery helper tests
+python3 -m unittest automation/config-discovery/test_config_discovery.py
 ```
 
 ### Tools available in the environment
@@ -46,4 +56,4 @@ bash -n path/to/script.sh
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- `.github/workflows/config-discovery.yml` is the scheduled maintenance workflow. It should only change discovery state, reports, and scoped config updates produced by the maintenance agent.

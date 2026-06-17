@@ -10,30 +10,33 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (4 of 6 with missing terms)
 
 ### Claude Code
 
 - Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
-
-### Claude Code
-
+  - Missing terms: `--fallback-model`, `--permission-mode`, `--settings`, `--teammate-mode`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `allowLocalBinding`, `allowUnixSockets`
 - Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+  - Missing terms: `--allow-dangerously-skip-permissions`, `--permission-mode`, `ANTHROPIC_MODEL`, `CLAUDE_MODEL`, `PermissionDenied`, `PermissionRequest`, `localSettings`, `mcp_server_name`, `my-mcp-server`, `permission_mode`, `permission_prompt`, `permission_suggestions`
+
+### Codex CLI
+
+- Source: OpenAI Codex releases
+  - Missing terms: `codex-windows-sandbox-setup`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe.tar.gz`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe.zip`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe.zst`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe.tar.gz`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe.zip`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe.zst`
 
 ### Continue.dev
 
 - Source: Configuration reference
-- Missing terms: `mcpServers`
+  - Missing terms: `mcpServers`
 
-### Claude Desktop
+### Google Gemini
 
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+- Source: Vertex AI Gemini safety settings
+  - Missing terms: `BLOCKED_REASON_UNSPECIFIED`, `blockReason`, `safetySettings`
 
-## Deferred (1 tools)
+## Deferred (2 tools)
 
 These tools also have missing terms but are deferred to a follow-up run:
 
+- Claude Desktop (Claude Desktop MCP documentation)
 - OpenAI Platform (OpenAI OpenAPI schema)
