@@ -21,7 +21,7 @@ USER_AGENT = "AI-Secure-Configs config discovery bot"
 MAX_SNIPPETS_PER_SOURCE = 5
 MAX_CONFIG_CANDIDATES = 25
 SNIPPET_RADIUS = 180
-HASH_BASIS = "normalized-source-v1"
+HASH_BASIS = "normalized-source-v2"
 ASCII_REPLACEMENTS = str.maketrans(
     {
         "\u00a0": " ",

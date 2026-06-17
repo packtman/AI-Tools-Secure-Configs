@@ -48,10 +48,10 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 
 Keyword snippets:
 
-> ... ttings Worktree settings Permission settings Permission rule syntax Sandbox settings Sandbox
-path prefixes Attribution settings File suggestion settings Hook configuration Compute managed
-settings with a policy helper Settings precedence Verify active settings Key points about the
-configuration system System prompt Excluding sensitive files Subagent configuration Plugin con ...
+> ... d shortcuts On this page Configuration scopes Available scopes When to use each scope How scopes
+interact What uses scopes Settings files When edits take effect Invalid entries in managed settings
+Available settings Global config settings Worktree settings Permission settings Permission rule
+syntax Sandbox settings Sandbox path prefixes Attribution settings File suggestion ...
 
 > ... in content Claude Code Docs home page English Search...  K Ask Assistant Claude Developer
 Platform Claude Code on the Web Claude Code on the Web Search... Navigation Settings and permissions
@@ -67,7 +67,7 @@ managed settings t ...
 > ... ons Claude Code settings Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Settings and permissions Settings Permissions Sandbox
 environments Bash sandbox Model and responses Model configuration Speed up responses with fast mode
-Output styles Interface Terminal configuration Fullscreen rendering Voice dicta ...
+Escalate hard decisions with the advisor tool Output styles Interface Terminal ...
 
 > ... , editor settings) Tools and plugins you use across all projects API keys and authentication
 (stored securely) Project scope is best for: Team-shared settings (permissions, hooks, MCP servers)
@@ -76,7 +76,7 @@ for: Personal overrides for a specific project Testing configurations be ...
 
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+`--fallback-model`, `--permission-mode`, `--settings`, `--teammate-mode`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `allowLocalBinding`, `allowUnixSockets`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -118,7 +118,7 @@ auth_success , elicitation_dialog , elicitation_complete , elicitation_response 
 
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+`--allow-dangerously-skip-permissions`, `--permission-mode`, `ANTHROPIC_MODEL`, `CLAUDE_MODEL`, `PermissionDenied`, `PermissionRequest`, `localSettings`, `mcp_server_name`, `my-mcp-server`, `permission_mode`, `permission_prompt`, `permission_suggestions`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -131,9 +131,9 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> Orchestrate subagents at scale with dynamic workflows - Claude Code Docs Skip to main content Claude
-Code Docs home page English Search...  K Ask Assistant Claude Developer Platform Claude Code on the
-Web Claude Code on the Web Sear ...
+> Orchestrate subagents at scale with dynamic workflows - Claude Code Docs Documentation Index Fetch
+the complete documentation index at: /docs/llms.txt Use this file to discover all available pages
+before exploring further. Skip to ma ...
 
 > ... and the Agent SDK . The same disable settings apply on every surface. To turn workflows off for
 yourself: Toggle Dynamic workflows off in /config . Persists across sessions. Set
@@ -149,13 +149,13 @@ the toggle on ...
 
 > ... ce On this page When to use a workflow Run a bundled workflow Bundled workflows Watch the run
 Have Claude write a workflow Ask for a workflow in your prompt Let Claude decide with ultracode
-Approve the plan before it runs Save the workflow for reuse How a workflow runs Behavior and limits
-Manage runs Resume after a pause Cost Turn workflows off Related resources Agen ...
+Approve the plan before it runs Save the workflow for reuse Pass input to a saved workflow How a
+workflow runs Behavior and limits Manage runs Resume after a pause Cost Turn workf ...
 
 > ... sions. Set CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you set it.
 To turn workflows off for your whole organization, set "disableWorkflows": true in managed settings
 , or use the toggle on the Claude Code admin settings page. When workflows are disabled, the bundled
-workflow commands are unavailable, the workflow keyword no longer triggers a r ...
+workflow commands are unavailable, the ultracode keyword no longer triggers a ...
 
 Potential config terms found upstream are already present in local tool files.
 
@@ -190,27 +190,27 @@ Keyword snippets:
 
 > ... LI command reference CLI plugin reference CLI programmatic reference ACP server CLI
 configuration directory Custom agents configuration Custom instructions support Hooks reference
-Policy conflicts Copilot allowlist reference MCP allowlist enforcement Metrics data Copilot billing
-Models and pricing Model multipliers for annual plans Billing cycle Seat assignment Li ...
+Policy conflicts Supported surfaces for policies Copilot allowlist reference MCP allowlist
+enforcement Metrics data Copilot billing Models and pricing Billing cycle Seat assignment Licen ...
 
 > Managing GitHub Copilot in your organization - GitHub Docs Skip to main content GitHub Docs Version:
 Free, Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is
 English Search or ask Co ...
 
-> ... stom agents Spaces Create Copilot Spaces Collaborate with others Copilot for GitHub tasks Use
+> ... MCP servers Spaces Create Copilot Spaces Collaborate with others Copilot for GitHub tasks Use
 Copilot to create or update issues Create a PR summary Use the GitHub MCP Server from Copilot Chat
 Use Copilot agents Get started Kick off a task Research, plan, iterate Manage agent sessions Copilot
 code review Review Copilot output Set up Set up for self Install Copilot exten ...
 
-> ... lls Enterprise management Spark Copilot usage metrics All articles Copilot usage metrics
+> ... Cloud and local sandboxes Spark Copilot usage metrics All articles Copilot usage metrics
 Prompting Prompt engineering Response customization Context MCP Spaces Repository indexing Content
 exclusion Tools AI tools About Copilot integrations Models Utility models Auto model selection
-FedRAMP models Base and LTS models Usage limits Billing Usage-based billing for individuals Us ...
+FedRAMP models Base and LTS models Usage limits Billing Billing for individuals Billing for or ...
 
-> ... ions Code suggestions Code referencing Chat Agents Cloud agent About cloud agent Agent
-management Custom agents Access management MCP and cloud agent Risks and mitigations Copilot CLI
-About Copilot CLI Comparing CLI features Cancel and roll back About remote control Custom agents
-About CLI plugins Enterprise plugin standards Autonomous task completion Parallel ...
+> ... ons Code referencing Chat Agents Cloud agent About cloud agent Agent management Custom agents
+About automations Access management MCP and cloud agent Risks and mitigations Copilot CLI About
+Copilot CLI Comparing CLI features Cancel and roll back About remote control Custom agents About CLI
+plugins Autonomous task completion Parallel task execution Researching w ...
 
 ### GitHub Copilot: Content exclusion documentation
 
@@ -235,10 +235,10 @@ Fix lint errors Refactor for optimization Refactor for sustainability Refactor d
 Refactor data access layers Decouple business logic Handle cross-cutting Simplify inheritance
 hierarchies Fix database deadlocks Translate code Document code File issues without b ...
 
-> ... lot billing Models and pricing Model multipliers for annual plans Billing cycle Seat assignment
-License changes Azure billing Agentic audit log events Agent session filters Review excluded files
-Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot usage
-metrics Copilot LoC metrics Team-level metrics Example schema Tutorials Al ...
+> ... lot requests (legacy) Billing overview (legacy) Monitor premium requests (legacy) Model
+multipliers for annual plans (legacy) Agentic audit log events Agent session filters Review excluded
+files Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot
+usage metrics Copilot LoC metrics Team-level metrics Example schema Tutorials Al ...
 
 > Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
 Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
@@ -253,13 +253,8 @@ Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current
 
 Keyword snippets:
 
-> ... igation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
-Copilot Write better code with AI GitHub Spark Build and deploy intelligent apps GitHub Models
-Manage and compare prompts MCP Registry New Integrate external tools DEVELOPER WORKFLOWS Actions
-Automate any workflow Codespaces Instant dev environments Issues Plan and track w ...
-
-> ... n in Appearance settings Platform AI CODE CREATION GitHub Copilot Write better code with AI
-GitHub Spark Build and deploy intelligent apps GitHub Models Manage and compare prompts MCP Registry
+> ... vigation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
+Copilot Write better code with AI GitHub Copilot app Direct agents from issue to merge MCP Registry
 New Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant
 dev environments Issues Plan and track work Code Review Manage code chan ...
 
@@ -272,23 +267,27 @@ dev environments Issues Plan and track work Code Review Manage code chan ...
 
 Keyword snippets:
 
+> ... delete`, `/delete`, and app-server `thread/delete`, with confirmation safeguards and subagent
+cleanup. (#25018, #27476)\n- Added `/import` for selectively importing setup, project configuration,
+and recent chats from Claude Code. (#27070, #27071, #27703)\n- Typing `@` now opens the unified
+mentions menu for files, plugins, and skills by default. (#27499)\n- Added managed ...
+
 > ... type": "application/octet-stream",         "digest":
-"sha256:2a3e6b764ae1f7317dd548530ada3a118c7c0485aeb0689b7820238e5f2e53fc",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1389,         "state": "uploaded"       },
+"sha256:f328de200721ab9a0fb1ecb91949b6b58a8485b72b5fbf647b7e43f563a81ef7",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:66bc2f3f20079bad73fde1d ...
+"sha256:fc634a39d177dc42090a6ef ...
 
-> ... ostics @fcoury-oai\r\n- #24474 Log rollout writer OS errors @etraut-openai\r\n- #24076 chore:
-stop consuming legacy config profiles @jif-oai\r\n- #24131 centralize Responses retry policy @rhan-
-oai\r\n- #23858 [wip] goal shift @jif-oai\r\n- #24555 chore: drop orphaned codex memories MCP crate
-@jif-oai\r\n- #24558 chore: move memory prompt builder into extension @ji ...
+> ... 700 Remove fs/join and fs/parent from exec-server protocol @anp-oai\n- #26426 Warn when
+hooks.json has unsupported top-level fields @abhinav-oai\n- #27318 [codex] Move persistence policy
+application into ThreadStore @wiltzius-openai\n- #27498 Route image extension reads through turn
+environments v2 @won-openai\n- #27623 Add spans to turn lifecycle gaps @mchen-oai\ ...
 
-> ... a remote transport. (#24420)\r\n- Vim mode gained text-object editing, improved word/line-end
-behavior, and a configurable interrupt-turn binding. (#24382, #24380, #24766)\r\n- `/permissions`
-now understands named permission profiles and displays configured custom profiles. (#21559)\r\n-
-Packaged Codex builds can discover and use the bundled patched zsh helper across ...
+Potential config terms not found in local tool files:
 
-Potential config terms found upstream are already present in local tool files.
+`codex-windows-sandbox-setup`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe.tar.gz`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe.zip`, `codex-windows-sandbox-setup-aarch64-pc-windows-msvc.exe.zst`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe.tar.gz`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe.zip`, `codex-windows-sandbox-setup-x86_64-pc-windows-msvc.exe.zst`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Codex Desktop: OpenAI Codex repository
 
@@ -325,23 +324,23 @@ here: - Full config docs: [docs/config.md](../docs/config.md) - MCP servers sect
 
 Keyword snippets:
 
-> config.yaml Reference | Continue Docs Search...  K Docs Blog Sign in Checks CLI IDE Extensions
-Getting Started Install Quick Start Customization Overview Features Agent Chat Autocomplet ...
+> config.yaml Reference | Continue - Docs Search...  K IDE Extensions CLI Getting Started Install
+Quick Start Customization Overview Features Agent Chat Autocomplete Edit Customize Custom ...
 
-> ... .  K Docs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start
+> ... Continue - Docs Search...  K IDE Extensions CLI Getting Started Install Quick Start
 Customization Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models
-MCP servers Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml
-Reference Migrating Config to YAML Continue Documentation MCP Server config.json R ...
+MCP servers Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference
+Migrating Config to YAML Continue Documentation MCP Server config.json Reference ( ...
 
-> ... mpts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference Migrating
+> ... Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
 Config to YAML Continue Documentation MCP Server config.json Reference (Deprecated) Context
-Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand Hub vs
-Local Configuration Configuring Models, Rules, and Tools Codebase and Documentatio ...
+Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand
+Configuration Configuring Models, Rules, and Tools Codebase and Documentation Awareness U ...
 
-> ... ocs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start Customization
+> ... ue - Docs Search...  K IDE Extensions CLI Getting Started Install Quick Start Customization
 Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models MCP servers
-Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference
-Migrating Config to YAML Continue Documentation MCP Server config.json Refer ...
+Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
+Config to YAML Continue Documentation MCP Server config.json Reference (Depr ...
 
 Potential config terms not found in local tool files:
 
@@ -358,20 +357,20 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... G.md CONTRIBUTING.md LICENSE LICENSE README.md README.md SECURITY.md SECURITY.md package-
+> ... ESTING.md TESTING.md docs-search-dark-mode-fix.png docs-search-dark-mode-fix.png package-
 lock.json package-lock.json package.json package.json tsconfig.json tsconfig.json worktree-
 config.yaml worktree-config.yaml View all files Repository files navigation README Code of conduct
-Contributing Apache-2.0 license Security Continue Source-controlled AI checks, enforceable i ...
+Contributing Apache-2.0 license Security Continue Pioneering open-source coding agent What i ...
 
-> ... en-source ai developer-tools jetbrains-plugin vs-code-extenstion llm Resources Readme License
+> ... g agent continue.dev Topics agent cli open-source ai developer-tools Resources Readme License
 Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
 Security policy Uh oh! There was an error while loading. Please reload this page . Activity Custom
-properties Stars 33.5k stars Watchers 158 watching Forks 4.6k forks Report repos ...
+properties Stars 33.8k stars Watchers 159 watching Forks 4.7k forks Report repos ...
 
-> ... Here is an example that performs a security review: --- name : Security Review description :
-Review PR for basic security vulnerabilities --- Review this PR and check that : - No secrets or API
-keys are hardcoded - All new API endpoints have input validation - Error responses use the standard
-error format Install CLI AI checks are powered by the open-source Contin ...
+> ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
+the VS Code extension, CLI, and JetBrains plugin. This included removing anonymous telemetry,
+pulling out authentication, squashing bugs, and more. VS Code CLI JetBrains Note: We recommend using
+the Continue CLI instead of the JetBrains plugin. Contributors Thank you to t ...
 
 ### Windsurf: Windsurf documentation
 
@@ -382,25 +381,20 @@ error format Install CLI AI checks are powered by the open-source Contin ...
 
 Keyword snippets:
 
-> ... Mode Modes App Deploys Web and Docs Search Memories & Rules Skills AGENTS.md Workflows Worktrees
-Model Context Protocol (MCP) Cascade Hooks Accounts Usage Quota Analytics Teams & Enterprise Context
-Awareness Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration
-SSL Inspection Linux inotify Limits WSL Issues Gathering Logs Security Fe ...
+> ... . Skip to main content Devin Docs home page English Search...  K Ask Assistant Support Devin
+Devin Search... Navigation Getting Started Welcome to Devin Desktop Cloud CLI Desktop Enterprise Use
+Cases API Devin Desktop Editor Getting Started Set Up Devin Desktop FAQ Recommended Extensions
+Models Adaptive Quick Review Tab Command Code Lenses Terminal Browser Previews A ...
 
-> ... mmand Code Lenses Terminal Browser Previews AI Commit Messages DeepWiki Codemaps Vibe and
-Replace Advanced Agent Command Center Agent Command Center Spaces Devin Devin Local Agent Cascade
-Overview Arena Mode Modes App Deploys Web and Docs Search Memories & Rules Skills AGENTS.md
-Workflows Worktrees Model Context Protocol (MCP) Cascade Hooks Accounts Usage Quota Ana ...
+> ... in Desktop FAQ Recommended Extensions Models Adaptive Quick Review Tab Command Code Lenses
+Terminal Browser Previews AI Commit Messages DeepWiki Codemaps Vibe and Replace Advanced Cascade
+Accounts Context Awareness Troubleshooting Security Agent Command Center Agent Command Center Spaces
+Devin Devin Local Agent Agent Client Protocol (preview) Building a custom ACP ...
 
-> ... nter Spaces Devin Devin Local Agent Cascade Overview Arena Mode Modes App Deploys Web and Docs
-Search Memories & Rules Skills AGENTS.md Workflows Worktrees Model Context Protocol (MCP) Cascade
-Hooks Accounts Usage Quota Analytics Teams & Enterprise Context Awareness Overview Fast Context
-Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL Insp ...
-
-> ... ess Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL
-Inspection Linux inotify Limits WSL Issues Gathering Logs Security FedRAMP Security Admin Guide
-Reporting On this page Set Up Onboarding 1. Select setup flow 2. Choose editor theme 3. Sign up /
-Log in Having Trouble? 4. Let's Surf! Update Windsurf Things to Try Forgot ...
+> ... Local Our next-generation agent harness, shared with Devin CLI. Runs on your machine as the
+primary local agent. Usage Credits and usage. Terminal An upgraded Terminal experience. MCP MCP
+servers extend the agent's capabilities. Memories Memories and rules help customize behavior.
+Context Awareness Instantly understands your codebase. Advanced Advanced configur ...
 
 ### Windsurf: Windsurf changelog
 
@@ -411,25 +405,25 @@ Log in Having Trouble? 4. Let's Surf! Update Windsurf Things to Try Forgot ...
 
 Keyword snippets:
 
-> ... cade 1.13.9 January 16, 2026 1.13.9 January 16, 2026 Bug Fixes and Improvements Improvements to
-GPT-5.2-Codex harness Admins can now manage Windsurf restrictions via Windows Group Policy 1.13.8
-January 14, 2026 1.13.8 January 14, 2026 GPT-5.2-Codex Adds support for GPT-5.2-Codex with four
-reasoning efforts (low, medium, high, and xhigh). GPT-5.2-Codex is OpenAI's ...
+> ... ascade Download 1.13.12  v1.13.9 January 16, 2026  Bug Fixes and Improvements Improvements to
+GPT-5.2-Codex harness Admins can now manage Windsurf restrictions via Windows Group Policy Download
+1.13.9  v1.13.8 January 14, 2026  GPT-5.2-Codex Adds support for GPT-5.2-Codex with four reasoning
+efforts (low, medium, high, and xhigh). GPT-5.2-Codex is OpenAI's lat ...
 
 > ... rolling out gradually. If you don't see it yet, try logging out of the website and IDE then
 logging back in. Devin Cloud is disabled by default for enterprise accounts. Enterprise admins
 should enable Devin access in their organization settings if they have already purchased Cognition
-Platform. Agent Command Center New Kanban-style view showing all local and clou ...
+Platform.  Agent Command Center New Kanban-style view showing all local and cl ...
 
-> ... indsurf Editor Pricing Windsurf for Enterprise Capabilities Cascade Tab JetBrains Plugin Company
-About Us Blog Careers Support Contact Partnerships Terms of Service Privacy Policy Security Windsurf
-for Government Resources Docs Changelog Releases Brand Referrals University Windsurf vs Cursor
-Windsurf vs Copilot 2025 Gartner Magic Quadrant Arena Leaderboard Connect U ...
+> ... tant Support Devin Devin Search... Navigation Releases Changelog Cloud CLI Desktop Enterprise
+Use Cases API Devin Desktop Editor Cascade Accounts Context Awareness Troubleshooting Security Agent
+Command Center Agent Command Center Spaces Devin Devin Local Agent Agent Client Protocol (preview)
+Building a custom ACP agent Releases Changelog Changelog (Next) Releases R ...
 
-> ... agent to 2026.5.26. See the changelog for the full list of changes. Devin Local is now aware of
-the files you have open in the editor as part of its context. When prompted for an MCP tool
-permission in Devin Local, two additional server-level options are now offered: approve all tools on
-the server for the current session, or permanently. Repaired hooks for De ...
+> ... enhancements and continued Devin Desktop polish. Devin Local Added a devin plugin system for
+extending Devin Local - in preview and opt-in for enterprises. Subagents can now call MCP tools
+directly. Teams can enforce terminal allow/deny lists through CLI permission scopes. Agent and
+Editor modes Enabled the Cmd+. mode-toggle shortcut from the empty editor welc ...
 
 > ... le scroll-to-next-hunk settings (default off) Preserved colors and styling in Cascade terminal
 output Multiple fixes to the Model Context Protocol implementation Supports lowering permissions for
@@ -445,10 +439,10 @@ killing commands in the dedicated terminal Improved markdown completion Fix ...
 
 Keyword snippets:
 
-> ... & Feedback Getting started Install Quickstart Guide Context Engine Tabnine Agent Tabnine Chat
-Tabnine Testing Tabnine CLI Code Completions Inline Actions Tabnine's Prompting Guide Administering
-Tabnine Private Installation Release Notes Powered by GitBook On this page Copy On this page Welcome
-Overview What is Tabnine? Tabnine is the AI code assistant that accele ...
+> ... ine Subscription Plans Support & Feedback Getting started Install Quickstart Guide Context
+Engine Tabnine Agent Tabnine Chat Tabnine CLI Code Completions Tabnine's Prompting Guide
+Administering Tabnine Private Installation Release Notes Powered by GitBook On this page For the
+complete documentation index, see llms.txt . This page is also available as Markdown . C ...
 
 > Overview | Tabnine Docs  Ctrl k Tabnine website Contact Sales More Welcome Overview Architecture
 Security Privacy Protection Personalization AI Models Integrations System & Hardware Requirements
@@ -523,8 +517,8 @@ today's commits to #dev channel > @database Run a query to find inactive us ...
 & Security - Safe execution environments. Trusted Folders - Control execution policies by folder.
 Enterprise Guide - Deploy and manage in a corporate environment. Telemetry & M ...
 
-> ... n in Appearance settings Platform AI CODE CREATION GitHub Copilot Write better code with AI
-GitHub Spark Build and deploy intelligent apps GitHub Models Manage and compare prompts MCP Registry
+> ... vigation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
+Copilot Write better code with AI GitHub Copilot app Direct agents from issue to merge MCP Registry
 New Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant
 dev environments Issues Plan and track work Code Review Manage code chan ...
 
@@ -566,29 +560,35 @@ languages, frameworks, and tools / Console English Deutsch Espaol Espaol - Amric
 
 Keyword snippets:
 
-> ... nt Remove objects from an image using inpaint Expand the content of an image using outpaint
-Replace the background of an image Configure Imagen parameters Configure Responsible AI safety
-settings Use prompt rewriter Set text prompt language Configure aspect ratio Set output resolution
-Omit content using a negative prompt Generate deterministic images Generate images for re ...
+> ... orm section of the Google Cloud console, go to the Agent Studio page. Go to Agent Studio Under
+Create a new prompt , click any of the buttons to open the prompt design page. Click Safety settings
+. The Safety settings dialog window opens. For each harm category, configure the selected threshold
+value. Click Save . Example output for a blocked response The following is an e ...
 
-> ... ribes each of the safety and content filter types and outlines key safety concepts. For
-configurable content filters, it shows you how to configure the blocking thresholds of each harm
-category to control how often prompts and responses are blocked. There are also examples provided to
-demonstrate how to program a configurable content filter. Safety and content filters ac ...
+> ... he response's Candidate.content field. It does not provide any feedback to the model.
+Configurable content filters Content filters assess content against a list of harms. For each harm
+category, the content filters assign one score based on the probability of the content being harmful
+and another score based on the severity of harmful content. The configurable content fi ...
 
-> ... ased on your preferences. To see an example of getting started with Responsible AI with Vertex
-AI Gemini API, run the "Responsible AI with Vertex AI Gemini API: Safety ratings and thresholds"
+> ... ent based on your preferences. To see an example of getting started with Responsible AI with
+Gemini API, run the "Responsible AI with Agent Platform Gemini API: Safety ratings and thresholds"
 notebook in one of the following environments: Open in Colab | Open in Colab Enterprise | Open in
 Vertex AI Workbench | View on GitHub Google's generative AI models, like Gemini ...
 
 > ... ts Capabilities Safety Overview Responsible AI System instructions for safety Configure content
 filters Gemini for safety filtering and content moderation Abuse monitoring Process blocked
-responses Content Credentials Text and code generation Text generation System instructions Function
-calling Structured output Content generation parameters Code execution Medical ...
+responses Content Credentials AI Content Detection API Text and code generation Text generation
+System instructions Function calling Structured output Content generation parameter ...
 
-> Safety and content filters | Generative AI on Vertex AI | Google Cloud Documentation Skip to main
-content Technology areas close AI and ML Application development Application hosting Compute Data
-analytics ...
+> Safety and content filters | Gemini Enterprise Agent Platform | Google Cloud Documentation Skip to
+main content Technology areas close AI and ML Application development Application hosting Compute
+Data anal ...
+
+Potential config terms not found in local tool files:
+
+`BLOCKED_REASON_UNSPECIFIED`, `blockReason`, `safetySettings`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Google Gemini: Google Cloud organization policies
 
@@ -632,23 +632,23 @@ custom authentication Add MCP servers from JSON configuration Import MCP servers
 Use MCP servers from Claude.ai Use Claude Code as an MCP server MCP output limits and warnings Raise
 the limit for a specific tool Respond to MCP elicitation requests Use MCP reso ...
 
-> Connect Claude Code to tools via MCP - Claude Code Docs Skip to main content Claude Code Docs home
-page English Search...  K Ask Assistant Claude Developer Platform Claude Code on the Web Claude Code
-on the Web Sear ...
+> Connect Claude Code to tools via MCP - Claude Code Docs Documentation Index Fetch the complete
+documentation index at: /docs/llms.txt Use this file to discover all available pages before
+exploring further. Skip to ma ...
 
 > ... bleshooting Troubleshoot installation and login Troubleshoot performance and stability Debug
 configuration Error reference On this page What you can do with MCP Find and build MCP servers
 Installing MCP servers Option 1: Add a remote HTTP server Option 2: Add a remote SSE server Option
-3: Add a local stdio server Managing your servers Dynamic tool updates Automati ...
+3: Add a local stdio server Option 4: Add a remote WebSocket server Managing yo ...
 
-> ... orm Claude Code on the Web Claude Code on the Web Search... Navigation Tools and plugins Connect
+> ... eveloper Platform Claude Code on the Web Claude Code on the Web Search... Navigation MCP Connect
 Claude Code to tools via MCP Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Agents and parallel work Overview Create custom subagents
-Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees Too ...
+Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees MCP ...
 
 Potential config terms not found in local tool files:
 
-`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+`--channels`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -661,13 +661,13 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... les Pro and Max plans 15 articles Team and Enterprise plans 55 articles Claude API and Console
+> ... les Pro and Max plans 15 articles Team and Enterprise plans 63 articles Claude API and Console
 40 articles Identity management (SSO, JIT, SCIM) 15 articles Claude Code 19 articles Claude Desktop
 9 articles Claude Mobile apps 20 articles Connectors 20 articles Claude in Chrome 5 articles Claude
-for Education 4 articles Claude for Nonprofits 6 articles Privacy and legal 20 ...
+for Education 4 articles Claude for Nonprofits 6 articles Privacy and legal 22 ...
 
 > ... Italiano   Portugus P  Espaol  English Search for answers or browse by topic Search for
-articles... Claude 84 articles Pro and Max plans 15 articles Team and Enterprise plans 55 articles
+articles... Claude 84 articles Pro and Max plans 15 articles Team and Enterprise plans 63 articles
 Claude API and Console 40 articles Identity management (SSO, JIT, SCIM) 15 articles Claude Code 19
 articles Claude Desktop 9 articles Claude Mobile apps 20 artic ...
 
@@ -716,7 +716,7 @@ program). responses: '200': description: OK content: application/json: schema: $
 
 Potential config terms not found in local tool files:
 
-`allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `reinforcement`, `response.mcp_call.completed`, `response.mcp_call.failed`, `response.mcp_call.in_progress`, `response.mcp_call_arguments.delta`, `response.mcp_call_arguments.done`, `score_model`
+`VAR_chat_model_id`, `VAR_completion_model_id`, `allowed_domains`, `allowed_tools`, `api.model.request`, `channels`, `checkpoint.permission`, `custom-model-name`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `event_CEKKrf1KTGvemCPyiJTJ2`, `fine_tuned_model`, `fine_tuned_model_checkpoint`, `label_model`, `mcp`, `mcp_682d437d90a88191bf88cd03aae0c3e503937d5f622d7a90`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_call_001`, `mcp_list_tools`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -754,7 +754,7 @@ information about the organization associated with the authenticated API key. ##
 
 Potential config terms not found in local tool files:
 
-`fast-mode-2026-02-01`, `model_group`
+`allowed_inference_geos`, `fast-mode-2026-02-01`, `jwks_polling_disabled_at`, `mcp-atlassian`, `mcp-tunnels-2026-05-19`, `model_breakdown`, `model_group`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -782,7 +782,7 @@ compatible API endpoint, allowing you to test Claude models by changing just you
 and model name in existing OpenAI integrations. This compatibility layer supports core chat
 completions functionality. Learn more in [OpenAI SDK compatibility](/docs/en ...
 
-> ... ence](/docs/en/api/sdks/cli). ### April 7, 2026 - We announced [Claude Mythos
+> ... ks-libraries/cli/quickstart). ### April 7, 2026 - We announced [Claude Mythos
 Preview](https://anthropic.com/glasswing) is available as a gated research preview for defensive
 cybersecurity work as part of [Project Glasswing](https://anthropic.com/glasswing). Access is
 invitation-only. - The [Messages API](/docs/en/api/messages) is now available on Amazon Bedrock as
@@ -790,7 +790,7 @@ invitation-only. - The [Messages API](/docs/en/api/messages) is now available on
 
 Potential config terms not found in local tool files:
 
-`fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`
+`disabled`, `fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
