@@ -86,6 +86,8 @@ CONFIG_HINTS = (
 )
 ENV_PREFIXES = ("ANTHROPIC_", "AWS_", "CLAUDE_", "CODEIUM_", "CONTINUE_", "CURSOR_", "GEMINI_", "GITHUB_", "GOOGLE_", "OPENAI_", "Q_", "TABNINE_")
 CONFIG_TERM_RE = re.compile(r"`([A-Za-z_][A-Za-z0-9_.-]{2,})`")
+QUOTED_CONFIG_TERM_RE = re.compile(r'"([A-Za-z_][A-Za-z0-9_.-]{2,})"')
+CLI_FLAG_RE = re.compile(r"(?<!\w)--([A-Za-z][A-Za-z0-9-]{2,})")
 ENV_VAR_RE = re.compile(r"\b([A-Z][A-Z0-9_]{6,})\b")
 
 
@@ -295,8 +297,14 @@ def extract_snippets(text: str, terms: list[str]) -> list[str]:
 
 def extract_config_candidates(text: str) -> list[str]:
     candidates: set[str] = set()
-    for match in CONFIG_TERM_RE.finditer(text):
-        candidate = match.group(1)
+    for pattern in (CONFIG_TERM_RE, QUOTED_CONFIG_TERM_RE):
+        for match in pattern.finditer(text):
+            candidate = match.group(1)
+            lower_candidate = candidate.lower()
+            if any(hint in lower_candidate for hint in CONFIG_HINTS):
+                candidates.add(candidate)
+    for match in CLI_FLAG_RE.finditer(text):
+        candidate = f"--{match.group(1)}"
         lower_candidate = candidate.lower()
         if any(hint in lower_candidate for hint in CONFIG_HINTS):
             candidates.add(candidate)

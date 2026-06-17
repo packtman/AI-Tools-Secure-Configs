@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import OrderedDict
 import pathlib
 import re
 import sys
@@ -58,29 +59,36 @@ def build_scope(report_text: str, max_tools: int) -> str:
         )
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    grouped: OrderedDict[str, list[tuple[str, list[str]]]] = OrderedDict()
+    for tool_name, source_name, terms in sections:
+        grouped.setdefault(tool_name, []).append((source_name, terms))
+
+    limited_tools = list(grouped.items())[:max_tools]
+    lines.append(f"## Tools to process ({len(limited_tools)} of {len(grouped)} with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name, sources in limited_tools:
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+        for source_name, terms in sources:
+            lines.append(f"- Source: {source_name}")
+            lines.append(f"  - Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
+            if len(terms) > 15:
+                lines.append(f"  - ({len(terms) - 15} more terms in the full report)")
         lines.append("")
 
-    if len(sections) > max_tools:
+    if len(grouped) > max_tools:
+        deferred = list(grouped.items())[max_tools:]
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(deferred)} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name, sources in deferred:
+            source_names = ", ".join(source_name for source_name, _ in sources)
+            lines.append(f"- {tool_name} ({source_names})")
         lines.append("")
 
     return "\n".join(lines)

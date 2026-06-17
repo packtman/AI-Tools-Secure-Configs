@@ -9,14 +9,14 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | File | Purpose |
 |------|---------|
 | `tool-sources.json` | Curated watch list of official docs, changelogs, and repositories for each supported tool. |
-| `discover_configs.py` | Dependency-free scanner that fingerprints sources, extracts likely config terms, and writes a PR report when a source changes. |
+| `discover_configs.py` | Dependency-free scanner that fingerprints sources, extracts likely config terms, including JSON-style keys and risky CLI flags, and writes a PR report when a source changes. |
 | `agent-prompt.md` | Instructions for the config-maintenance agent that turns discovery reports into config and documentation updates. |
 | `CURSOR-AUTOMATION.md` | Copy/paste setup prompt for a Cursor Cloud scheduled automation that produces final config-update PRs. |
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
-| `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner, runs the maintenance agent when needed, and opens or updates a PR. |
 
 ## How the Loop Works
 
@@ -25,10 +25,13 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 3. It compares the normalized response fingerprint, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
-6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+6. `build_agent_scope.py` groups candidate gaps by tool and writes a bounded work list in `reports/agent-scope.md`.
+7. The workflow commits those files to `automation/config-maintenance`.
+8. The workflow runs the config-maintenance agent when a source changed, or when manually dispatched with `force_agent_review`.
+9. The agent reads the scoped report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, and leaves the changes for the workflow to commit.
+10. The workflow opens or updates a PR from `automation/config-maintenance`.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+The GitHub workflow uses `anthropics/claude-code-action` for the agent step and requires the repository secret `ANTHROPIC_API_KEY`. If you prefer Cursor Cloud for the review step, use `CURSOR-AUTOMATION.md` as a scheduled automation prompt after the discovery workflow runs.
 
 ## Adding a Source
 
@@ -69,6 +72,12 @@ python3 automation/config-discovery/discover_configs.py \
   --offline
 ```
 
+Run the helper tests:
+
+```bash
+python3 -m unittest automation/config-discovery/test_config_discovery.py
+```
+
 ## Review Standard for Generated PRs
 
 Treat the initial discovery commit as an intake signal. The final PR should include actual config updates when the upstream change is relevant. Before changing a config:
@@ -93,7 +102,7 @@ No external package registry tokens or vendor API keys are required for discover
 
 If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow now:
 
-- Builds `reports/agent-scope.md` with at most four tools that have missing local terms.
+- Builds `reports/agent-scope.md` with at most four distinct tools that have missing local terms. Multiple changed sources for the same tool stay grouped together.
 - Uses `--max-turns 60` and instructs the agent to mirror strict, moderate, and baseline per scoped tool.
 - Commits partial file changes if the agent edited files before hitting the limit.
 - Fails the job only when the agent errors and leaves no diff.
