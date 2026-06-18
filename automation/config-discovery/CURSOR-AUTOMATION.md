@@ -2,7 +2,7 @@
 
 Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent when the GitHub workflow cannot or should not run a model API key.
 
 ## Recommended Trigger
 
@@ -26,10 +26,11 @@ Process:
 5. If a real control changed or was added, update the affected tool's tier files, rationale docs, README, rollout guide, deployment paths, validation steps, and workflow-preservation notes.
 6. Keep deployable JSON valid. If comments are needed, update JSONC and companion .comments.md files.
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
-8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
-9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
-11. Commit and push the branch.
+8. For each affected tool, keep the output order in rollout docs as Rollout Plan, Config Files, Tier Delta Table, Deployment Steps, Workflow-Preservation Notes.
+9. Do not create a report-only PR when a relevant control changed. The PR should contain actual config changes, rationale, rollout impact, deployment paths, validation steps, and safe workflow alternatives.
+10. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
+11. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md or `python3 scripts/validate_config_files.py --changed origin/main`.
+12. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
 ```
@@ -43,6 +44,6 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 - Update JSONC, deployable JSON, rationale docs, tier delta tables, and workflow-preservation notes.
 - Push a PR that reviewers can merge as an actual config update.
 
-## Why This Requires Cursor Automation
+## When To Use Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+Use Cursor Automation when `ANTHROPIC_API_KEY` is not configured in GitHub, when the workflow opened a discovery-only PR, or when you want a second agent pass before a human security review. The scanner can detect source changes and identify candidate config terms, but tier policy for a brand-new vendor control still needs an AI maintenance agent or a human reviewer.

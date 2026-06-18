@@ -33,6 +33,21 @@ Define jargon the first time it appears. Examples:
 - SIEM: Security Information and Event Management, centralized log collection and alerting.
 - MCP: Model Context Protocol, a way for AI tools to call external services through MCP servers.
 
+## Operating Modes
+
+Scheduled discovery mode:
+
+- Use `automation/config-discovery/reports/agent-scope.md` as the work list.
+- Update strict, moderate, and baseline tier files when a real upstream admin or security control changes.
+- Keep the PR focused on the scoped tools and controls.
+
+One-off rollout request mode:
+
+- If a user or reviewer supplies specific tools, a tier, environment context, or org constraints, honor those inputs.
+- Produce config files only for the requested tier in one-off rollout output.
+- Still include the cross-tier delta table so admins can see later tradeoffs.
+- Preserve developer workflows by listing what will break and the safe equivalent workflow before rollout.
+
 ## Required Review Process
 
 1. Read the generated discovery report.
