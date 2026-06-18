@@ -2,7 +2,7 @@
 
 ## Cursor Cloud specific instructions
 
-This is a **documentation and configuration reference repository** (AI-Secure-Configs). It contains security-hardened configuration templates and deployment guides for AI coding tools. There is no runnable application, no build system, and no package dependencies.
+This is a **documentation and configuration reference repository** (AI-Secure-Configs). It contains security-hardened configuration templates and deployment guides for AI coding tools. There is no runnable application, no build system, and no application package dependencies.
 
 ### Repository structure
 
@@ -35,6 +35,18 @@ python3 -c "import toml; toml.load('path/to/file.toml')"
 bash -n path/to/script.sh
 ```
 
+You can also validate all deployable config files with:
+
+```bash
+python3 scripts/validate_config_files.py
+```
+
+To validate only branch, staged, and unstaged config changes relative to a base ref:
+
+```bash
+python3 scripts/validate_config_files.py --changed origin/main
+```
+
 ### Tools available in the environment
 
 - `python3` with `yaml`, `toml` packages for config validation
@@ -46,4 +58,4 @@ bash -n path/to/script.sh
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- GitHub workflows under `.github/workflows/` run config discovery and syntax validation. The config discovery workflow opens discovery-only PRs when `ANTHROPIC_API_KEY` is unavailable, so Cursor Automation or a human reviewer can finish the config update.
