@@ -12,10 +12,12 @@ Each top-level directory (e.g. `claude-code/`, `cursor/`, `github-copilot/`) pro
 
 - `.md` — Documentation and deployment checklists
 - `.json` / `.jsonc` — Configuration templates (70 JSON + 4 JSONC files)
-- `.yaml` / `.yml` — Configuration templates (10 files)
+- `.yaml` / `.yml` — Configuration templates and GitHub workflow files
 - `.toml` — Configuration templates (14 files)
 - `.sh` — Example hook scripts in `claude-code/examples/hook-scripts/`
 - `.mdc` — Cursor rule files
+- `.github/workflows/` — Scheduled config discovery and config syntax validation workflows
+- `scripts/validate_config_files.py` — Repository-wide syntax validator for deployable config files
 
 ### Development workflow
 
@@ -33,6 +35,9 @@ python3 -c "import toml; toml.load('path/to/file.toml')"
 
 # Validate shell scripts
 bash -n path/to/script.sh
+
+# Validate all deployable config and workflow files
+python3 scripts/validate_config_files.py
 ```
 
 ### Tools available in the environment
@@ -46,4 +51,5 @@ bash -n path/to/script.sh
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- `.github/workflows/config-discovery.yml` runs the scheduled upstream config discovery and opens a maintenance PR when watched sources change.
+- `.github/workflows/config-validation.yml` validates deployable config syntax on PRs.
