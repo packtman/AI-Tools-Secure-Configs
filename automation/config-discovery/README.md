@@ -16,7 +16,9 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
+| `scripts/validate_config_files.py` | Shared validator for deployable JSON, YAML, TOML, and shell files. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `.github/workflows/config-validation.yml` | Pull request workflow that validates config syntax. |
 
 ## How the Loop Works
 
@@ -26,9 +28,10 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
 6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+7. If repository secret `ANTHROPIC_API_KEY` is available, the workflow runs the config-maintenance agent on the scoped report, validates edited config files, commits the real config changes, and opens or updates the PR.
+8. If `ANTHROPIC_API_KEY` is unavailable, the workflow still opens a discovery-only PR with the report. A Cursor Cloud automation or human reviewer should then run `agent-prompt.md` on that branch.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+GitHub Actions acts as the sensor and optional agent runner. It should not silently fail just because a model secret is missing, because the discovery report is still useful intake for Cursor Automation or human review.
 
 ## Adding a Source
 
@@ -69,6 +72,12 @@ python3 automation/config-discovery/discover_configs.py \
   --offline
 ```
 
+Validate deployable config files after an agent edits them:
+
+```bash
+python3 scripts/validate_config_files.py --changed origin/main
+```
+
 ## Review Standard for Generated PRs
 
 Treat the initial discovery commit as an intake signal. The final PR should include actual config updates when the upstream change is relevant. Before changing a config:
@@ -87,7 +96,7 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`. If that secret is absent, the workflow warns and opens a discovery-only PR for Cursor Automation or human review instead of failing before a PR exists.
 
 ## Agent step failures (`error_max_turns`)
 

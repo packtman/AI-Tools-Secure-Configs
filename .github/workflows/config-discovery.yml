@@ -97,20 +97,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check Claude API key availability
+        id: claude-api-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery-only PR for Cursor Automation or human review."
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.claude-api-key.outputs.available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -135,7 +138,7 @@ jobs:
             5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, and TOML using AGENTS.md commands before finishing.
+            8. Validate every edited JSON, YAML, TOML, and shell file using AGENTS.md commands before finishing. The workflow also runs the changed-file validator against the default branch after you finish.
 
             Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
@@ -143,8 +146,17 @@ jobs:
             --model claude-sonnet-4-20250514
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
+      - name: Validate agent edits
+        if: steps.discovery.outputs.run_agent == 'true' && steps.claude-api-key.outputs.available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py --changed "origin/${BASE_BRANCH}"
+          git diff --check
+
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.claude-api-key.outputs.available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -192,7 +204,7 @@ jobs:
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When the Claude API key was available, it also ran the config-maintenance agent against the generated report.
 
           Review:
 
@@ -206,7 +218,7 @@ jobs:
           3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
           4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
-          If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
+          If this PR contains only discovery snapshot/report changes, either the Claude API key was unavailable for the agent step or the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
