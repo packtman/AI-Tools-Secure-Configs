@@ -2,7 +2,7 @@
 
 Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor and can run the config-maintenance agent when repository secret `ANTHROPIC_API_KEY` is available. Cursor Cloud is the fallback agent when GitHub Actions opens a discovery-only PR or when you prefer Cursor to make the final config edits.
 
 ## Recommended Trigger
 
@@ -19,7 +19,7 @@ Goal: keep hardened AI tool configs current across Claude Code, Cursor, GitHub C
 
 Process:
 
-1. Check for an open config maintenance PR or branch named automation/config-maintenance.
+1. Check for an open config maintenance PR or branch named automation/config-maintenance, including discovery-only PRs opened because `ANTHROPIC_API_KEY` was unavailable to GitHub Actions.
 2. Read automation/config-discovery/reports/latest-config-discovery.md.
 3. For each changed upstream source, open the upstream source and identify real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion controls.
 4. Pay special attention to "Potential config terms not found in local tool files."
@@ -28,7 +28,7 @@ Process:
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
 8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
 9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
+10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md and `python3 scripts/validate_config_files.py --changed origin/main`.
 11. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
