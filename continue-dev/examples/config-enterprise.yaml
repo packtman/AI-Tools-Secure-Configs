@@ -1,5 +1,6 @@
-# Continue.dev — Enterprise configuration
-# Includes proxy settings and private model endpoints.
+# Continue.dev — Enterprise configuration (supplemental)
+# Demonstrates proxy settings and private model endpoints for corporate gateways.
+# For tiered security configs, see config-strict.yaml, config-moderate.yaml, and config-baseline.yaml.
 
 schema: v1
 

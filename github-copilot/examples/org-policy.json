@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
-  "_comment": "Reference document for GitHub Copilot organization policy settings. Configure via Organization Settings → Copilot → Policies & features.",
+  "_comment": "Reference starting-point for GitHub Copilot organization policy. For tiered configs, see org-policy-strict.json, org-policy-moderate.json, and org-policy-baseline.json. Configure via Organization Settings → Copilot → Policies & features.",
 
   "organization": "acme-corp",
 

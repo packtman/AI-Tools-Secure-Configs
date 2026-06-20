@@ -14,7 +14,7 @@ This directory contains security-hardened configurations for **Continue.dev** (t
 | `examples/permissions-strict.yaml` | **Strict** — Read-only tools only, write/bash excluded |
 | `examples/permissions-moderate.yaml` | **Moderate** — Read auto-approved, write requires confirmation |
 | `examples/permissions-baseline.yaml` | **Baseline** — Most tools auto-approved, bash requires confirmation |
-| `examples/config-enterprise.yaml` | Enterprise configuration with proxy |
+| `examples/config-enterprise.yaml` | Enterprise configuration with proxy (supplemental, see tiered configs) |
 | `examples/continuerc-secure.json` | Workspace-level `.continuerc.json` |
 | `examples/secrets-management.md` | Secrets management guide |
 

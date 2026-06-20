@@ -18,8 +18,8 @@ This directory contains comprehensive, security-hardened configurations for **Cl
 | `examples/config-strict.json` | **Strict** — Zero MCP, all features disabled (regulated environments) |
 | `examples/config-moderate.json` | **Moderate** — Scoped MCP servers, extensions disabled (enterprise teams) |
 | `examples/config-baseline.json` | **Baseline** — MCP enabled, essential restrictions (startups, individual devs) |
-| `examples/config-minimal.json` | Zero MCP servers — maximum lockdown (legacy, see strict) |
-| `examples/config-restricted-mcp.json` | Tightly scoped MCP servers (legacy, see moderate) |
+| `examples/config-minimal.json` | Zero MCP, all features disabled — **legacy alias** for `config-strict.json` |
+| `examples/config-restricted-mcp.json` | Scoped MCP, extensions disabled — **legacy alias** for `config-moderate.json` |
 | `examples/mdm-macos-profile.md` | macOS MDM deployment guide (Jamf, Kandji) |
 | `examples/mdm-windows-gpo.md` | Windows GPO / Intune deployment guide |
 | `examples/policy-rationale.md` | Reasoning behind every enterprise policy key |
