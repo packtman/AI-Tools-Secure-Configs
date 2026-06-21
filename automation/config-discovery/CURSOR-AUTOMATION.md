@@ -6,7 +6,7 @@ GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance a
 
 ## Recommended Trigger
 
-- Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
+- Schedule: daily, after `.github/workflows/config-discovery.yml` has run, or on discovery handoff PRs created when `ANTHROPIC_API_KEY` is unavailable.
 - Repository: this repo.
 - Branch: default branch, unless your automation service creates a working branch automatically.
 
@@ -28,7 +28,7 @@ Process:
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
 8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
 9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
+10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md or `python3 scripts/validate_config_files.py --changed`.
 11. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
