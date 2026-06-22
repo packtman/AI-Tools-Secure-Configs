@@ -9,6 +9,7 @@ GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance a
 - Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
 - Repository: this repo.
 - Branch: default branch, unless your automation service creates a working branch automatically.
+- Purpose: finish discovery-only PRs when the GitHub workflow could not run the maintenance agent, or when reviewers want a second pass on scoped config changes.
 
 ## Prompt
 
@@ -45,4 +46,4 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 
 ## Why This Requires Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+The GitHub workflow can detect source changes, identify candidate config terms, and run syntax validation. It only runs the maintenance agent when repository secret `ANTHROPIC_API_KEY` is configured. Cursor Automation is the fallback that turns discovery-only PRs into real config-update PRs, because the tier policy for a brand-new vendor control needs security review rather than blind ingestion.
