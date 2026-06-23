@@ -97,20 +97,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check config maintenance agent credentials
+        id: agent-credentials
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery-only PR for Cursor Automation or human review."
+            echo "agent_available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "agent_available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-credentials.outputs.agent_available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -135,7 +138,7 @@ jobs:
             5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, and TOML using AGENTS.md commands before finishing.
+            8. Validate every edited JSON, YAML, TOML, and shell file with scripts/validate_config_files.py or AGENTS.md commands before finishing.
 
             Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
@@ -144,9 +147,10 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true'
         id: agent-changes
         env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
           PR_BRANCH: automation/config-maintenance
           AGENT_OUTCOME: ${{ steps.agent.outcome }}
         run: |
@@ -163,6 +167,8 @@ jobs:
             fi
             exit 0
           fi
+
+          python3 scripts/validate_config_files.py --changed --base "origin/${BASE_BRANCH}"
 
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
@@ -198,6 +204,7 @@ jobs:
 
           - `automation/config-discovery/reports/latest-config-discovery.md`
           - `automation/config-discovery/agent-prompt.md`
+          - `automation/config-discovery/reports/agent-scope.md`
 
           Expected reviewer checks:
 
@@ -206,7 +213,7 @@ jobs:
           3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
           4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
-          If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
+          If this PR contains only discovery snapshot/report changes, either the config-maintenance agent was unavailable or the report should include a "No config update needed" explanation for each changed source. Cursor Automation can use `automation/config-discovery/CURSOR-AUTOMATION.md` to finish the config update.
           PR_BODY
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
