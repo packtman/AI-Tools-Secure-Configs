@@ -164,6 +164,24 @@
   //      Code and trigger actions.
   "disableDeepLinkRegistration": "disable",
 
+  // WHAT: Turns off background agents and agent view (`claude agents`, `--bg`,
+  //      `/background`, and the on-demand supervisor).
+  // WHY: Moderate tier allows normal interactive Claude Code sessions but blocks
+  //      higher-autonomy background agent execution until admins define monitoring,
+  //      ownership, and exception handling.
+  // BREAKS IF SET TO TRUE: Developers cannot launch background agents or use agent
+  //      view for parallel work. They can still use normal foreground sessions.
+  "disableAgentView": true,
+
+  // WHAT: Keeps bundled Claude Code skills available while `disableWorkflows` blocks
+  //      bundled workflow commands.
+  // WHY: Moderate tier avoids removing vendor-provided skills unless an org has a
+  //      specific risk reason, because those skills are part of normal developer
+  //      assistance and are still governed by tool permissions.
+  // BREAKS IF SET TO TRUE: Developers lose bundled skills that may help with common
+  //      coding tasks, even though custom/project skills remain separately governed.
+  "disableBundledSkills": false,
+
   // WHAT: Disables dynamic workflows and bundled workflow commands.
   // WHY: Dynamic workflows are a research preview for long-running, parallel agent
   //      work. Moderate tier keeps normal Claude Code workflows available, but blocks

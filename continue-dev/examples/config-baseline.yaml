@@ -31,5 +31,12 @@ contextProviders:
   - name: "codebase"
   - name: "web"
 
+# WHAT: Lists MCP servers that provide additional tools to Continue.dev.
+# WHY: Baseline keeps the default empty so admins consciously add servers and
+# can document why each one is trusted.
+# BREAKS IF POPULATED WITH SECRETS: Server env blocks can expose credentials to
+# local processes. Reference secrets manager values or environment variables.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

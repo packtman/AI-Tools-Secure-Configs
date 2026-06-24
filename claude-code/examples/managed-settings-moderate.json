@@ -90,6 +90,8 @@
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": true,
   "disableDeepLinkRegistration": "disable",
+  "disableAgentView": true,
+  "disableBundledSkills": false,
   "disableWorkflows": true,
 
   "forceLoginMethod": "claudeai",

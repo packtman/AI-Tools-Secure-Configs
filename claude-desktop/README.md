@@ -64,6 +64,8 @@ Machine-level policies override in-app settings. Enterprise policy controls over
 
 Each MCP server entry in `claude_desktop_config.json` grants Claude the ability to execute arbitrary operations. This is functionally equivalent to giving the AI a shell.
 
+Claude Code may set helper environment variables such as `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` when executing MCP helper scripts. Those variables are not Claude Desktop enterprise policy keys and should not be deployed through MDM payloads.
+
 **Threats:**
 - A misconfigured server can read/write any file the user can access.
 - Malicious packages can exfiltrate data.

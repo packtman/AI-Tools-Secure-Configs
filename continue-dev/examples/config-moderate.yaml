@@ -35,5 +35,12 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Lists approved MCP servers, which expose external tools to the agent.
+# WHY: Moderate tier starts empty so teams add only reviewed servers with scoped
+# filesystem, network, and credential access.
+# BREAKS IF REMOVED: Developers may copy ad hoc MCP examples into local configs
+# without an approved allowlist or review trail.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

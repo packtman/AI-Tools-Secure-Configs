@@ -33,6 +33,15 @@ Defaults:
 - Write tools (Edit, Write): `ask`
 - Bash: `ask`
 
+### MCP Servers
+
+MCP (Model Context Protocol) servers give Continue.dev additional tools through the top-level `mcpServers` list in `config.yaml`.
+
+Defaults:
+- Strict: `mcpServers: []`
+- Moderate: `mcpServers: []`, add only reviewed and scoped servers
+- Baseline: `mcpServers: []`, developers may add approved servers as needed
+
 ### Operational Modes
 
 | Mode | Effect |

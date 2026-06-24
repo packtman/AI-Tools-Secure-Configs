@@ -59,6 +59,8 @@
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
+  "disableAgentView": false,
+  "disableBundledSkills": false,
   "disableWorkflows": false,
 
   "autoUpdatesChannel": "stable",

@@ -39,6 +39,8 @@
 - [ ] **Training opt-out** — Confirm API data is not used for model training (default for API).
 - [ ] **Content filtering** — Apply appropriate safety filters for your use case.
 - [ ] **PII handling** — Establish policies for what data can be sent to the API.
+- [ ] **MCP connector approvals**: For applications that use OpenAI MCP connectors, require `allowed_tools` to narrow the tool surface and keep approval flows enabled for sensitive tools.
+- [ ] **MCP audit trail**: Log `mcp_approval_request`, `mcp_approval_response`, and `mcp_call` events in the application before shipping to SIEM.
 
 ## 6. Usage & Cost Controls
 

@@ -126,8 +126,16 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 
 | Aspect | Detail |
 |--------|--------|
-| **What it does** | Continue.dev supports Model Context Protocol servers as tools, extending the agent's capabilities with external integrations. |
-| **Recommended** | Audit and scope all MCP servers. Use only approved servers. |
+| **What it does** | The top-level `mcpServers` list defines Model Context Protocol servers as tools, extending the agent's capabilities with external integrations. |
+| **Recommended** | Keep `mcpServers: []` until each server is approved, scoped, pinned, and documented. |
+
+### Tier Recommendations
+
+| Environment | `mcpServers` value | Reasoning |
+|-------------|--------------------|-----------|
+| Strict | `[]` | No external tool servers unless security approves a specific exception. |
+| Moderate | `[]` by default | Teams can add approved servers after review, but the shared template starts empty. |
+| Baseline | `[]` by default | Developers may add servers, but the config should make that a conscious choice. |
 
 ### Scoping and Auditing
 

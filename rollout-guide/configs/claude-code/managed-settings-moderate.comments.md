@@ -151,6 +151,38 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Turns off background agents and agent view, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate tier):** Background agents can continue work outside the foreground session. Moderate tier blocks that higher-autonomy mode until admins define monitoring, ownership, and exception handling.
+
+**What breaks if set to true:** Developers cannot launch background agents or use agent view for parallel work. Normal foreground Claude Code sessions still work.
+
+**Strict difference:** Also `true`, because Strict blocks parallel background agent execution by default.
+
+**Baseline difference:** `false`, allowing local experimentation with background agents.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `false`
+
+**What:** Controls whether Claude Code removes bundled skills and bundled workflows from the product. Custom/project skills remain governed by other settings.
+
+**Why (Moderate tier):** Moderate tier keeps vendor-provided skills available for developer productivity while `disableWorkflows` separately blocks bundled workflow commands.
+
+**What breaks if set to true:** Developers lose bundled skills that may help with common coding tasks, even when the underlying tool calls still require approval.
+
+**Strict difference:** `true`, because Strict removes optional bundled skills and workflows to reduce product-supplied autonomous behaviors.
+
+**Baseline difference:** `false`, preserving default Claude Code behavior.
+
+---
+
 ## `disableWorkflows`
 
 **Value:** `true`
