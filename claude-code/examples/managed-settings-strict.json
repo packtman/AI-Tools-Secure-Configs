@@ -108,6 +108,8 @@
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
+  "disableAgentView": true,
+  "disableBundledSkills": true,
   "disableWorkflows": true,
   "channelsEnabled": false,
 

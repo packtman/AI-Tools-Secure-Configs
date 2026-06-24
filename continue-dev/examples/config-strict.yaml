@@ -32,5 +32,12 @@ contextProviders:
   - name: "diff"
   - name: "tree"
 
+# WHAT: Lists approved MCP servers, which extend the agent with external tools.
+# WHY: Strict tier starts with no MCP servers because each server can read data,
+# run commands, or call external services depending on its implementation.
+# BREAKS IF POPULATED WITHOUT REVIEW: An unvetted server can exfiltrate source
+# code or credentials with the developer's local permissions.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: true

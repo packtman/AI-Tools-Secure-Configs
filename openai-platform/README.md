@@ -64,6 +64,10 @@ Enable audit logs via **Organization Settings → Data Controls → Data Retenti
 - Login/logout events and failures
 - Organization configuration changes
 
+### MCP Connector Controls
+
+For applications that use OpenAI MCP connectors, narrow the remote tool surface with `allowed_tools`, keep approval flows enabled for sensitive tools, and log `mcp_approval_request`, `mcp_approval_response`, and `mcp_call` events for SIEM review.
+
 ## Deployment Checklist
 
 1. Enable SSO/OIDC and enforce for all members.

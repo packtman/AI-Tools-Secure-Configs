@@ -110,6 +110,10 @@
 
   "disableDeepLinkRegistration": "disable",
 
+  "disableAgentView": true,
+
+  "disableBundledSkills": false,
+
   "disableWorkflows": true,
 
   "autoUpdatesChannel": "stable",

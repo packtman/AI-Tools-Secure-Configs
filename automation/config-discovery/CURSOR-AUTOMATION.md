@@ -2,7 +2,7 @@
 
 Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent when the GitHub workflow cannot run the model step or when you want Cursor Cloud to own the final review.
 
 ## Recommended Trigger
 
@@ -19,7 +19,7 @@ Goal: keep hardened AI tool configs current across Claude Code, Cursor, GitHub C
 
 Process:
 
-1. Check for an open config maintenance PR or branch named automation/config-maintenance.
+1. Check for an open config maintenance PR or branch named automation/config-maintenance, or use the current automation branch if this run was triggered from a discovery handoff PR.
 2. Read automation/config-discovery/reports/latest-config-discovery.md.
 3. For each changed upstream source, open the upstream source and identify real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion controls.
 4. Pay special attention to "Potential config terms not found in local tool files."

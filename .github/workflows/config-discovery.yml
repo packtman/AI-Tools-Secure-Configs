@@ -98,19 +98,22 @@ jobs:
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
       - name: Verify Claude API key
+        id: agent-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery handoff PR without running the agent."
+            echo "agent_key_available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "agent_key_available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.agent_key_available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -144,9 +147,10 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.agent_key_available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
           PR_BRANCH: automation/config-maintenance
           AGENT_OUTCOME: ${{ steps.agent.outcome }}
         run: |
@@ -164,6 +168,7 @@ jobs:
             exit 0
           fi
 
+          python3 scripts/validate_config_files.py --changed --base-ref "origin/${BASE_BRANCH}"
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
             git commit -m "Apply partial config maintenance updates (agent hit turn limit)"
@@ -174,7 +179,7 @@ jobs:
           echo "agent_changed=true" >> "${GITHUB_OUTPUT}"
 
       - name: Fail if agent errored with no usable diff
-        if: steps.discovery.outputs.run_agent == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.agent_key_available == 'true' && steps.agent.outcome == 'failure' && steps.agent-changes.outputs.agent_changed != 'true'
         run: |
           echo "::error::Config maintenance agent failed before producing file changes. Typical cause: error_max_turns (task too large for one run). Check agent-scope.md limits and re-run."
           exit 1
@@ -186,13 +191,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          AGENT_KEY_AVAILABLE: ${{ steps.agent-key.outputs.agent_key_available }}
         run: |
           set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent when the repository secret was available.
+
+          If this PR contains only discovery snapshot/report changes, either no agent API key was available to the workflow or the agent determined no config update was needed. A Cursor Automation or human reviewer should process the report and add config changes when a real admin control changed.
 
           Review:
 
@@ -206,11 +214,12 @@ jobs:
           3. Confirm deployable JSON remains valid and rationale lives in JSONC or `.comments.md` where needed.
           4. Confirm rollout impact, deployment steps, audit logging, rollback, and workflow-preservation notes are updated when behavior changes.
 
-          If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"
+          elif [ "${AGENT_KEY_AVAILABLE:-true}" = "false" ]; then
+            TITLE="Config maintenance: upstream changes need agent review"
           else
             TITLE="Config maintenance: upstream changes reviewed"
           fi

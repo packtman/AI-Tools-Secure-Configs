@@ -652,6 +652,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+No config update needed: these variables are set by Claude Code when it executes an MCP helper so one helper script can identify the server name and URL. They are not Claude Desktop managed policy keys and should not be added to Claude Desktop MDM payloads or `claude_desktop_config.json`.
+
 ### Claude Desktop: Claude Desktop support documentation
 
 - Change type: `fingerprint-method-changed`
@@ -719,6 +721,8 @@ Potential config terms not found in local tool files:
 `allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `reinforcement`, `response.mcp_call.completed`, `response.mcp_call.failed`, `response.mcp_call.in_progress`, `response.mcp_call_arguments.delta`, `response.mcp_call_arguments.done`, `score_model`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Config update applied to documentation only: `allowed_tools`, `require_approval`, `mcp_approval_request`, `mcp_approval_response`, and `mcp_call` are request-level MCP connector controls and event names for OpenAI API clients. They are not OpenAI organization policy JSON keys, so the PR updates OpenAI Platform README, secure policy, and rationale guidance instead of adding a fake org-policy field.
 
 ### Claude API: Anthropic admin API documentation
 

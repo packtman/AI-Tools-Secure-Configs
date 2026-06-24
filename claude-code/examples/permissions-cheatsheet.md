@@ -198,6 +198,8 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableRemoteControl` | Blocks remote control feature |
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
+| `disableAgentView` | Disables background agents and agent view |
+| `disableBundledSkills` | Removes bundled Claude Code skills and bundled workflows |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 

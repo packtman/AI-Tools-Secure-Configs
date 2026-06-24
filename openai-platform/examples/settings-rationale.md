@@ -119,6 +119,27 @@ Custom roles can combine granular permissions for delegated administration. Note
 
 ---
 
+## MCP Connector Request Controls
+
+OpenAI MCP connector settings are request-level controls used by applications that call the Responses or Realtime APIs with remote MCP tools. They are not organization policy JSON keys, but security teams should require them in application standards and code review.
+
+| Control | What it does | Recommended value | What breaks if misconfigured |
+|---------|--------------|-------------------|------------------------------|
+| `allowed_tools` | Limits which tools from an MCP server are exposed to the model. | List only the reviewed tool names required by the application. | Exposing all server tools increases cost, latency, and the chance of data disclosure through an unintended tool call. |
+| `require_approval` | Requires a human or application approval flow before sensitive MCP tool calls run. | Keep approval enabled for tools that send data to remote systems or mutate state. | Setting approval to `never` for broad tool sets can send sensitive data to connectors without review. |
+| `mcp_approval_request` / `mcp_approval_response` | Records the request and decision for an MCP tool approval. | Log both events with user, project, server label, tool name, and decision. | Without logs, SIEM cannot reconstruct who approved a connector action after an incident. |
+| `mcp_call` | Records the actual MCP tool invocation and result status. | Log call status and failures, but avoid storing sensitive arguments or outputs unless your retention policy allows it. | Missing call logs hide connector failures, unexpected tool use, and potential exfiltration attempts. |
+
+### Tier Guidance
+
+| Environment | Guidance |
+|-------------|----------|
+| Strict | Do not enable remote MCP connectors unless the server, tool list, and approval workflow are explicitly approved. |
+| Moderate | Allow approved connectors with `allowed_tools` and approval logging. Require exception review before disabling approvals. |
+| Baseline | Permit connectors for developer productivity, but still narrow `allowed_tools` and log approval events. |
+
+---
+
 ## 4. API Key Types
 
 ### Key Type Comparison

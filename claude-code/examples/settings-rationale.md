@@ -88,6 +88,30 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `"disable"` | Until auto mode exits research preview and the classifier is proven reliable. |
 | Developer | Not set | Let developers opt in for personal productivity. |
 
+### `disableAgentView`
+
+**What it does:** Turns off background agents and agent view, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can keep working outside the foreground session and can run parallel work with less immediate user attention. Enterprises should pilot that operating model before enabling it broadly.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No parallel background agent execution without explicit governance and audit coverage. |
+| Standard enterprise | `true` | Keep normal interactive sessions available, but require exception approval for background agents. |
+| Developer | `false` | Allow local experimentation where the user accepts the workflow risk. |
+
+### `disableBundledSkills`
+
+**What it does:** Removes bundled Claude Code skills and bundled workflows from the product. Custom, plugin, and project skills remain governed by their own settings.
+
+**Why it matters:** Bundled skills can expand what the model attempts during a session. Strict environments may prefer to remove optional product-supplied behaviors and allow only explicitly reviewed skills.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Remove optional bundled skills and workflows to reduce autonomous behavior surface. |
+| Standard enterprise | `false` | Preserve normal vendor-provided skills while other controls govern tool use. |
+| Developer | `false` | Preserve default product behavior. |
+
 ### `disableWorkflows`
 
 **What it does:** Disables dynamic workflows and bundled workflow commands. When enabled, workflow commands are unavailable, the `workflow` keyword does not trigger a workflow run, and `ultracode` is removed from the effort menu. Equivalent environment control: `CLAUDE_CODE_DISABLE_WORKFLOWS=1`.
