@@ -124,6 +124,30 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `false` | Preserve vetted productivity features while `disableWorkflows` blocks higher-autonomy workflow mode. |
 | Developer | `false` | Maximum flexibility. |
 
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which can publish session output as a private page on claude.ai. Equivalent environment control: `CLAUDE_CODE_DISABLE_ARTIFACT=1`.
+
+**Why it matters:** Artifact publishing is a separate data-sharing path. Code snippets, prompts, generated docs, or sensitive implementation details can leave the endpoint outside normal repository review.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Block external publication paths unless approved through data governance. |
+| Standard enterprise | `true` | Use internal review and documentation systems until Artifact retention and audit expectations are approved. |
+| Developer | `false` | Allow local sharing after user review. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Saves file snapshots before edits so users can recover with `/rewind`. Equivalent environment control to disable it: `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING=1`.
+
+**Why it matters:** Checkpoints improve recovery after bad edits, but they also create local snapshots of source content. In regulated environments, reducing local copies can be more important than edit convenience.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Minimize additional local snapshots of sensitive source content. |
+| Standard enterprise | `true` | Preserve developer recovery workflows while deny rules block sensitive files. |
+| Developer | `true` | Maximum usability and easy rollback of AI edits. |
+
 ### `disableClaudeAiConnectors`
 
 **What it does:** Prevents Claude.ai MCP connectors from being auto-fetched or connected. Explicit MCP servers passed by approved managed configuration are not affected.

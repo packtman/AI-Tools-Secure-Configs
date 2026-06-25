@@ -107,11 +107,13 @@
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
   "disableAgentView": true,
+  "disableArtifact": true,
   "disableSkillShellExecution": true,
   "disableBundledSkills": true,
   "disableDeepLinkRegistration": "disable",
   "disableClaudeAiConnectors": true,
   "disableWorkflows": true,
+  "fileCheckpointingEnabled": false,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",

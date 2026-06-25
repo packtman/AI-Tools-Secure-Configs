@@ -95,7 +95,7 @@ def build_scope(report_text: str, max_tools: int, local_text_by_tool: dict[str, 
             [
                 "## No scoped tools",
                 "",
-                "No 'Potential config terms not found' sections were found.",
+                "No uncovered missing-term work items remain after checking current local tool files.",
                 "Add 'No config update needed' notes for changed sources in the discovery report, then exit.",
                 "",
             ]

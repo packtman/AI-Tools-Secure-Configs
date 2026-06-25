@@ -167,6 +167,20 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables the Artifact tool, which can publish session output as a private page on claude.ai.
+
+**Why (Moderate):** Artifact publishing creates an additional path for code, prompts, or generated output to leave the endpoint. Standard enterprise rollouts should block it until data handling, retention, and audit expectations are approved.
+
+**What breaks if set to true:** Developers cannot share Artifact pages and must use approved internal review tools instead.
+
+**Baseline difference:** `false`, allowing local use after user review.
+
+---
+
 ## `disableDeepLinkRegistration`
 
 **Value:** `"disable"`
@@ -204,6 +218,20 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **Strict difference:** Also `true`, because Strict blocks research-preview autonomous workflows by default.
 
 **Baseline difference:** `false`, allowing teams to use dynamic workflows after local confirmation prompts.
+
+---
+
+## `fileCheckpointingEnabled`
+
+**Value:** `true`
+
+**What:** Saves file snapshots before edits so users can recover with `/rewind`.
+
+**Why (Moderate):** The recovery workflow prevents bad edits from blocking developers. Sensitive file reads are still governed by deny rules.
+
+**What breaks if set to false:** Developers lose automatic edit recovery and must rely on VCS diffs or backups.
+
+**Strict difference:** `false`, reducing local snapshots of sensitive source content in regulated environments.
 
 ---
 

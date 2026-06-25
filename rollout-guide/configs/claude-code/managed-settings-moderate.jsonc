@@ -165,6 +165,14 @@
   //      view until an exception is approved.
   "disableAgentView": true,
 
+  // WHAT: Disables the Artifact tool that can publish session output as a private
+  //      claude.ai page.
+  // WHY: Moderate tier blocks extra publication paths until data handling and audit
+  //      expectations are approved.
+  // BREAKS IF SET TO TRUE: Developers cannot share Artifact pages and must use
+  //      approved internal review tools instead.
+  "disableArtifact": true,
+
   // WHAT: Leaves Anthropic-bundled skills available while separate workflow controls
   //      disable bundled workflow commands.
   // WHY: Moderate tier preserves vetted productivity features. Strict tier disables
@@ -195,6 +203,12 @@
   // BREAKS IF SET TO TRUE: Developers cannot use workflow commands, the workflow
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
+
+  // WHAT: Keeps file checkpoints enabled so users can rewind edits.
+  // WHY: Moderate tier preserves recovery from bad edits. Strict disables this to
+  //      reduce local snapshots of sensitive source content.
+  // BREAKS IF SET TO FALSE: Developers lose /rewind recovery for file edits.
+  "fileCheckpointingEnabled": true,
 
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.

@@ -77,7 +77,7 @@ Each MCP server entry in `claude_desktop_config.json` grants Claude the ability 
 - Review MCP server source code before deployment.
 - Deploy enterprise policies to block local MCP if not needed.
 
-Note: `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` are Claude Code MCP bridge environment variables, not Claude Desktop MDM policy keys. Use Desktop enterprise policies for Desktop features and Claude Code managed settings for the coding agent.
+Note: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, and `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` are Claude Code MCP bridge environment variables, not Claude Desktop MDM policy keys. Use Desktop enterprise policies for Desktop features and Claude Code managed settings for the coding agent.
 
 ---
 
