@@ -1,8 +1,8 @@
 # Cursor Automation Setup
 
-Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
+Use this prompt for a Cursor Cloud scheduled automation if you want a resilient fallback that turns discovery handoff PRs into real config updates.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor. When `ANTHROPIC_API_KEY` is available, the workflow also runs the config-maintenance agent. Cursor Cloud acts as the fallback or second-pass config-maintenance agent when that secret is unavailable, the scoped task is too large, or a human wants another review.
 
 ## Recommended Trigger
 
@@ -32,6 +32,7 @@ Process:
 11. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
+Use scripts/validate_config_files.py --changed before committing.
 ```
 
 ## Expected Result
@@ -45,4 +46,4 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 
 ## Why This Requires Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+The GitHub workflow detects source changes and can run the model-backed maintenance agent when its secret is available. Cursor Automation is still useful because scheduled repository secrets may be unavailable, model runs may hit scope limits, and security teams may want a separate agent review before merging.

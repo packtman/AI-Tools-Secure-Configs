@@ -47,6 +47,16 @@ Defaults:
 2. **Global** — `~/.continue/config.yaml`
 3. **Environment** — `.env` files for secrets
 
+### MCP Servers
+
+MCP (Model Context Protocol) servers give the agent extra tools, such as filesystem, database, HTTP, or ticket-system access.
+
+| Tier | Default `mcpServers` value | Admin action |
+|------|----------------------------|--------------|
+| Strict | `[]` | Keep empty unless a server has a documented exception and scoped credentials. |
+| Moderate | `[]` | Add only IT-approved servers with pinned package versions and scoped working directories. |
+| Baseline | `[]` | Let developers add reviewed servers intentionally rather than inheriting an implicit list. |
+
 ### Secrets Management
 
 | Secret type | Visibility | Plans |

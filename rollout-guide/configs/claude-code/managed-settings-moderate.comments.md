@@ -141,6 +141,32 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Turns off background agents and agent view, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate):** Background agents can run long-lived, parallel work that is harder for admins to monitor during initial rollout. Disable until a pilot group has cost, audit, and review procedures.
+
+**What breaks if set to true:** Developers cannot use background sessions or the agent view until an exception is approved.
+
+**Baseline difference:** `false`, allowing local experimentation.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `false`
+
+**What:** Controls whether Anthropic-bundled skills are available. Bundled workflow commands are separately blocked by `disableWorkflows`.
+
+**Why (Moderate):** Preserves vetted productivity features while still blocking higher-autonomy workflow mode.
+
+**Strict difference:** `true`, minimizing the executable feature surface in regulated environments.
+
+---
+
 ## `disableDeepLinkRegistration`
 
 **Value:** `"disable"`
@@ -148,6 +174,20 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **What:** Prevents protocol handler registration for `claude-code://` deep links.
 
 **Why:** Untrusted websites could use deep links to trigger Claude Code actions.
+
+---
+
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Blocks Claude.ai MCP connectors from being auto-fetched or connected by Claude Code.
+
+**Why (Moderate):** MCP connectors extend the agent to external services. Standard enterprise rollouts should deploy approved MCP servers through managed config instead of allowing user-discovered cloud connectors.
+
+**What breaks if set to true:** Developers cannot use Claude.ai connectors unless admins provide an approved managed MCP configuration or an exception.
+
+**Baseline difference:** `false`, allowing connectors with user-level review.
 
 ---
 

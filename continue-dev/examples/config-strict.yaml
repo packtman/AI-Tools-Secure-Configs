@@ -32,5 +32,10 @@ contextProviders:
   - name: "diff"
   - name: "tree"
 
+# WHAT: Defines approved MCP servers for agent tools.
+# WHY: Strict tier starts with no MCP servers, each server can add file, shell, or network access.
+# BREAKS IF REMOVED: Users may assume MCP is ungoverned and add local servers outside review.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: true

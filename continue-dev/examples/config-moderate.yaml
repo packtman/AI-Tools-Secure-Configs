@@ -35,5 +35,10 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Defines approved MCP servers for agent tools.
+# WHY: Moderate tier starts empty, add only IT-reviewed servers with pinned packages and scoped env vars.
+# BREAKS IF REMOVED: Teams may add arbitrary MCP servers without a visible policy review point.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

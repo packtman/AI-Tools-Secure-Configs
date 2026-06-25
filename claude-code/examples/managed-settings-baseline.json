@@ -58,7 +58,10 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": false,
+  "disableAgentView": false,
+  "disableBundledSkills": false,
   "disableDeepLinkRegistration": "allow",
+  "disableClaudeAiConnectors": false,
   "disableWorkflows": false,
 
   "autoUpdatesChannel": "stable",

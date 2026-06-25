@@ -129,6 +129,16 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | **What it does** | Continue.dev supports Model Context Protocol servers as tools, extending the agent's capabilities with external integrations. |
 | **Recommended** | Audit and scope all MCP servers. Use only approved servers. |
 
+### `mcpServers`
+
+| Tier | Recommended value | Reasoning |
+|------|-------------------|-----------|
+| Strict | `[]` | No MCP servers by default. Each server is another tool execution surface and must be separately approved. |
+| Moderate | `[]` initially, then an explicit allowlist | Start empty during rollout. Add only IT-reviewed servers with pinned packages, scoped working directories, and secrets from org secrets. |
+| Baseline | `[]` initially | Keeps onboarding safe while still allowing developers to add reviewed servers later. |
+
+**What breaks if misconfigured:** A filesystem MCP server scoped to `/` or `~` can expose secrets. A shell or database MCP server can modify local or production resources. An MCP server with inline API keys leaks credentials through config sync or repository commits.
+
 ### Scoping and Auditing
 
 | Control | Implementation | Why |

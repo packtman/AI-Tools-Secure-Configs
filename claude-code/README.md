@@ -184,6 +184,9 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
+| `disableAgentView` | Block background agents and agent view |
+| `disableBundledSkills` | Block Anthropic-bundled skills |
+| `disableClaudeAiConnectors` | Block Claude.ai MCP connectors |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
@@ -204,6 +207,8 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableAgentView: true` until background agents have audit and cost monitoring.
+- [ ] Set `disableClaudeAiConnectors: true` unless cloud MCP connectors are approved.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

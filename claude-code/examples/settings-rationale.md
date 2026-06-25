@@ -100,6 +100,42 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Turns off background agents and agent view, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor. Equivalent environment control: `CLAUDE_CODE_DISABLE_AGENT_VIEW=1`.
+
+**Why it matters:** Background agents can run long-lived, parallel tasks in separate worktrees. That expands cost, review scope, and audit volume compared with one foreground session.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Keep all agent work in foreground sessions until audit coverage and review procedures are proven. |
+| Standard enterprise | `true` | Disable during broad rollout, then allow by exception for teams with monitoring and cost controls. |
+| Developer | `false` | Allow experimentation with local review. |
+
+### `disableBundledSkills`
+
+**What it does:** Disables Anthropic-bundled skills and bundled workflow commands. Custom project skills, plugin skills, and managed skills are controlled separately.
+
+**Why it matters:** Bundled skills add tool-use behaviors that may not match a regulated environment's approved workflow. Disabling them minimizes the executable feature surface.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Minimize built-in automation until every skill is approved for the environment. |
+| Standard enterprise | `false` | Preserve vetted productivity features while `disableWorkflows` blocks higher-autonomy workflow mode. |
+| Developer | `false` | Maximum flexibility. |
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Prevents Claude.ai MCP connectors from being auto-fetched or connected. Explicit MCP servers passed by approved managed configuration are not affected.
+
+**Why it matters:** Cloud MCP connectors extend Claude Code to external services. Without governance, a connector can expose source code, tickets, docs, or customer data to a service that has not been approved.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only IT-approved MCP servers should connect. |
+| Standard enterprise | `true` | Use managed MCP configuration and exception review for connector access. |
+| Developer | `false` | Allow local connector experimentation with user review. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
