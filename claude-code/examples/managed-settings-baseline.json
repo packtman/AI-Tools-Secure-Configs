@@ -58,8 +58,13 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": false,
+  "disableAgentView": false,
+  "disableArtifact": false,
+  "disableBundledSkills": false,
   "disableDeepLinkRegistration": "allow",
+  "disableClaudeAiConnectors": false,
   "disableWorkflows": false,
+  "fileCheckpointingEnabled": true,
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",

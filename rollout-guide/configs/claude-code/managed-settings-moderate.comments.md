@@ -141,6 +141,46 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Turns off background agents and agent view, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate):** Background agents can run long-lived, parallel work that is harder for admins to monitor during initial rollout. Disable until a pilot group has cost, audit, and review procedures.
+
+**What breaks if set to true:** Developers cannot use background sessions or the agent view until an exception is approved.
+
+**Baseline difference:** `false`, allowing local experimentation.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `false`
+
+**What:** Controls whether Anthropic-bundled skills are available. Bundled workflow commands are separately blocked by `disableWorkflows`.
+
+**Why (Moderate):** Preserves vetted productivity features while still blocking higher-autonomy workflow mode.
+
+**Strict difference:** `true`, minimizing the executable feature surface in regulated environments.
+
+---
+
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables the Artifact tool, which can publish session output as a private page on claude.ai.
+
+**Why (Moderate):** Artifact publishing creates an additional path for code, prompts, or generated output to leave the endpoint. Standard enterprise rollouts should block it until data handling, retention, and audit expectations are approved.
+
+**What breaks if set to true:** Developers cannot share Artifact pages and must use approved internal review tools instead.
+
+**Baseline difference:** `false`, allowing local use after user review.
+
+---
+
 ## `disableDeepLinkRegistration`
 
 **Value:** `"disable"`
@@ -148,6 +188,20 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **What:** Prevents protocol handler registration for `claude-code://` deep links.
 
 **Why:** Untrusted websites could use deep links to trigger Claude Code actions.
+
+---
+
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Blocks Claude.ai MCP connectors from being auto-fetched or connected by Claude Code.
+
+**Why (Moderate):** MCP connectors extend the agent to external services. Standard enterprise rollouts should deploy approved MCP servers through managed config instead of allowing user-discovered cloud connectors.
+
+**What breaks if set to true:** Developers cannot use Claude.ai connectors unless admins provide an approved managed MCP configuration or an exception.
+
+**Baseline difference:** `false`, allowing connectors with user-level review.
 
 ---
 
@@ -164,6 +218,20 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **Strict difference:** Also `true`, because Strict blocks research-preview autonomous workflows by default.
 
 **Baseline difference:** `false`, allowing teams to use dynamic workflows after local confirmation prompts.
+
+---
+
+## `fileCheckpointingEnabled`
+
+**Value:** `true`
+
+**What:** Saves file snapshots before edits so users can recover with `/rewind`.
+
+**Why (Moderate):** The recovery workflow prevents bad edits from blocking developers. Sensitive file reads are still governed by deny rules.
+
+**What breaks if set to false:** Developers lose automatic edit recovery and must rely on VCS diffs or backups.
+
+**Strict difference:** `false`, reducing local snapshots of sensitive source content in regulated environments.
 
 ---
 

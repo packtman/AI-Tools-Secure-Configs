@@ -64,6 +64,7 @@ jobs:
 
           python3 automation/config-discovery/build_agent_scope.py \
             --report automation/config-discovery/reports/latest-config-discovery.md \
+            --sources automation/config-discovery/tool-sources.json \
             --output automation/config-discovery/reports/agent-scope.md \
             --max-tools 4
 
@@ -98,19 +99,22 @@ jobs:
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
       - name: Verify Claude API key
+        id: claude-api-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery handoff PR without running the agent."
+            echo "has_key=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_key=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.claude-api-key.outputs.has_key == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -144,7 +148,7 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.claude-api-key.outputs.has_key == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -163,6 +167,8 @@ jobs:
             fi
             exit 0
           fi
+
+          python3 scripts/validate_config_files.py --changed
 
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
@@ -186,13 +192,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          HAS_CLAUDE_API_KEY: ${{ steps.claude-api-key.outputs.has_key }}
         run: |
           set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then either ran the config-maintenance agent or opened this handoff for Cursor Automation or human review.
 
           Review:
 
@@ -208,6 +215,13 @@ jobs:
 
           If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
+
+          if [ "${HAS_CLAUDE_API_KEY:-true}" = "false" ]; then
+            cat >> pr-body.md <<'PR_BODY'
+
+          Note: `ANTHROPIC_API_KEY` was not available to this workflow, so the config-maintenance agent was skipped. A Cursor Cloud automation or human reviewer should use `automation/config-discovery/agent-prompt.md` to turn the discovery report into focused config updates.
+          PR_BODY
+          fi
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"

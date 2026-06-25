@@ -59,6 +59,16 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## Claude Code as an MCP Server
+
+`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, and `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` are Claude Code integration environment variables used when Claude Code is exposed as an MCP server. They are not Claude Desktop enterprise policy keys.
+
+**Admin guidance:** Govern Claude Desktop with the enterprise keys in this document, then govern Claude Code separately with `claude-code/examples/managed-settings-*.json`. If Claude Desktop imports a Claude Code MCP server, treat that server like any other MCP entry: approve the source, scope the available tools, and avoid inline secrets.
+
+**What breaks if misclassified:** Placing these variables in a Desktop MDM payload will not enforce a Desktop policy. The intended MCP bridge may fail to connect, while Desktop users remain subject only to the actual enterprise keys.
+
+---
+
 ## `secureVmFeaturesEnabled`
 
 **What it does:** Controls whether the Cowork (computer use) feature is available. This allows Claude to interact with applications on the user's machine via a sandboxed VM.

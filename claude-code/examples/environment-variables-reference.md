@@ -36,6 +36,15 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
+| `ANTHROPIC_MODEL` | Override the default model for one session | Do not use as org policy; enforce model governance with managed model settings |
+| `CLAUDE_MODEL` | Legacy/session model override used by some hooks and wrappers | Do not use as org policy; prefer managed model settings |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | Disable background agents and agent view | `1` for Moderate and Strict rollouts |
+| `CLAUDE_CODE_DISABLE_ARTIFACT` | Disable Artifact page publishing | `1` for Moderate and Strict rollouts |
+| `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | Disable Anthropic-bundled skills | `1` for Strict rollouts |
+| `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` | Disable edit checkpoint snapshots | `1` for Strict rollouts |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Auto-connect an external terminal session to a running IDE | User-global preference, not a tier policy control |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Skip automatic IDE extension installation | Use MDM or endpoint management for IDE extension deployment |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Show or hide the one-line recap after the user is away | Optional screen privacy preference, not required for the security tiers |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |

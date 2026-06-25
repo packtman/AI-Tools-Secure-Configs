@@ -157,12 +157,43 @@
   //      Claude Code sessions.
   "disableRemoteControl": true,
 
+  // WHAT: Turns off background agents and agent view (`claude agents`, `--bg`, and
+  //      `/background`).
+  // WHY: Background agents can run long-lived work in parallel. Moderate tier should
+  //      pilot this mode before broad rollout because it expands cost and review scope.
+  // BREAKS IF SET TO TRUE: Developers cannot use background sessions or the agent
+  //      view until an exception is approved.
+  "disableAgentView": true,
+
+  // WHAT: Disables the Artifact tool that can publish session output as a private
+  //      claude.ai page.
+  // WHY: Moderate tier blocks extra publication paths until data handling and audit
+  //      expectations are approved.
+  // BREAKS IF SET TO TRUE: Developers cannot share Artifact pages and must use
+  //      approved internal review tools instead.
+  "disableArtifact": true,
+
+  // WHAT: Leaves Anthropic-bundled skills available while separate workflow controls
+  //      disable bundled workflow commands.
+  // WHY: Moderate tier preserves vetted productivity features. Strict tier disables
+  //      bundled skills when admins want the smallest executable feature surface.
+  // BREAKS IF SET TO TRUE: Built-in skill shortcuts disappear and developers may need
+  //      manual prompts or approved plugin replacements.
+  "disableBundledSkills": false,
+
   // WHAT: Prevents Claude Code from registering as a protocol handler for deep links.
   // WHY: Deep links (e.g., claude-code://) from untrusted websites could trigger
   //      Claude Code actions without the user's awareness.
   // BREAKS IF SET TO "allow": Clicking a crafted link in a browser could open Claude
   //      Code and trigger actions.
   "disableDeepLinkRegistration": "disable",
+
+  // WHAT: Blocks automatic Claude.ai MCP connectors from being fetched or connected.
+  // WHY: Moderate tier should use IT-approved MCP servers from managed config instead
+  //      of user-discovered cloud connectors.
+  // BREAKS IF SET TO TRUE: Claude.ai connectors will not appear unless admins deploy
+  //      approved MCP configuration through the managed path.
+  "disableClaudeAiConnectors": true,
 
   // WHAT: Disables dynamic workflows and bundled workflow commands.
   // WHY: Dynamic workflows are a research preview for long-running, parallel agent
@@ -172,6 +203,12 @@
   // BREAKS IF SET TO TRUE: Developers cannot use workflow commands, the workflow
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
+
+  // WHAT: Keeps file checkpoints enabled so users can rewind edits.
+  // WHY: Moderate tier preserves recovery from bad edits. Strict disables this to
+  //      reduce local snapshots of sensitive source content.
+  // BREAKS IF SET TO FALSE: Developers lose /rewind recovery for file edits.
+  "fileCheckpointingEnabled": true,
 
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.

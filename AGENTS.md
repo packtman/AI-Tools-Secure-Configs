@@ -2,7 +2,7 @@
 
 ## Cursor Cloud specific instructions
 
-This is a **documentation and configuration reference repository** (AI-Secure-Configs). It contains security-hardened configuration templates and deployment guides for AI coding tools. There is no runnable application, no build system, and no package dependencies.
+This is a **documentation and configuration reference repository** (AI-Secure-Configs). It contains security-hardened configuration templates and deployment guides for AI coding tools. There is no runnable application or build system. GitHub workflows validate config syntax and run scheduled upstream config discovery.
 
 ### Repository structure
 
@@ -19,7 +19,7 @@ Each top-level directory (e.g. `claude-code/`, `cursor/`, `github-copilot/`) pro
 
 ### Development workflow
 
-There is no build, test suite, or dev server. Development consists of editing documentation and config files. To validate changes:
+There is no build, app test suite, or dev server. Development consists of editing documentation and config files. To validate changes:
 
 ```bash
 # Validate JSON files
@@ -33,6 +33,12 @@ python3 -c "import toml; toml.load('path/to/file.toml')"
 
 # Validate shell scripts
 bash -n path/to/script.sh
+
+# Validate all deployable config files
+python3 scripts/validate_config_files.py
+
+# Validate only changed deployable config files
+python3 scripts/validate_config_files.py --changed
 ```
 
 ### Tools available in the environment
@@ -46,4 +52,5 @@ bash -n path/to/script.sh
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- `.github/workflows/config-discovery.yml` opens config-maintenance PRs when upstream sources change.
+- `.github/workflows/config-validation.yml` validates deployable JSON, YAML, TOML, and shell files on PRs.

@@ -31,5 +31,10 @@ contextProviders:
   - name: "codebase"
   - name: "web"
 
+# WHAT: Defines approved MCP servers for agent tools.
+# WHY: Baseline keeps the default list empty so developers intentionally add reviewed servers.
+# BREAKS IF REMOVED: MCP additions become implicit and harder to audit during onboarding.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false
