@@ -31,14 +31,13 @@ def build_scope(report_text: str, max_tools: int) -> str:
 
     sections_by_tool: dict[str, list[tuple[str, list[str]]]] = {}
     tool_order: list[str] = []
-    parts = report_text.split("### ")
-    for part in parts[1:]:
-        header_line, _, body = part.partition("\n")
-        if ":" not in header_line:
-            continue
-        tool_name, source_name = header_line.split(":", 1)
-        tool_name = tool_name.strip()
-        source_name = source_name.strip()
+    matches = list(SECTION_RE.finditer(report_text))
+    for index, match in enumerate(matches):
+        tool_name = match.group(1).strip()
+        source_name = match.group(2).strip()
+        body_start = match.end()
+        body_end = matches[index + 1].start() if index + 1 < len(matches) else len(report_text)
+        body = report_text[body_start:body_end]
         if MISSING_BLOCK not in body:
             continue
         after = body.split(MISSING_BLOCK, 1)[1].strip()
