@@ -126,6 +126,22 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `allow_managed_hooks_only` (in requirements.toml)
+
+**What it does:** Forces Codex to ignore user, project, and session lifecycle hooks, while still allowing hooks that are delivered through managed requirements or managed configuration layers.
+
+**Why it matters:** Lifecycle hooks can run checks, collect audit data, or alter how Codex responds to events. If unreviewed project hooks are allowed in regulated or enterprise environments, a repository can weaken monitoring or run unexpected commands.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only centrally reviewed hooks run. This prevents repository-local hook changes from bypassing audit or approval controls. |
+| Standard enterprise | `true` | Allows approved managed hooks for audit and workflow control while blocking unreviewed local hook definitions. |
+| Individual developers | `false` | Preserves local workflow hooks, with the understanding that local hooks should still be reviewed before use. |
+
+**What breaks if misconfigured:** Setting this to `true` without providing managed hook coverage can disable legitimate team automation, such as formatting checks, audit emitters, or command review hooks. Removing it in Strict or Moderate lets unreviewed local hooks run.
+
+---
+
 ## `deny_read` (in requirements.toml)
 
 **What it does:** Prevents the agent from reading specified file paths or patterns, even in writable sandbox modes.

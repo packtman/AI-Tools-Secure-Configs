@@ -8,6 +8,11 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
+# WHAT: Runs only admin-managed lifecycle hooks and ignores user, project, and session hook configs.
+# WHY: Strict environments need centrally reviewed hooks so local repositories cannot alter agent behavior or hide audit events.
+# BREAKS: If true without managed hook coverage, developer custom hooks and repo hooks will not run; if removed, unreviewed hooks can run.
+allow_managed_hooks_only = true
+
 # Disable all extended features
 [features]
 browser_use = false

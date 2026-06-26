@@ -232,9 +232,11 @@
         {
           "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md",
           "watch_for": [
+            "allow_managed_hooks_only",
             "config",
+            "hooks",
             "sandbox",
             "approval",
             "model",

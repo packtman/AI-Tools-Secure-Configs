@@ -8,6 +8,11 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
+# WHAT: Allows user, project, and session lifecycle hooks in addition to managed hooks.
+# WHY: Baseline keeps local developer automation working while documenting the tier tradeoff.
+# BREAKS: If set true, local workflow hooks may stop; if removed, behavior stays permissive but the tier decision is less explicit.
+allow_managed_hooks_only = false
+
 # Only pin the most dangerous feature
 [features]
 computer_use = false
