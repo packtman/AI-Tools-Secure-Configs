@@ -31,6 +31,7 @@ Admins can configure different policies for different user groups. If a user mat
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allow_managed_hooks_only = true
 
 [features]
 browser_use = false
@@ -42,6 +43,7 @@ computer_use = false
 allowed_approval_policies = ["on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
+allow_managed_hooks_only = false
 
 [features]
 browser_use = true
@@ -53,6 +55,7 @@ computer_use = false
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = ["disabled"]
+allow_managed_hooks_only = true
 
 [features]
 browser_use = false
@@ -93,6 +96,7 @@ com.openai.codex
 cat > /tmp/codex-requirements.toml << 'EOF'
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allow_managed_hooks_only = true
 
 [features]
 browser_use = false
@@ -146,6 +150,7 @@ if (-not (Test-Path $requirementsDir)) {
 @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allow_managed_hooks_only = true
 
 [features]
 browser_use = false
@@ -214,7 +219,7 @@ sudo chown root:root /etc/codex/requirements.toml
 2. Set `approval_policy = "on-request"` as the managed default
 3. Allow `cached` web search but block `live` unless needed
 4. Define an MCP server allowlist with only approved integrations
-5. Use managed hooks to audit command execution
+5. Use `allow_managed_hooks_only = true` with managed hooks to audit command execution
 6. Enable telemetry for compliance and audit logging
 
 ### Authentication Controls

@@ -50,6 +50,7 @@ Requirements are constraints that **users cannot override**. They control securi
 - Allowed sandbox modes
 - Web search mode restrictions
 - MCP server allowlists
+- Managed-hooks-only enforcement
 - Feature flag pins
 - Command rules (prompt/forbidden)
 - Filesystem deny-read rules
@@ -113,6 +114,10 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
 
+### Managed Hooks Only
+
+`allow_managed_hooks_only = true` belongs in `requirements.toml`. It makes Codex ignore user, project, and session lifecycle hooks while still allowing hooks delivered through managed layers. Use it in Strict and Moderate tiers when hooks are part of audit logging or command review, because repository-local hooks should not be able to weaken centrally reviewed controls.
+
 ### Protected Paths
 
 The `.codex/` directory and `.git/` are always protected, even in writable sandbox modes.
@@ -139,6 +144,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_sandbox_modes` to exclude `danger-full-access`
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
+- [ ] Set `allow_managed_hooks_only = true` for Strict and Moderate tiers before relying on hooks for audit or command review
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
 - [ ] Add `deny_read` rules for sensitive paths
 

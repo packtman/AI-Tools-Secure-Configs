@@ -7,6 +7,11 @@ allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
+# WHAT: Runs only admin-managed lifecycle hooks and ignores user, project, and session hook configs.
+# WHY: Moderate allows hooks for audit and workflow controls, but keeps hook definitions centrally reviewed.
+# BREAKS: If true without managed hook coverage, team-local workflow hooks stop; if removed, repo-local hooks can bypass review.
+allow_managed_hooks_only = true
+
 # Disable high-risk features but allow core development
 [features]
 browser_use = false

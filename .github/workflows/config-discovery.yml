@@ -97,20 +97,23 @@ jobs:
           git commit -m "Update config discovery source snapshots"
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
-      - name: Verify Claude API key
+      - name: Check config maintenance agent credentials
+        id: agent-secret
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery handoff PR instead of running the agent."
+            echo "agent_available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "agent_available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-secret.outputs.agent_available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -144,9 +147,10 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-secret.outputs.agent_available == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
           PR_BRANCH: automation/config-maintenance
           AGENT_OUTCOME: ${{ steps.agent.outcome }}
         run: |
@@ -163,6 +167,9 @@ jobs:
             fi
             exit 0
           fi
+
+          python3 scripts/validate_config_files.py --changed "origin/${BASE_BRANCH}"
+          git diff --check
 
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
@@ -186,17 +193,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          AGENT_AVAILABLE: ${{ steps.agent-secret.outputs.agent_available }}
         run: |
           set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When agent credentials are available, it runs the config-maintenance agent against the generated report. When credentials are unavailable, this PR is a Cursor Automation or human review handoff.
 
           Review:
 
           - `automation/config-discovery/reports/latest-config-discovery.md`
+          - `automation/config-discovery/reports/agent-scope.md`
           - `automation/config-discovery/agent-prompt.md`
 
           Expected reviewer checks:
@@ -208,6 +217,16 @@ jobs:
 
           If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
+
+          if [ "${AGENT_AVAILABLE:-false}" != "true" ]; then
+            cat >> pr-body.md <<'PR_BODY'
+
+          Agent status:
+
+          - The config-maintenance agent was skipped because `ANTHROPIC_API_KEY` was not available to the workflow.
+          - Use the Cursor Automation prompt in `automation/config-discovery/CURSOR-AUTOMATION.md`, or review `agent-scope.md` manually.
+          PR_BODY
+          fi
 
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"
