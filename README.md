@@ -156,7 +156,9 @@ AI-Secure-Configs/
 
 This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
 
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+Discovery PRs are intended for a config-maintenance agent. When repository secret `ANTHROPIC_API_KEY` is configured, the scheduled workflow runs the agent, validates its edits, and updates the PR with focused config or rollout documentation changes. When the secret is unavailable, the workflow still opens a discovery-only handoff PR so Cursor Automation or a human reviewer can process `automation/config-discovery/reports/agent-scope.md`.
+
+Pull requests are also checked by [`config-validation.yml`](./.github/workflows/config-validation.yml), which validates deployable JSON, YAML, TOML, and shell examples plus the discovery registry.
 
 ### For Security Teams
 
