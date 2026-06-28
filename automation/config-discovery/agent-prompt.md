@@ -137,4 +137,5 @@ If two tools overlap, such as Claude Code and Cursor both running shell commands
 - Do not reformat unrelated files.
 - Do not add dependencies unless necessary.
 - Do not edit generated discovery state by hand unless you are repairing a scanner issue.
-- Commit and push changes to the current feature branch.
+- Commit and push changes to the current `automation/config-maintenance-<run_id>` feature branch.
+- Run `python3 scripts/validate_config_files.py --changed` before committing deployable config edits.
