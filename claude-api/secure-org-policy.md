@@ -29,6 +29,8 @@ Use this document as a checklist and reference when hardening your Anthropic org
 ## 4. Rate Limits & Spend Controls
 
 - [ ] **Workspace rate limits** — Set requests-per-minute and tokens-per-day caps per workspace.
+- [ ] **Rate-limit API review**, query `/v1/organizations/rate_limits` and `/v1/organizations/workspaces/{workspace_id}/rate_limits`; review each `group_type` such as `model_group`, `batch`, `token_count`, `files`, `skills`, and `web_search`.
+- [ ] **Fast mode approval**, treat the `fast-mode-2026-02-01` beta header as a premium usage feature, not a baseline org setting. Require FinOps and security approval before teams use it.
 - [ ] **Spend notifications** — Configure alerts at 50%, 75%, and 90% of budget.
 - [ ] **Hard caps** — Set maximum monthly spend per workspace where supported.
 

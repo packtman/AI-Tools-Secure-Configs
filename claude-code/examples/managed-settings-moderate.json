@@ -91,6 +91,11 @@
   "disableRemoteControl": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableAgentView": true,
+  "disableArtifact": true,
+  "disableBundledSkills": false,
+  "disableClaudeAiConnectors": true,
+  "fileCheckpointingEnabled": true,
 
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",

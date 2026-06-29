@@ -31,5 +31,12 @@ contextProviders:
   - name: "codebase"
   - name: "web"
 
+# WHAT: No MCP servers are preconfigured in the baseline template.
+# WHY: MCP servers can read data or call external systems, so even low-friction
+# teams should add them intentionally after review.
+# BREAKS IF REMOVED: Developers may assume any local MCP server is part of the
+# approved baseline.
+mcpServers: {}
+
 allowAnonymousTelemetry: false
 disableIndexing: false

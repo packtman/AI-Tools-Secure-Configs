@@ -35,5 +35,11 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: No org-approved MCP servers are preconfigured.
+# WHY: Moderate tier requires each MCP server to be reviewed for data access,
+# command execution, package pinning, and network behavior before rollout.
+# BREAKS IF REMOVED: Teams may add MCP servers informally without review.
+mcpServers: {}
+
 allowAnonymousTelemetry: false
 disableIndexing: false

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import collections
 import pathlib
 import re
 import sys
@@ -11,6 +12,17 @@ import sys
 
 SECTION_RE = re.compile(r"^### (.+?): (.+)$", re.MULTILINE)
 MISSING_BLOCK = "Potential config terms not found in local tool files:"
+
+
+def iter_report_sections(report_text: str) -> list[tuple[str, str, str]]:
+    """Return top-level review sections without splitting on snippet headings."""
+    matches = list(SECTION_RE.finditer(report_text))
+    sections: list[tuple[str, str, str]] = []
+    for index, match in enumerate(matches):
+        body_start = match.end()
+        body_end = matches[index + 1].start() if index + 1 < len(matches) else len(report_text)
+        sections.append((match.group(1).strip(), match.group(2).strip(), report_text[body_start:body_end]))
+    return sections
 
 
 def build_scope(report_text: str, max_tools: int) -> str:
@@ -29,24 +41,17 @@ def build_scope(report_text: str, max_tools: int) -> str:
         "",
     ]
 
-    sections: list[tuple[str, str, list[str]]] = []
-    parts = report_text.split("### ")
-    for part in parts[1:]:
-        header_line, _, body = part.partition("\n")
-        if ":" not in header_line:
-            continue
-        tool_name, source_name = header_line.split(":", 1)
-        tool_name = tool_name.strip()
-        source_name = source_name.strip()
+    grouped_sections: collections.OrderedDict[str, list[tuple[str, list[str]]]] = collections.OrderedDict()
+    for tool_name, source_name, body in iter_report_sections(report_text):
         if MISSING_BLOCK not in body:
             continue
         after = body.split(MISSING_BLOCK, 1)[1].strip()
         terms_block = after.split("\n\n", 1)[0]
         terms = re.findall(r"`([^`]+)`", terms_block)
         if terms:
-            sections.append((tool_name, source_name, terms))
+            grouped_sections.setdefault(tool_name, []).append((source_name, terms))
 
-    if not sections:
+    if not grouped_sections:
         lines.extend(
             [
                 "## No scoped tools",
@@ -58,29 +63,32 @@ def build_scope(report_text: str, max_tools: int) -> str:
         )
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    grouped_items = list(grouped_sections.items())
+    limited = grouped_items[:max_tools]
+    lines.append(f"## Tools to process ({len(limited)} of {len(grouped_items)} tools with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name, source_sections in limited:
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
-        lines.append("")
+        for source_name, terms in source_sections:
+            lines.append(f"- Source: {source_name}")
+            lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
+            if len(terms) > 15:
+                lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+            lines.append("")
 
-    if len(sections) > max_tools:
+    if len(grouped_items) > max_tools:
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(grouped_items) - max_tools} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name, source_sections in grouped_items[max_tools:]:
+            source_names = ", ".join(source_name for source_name, _ in source_sections)
+            lines.append(f"- {tool_name} ({source_names})")
         lines.append("")
 
     return "\n".join(lines)

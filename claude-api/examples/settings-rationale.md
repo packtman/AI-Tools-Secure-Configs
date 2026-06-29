@@ -106,6 +106,19 @@ Every organization-level security setting explained: **what it does**, **why it 
 | `monthly_budget_usd` | Hard cost boundary | CFO-friendly: maximum spend is guaranteed. |
 | `alert_thresholds` (50/75/90%) | Early warning | Time to investigate before the cap is hit. |
 
+### Admin API rate-limit groups
+
+The Admin API returns rate-limit entries by `group_type`, including `model_group`, `batch`, `token_count`, `files`, `skills`, and `web_search`. Organization limits and workspace overrides can differ. A workspace response only lists groups with overrides, so also query the organization endpoint to see inherited limits.
+
+| Review item | Why it matters |
+|-------------|----------------|
+| `model_group` entries | Confirms which model families share request and token budgets. This matters after vendor tier changes. |
+| Workspace overrides | Shows where a workspace has stricter or looser limits than the organization baseline. |
+| `web_search`, `files`, and `skills` groups | These API surfaces can create cost and data exposure patterns that differ from normal Messages API calls. |
+| `fast-mode-2026-02-01` beta header | This is a request header for premium fast mode usage, not an org policy key. Require FinOps approval and alerting before allowing it. |
+
+**What breaks if ignored:** A team may inherit higher limits than expected after a vendor tier change, or enable premium fast mode without cost monitoring.
+
 ---
 
 ## 8. Compliance API & Activity Feed
