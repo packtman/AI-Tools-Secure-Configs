@@ -73,6 +73,20 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## Claude Code MCP bridge environment variables
+
+**What they do:** `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` are provided to Claude Code MCP helper scripts. `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` tunes Claude Code's idle timeout for remote MCP tool calls.
+
+**Why they matter:** They are relevant when Claude Code is used as, or connects to, an MCP server. They do not enforce Claude Desktop policy and are not valid `claude_desktop_config.json` keys.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All | Do not place these in Desktop policy or config files | Manage Claude Desktop with Desktop enterprise policy keys, and manage Claude Code MCP behavior with Claude Code managed settings or environment controls. |
+
+**What breaks if misconfigured:** Adding these variables to Desktop policy creates a false sense of enforcement. The Desktop app ignores unsupported policy keys, while Claude Code MCP behavior remains governed elsewhere.
+
+---
+
 ## `disableAutoUpdates`
 
 **What it does:** Prevents Claude Desktop from automatically downloading and installing updates.

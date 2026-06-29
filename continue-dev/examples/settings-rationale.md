@@ -127,7 +127,7 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | Aspect | Detail |
 |--------|--------|
 | **What it does** | Continue.dev supports Model Context Protocol servers as tools, extending the agent's capabilities with external integrations. |
-| **Recommended** | Audit and scope all MCP servers. Use only approved servers. |
+| **Recommended** | Set `mcpServers: {}` until a server is approved, then add only audited and scoped servers. |
 
 ### Scoping and Auditing
 
@@ -138,6 +138,16 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | Package pinning | Use exact versions, not `latest` | Prevents supply chain attacks via compromised upstream packages. |
 | Network auditing | Monitor MCP server network connections | Detect unexpected outbound connections to unauthorized endpoints. |
 | Configuration review | Review MCP configs in code review / CI | Catch malicious or overly permissive MCP configurations before they're used. |
+
+### Tier guidance for `mcpServers`
+
+| Environment | Recommended value | Reasoning |
+|-------------|-------------------|-----------|
+| Regulated | `{}` | No external tool integrations until each server is reviewed and deployed by IT. |
+| Standard enterprise | `{}` by default, then approved named servers | Keeps the default safe while allowing reviewed team workflows. |
+| Developer | `{}` in the shared template | Developers can add local servers intentionally, but the baseline template does not bless arbitrary MCP access. |
+
+**What breaks if misconfigured:** A broad filesystem MCP server can expose home directories. A shell or HTTP MCP server can execute commands or move data to external systems. An empty `mcpServers` map does not block normal chat or code context providers, but it means MCP-backed tools are unavailable until added.
 
 ### Risk Categories
 

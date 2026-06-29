@@ -98,19 +98,22 @@ jobs:
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
       - name: Verify Claude API key
+        id: api-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable. Opening a discovery-only handoff PR."
+            echo "has_api_key=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_api_key=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.api-key.outputs.has_api_key == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -135,7 +138,7 @@ jobs:
             5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
-            8. Validate every edited JSON, YAML, and TOML using AGENTS.md commands before finishing.
+            8. Validate edited config files with `python3 scripts/validate_config_files.py --changed` and any extra AGENTS.md commands needed.
 
             Leave file changes unstaged. The workflow commits after you finish.
           claude_args: |
@@ -144,7 +147,7 @@ jobs:
             --allowedTools "Read,Edit,Write,MultiEdit,WebFetch,Bash(git diff *),Bash(git status *),Bash(python3 *),Bash(yamllint *),Bash(bash -n *)"
 
       - name: Commit agent changes
-        if: steps.discovery.outputs.run_agent == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
+        if: steps.discovery.outputs.run_agent == 'true' && steps.api-key.outputs.has_api_key == 'true' && (steps.agent.outcome == 'success' || steps.agent.outcome == 'failure')
         id: agent-changes
         env:
           PR_BRANCH: automation/config-maintenance
@@ -164,6 +167,7 @@ jobs:
             exit 0
           fi
 
+          python3 scripts/validate_config_files.py --changed
           git add .
           if [ "${AGENT_OUTCOME}" = "failure" ]; then
             git commit -m "Apply partial config maintenance updates (agent hit turn limit)"
@@ -186,17 +190,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_BRANCH: automation/config-maintenance
           AGENT_CHANGED: ${{ steps.agent-changes.outputs.agent_changed }}
+          HAS_API_KEY: ${{ steps.api-key.outputs.has_api_key }}
         run: |
           set -euo pipefail
 
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When the Claude action secret is available, the workflow also runs the config-maintenance agent against the generated report.
 
           Review:
 
           - `automation/config-discovery/reports/latest-config-discovery.md`
+          - `automation/config-discovery/reports/agent-scope.md`
           - `automation/config-discovery/agent-prompt.md`
 
           Expected reviewer checks:
@@ -209,10 +215,17 @@ jobs:
           If this PR contains only discovery snapshot/report changes, the report should include a "No config update needed" explanation for each changed source.
           PR_BODY
 
+          if [ "${HAS_API_KEY:-false}" != "true" ]; then
+            cat >> pr-body.md <<'PR_BODY'
+
+          Note: `ANTHROPIC_API_KEY` was not available to this workflow run, so the Claude action did not apply config edits automatically. Use the generated report as the handoff for Cursor Automation or human review.
+          PR_BODY
+          fi
+
           if [ "${AGENT_CHANGED:-false}" = "true" ]; then
             TITLE="Config maintenance: apply upstream config updates"
           else
-            TITLE="Config maintenance: upstream changes reviewed"
+            TITLE="Config maintenance: upstream changes ready for review"
           fi
 
           OPEN_PR="$(gh pr list --head "${PR_BRANCH}" --state open --json number --jq '.[0].number // empty')"

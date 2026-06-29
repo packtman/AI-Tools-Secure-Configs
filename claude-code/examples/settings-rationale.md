@@ -100,6 +100,62 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and Agent View, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can run beyond a single interactive turn. They increase autonomy, usage, and the chance that an agent keeps working outside the developer's immediate attention.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No background agent execution without a reviewed pilot and monitoring. |
+| Standard enterprise | `true` | Block until cost controls, workspace scope, and audit guidance are defined. |
+| Developer | `false` | Allow experimentation after local approvals. |
+
+**What breaks if enabled:** Developers cannot use background agents, `--bg`, `/background`, or Agent View supervision.
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which publishes session output as a private web page on claude.ai.
+
+**Why it matters:** Artifacts create a web-published sharing surface for code, review notes, and implementation details. Organizations should approve that sharing path before enabling it broadly.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Avoid web-published output surfaces for sensitive code. |
+| Standard enterprise | `true` | Keep sharing inside approved repositories and collaboration tools. |
+| Developer | `false` | Allow low-risk teams to use Artifacts for collaboration. |
+
+**What breaks if enabled:** Developers cannot publish Claude Code output through Artifact pages.
+
+### `disableBundledSkills`
+
+**What it does:** Disables vendor-shipped bundled skills and workflows. Project, user, and plugin skills are controlled separately by skills and plugin settings.
+
+**Why it matters:** Bundled skills add behavior to the model context. Strict environments should review those behaviors before enabling them.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only reviewed skills should be available. |
+| Standard enterprise | `false` | Keep normal productivity, while `disableWorkflows` blocks higher-autonomy workflow runs. |
+| Developer | `false` | Maximum feature availability. |
+
+**What breaks if enabled:** Built-in bundled skills disappear from Claude Code, which can reduce help quality for common development tasks.
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Blocks automatic fetching or connection of claude.ai hosted MCP connectors.
+
+**Why it matters:** MCP connectors become agent tools that can move prompts, code, or metadata through external services. They need the same review as local MCP servers.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only explicitly approved MCP integrations should run. |
+| Standard enterprise | `true` | Require security review before hosted connectors become available. |
+| Developer | `false` | Allow connector use with user approval and monitoring. |
+
+**What breaks if enabled:** Users cannot use claude.ai hosted connectors unless IT provides an approved alternative or exception.
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
@@ -234,6 +290,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | Regulated | Disabled | No persistent AI memory. Prevents data leakage between sessions. |
 | Standard enterprise | Enabled | Productivity benefit outweighs risk. |
+
+### `fileCheckpointingEnabled` / `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`
+
+**What it does:** Controls whether Claude Code snapshots files before edits so `/rewind` can restore them.
+
+**Why it matters:** Checkpoints improve recovery from mistaken edits, but they also create local copies of changed files. Strict environments may not allow extra local snapshots of regulated source or generated files.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Avoid extra local snapshots of sensitive files. |
+| Standard enterprise | `true` | Preserve `/rewind` recovery for normal developer workflows. |
+| Developer | `true` | Maximum recoverability. |
+
+**What breaks if disabled:** Developers lose `/rewind` recovery for AI edits.
 
 ### `CLAUDE_CODE_SKIP_PROMPT_HISTORY`
 

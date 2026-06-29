@@ -32,5 +32,10 @@ contextProviders:
   - name: "diff"
   - name: "tree"
 
+# WHAT: No org-approved MCP servers are preconfigured.
+# WHY: Strict tier blocks external tool integrations until each server is reviewed.
+# BREAKS IF REMOVED: Admins may miss that MCP access has no approved baseline here.
+mcpServers: {}
+
 allowAnonymousTelemetry: false
 disableIndexing: true

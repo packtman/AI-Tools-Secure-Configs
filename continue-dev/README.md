@@ -56,12 +56,17 @@ Defaults:
 
 Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 
+### MCP Servers
+
+The tiered `config-*.yaml` files set `mcpServers: {}` by default. MCP servers extend Continue.dev with external tools, so add named servers only after reviewing their package source, filesystem scope, command execution behavior, and network destinations.
+
 ## Deployment Checklist
 
 1. Deploy `~/.continue/config.yaml` with secure defaults on all developer machines.
 2. Create `permissions.yaml` with appropriate tool restrictions.
 3. Use org secrets (not user secrets) for shared API keys.
-4. Deploy `.continuerc.json` to all repositories for project-level overrides.
-5. Train developers on permission modes (`--readonly` for code review).
-6. Never store API keys in `config.yaml` — use environment variables or org secrets.
-7. Audit Continue configuration in repositories before trusting.
+4. Keep `mcpServers: {}` until each server is approved and scoped.
+5. Deploy `.continuerc.json` to all repositories for project-level overrides.
+6. Train developers on permission modes (`--readonly` for code review).
+7. Never store API keys in `config.yaml`, use environment variables or org secrets.
+8. Audit Continue configuration in repositories before trusting.

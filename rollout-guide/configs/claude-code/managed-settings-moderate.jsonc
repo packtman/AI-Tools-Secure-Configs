@@ -173,6 +173,40 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables background agents and Agent View.
+  // WHY: Moderate tier blocks extra autonomous execution surfaces until admins can
+  //      monitor cost, workspace scope, and approval behavior.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude agents, --bg, /background,
+  //      or the on-demand supervisor UI.
+  "disableAgentView": true,
+
+  // WHAT: Disables publishing session output as a private claude.ai artifact page.
+  // WHY: Moderate tier keeps source code and review output inside approved local
+  //      or enterprise-controlled surfaces unless an artifact workflow is approved.
+  // BREAKS IF SET TO TRUE: Developers cannot share polished session output through
+  //      the Artifact tool.
+  "disableArtifact": true,
+
+  // WHAT: Leaves bundled skills enabled.
+  // WHY: Moderate tier already disables dynamic workflows but keeps vendor-shipped
+  //      skills available for productivity while managed permissions still apply.
+  // BREAKS IF SET TO TRUE: Built-in bundled skills disappear from the model context,
+  //      which can reduce assistance quality for common development tasks.
+  "disableBundledSkills": false,
+
+  // WHAT: Prevents automatic use of claude.ai hosted MCP connectors.
+  // WHY: Moderate tier requires MCP servers and cloud connectors to be reviewed
+  //      before they become agent tools.
+  // BREAKS IF SET TO FALSE: Users may connect unapproved cloud-hosted tools that
+  //      move code or prompts outside approved integrations.
+  "disableClaudeAiConnectors": true,
+
+  // WHAT: Keeps edit checkpoint snapshots enabled for /rewind.
+  // WHY: Moderate tier favors recoverability after AI edits. Secret file deny rules
+  //      still reduce the chance of checkpointing sensitive files.
+  // BREAKS IF SET TO FALSE: Developers lose /rewind recovery for mistaken edits.
+  "fileCheckpointingEnabled": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

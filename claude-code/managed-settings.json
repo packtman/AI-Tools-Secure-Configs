@@ -112,6 +112,16 @@
 
   "disableWorkflows": true,
 
+  "disableAgentView": true,
+
+  "disableArtifact": true,
+
+  "disableBundledSkills": false,
+
+  "disableClaudeAiConnectors": true,
+
+  "fileCheckpointingEnabled": true,
+
   "autoUpdatesChannel": "stable",
 
   "minimumVersion": "2.1.38",

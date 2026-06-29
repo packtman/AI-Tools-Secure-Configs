@@ -184,6 +184,11 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
+| `disableAgentView` | Block background agents and Agent View |
+| `disableArtifact` | Block publishing session output as Artifact pages |
+| `disableBundledSkills` | Block vendor-shipped bundled skills |
+| `disableClaudeAiConnectors` | Block claude.ai hosted MCP connector auto-fetching |
+| `fileCheckpointingEnabled` | Enable or disable local edit checkpoints for `/rewind` |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
