@@ -55,7 +55,7 @@ def build_scope(report_text: str, max_tools: int) -> str:
         "2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.",
         "3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.",
         "4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.",
-        "5. Validate edited JSON, YAML, and TOML before finishing.",
+        "5. Validate edited JSON, YAML, TOML, and shell files before finishing.",
         "",
         "Do not attempt to review unchanged tools or sources with no missing local terms in this run.",
         "",
