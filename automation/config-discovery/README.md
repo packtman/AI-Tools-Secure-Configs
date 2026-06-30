@@ -15,8 +15,10 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `state/source-snapshots.json` | Persisted source fingerprints. This changes only when a watched source changes or a new source is added. |
 | `reports/latest-config-discovery.md` | Latest generated discovery report for reviewers. |
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
-| `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
-| `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report, grouped by distinct tool. |
+| `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner, optionally runs the config-maintenance agent, and opens a PR. |
+| `.github/workflows/config-validation.yml` | PR workflow that validates deployable JSON, YAML, TOML, and shell files. |
+| `scripts/validate_config_files.py` | Local and CI validator for deployable config examples. |
 
 ## How the Loop Works
 
@@ -25,8 +27,9 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 3. It compares the normalized response fingerprint, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
-6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+6. The workflow commits those files to a per-run branch named `automation/config-maintenance-<run_id>`.
+7. If repository secret `ANTHROPIC_API_KEY` is available, the workflow runs the config-maintenance agent. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the PR branch.
+8. If `ANTHROPIC_API_KEY` is unavailable, the workflow still opens a discovery handoff PR for Cursor Automation or a human reviewer.
 
 GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
 
@@ -87,15 +90,16 @@ The workflow needs:
 - `contents: write`, to commit updated snapshots and reports.
 - `pull-requests: write`, to open or update the discovery PR.
 
-No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step requires repository secret `ANTHROPIC_API_KEY`.
+No external package registry tokens or vendor API keys are required for discovery. The maintenance agent step uses repository secret `ANTHROPIC_API_KEY` when available. If the secret is missing, the workflow opens a discovery-only handoff PR instead of failing before review.
 
 ## Agent step failures (`error_max_turns`)
 
-If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow now:
+If the Claude Code action log shows `error_max_turns` with `num_turns` above the configured limit, the maintenance task was too large for one run. The workflow:
 
 - Builds `reports/agent-scope.md` with at most four tools that have missing local terms.
 - Uses `--max-turns 60` and instructs the agent to mirror strict, moderate, and baseline per scoped tool.
-- Commits partial file changes if the agent edited files before hitting the limit.
+- Validates agent-edited deployable config files before commit.
+- Commits partial file changes if the agent edited valid files before hitting the limit.
 - Fails the job only when the agent errors and leaves no diff.
 
 Re-run with `workflow_dispatch` and `force_agent_review: true` to process deferred tools on a later run.
