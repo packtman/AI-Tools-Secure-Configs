@@ -406,7 +406,8 @@ def run_discovery(args: argparse.Namespace) -> int:
             print(f"registry error: {error}", file=sys.stderr)
         return 2
 
-    source_count = len(iter_sources(registry))
+    sources = iter_sources(registry)
+    source_count = len(sources)
     if args.check:
         print(f"registry ok: {len(registry['tools'])} tools, {source_count} sources")
         return 0
@@ -420,12 +421,12 @@ def run_discovery(args: argparse.Namespace) -> int:
         {"schema_version": 1, "generated_by": "automation/config-discovery/discover_configs.py", "sources": {}},
     )
     previous_sources = previous_state.get("sources", {})
-    new_sources = dict(previous_sources)
+    new_sources: dict[str, Any] = {}
     changes: list[dict[str, Any]] = []
     changed_at = utc_now()
     local_text_by_tool = {tool["id"]: load_local_tool_text(tool, repo_root) for tool in registry["tools"]}
 
-    for source in iter_sources(registry):
+    for source in sources:
         source_id = source["source_id"]
         previous = previous_sources.get(source_id, {})
         metadata, body = fetch_source(source, previous, args.timeout)
@@ -437,6 +438,17 @@ def run_discovery(args: argparse.Namespace) -> int:
             changes.append({"source_id": source_id, "change_type": change_type, "snapshot": current})
         else:
             new_sources[source_id] = previous
+
+    active_source_ids = {source["source_id"] for source in sources}
+    for stale_source_id in sorted(set(previous_sources) - active_source_ids):
+        previous = previous_sources[stale_source_id]
+        snapshot = dict(previous)
+        snapshot.setdefault("source_id", stale_source_id)
+        snapshot.setdefault("name", stale_source_id.split(":", 1)[-1])
+        snapshot.setdefault("tool_id", stale_source_id.split(":", 1)[0])
+        snapshot.setdefault("tool_display_name", snapshot["tool_id"])
+        snapshot["last_changed_at"] = changed_at
+        changes.append({"source_id": stale_source_id, "change_type": "source-removed-from-registry", "snapshot": snapshot})
 
     if not changes:
         print("no upstream source changes detected")

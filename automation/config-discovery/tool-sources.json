@@ -129,7 +129,7 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
           "watch_for": [
             "policy",
             "organization",
@@ -141,13 +141,37 @@
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",
             "patterns",
             "excluded",
             "audit"
+          ]
+        },
+        {
+          "name": "Content exclusion audit documentation",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/review-changes.md",
+          "watch_for": [
+            "content exclusion",
+            "audit log",
+            "copilot.content_exclusion_changed",
+            "organization",
+            "enterprise"
+          ]
+        },
+        {
+          "name": "MCP allowlist enforcement documentation",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/reference/mcp-allowlist-enforcement.md",
+          "watch_for": [
+            "MCP",
+            "allowlist",
+            "Registry only",
+            "enforcement",
+            "server ID"
           ]
         }
       ]
@@ -171,9 +195,9 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
+          "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md",
           "watch_for": [
             "config",
             "sandbox",
@@ -232,7 +256,7 @@
         {
           "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md",
           "watch_for": [
             "config",
             "sandbox",
