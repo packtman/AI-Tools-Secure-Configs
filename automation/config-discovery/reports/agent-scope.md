@@ -10,30 +10,30 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (4 of 4 with missing terms)
 
 ### Claude Code
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
-
-### Claude Code
-
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+- Sources:
+  - Managed settings documentation: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+  - Hooks documentation: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+- Combined missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `CLAUDE_MODEL`
 
 ### Continue.dev
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
+- Sources:
+  - Configuration reference: `mcpServers`
+- Combined missing terms: `mcpServers`
 
 ### Claude Desktop
 
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+- Sources:
+  - Claude Desktop MCP documentation: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
+- Combined missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
-## Deferred (1 tools)
+### Claude API
 
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Sources:
+  - Anthropic admin API documentation: `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `model_group`
+  - Anthropic API release notes: `LanguageModel`, `LanguageModelSession`, `fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`
+- Combined missing terms: `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `model_group`, `LanguageModel`, `LanguageModelSession`, `mcp_oauth`, `model_context_window_exceeded`

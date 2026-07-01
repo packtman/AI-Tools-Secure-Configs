@@ -19,7 +19,7 @@ Goal: keep hardened AI tool configs current across Claude Code, Cursor, GitHub C
 
 Process:
 
-1. Check for an open config maintenance PR or branch named automation/config-maintenance.
+1. Check for an open config maintenance PR or branch named `automation/config-maintenance-<run_id>`.
 2. Read automation/config-discovery/reports/latest-config-discovery.md.
 3. For each changed upstream source, open the upstream source and identify real admin, managed-settings, permission, privacy, sandbox, network, MCP, audit, retention, identity, or content-exclusion controls.
 4. Pay special attention to "Potential config terms not found in local tool files."
@@ -45,4 +45,4 @@ For a vendor change such as Claude Code adding dynamic workflows, the agent shou
 
 ## Why This Requires Cursor Automation
 
-The GitHub workflow is intentionally dependency-free and does not call a model API. It can detect source changes and identify candidate config terms, but it cannot safely decide the tier policy for a brand-new vendor control. That security decision needs an AI maintenance agent or a human reviewer.
+The GitHub workflow can detect source changes and identify candidate config terms. If the in-workflow model step cannot run, for example because `ANTHROPIC_API_KEY` is missing, it opens a discovery handoff PR for this Cursor Automation or a human reviewer. Security decisions for brand-new vendor controls still need an AI maintenance agent or a human reviewer.
