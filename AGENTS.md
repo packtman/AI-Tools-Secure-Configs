@@ -16,7 +16,7 @@ Each top-level directory (e.g. `claude-code/`, `cursor/`, `github-copilot/`) pro
 - `.toml` — Configuration templates (14 files)
 - `.sh` — Example hook scripts in `claude-code/examples/hook-scripts/`
 - `.mdc` — Cursor rule files
-- `.github/workflows/` — Automation workflows for config discovery and config validation
+- `.github/workflows/` - Automation workflows for config discovery and config validation
 
 ### Development workflow
 
