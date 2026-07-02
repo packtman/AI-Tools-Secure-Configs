@@ -454,9 +454,9 @@
       },
       "sources": [
         {
-          "name": "Gemini CLI repository",
-          "kind": "repository",
-          "url": "https://github.com/google-gemini/gemini-cli",
+          "name": "Gemini CLI settings reference",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/settings.md",
           "watch_for": [
             "settings.json",
             "sandbox",
