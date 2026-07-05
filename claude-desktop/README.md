@@ -77,6 +77,12 @@ Each MCP server entry in `claude_desktop_config.json` grants Claude the ability 
 - Review MCP server source code before deployment.
 - Deploy enterprise policies to block local MCP if not needed.
 
+### Claude Code MCP helper variables are not Desktop policy keys
+
+The upstream Claude Code MCP docs mention `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL`. Claude Code sets these only when it runs a dynamic header helper for a remote MCP server. They are useful for writing one helper script that serves multiple MCP servers, but they are not Claude Desktop managed policy keys and should not be added to `claude_desktop_config.json` or Desktop MDM payloads.
+
+If Desktop needs the same remote MCP server, configure it as a reviewed `mcpServers` entry and keep secrets in environment variables or a secrets manager. Do not store bearer tokens, API keys, or OAuth client secrets inline.
+
 ---
 
 ## Deployment Checklist

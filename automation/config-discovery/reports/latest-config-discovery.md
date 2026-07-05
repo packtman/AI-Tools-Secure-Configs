@@ -80,6 +80,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+Config update added: tiered Claude Code managed settings now cover `disableAgentView` plus related newly documented controls for Artifact publishing, bundled skills, claude.ai connectors, and file checkpointing. The environment variable reference now documents model override, IDE auto-connect, IDE auto-install skip, and away-summary variables as guidance so admins do not mistake developer convenience variables for stronger managed policy enforcement.
+
 ### Claude Code: Hooks documentation
 
 - Change type: `fingerprint-method-changed`
@@ -348,6 +350,8 @@ Potential config terms not found in local tool files:
 `mcpServers`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Config update added: Continue.dev tier configs now include an explicit empty `mcpServers` list with comments explaining how to add only reviewed, pinned, least-privilege MCP servers.
 
 ### Continue.dev: Continue repository
 
@@ -651,6 +655,8 @@ Potential config terms not found in local tool files:
 `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+No config update needed: these are Claude Code MCP dynamic header helper environment variables set when Claude Code executes an MCP header helper. They are not Claude Desktop managed policy keys and should not be added to `claude_desktop_config.json` or Desktop MDM payloads. Claude Desktop guidance now calls this out explicitly.
 
 ### Claude Desktop: Claude Desktop support documentation
 

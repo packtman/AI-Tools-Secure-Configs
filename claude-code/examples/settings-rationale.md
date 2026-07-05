@@ -100,6 +100,54 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and agent view commands, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can keep working outside the user's main terminal flow. That changes audit expectations and can surprise developers who expect all actions to happen in the foreground session.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No autonomous background work without a formal pilot and monitoring. |
+| Standard enterprise | `true` | Disable until admins define usage monitoring, repository scope, and exception handling. |
+| Developer | `false` | Allow local experimentation with normal prompts and local accountability. |
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which publishes session output as a private web page on claude.ai.
+
+**Why it matters:** Session output may include code, filenames, architecture details, or incident context. Artifact sharing needs data-handling review before enterprise rollout.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Minimize hosted sharing surfaces. |
+| Standard enterprise | `true` | Use approved internal sharing systems until Artifact handling is reviewed. |
+| Developer | `false` | Preserve account-default behavior. |
+
+### `disableBundledSkills`
+
+**What it does:** Removes bundled Claude Code skills and bundled workflow commands. Skills from plugins, `.claude/skills/`, and `.claude/commands/` are unaffected.
+
+**Why it matters:** Bundled skills can change product behavior and expand what the model can attempt. Strict environments may prefer to pilot every skill surface before enabling it.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Remove unpiloted skill surfaces. |
+| Standard enterprise | `false` | Preserve vendor-maintained productivity skills while disabling dynamic workflows separately. |
+| Developer | `false` | Preserve the default developer experience. |
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Disables automatic loading of claude.ai MCP connectors. MCP (Model Context Protocol) lets AI tools call external services through configured servers or connectors.
+
+**Why it matters:** Connectors can expose external services and data paths. They need review for scopes, logging, ownership, and data handling before broad rollout.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only reviewed and documented tool integrations are allowed. |
+| Standard enterprise | `true` | Require connector review before cloud-hosted tool integrations appear in sessions. |
+| Developer | `false` | Allow account-default connectors with local prompts. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
@@ -234,6 +282,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | Regulated | Disabled | No persistent AI memory. Prevents data leakage between sessions. |
 | Standard enterprise | Enabled | Productivity benefit outweighs risk. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Saves snapshots before file edits so `/rewind` can restore previous versions.
+
+**Why it matters:** Checkpoints improve rollback for AI-made edits, but they also create extra local copies of source files. Strict environments may disable them when local code retention is tightly controlled.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Reduce extra local copies of sensitive code. |
+| Standard enterprise | `true` | Preserve `/rewind` for safer developer rollback. |
+| Developer | `true` | Preserve the default developer experience. |
 
 ### `CLAUDE_CODE_SKIP_PROMPT_HISTORY`
 

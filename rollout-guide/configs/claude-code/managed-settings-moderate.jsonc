@@ -173,6 +173,41 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables background agents and agent view commands.
+  // WHY: Background agents can continue broader autonomous work outside the user's
+  //      main terminal flow. Moderate tier blocks this until admins define audit,
+  //      usage, and repository-scope controls.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude agents, --bg, /background,
+  //      or the on-demand supervisor.
+  "disableAgentView": true,
+
+  // WHAT: Disables the Artifact tool that publishes session output as a private web page.
+  // WHY: Session output may include code, filenames, or incident context that should
+  //      not be copied to a hosted artifact surface without a rollout review.
+  // BREAKS IF SET TO TRUE: Developers cannot share Claude Code output through Artifact
+  //      and must use approved internal paste, ticket, or document systems.
+  "disableArtifact": true,
+
+  // WHAT: Keeps bundled Claude Code skills available.
+  // WHY: Moderate tier allows built-in productivity skills while other settings block
+  //      dynamic workflows and shell execution in untrusted skills.
+  // BREAKS IF SET TO TRUE: Built-in skills disappear, which can break standard
+  //      developer workflows that rely on vendor-maintained skill behavior.
+  "disableBundledSkills": false,
+
+  // WHAT: Disables automatic loading of claude.ai MCP connectors.
+  // WHY: MCP connectors can call external services. Moderate tier requires connector
+  //      review before cloud-hosted tool integrations appear in developer sessions.
+  // BREAKS IF SET TO FALSE: Users may inherit account-level connectors that security
+  //      has not reviewed for data handling, scopes, or logging.
+  "disableClaudeAiConnectors": true,
+
+  // WHAT: Keeps edit checkpoints enabled so /rewind can restore files.
+  // WHY: Checkpoints preserve developer rollback during normal enterprise work.
+  //      Strict tier may disable them to reduce local copies of sensitive code.
+  // BREAKS IF SET TO FALSE: Developers lose the ability to rewind AI-made file edits.
+  "fileCheckpointingEnabled": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

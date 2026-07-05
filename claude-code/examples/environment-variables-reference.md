@@ -29,16 +29,24 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable auto memory writes | `1` for sensitive environments |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments |
+| `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` | Disable edit checkpoints used by `/rewind` | `1` for regulated environments |
 
 ## Behavior Controls
 
 | Variable | Description | Secure value |
 |----------|-------------|-------------|
+| `ANTHROPIC_MODEL` / `CLAUDE_MODEL` | Per-session model override | Prefer managed `model`, `availableModels`, and `enforceAvailableModels` for policy |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | Disable background agents and agent view | `1` until background agents are piloted |
+| `CLAUDE_CODE_DISABLE_ARTIFACT` | Disable hosted Artifact publishing | `1` unless hosted sharing is approved |
+| `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | Disable bundled Claude Code skills and bundled workflow commands | `1` for strict environments |
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Enable or disable the terminal session recap after idle time | `0` if terminal recaps are not approved |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Automatically connect an external terminal session to a running IDE | `0` or unset unless IDE context sharing is approved |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Skip automatic IDE extension installation | `1` when extensions are managed by IT |
 
 ## MCP & Tools
 
@@ -47,6 +55,8 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `MCP_TIMEOUT` | MCP server startup timeout (ms) | `10000` |
 | `MAX_MCP_OUTPUT_TOKENS` | Max token output from MCP tools | `10000` (default) |
 | `MCP_TOOL_TIMEOUT` | MCP tool execution timeout (ms) | `60000` |
+| `ENABLE_CLAUDEAI_MCP_SERVERS` | Enable or disable claude.ai MCP connectors for one shell session | `false` until connectors are reviewed |
+| `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | Abort idle remote MCP tool calls after this many milliseconds | Keep default unless an approved server needs longer |
 
 ## Sandbox
 
@@ -88,6 +98,10 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_DISABLE_AGENT_VIEW": "1",
+    "CLAUDE_CODE_DISABLE_ARTIFACT": "1",
+    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "false",
     "DISABLE_AUTOUPDATER": "1"
   }
 }

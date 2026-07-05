@@ -35,5 +35,12 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Approved MCP servers that Continue can launch as tools.
+# WHY: Moderate tier requires an explicit reviewed list. Add only pinned,
+#      least-privilege servers with documented owner, scopes, and logging.
+# BREAKS IF REMOVED: Teams may assume ad hoc project MCP servers are acceptable,
+#      creating unmanaged filesystem, shell, or API access.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

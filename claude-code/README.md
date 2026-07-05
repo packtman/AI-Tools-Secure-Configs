@@ -183,6 +183,11 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
+| `disableAgentView` | Disable background agents and agent view |
+| `disableArtifact` | Disable hosted Artifact publishing |
+| `disableBundledSkills` | Remove bundled skills and bundled workflow commands |
+| `disableClaudeAiConnectors` | Disable automatic claude.ai MCP connectors |
+| `fileCheckpointingEnabled` | Enable or disable edit checkpoints for `/rewind` |
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
@@ -204,6 +209,9 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableAgentView: true` until background agents have audit and usage controls.
+- [ ] Set `disableArtifact: true` unless hosted Artifact sharing is approved.
+- [ ] Set `disableClaudeAiConnectors: true` until cloud MCP connectors are reviewed.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
