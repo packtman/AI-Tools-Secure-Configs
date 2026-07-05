@@ -149,6 +149,21 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | HTTP/API client | High | Allow only to approved internal APIs. Block external URLs. |
 | Shell execution | **Critical** | Block or require-confirmation for every invocation. |
 
+### `mcpServers`
+
+| Aspect | Detail |
+|--------|--------|
+| **What it does** | Defines MCP servers that Continue can launch as agent tools. |
+| **Recommended** | Keep `mcpServers: []` until IT approves a specific server package, command, scopes, and owner. |
+| **Why** | An MCP server can read files, run commands, call APIs, or query databases depending on its implementation. Empty-by-default avoids silently approving a new tool-execution surface. |
+| **What breaks if removed** | Developers may configure MCP elsewhere without review, making it harder to audit which tool servers are available. |
+
+| Environment | Recommended value | Reasoning |
+|-------------|-------------------|-----------|
+| Regulated | `[]` | No MCP server until an exception documents data access, logs, and rollback. |
+| Standard enterprise | `[]` plus reviewed additions | Start empty, then add pinned, least-privilege servers with owners and SIEM-visible logs. |
+| Developer | `[]` as a safe default | Teams can add reviewed servers for productivity without making the base config risky. |
+
 ### Misconfiguration Risk
 
 An unscoped filesystem MCP server gives the agent access to the entire filesystem. A shell-execution MCP server gives the agent arbitrary command execution. A database MCP server with write access allows the agent to modify production data. Each unaudited MCP server is an additional attack surface.

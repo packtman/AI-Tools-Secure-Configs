@@ -36,5 +36,12 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Approved MCP servers that Continue can launch as tools.
+# WHY: Enterprise deployments should centralize MCP review. Add only pinned,
+#      least-privilege servers that route through approved network paths.
+# BREAKS IF REMOVED: MCP server approval may drift into local workstation files,
+#      bypassing model gateway and SIEM expectations.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

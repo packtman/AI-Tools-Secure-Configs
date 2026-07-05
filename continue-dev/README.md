@@ -41,6 +41,16 @@ Defaults:
 | `--readonly` | Only read-only tools are available |
 | Default | Respects per-tool permission settings |
 
+### MCP Server Governance
+
+MCP, Model Context Protocol, lets Continue launch external tool servers. Treat each MCP server like a local integration with the permissions of the developer account.
+
+| Tier | `mcpServers` posture |
+|------|----------------------|
+| Strict | Empty list. Add servers only through an approved exception. |
+| Moderate | Empty list by default. Add only reviewed, pinned, least-privilege servers. |
+| Baseline | Empty list as a safe starting point. Teams may add reviewed servers for productivity. |
+
 ### Configuration Hierarchy
 
 1. **Workspace** — `.continuerc.json` in project root
@@ -65,3 +75,4 @@ Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 5. Train developers on permission modes (`--readonly` for code review).
 6. Never store API keys in `config.yaml` — use environment variables or org secrets.
 7. Audit Continue configuration in repositories before trusting.
+8. Keep `mcpServers` empty until each server package, command, scopes, and logs are reviewed.

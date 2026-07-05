@@ -32,5 +32,12 @@ contextProviders:
   - name: "diff"
   - name: "tree"
 
+# WHAT: Approved MCP servers that Continue can launch as tools.
+# WHY: Strict tier starts with no MCP servers because MCP can grant filesystem,
+#      shell, database, or API access outside normal model requests.
+# BREAKS IF REMOVED: Admins may overlook MCP as a tool-execution surface and
+#      users may add unreviewed servers outside the rollout plan.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: true

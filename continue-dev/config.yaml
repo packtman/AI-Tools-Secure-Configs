@@ -35,6 +35,13 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Approved MCP servers that Continue can launch as tools.
+# WHY: Empty by default so no external tool server is trusted until IT reviews
+#      the package, command, scopes, network access, and logging.
+# BREAKS IF REMOVED: Admins may miss MCP governance and developers may add
+#      unreviewed local servers with filesystem, shell, or API access.
+mcpServers: []
+
 # Disable telemetry
 allowAnonymousTelemetry: false
 

@@ -31,5 +31,12 @@ contextProviders:
   - name: "codebase"
   - name: "web"
 
+# WHAT: Approved MCP servers that Continue can launch as tools.
+# WHY: Baseline keeps the default config empty but gives admins the correct
+#      place to add reviewed MCP servers when a team needs tool integrations.
+# BREAKS IF REMOVED: MCP may be configured elsewhere without review, making it
+#      harder to audit which tool servers developers can use.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false
