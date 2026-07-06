@@ -156,7 +156,9 @@ AI-Secure-Configs/
 
 This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
 
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+The loop writes a discovery report, builds a per-tool agent scope, and opens a per-run `automation/config-maintenance-*` branch. When `ANTHROPIC_API_KEY` is configured, the workflow runs the config-maintenance agent against the scoped tools and validates changed deployable config files before committing. If the key is unavailable, the workflow still opens a handoff PR for Cursor Automation or human review.
+
+Generated PRs should contain actual config and rollout documentation updates when a real admin control changed. If no config change is needed, reviewers should record a short "No config update needed" note in the discovery report before merge.
 
 ### For Security Teams
 
