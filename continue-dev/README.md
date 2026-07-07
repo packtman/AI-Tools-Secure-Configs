@@ -33,6 +33,10 @@ Defaults:
 - Write tools (Edit, Write): `ask`
 - Bash: `ask`
 
+### MCP Server Inventory
+
+The tiered `config-*.yaml` examples include `mcpServers: []` as an explicit empty inventory. Add MCP servers only after reviewing package source, pinning versions, scoping filesystem/database access, and confirming audit coverage.
+
 ### Operational Modes
 
 | Mode | Effect |

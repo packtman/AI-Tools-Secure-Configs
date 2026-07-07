@@ -149,6 +149,18 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | HTTP/API client | High | Allow only to approved internal APIs. Block external URLs. |
 | Shell execution | **Critical** | Block or require-confirmation for every invocation. |
 
+### Tiered `mcpServers` Defaults
+
+The tiered `config-*.yaml` files set `mcpServers: []` on purpose.
+
+| Tier | Value | Why |
+|------|-------|-----|
+| Strict | `[]` | No external tool integrations until each server is approved, pinned, scoped, and monitored. |
+| Moderate | `[]` | Start from an empty inventory. Add only IT-approved servers after reviewing authentication scopes and SIEM coverage. |
+| Baseline | `[]` | Avoid surprise third-party tool execution in copied templates. Developers can add reviewed project-specific servers when needed. |
+
+If this key is populated without review, Continue can gain new filesystem, network, database, or shell-like capabilities outside the normal model and context settings.
+
 ### Misconfiguration Risk
 
 An unscoped filesystem MCP server gives the agent access to the entire filesystem. A shell-execution MCP server gives the agent arbitrary command execution. A database MCP server with write access allows the agent to modify production data. Each unaudited MCP server is an additional attack surface.

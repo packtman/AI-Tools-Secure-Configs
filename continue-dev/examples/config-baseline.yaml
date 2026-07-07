@@ -31,5 +31,12 @@ contextProviders:
   - name: "codebase"
   - name: "web"
 
+# WHAT: Ships with no MCP servers by default.
+# WHY: Even Baseline should avoid surprise third-party tool execution.
+# Developers can add reviewed project-specific servers when needed.
+# BREAKS IF POPULATED UNSAFELY: A copied server entry can expose local files,
+# credentials, or external systems without an admin review trail.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

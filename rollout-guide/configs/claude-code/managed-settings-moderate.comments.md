@@ -167,6 +167,86 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Turns off background agents and agent view commands such as `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate tier):** Background agents can continue work beyond the immediate interactive review moment. Moderate tier disables them until admins define pilot groups, repository scope, usage monitoring, and rollback handling.
+
+**What breaks if set to true:** Developers cannot use background-agent views or commands. They should use normal interactive Claude Code sessions unless approved for a monitored pilot.
+
+**Strict difference:** Also `true`, because Strict does not allow long-running autonomous agent work by default.
+
+**Baseline difference:** `false`, allowing small teams to opt in locally.
+
+---
+
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables the Artifact tool that publishes session output as a private web page on claude.ai.
+
+**Why (Moderate tier):** Session output can include source code, paths, architecture details, and incident context. Moderate tier blocks this sharing surface until the organization approves data handling and retention expectations.
+
+**What breaks if set to true:** Developers cannot publish Claude Code session output as artifacts. Use approved internal paste, wiki, or ticketing systems instead.
+
+**Strict difference:** Also `true`, because Strict avoids web-published session output.
+
+**Baseline difference:** `false`, because Baseline prioritizes feature availability.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `false`
+
+**What:** Controls whether Claude Code bundled skills and workflows are removed from the model's available skills.
+
+**Why (Moderate tier):** Moderate already disables dynamic workflows and requires approval for shell, write, and MCP tools. Keeping bundled skills enabled preserves developer productivity without removing the existing approval gates.
+
+**What breaks if set to true:** Built-in bundled skills disappear, which can remove useful coding workflows and increase support requests.
+
+**Strict difference:** `true`, because Strict allows only explicitly approved skills and workflows.
+
+**Baseline difference:** `false`, because Baseline keeps the default feature set.
+
+---
+
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Disables automatic claude.ai MCP connector discovery and connection.
+
+**Why (Moderate tier):** MCP connectors can expose external systems to the agent. Moderate tier requires an approved connector inventory, scoped authentication, and SIEM coverage before enabling cloud connectors.
+
+**What breaks if set to true:** Developers cannot use claude.ai-provided MCP connectors automatically. Approved MCP servers can still be provided through managed MCP configuration.
+
+**Strict difference:** Also `true`, because Strict limits MCP to IT-approved servers.
+
+**Baseline difference:** `false`, because Baseline permits user-managed connector discovery with prompts.
+
+---
+
+## `fileCheckpointingEnabled`
+
+**Value:** `true`
+
+**What:** Snapshots files before edits so `/rewind` can restore changes.
+
+**Why (Moderate tier):** Moderate allows approved file edits. Checkpoints improve recovery from bad AI edits without expanding command or MCP permissions.
+
+**What breaks if set to false:** Developers lose quick rollback for AI edits and must rely on git or editor undo.
+
+**Strict difference:** `false`, because Strict minimizes extra local copies of edited files.
+
+**Baseline difference:** `true`, because Baseline keeps rewind available.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`
@@ -176,6 +256,18 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **Why:** Ensures all usage is under your org's managed identity, billing, and data processing agreement. Prevents personal accounts that bypass managed settings.
 
 **What breaks if wrong:** If `forceLoginOrgUUID` has the wrong UUID, all users are locked out of Claude Code.
+
+---
+
+## `minimumVersion`
+
+**Value:** `"2.1.182"`
+
+**What:** Sets the minimum Claude Code version that managed endpoints should stay on.
+
+**Why (Moderate tier):** This tier depends on `disableClaudeAiConnectors`, which requires Claude Code v2.1.182 or later. Older versions may ignore that control and leave cloud MCP connectors available.
+
+**What breaks if set too high:** Endpoints on older packaged versions may need an update before the policy is fully supported. Pilot the update before org-wide rollout.
 
 ---
 

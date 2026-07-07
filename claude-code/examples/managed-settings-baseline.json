@@ -60,6 +60,11 @@
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
+  "disableAgentView": false,
+  "disableArtifact": false,
+  "disableBundledSkills": false,
+  "disableClaudeAiConnectors": false,
+  "fileCheckpointingEnabled": true,
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",

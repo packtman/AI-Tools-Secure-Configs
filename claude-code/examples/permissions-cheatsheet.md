@@ -199,6 +199,11 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `disableAgentView` | Disables background agents and agent view commands |
+| `disableArtifact` | Disables artifact web publishing |
+| `disableBundledSkills` | Removes bundled Claude Code skills and workflows |
+| `disableClaudeAiConnectors` | Blocks claude.ai MCP connector auto-connect |
+| `fileCheckpointingEnabled` | Enables or disables rewind checkpoints before edits |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---
