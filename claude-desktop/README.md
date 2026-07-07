@@ -77,6 +77,10 @@ Each MCP server entry in `claude_desktop_config.json` grants Claude the ability 
 - Review MCP server source code before deployment.
 - Deploy enterprise policies to block local MCP if not needed.
 
+### Claude Code MCP Bridge Note
+
+Anthropic's MCP documentation also describes using Claude Code as an MCP server for Claude Desktop with `claude mcp serve`. The variables `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, and `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` belong to Claude Code MCP helper scripts and timeout behavior. They are not Claude Desktop enterprise policy keys and should not be deployed through the `com.anthropic.claudefordesktop` MDM domain or Windows `Policies\Claude` registry path.
+
 ---
 
 ## Deployment Checklist

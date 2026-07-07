@@ -35,5 +35,12 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
+# WHAT: Starts the Moderate tier with no pre-approved MCP servers.
+# WHY: MCP servers can expose files, APIs, databases, or shell-like tools. Add only
+# IT-approved, version-pinned, scoped servers after review.
+# BREAKS IF POPULATED UNSAFELY: Developers may receive powerful external tools
+# before authentication scopes, data access, and SIEM coverage are approved.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: false

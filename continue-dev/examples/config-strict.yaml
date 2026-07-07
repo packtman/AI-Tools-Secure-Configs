@@ -32,5 +32,12 @@ contextProviders:
   - name: "diff"
   - name: "tree"
 
+# WHAT: Declares that no MCP servers are approved in this Strict template.
+# WHY: MCP servers can add filesystem, network, database, or shell tools. Strict
+# environments should start with zero external tool integrations.
+# BREAKS IF POPULATED: Any listed server expands the agent's tool surface and must
+# be separately audited, pinned, scoped, and monitored before rollout.
+mcpServers: []
+
 allowAnonymousTelemetry: false
 disableIndexing: true

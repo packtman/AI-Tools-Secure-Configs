@@ -186,6 +186,10 @@ See `examples/mcp-security.md` for the complete security guide.
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
+| `disableArtifact` | Block artifact web publishing |
+| `disableBundledSkills` | Remove bundled skills and workflows |
+| `disableClaudeAiConnectors` | Block claude.ai MCP connector auto-connect |
+| `fileCheckpointingEnabled` | Enable or disable file rewind checkpoints |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
@@ -204,6 +208,9 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableAgentView: true` until background agents have a pilot and usage monitoring.
+- [ ] Set `disableArtifact: true` until artifact sharing and retention are approved.
+- [ ] Set `disableClaudeAiConnectors: true` until cloud MCP connectors are inventoried.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
