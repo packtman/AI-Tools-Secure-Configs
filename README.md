@@ -156,7 +156,9 @@ AI-Secure-Configs/
 
 This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
 
-Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed. If the Claude API key secret is unavailable to the GitHub workflow, the workflow still opens a discovery-only handoff PR so Cursor Automation or a human reviewer can complete the config update instead of losing the upstream signal.
+
+Pull requests also run config validation for deployable JSON, YAML, TOML, and shell examples through [`scripts/validate_config_files.py`](./scripts/validate_config_files.py). JSONC examples remain documentation-oriented and should be paired with valid stripped JSON when they represent deployable policy.
 
 ### For Security Teams
 

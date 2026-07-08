@@ -33,6 +33,12 @@ python3 -c "import toml; toml.load('path/to/file.toml')"
 
 # Validate shell scripts
 bash -n path/to/script.sh
+
+# Validate all deployable config examples
+python3 scripts/validate_config_files.py
+
+# Validate deployable config examples changed against main
+python3 scripts/validate_config_files.py --changed --base origin/main
 ```
 
 ### Tools available in the environment
@@ -41,9 +47,11 @@ bash -n path/to/script.sh
 - `yamllint` at `~/.local/bin/yamllint`
 - `bash -n` for shell script syntax checking
 - `git` for version control
+- `scripts/validate_config_files.py` for full-repo or changed-file config syntax validation
 
 ### Notes
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- `.github/workflows/config-discovery.yml` runs scheduled upstream source discovery.
+- `.github/workflows/config-validation.yml` validates deployable config syntax on pull requests.
