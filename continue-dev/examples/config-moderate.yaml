@@ -5,8 +5,10 @@
 schema: v1
 
 # WHAT: Inventory of approved MCP servers for this tier.
-# WHY: Moderate allows MCP only after admin review, so the default approved list is empty.
-# BREAKS IF REMOVED: Developers may assume untracked local MCP server entries are part of policy.
+# WHY: Moderate allows MCP only after admin review, so the default approved
+# list is empty.
+# BREAKS IF REMOVED: Developers may assume untracked local MCP server entries
+# are part of policy.
 mcpServers: []
 
 models:

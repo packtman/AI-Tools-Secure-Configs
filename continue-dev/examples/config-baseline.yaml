@@ -5,8 +5,10 @@
 schema: v1
 
 # WHAT: Inventory of approved MCP servers for this tier.
-# WHY: Baseline has no pre-approved MCP servers, developers must add and review servers intentionally.
-# BREAKS IF REMOVED: Admins lose an obvious place to audit whether MCP servers were approved.
+# WHY: Baseline has no pre-approved MCP servers, developers must add and
+# review servers intentionally.
+# BREAKS IF REMOVED: Admins lose an obvious place to audit whether MCP
+# servers were approved.
 mcpServers: []
 
 models:

@@ -5,8 +5,10 @@
 schema: v1
 
 # WHAT: Inventory of approved MCP servers for this tier.
-# WHY: Strict starts with no MCP servers because each server expands the agent's tool surface.
-# BREAKS IF REMOVED: Auditors cannot quickly confirm that no MCP servers are approved by default.
+# WHY: Strict starts with no MCP servers because each server expands the
+# agent's tool surface.
+# BREAKS IF REMOVED: Auditors cannot quickly confirm that no MCP servers are
+# approved by default.
 mcpServers: []
 
 models:
