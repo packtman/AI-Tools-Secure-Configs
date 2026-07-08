@@ -10,10 +10,7 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (1 of 1 with missing terms)
+## No scoped tools
 
-### OpenAI Platform
-
-- Source: OpenAI OpenAPI schema
-  - Missing terms: `allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `reinforcement`
-  - (6 more terms in the full report)
+No 'Potential config terms not found' sections were found.
+Add 'No config update needed' notes for changed sources in the discovery report, then exit.

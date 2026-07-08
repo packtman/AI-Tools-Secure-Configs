@@ -31,12 +31,12 @@ def build_scope(report_text: str, max_tools: int) -> str:
     ]
 
     sections_by_tool: "collections.OrderedDict[str, list[tuple[str, list[str]]]]" = collections.OrderedDict()
-    parts = report_text.split("### ")
-    for part in parts[1:]:
-        header_line, _, body = part.partition("\n")
-        if ":" not in header_line:
-            continue
-        tool_name, source_name = header_line.split(":", 1)
+    matches = list(SECTION_RE.finditer(report_text))
+    for index, match in enumerate(matches):
+        body_start = match.end()
+        body_end = matches[index + 1].start() if index + 1 < len(matches) else len(report_text)
+        body = report_text[body_start:body_end]
+        tool_name, source_name = match.group(1), match.group(2)
         tool_name = tool_name.strip()
         source_name = source_name.strip()
         if MISSING_BLOCK not in body:
