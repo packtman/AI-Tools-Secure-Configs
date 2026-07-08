@@ -106,6 +106,14 @@ Every organization-level security setting explained: **what it does**, **why it 
 | `monthly_budget_usd` | Hard cost boundary | CFO-friendly: maximum spend is guaranteed. |
 | `alert_thresholds` (50/75/90%) | Early warning | Time to investigate before the cap is hit. |
 
+### Beta and SDK feature terms
+
+Terms such as `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `mcp_oauth`, `model_group`, `model_context_window_exceeded`, `LanguageModel`, and `LanguageModelSession` describe API beta headers, SDK classes, stop reasons, or integration features. They are not durable organization policy settings in this repo's tier files.
+
+**Recommended handling:** Approve them through application change management, gateway allowlists, and workspace rate limits. For example, fast mode can affect cost and throughput, so govern it with workspace spend caps and per-application review rather than adding a new org-policy JSON key.
+
+**Misconfiguration risk:** Treating a beta header as a global policy key creates a false sense of enforcement. The API will only honor supported request headers and admin endpoints.
+
 ---
 
 ## 8. Compliance API & Activity Feed

@@ -52,6 +52,17 @@ Anthropic issues three key types — each with different blast-radius:
 - Stream activity feeds to your SIEM via the `/v1/compliance/activity` endpoint.
 - Treat Compliance Access Keys like production database credentials — store in a secrets manager, never in source control.
 
+### Beta Headers and SDK Terms
+
+Claude API release notes may mention feature beta headers or SDK object names such as `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `mcp_oauth`, `model_group`, `model_context_window_exceeded`, `LanguageModel`, and `LanguageModelSession`. These are not organization policy settings by themselves.
+
+Treat them as application integration choices:
+
+- Approve beta headers through change management before application teams use them.
+- Keep beta headers in application code or gateway policy, not in org-policy JSON.
+- Use workspace RBAC, Admin API keys, rate limits, and spend caps to govern who can call the API and how much they can consume.
+- Route high-cost or beta features through an internal gateway when you need centralized allowlists, logging, or per-team budget controls.
+
 ## Deployment Checklist
 
 1. Enforce SSO via your identity provider (SAML/OIDC) for all console access.

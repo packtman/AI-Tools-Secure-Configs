@@ -23,6 +23,8 @@ Create a configuration profile with the following keys:
 | `isLocalDevMcpEnabled` | Boolean | `false` to block local MCP servers |
 | `isDesktopExtensionEnabled` | Boolean | `false` to disable desktop extensions |
 
+Do not add Claude Code MCP helper variables such as `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, or `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` to this payload. They apply to Claude Code helper scripts and remote MCP timeout behavior, not Claude Desktop enterprise policy.
+
 ### Example plist payload
 
 ```xml

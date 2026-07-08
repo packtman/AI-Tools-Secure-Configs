@@ -66,7 +66,7 @@ Supports a `managed-settings.d/` drop-in directory alongside the base file for m
 ### Server-managed (Admin Console)
 
 - Configure in **Claude.ai → Admin Settings → Claude Code → Managed settings**.
-- Requires Claude for Teams or Enterprise, Claude Code ≥ 2.1.38.
+- Requires Claude for Teams or Enterprise, Claude Code >= 2.1.182.
 - No MDM infrastructure needed.
 - See `examples/server-managed-settings-guide.md` for details.
 
@@ -183,6 +183,11 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
+| `disableAgentView` | Disable background agents and agent view |
+| `disableArtifact` | Disable Artifact web publishing |
+| `disableBundledSkills` | Disable bundled vendor skills and workflows |
+| `disableClaudeAiConnectors` | Disable auto-fetched claude.ai MCP connectors |
+| `fileCheckpointingEnabled` | Enable or disable file checkpoints for `/rewind` |
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
@@ -204,6 +209,9 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableAgentView: true` until background agents have audit coverage and cost monitoring.
+- [ ] Set `disableArtifact: true` unless claude.ai artifact publishing is approved for your data classes.
+- [ ] Set `disableClaudeAiConnectors: true` unless cloud connectors have passed MCP review.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

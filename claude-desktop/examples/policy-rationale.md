@@ -16,6 +16,16 @@ Every setting below explains **what it does**, **why you should care**, and **th
 | Standard enterprise | `false` with pre-deployed config | Block user-added servers but deploy an IT-approved `claude_desktop_config.json` with vetted servers. |
 | Developer teams | `true` | Developers need MCP for productivity. Mitigate by auditing configs and training on safe usage. |
 
+### Not Desktop policy keys: Claude Code MCP helper variables
+
+`CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` are environment variables exposed to Claude Code MCP helper scripts. `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` controls Claude Code remote MCP idle timeout behavior. They do not configure Claude Desktop enterprise policy and should not be deployed as Claude Desktop MDM payload keys.
+
+Use Claude Desktop controls for Desktop MCP governance:
+
+- `isLocalDevMcpEnabled` to allow or block user-managed local MCP servers.
+- `claude_desktop_config.json` to deploy approved MCP servers.
+- File permissions, MDM, or endpoint management to protect the deployed config file.
+
 ---
 
 ## `isDesktopExtensionEnabled`

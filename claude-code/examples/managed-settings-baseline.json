@@ -60,9 +60,14 @@
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
+  "disableAgentView": false,
+  "disableArtifact": false,
+  "disableBundledSkills": false,
+  "disableClaudeAiConnectors": false,
+  "fileCheckpointingEnabled": true,
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.182",
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0"

@@ -153,6 +153,16 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 
 An unscoped filesystem MCP server gives the agent access to the entire filesystem. A shell-execution MCP server gives the agent arbitrary command execution. A database MCP server with write access allows the agent to modify production data. Each unaudited MCP server is an additional attack surface.
 
+### Tier defaults for `mcpServers`
+
+| Tier | Recommended value | Rationale |
+|------|-------------------|-----------|
+| Baseline | `[]` | No server is pre-approved. Developers can request a reviewed server when needed. |
+| Moderate | `[]` | Enterprise teams should add only IT-approved servers with pinned packages and scoped credentials. |
+| Strict | `[]` | High-risk environments should start with no MCP tool surface unless a server has a documented exception. |
+
+**What breaks if removed:** Admins lose an explicit inventory point. Local or copied configs may add MCP servers without the change being obvious during review.
+
 ---
 
 ## 6. `config.yaml` vs `.continuerc.json` — Configuration Scoping
