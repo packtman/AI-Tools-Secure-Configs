@@ -100,6 +100,66 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and agent view commands such as `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can continue work while the user is away from the terminal. That is useful, but it also increases autonomy, usage, and audit requirements.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Do not allow background autonomous work without strict audit coverage. |
+| Standard enterprise | `true` | Disable until a pilot group has cost monitoring, scope limits, and incident response guidance. |
+| Developer | `false` | Allow experimentation where the user accepts the autonomy trade-off. |
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which publishes session output as a private web page on claude.ai.
+
+**Why it matters:** Artifacts can create an extra sharing and retention path for source code or analysis. Admins should approve that path before it is available broadly.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Keep generated code and analysis inside approved storage and review systems. |
+| Standard enterprise | `true` | Use internal sharing channels until artifact retention and access controls are reviewed. |
+| Developer | `false` | Allow if account policy permits and the data is low risk. |
+
+### `disableBundledSkills`
+
+**What it does:** Removes bundled skills and workflows shipped with Claude Code while keeping built-in slash commands available.
+
+**Why it matters:** Bundled skills can change with product releases. Security teams may want only reviewed project, user, plugin, or managed skills available.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only reviewed skills should run in high-risk environments. |
+| Standard enterprise | `true` | Avoid unreviewed vendor-provided automation until admins approve it. |
+| Developer | `false` | Preserve default productivity features. |
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Prevents claude.ai MCP connectors from being auto-fetched or connected.
+
+**Why it matters:** Cloud connectors can reach external systems and data stores. They should follow the same approval path as local MCP servers.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only IT-approved MCP servers and connectors are allowed. |
+| Standard enterprise | `true` | Require explicit connector approval before data leaves developer workstations. |
+| Developer | `false` | Allow connector use with normal prompts and account policy. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Controls file snapshots before edits, used by `/rewind` to restore earlier file contents.
+
+**Why it matters:** Checkpoints improve recovery, but they can persist sensitive source or generated code outside normal git review paths.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Avoid additional local copies of sensitive code. |
+| Standard enterprise | `false` | Prefer git commits, stashes, or approved IDE local history. |
+| Developer | `true` | Preserve easy rollback for low-risk work. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

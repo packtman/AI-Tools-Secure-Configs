@@ -56,6 +56,10 @@ Defaults:
 
 Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 
+### MCP Server Inventory
+
+Continue.dev supports `mcpServers` in `config.yaml`. Each entry starts an external Model Context Protocol server, which can add tools that read files, call APIs, or run commands. The tier examples set `mcpServers: []` by default so admins can audit and approve each server before adding it.
+
 ## Deployment Checklist
 
 1. Deploy `~/.continue/config.yaml` with secure defaults on all developer machines.
@@ -65,3 +69,4 @@ Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 5. Train developers on permission modes (`--readonly` for code review).
 6. Never store API keys in `config.yaml` — use environment variables or org secrets.
 7. Audit Continue configuration in repositories before trusting.
+8. Keep `mcpServers: []` until each MCP server package, arguments, environment variables, and network destinations have been reviewed.

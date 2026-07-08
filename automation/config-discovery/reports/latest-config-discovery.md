@@ -74,11 +74,7 @@ Output styles Interface Terminal configuration Fullscreen rendering Voice dicta 
 Plugins the whole team should have Standardizing tooling across collaborators Local scope is best
 for: Personal overrides for a specific project Testing configurations be ...
 
-Potential config terms not found in local tool files:
-
-`ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+Resolution note (2026-07-08): `disableAgentView` is a real managed control and has been added to Claude Code Baseline, Moderate, and Strict tier files with tier-appropriate values. `CLAUDE_CODE_DISABLE_AGENT_VIEW` is documented as the equivalent environment variable. `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, and `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` are session, IDE, or UI preference variables, so they are documented in the environment-variable reference but not added as tier policy controls.
 
 ### Claude Code: Hooks documentation
 
@@ -116,11 +112,7 @@ bypass_permissions_disabled , other Notification notification type permission_pr
 auth_success , elicitation_dialog , elicitation_complete , elicitation_response SubagentStart age
 ...
 
-Potential config terms not found in local tool files:
-
-`ANTHROPIC_MODEL`, `CLAUDE_MODEL`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+Resolution note (2026-07-08): `ANTHROPIC_MODEL` and `CLAUDE_MODEL` are session-level model override variables, not durable tier policy controls. They are documented in the Claude Code environment-variable reference. Use managed `model`, `availableModels`, and `enforceAvailableModels` for organization model governance.
 
 ### Claude Code: Dynamic workflows documentation
 
@@ -343,11 +335,7 @@ Overview Features Agent Chat Autocomplete Edit Customize Customization Overview 
 Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference
 Migrating Config to YAML Continue Documentation MCP Server config.json Refer ...
 
-Potential config terms not found in local tool files:
-
-`mcpServers`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+Resolution note (2026-07-08): `mcpServers` is a real Continue.dev config property. Baseline, Moderate, and Strict examples now include explicit empty `mcpServers: []` inventories so admins have a clear review point before approving any MCP server.
 
 ### Continue.dev: Continue repository
 
@@ -646,11 +634,7 @@ Claude Code to tools via MCP Getting started Build with Claude Code Administrati
 Reference Agent SDK What's New Resources Agents and parallel work Overview Create custom subagents
 Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees Too ...
 
-Potential config terms not found in local tool files:
-
-`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+Resolution note (2026-07-08): `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` are Claude Code MCP helper variables, not Claude Desktop MDM keys, registry values, or `claude_desktop_config.json` settings. Claude Desktop docs now call out that distinction and direct admins back to Desktop MCP policy controls.
 
 ### Claude Desktop: Claude Desktop support documentation
 
