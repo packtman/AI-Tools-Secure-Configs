@@ -64,6 +64,10 @@ Enable audit logs via **Organization Settings → Data Controls → Data Retenti
 - Login/logout events and failures
 - Organization configuration changes
 
+### Runtime Tool and Eval Terms
+
+The OpenAI OpenAPI schema includes runtime and event names such as `allowed_tools`, `mcp`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `mcp_approval_request`, `mcp_approval_response`, `response.mcp_call.completed`, `response.mcp_call.failed`, `response.mcp_call.in_progress`, `response.mcp_call_arguments.delta`, `response.mcp_call_arguments.done`, `enabled_per_call`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `checkpoint.permission`, `label_model`, `score_model`, and `reinforcement`. Treat these as application or gateway governance signals, not organization policy JSON keys. Enforce them through project design, API gateway checks, service account scoping, and audit log alerts.
+
 ## Deployment Checklist
 
 1. Enable SSO/OIDC and enforce for all members.

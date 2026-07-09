@@ -7,6 +7,8 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | Variable | Description | Secure value |
 |----------|-------------|-------------|
 | `ANTHROPIC_API_KEY` | API key for direct authentication | Use secrets manager; never hard-code |
+| `ANTHROPIC_MODEL` | Session-level model override | Prefer managed `model`, `availableModels`, and `enforceAvailableModels` for org policy |
+| `CLAUDE_MODEL` | Not a supported environment variable | Do not set, hooks can read `$ANTHROPIC_MODEL` only if the parent shell set it |
 | `CLAUDE_CODE_USE_BEDROCK` | Route through AWS Bedrock | `1` if using Bedrock |
 | `CLAUDE_CODE_USE_VERTEX` | Route through GCP Vertex AI | `1` if using Vertex |
 | `ANTHROPIC_FOUNDRY_BASE_URL` | Foundry base URL | Your Foundry endpoint URL |
@@ -36,8 +38,15 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Auto-connect Claude Code to a running IDE from external terminals | Leave unset by default, enable only after IDE extension rollout |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Skip automatic IDE extension installation | `1` when MDM or package management installs extensions |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Show or hide a short session recap after idle time | `0` for sensitive environments if recap text should not be shown |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | Disable background agents and Agent View | Prefer managed `disableAgentView: true` for org policy |
+| `CLAUDE_CODE_DISABLE_ARTIFACT` | Disable publishing Claude Code artifacts | Prefer managed `disableArtifact: true` for org policy |
+| `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | Disable bundled skills and bundled workflows | Prefer managed `disableBundledSkills: true` for Strict tier |
+| `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` | Disable local edit checkpoints | Prefer managed `fileCheckpointingEnabled: false` for Strict tier |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
 ## MCP & Tools

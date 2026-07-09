@@ -52,6 +52,10 @@ Anthropic issues three key types — each with different blast-radius:
 - Stream activity feeds to your SIEM via the `/v1/compliance/activity` endpoint.
 - Treat Compliance Access Keys like production database credentials — store in a secrets manager, never in source control.
 
+### Runtime Beta and SDK Terms
+
+The API docs and release notes may mention terms such as `fast-mode-2026-02-01`, `model_group`, `mcp_oauth`, and `model_context_window_exceeded`. These are beta headers, rate-limit grouping fields, or runtime/SDK events, not standalone organization policy JSON keys. Govern them with application gateway rules, workspace rate-limit review, SDK version policy, and SIEM alerts rather than adding them to `org-policy-*.json`.
+
 ## Deployment Checklist
 
 1. Enforce SSO via your identity provider (SAML/OIDC) for all console access.

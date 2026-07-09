@@ -167,6 +167,86 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Disables background agents and Agent View commands such as `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate tier):** Background agents can perform unattended work outside the main interactive approval flow. Moderate tier blocks this until admins have pilot feedback, cost monitoring, and audit coverage.
+
+**What breaks if set to true:** Developers cannot run background agent sessions or use Agent View.
+
+**Strict difference:** Also `true`, because Strict blocks unattended background agent execution.
+
+**Baseline difference:** `false`, allowing local experimentation with user approval.
+
+---
+
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables the Artifact tool that publishes session output as a private web page on claude.ai.
+
+**Why (Moderate tier):** Session output can contain source snippets, internal architecture, or incident details. Moderate tier keeps output local until sharing rules are approved.
+
+**What breaks if set to true:** Developers cannot publish Claude Code session artifacts to claude.ai for review.
+
+**Strict difference:** Also `true`, because Strict keeps session output local by default.
+
+**Baseline difference:** `false`, allowing sharing when individual users accept the risk.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `false`
+
+**What:** Controls the bundled skills and workflows that ship with Claude Code. Dynamic workflows are separately blocked by `disableWorkflows`.
+
+**Why (Moderate tier):** Keeping bundled skills available preserves common coding, review, and documentation workflows while the higher-autonomy workflow mode remains disabled.
+
+**What breaks if set to true:** Built-in skills disappear, which can remove useful helpers developers already rely on.
+
+**Strict difference:** `true`, because Strict allows only explicitly approved skills.
+
+**Baseline difference:** `false`, matching the Moderate workflow-preservation posture.
+
+---
+
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Blocks auto-fetched claude.ai MCP connectors. Servers explicitly passed with `--mcp-config` are unaffected and still governed by permission rules.
+
+**Why (Moderate tier):** MCP connectors can access external services. Moderate tier requires admins to approve connectors before they become available to developers.
+
+**What breaks if removed:** Cloud connectors may appear without endpoint review, creating an unmanaged data path.
+
+**Strict difference:** Also `true`, because Strict requires an explicit managed MCP allowlist.
+
+**Baseline difference:** `false`, allowing individual teams to use cloud connectors with local approval.
+
+---
+
+## `fileCheckpointingEnabled`
+
+**Value:** `true`
+
+**What:** Snapshots files before edits so `/rewind` can restore them.
+
+**Why (Moderate tier):** Moderate tier values safe rollback after AI-generated edits. Secret read/write deny rules still prevent obvious credential files from being edited into checkpoints.
+
+**What breaks if set to false:** Developers lose `/rewind` recovery after generated edits.
+
+**Strict difference:** `false`, reducing local snapshot retention in regulated environments.
+
+**Baseline difference:** `true`, matching the Moderate workflow-preservation posture.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

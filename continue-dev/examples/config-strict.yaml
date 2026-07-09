@@ -2,6 +2,11 @@
 # Maximum restrictions. Read-only tools only, bash disabled, telemetry off.
 # Use for regulated environments where AI autonomy must be minimized.
 
+# WHAT: Human-readable config identity required by the current Continue config spec.
+# WHY: Strict examples should be directly importable without local edits.
+# BREAKS IF REMOVED: Continue may reject the config or show an unnamed config.
+name: "Corporate Strict"
+version: "1.0.0"
 schema: v1
 
 models:
@@ -31,6 +36,11 @@ contextProviders:
   - name: "code"
   - name: "diff"
   - name: "tree"
+
+# WHAT: Explicit MCP server inventory.
+# WHY: Strict tier permits no external MCP tools unless they are added by a reviewed exception.
+# BREAKS IF REMOVED: Developers may add unreviewed MCP servers that can access files or services.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: true

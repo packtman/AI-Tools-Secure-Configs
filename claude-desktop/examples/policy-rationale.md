@@ -18,6 +18,16 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## Claude Code MCP helper variables
+
+**What they do:** `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, and `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` are environment variables used by Claude Code MCP bridge scripts and MCP tool timeout behavior.
+
+**Why they are not Desktop policy keys:** Claude Desktop enterprise policy is enforced through managed preferences or registry keys such as `isLocalDevMcpEnabled`. Adding `CLAUDE_CODE_MCP_*` variables to a Desktop policy payload does not enforce Desktop MCP behavior.
+
+**Operational guidance:** If Claude Desktop and Claude Code are deployed together, manage Desktop MCP access with `isLocalDevMcpEnabled` and manage Claude Code bridge helpers through Claude Code managed settings, approved wrapper scripts, or endpoint environment policy.
+
+---
+
 ## `isDesktopExtensionEnabled`
 
 **What it does:** Controls whether Claude Desktop extensions can be installed and used.

@@ -66,7 +66,7 @@ Supports a `managed-settings.d/` drop-in directory alongside the base file for m
 ### Server-managed (Admin Console)
 
 - Configure in **Claude.ai → Admin Settings → Claude Code → Managed settings**.
-- Requires Claude for Teams or Enterprise, Claude Code ≥ 2.1.38.
+- Requires Claude for Teams or Enterprise, Claude Code >= 2.1.182 for the examples in this repo.
 - No MDM infrastructure needed.
 - See `examples/server-managed-settings-guide.md` for details.
 
@@ -189,6 +189,17 @@ See `examples/mcp-security.md` for the complete security guide.
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
+## Feature Controls
+
+| Setting | Effect |
+|---------|--------|
+| `disableWorkflows` | Disable dynamic workflows, workflow commands, and ultracode |
+| `disableAgentView` | Disable background agents and Agent View |
+| `disableArtifact` | Disable publishing session output as Claude artifacts |
+| `disableBundledSkills` | Remove bundled skills and bundled workflows |
+| `disableClaudeAiConnectors` | Block auto-fetched claude.ai MCP connectors |
+| `fileCheckpointingEnabled` | Enable or disable local edit checkpoints for `/rewind` |
+
 ---
 
 ## Deployment Checklist
@@ -204,6 +215,9 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableAgentView: true` until background agents have cost and audit monitoring.
+- [ ] Set `disableArtifact: true` until session-output sharing rules are approved.
+- [ ] Set `disableClaudeAiConnectors: true` until MCP connectors are reviewed.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
