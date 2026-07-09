@@ -173,6 +173,40 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables background agents and Agent View commands.
+  // WHY: Moderate tier keeps interactive sessions but blocks unattended background
+  //      agent runs until admins have pilot feedback, cost monitoring, and audit logs.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude agents, --bg, /background,
+  //      or the on-demand supervisor.
+  "disableAgentView": true,
+
+  // WHAT: Disables the Artifact tool that publishes session output as a private web page.
+  // WHY: Session output can contain source snippets, internal architecture, or incident
+  //      details. Moderate tier keeps output local until sharing rules are approved.
+  // BREAKS IF SET TO TRUE: Developers cannot publish Claude Code session artifacts to
+  //      claude.ai for review.
+  "disableArtifact": true,
+
+  // WHAT: Leaves bundled skills available while dynamic workflows remain disabled.
+  // WHY: Bundled skills preserve common developer workflows. Higher-risk workflow
+  //      execution is controlled by disableWorkflows above.
+  // BREAKS IF SET TO TRUE: Built-in skills disappear, which can remove useful
+  //      documentation, review, or coding helpers developers already rely on.
+  "disableBundledSkills": false,
+
+  // WHAT: Blocks auto-fetched claude.ai MCP connectors.
+  // WHY: MCP connectors can access external services. Moderate tier requires admins
+  //      to approve connectors before they become available to developers.
+  // BREAKS IF SET TO FALSE: Cloud connectors may appear without endpoint review,
+  //      creating an unmanaged data path.
+  "disableClaudeAiConnectors": true,
+
+  // WHAT: Keeps file checkpoints enabled for /rewind recovery.
+  // WHY: Moderate tier values safe rollback after edits. Secret read/write deny rules
+  //      still prevent obvious credential files from being edited into checkpoints.
+  // BREAKS IF SET TO FALSE: Developers lose /rewind recovery after generated edits.
+  "fileCheckpointingEnabled": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -193,8 +227,8 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.182 is required for disableClaudeAiConnectors support.
+  "minimumVersion": "2.1.182",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed

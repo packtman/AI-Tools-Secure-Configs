@@ -47,6 +47,10 @@ Defaults:
 2. **Global** — `~/.continue/config.yaml`
 3. **Environment** — `.env` files for secrets
 
+### MCP Server Inventory
+
+`mcpServers` lists external tools that Continue.dev can start and call. MCP, Model Context Protocol, lets an AI tool call external services through local or remote servers. The tier examples set `mcpServers: []` by default so admins start from a known empty inventory, then add only reviewed servers.
+
 ### Secrets Management
 
 | Secret type | Visibility | Plans |
@@ -64,4 +68,5 @@ Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 4. Deploy `.continuerc.json` to all repositories for project-level overrides.
 5. Train developers on permission modes (`--readonly` for code review).
 6. Never store API keys in `config.yaml` — use environment variables or org secrets.
-7. Audit Continue configuration in repositories before trusting.
+7. Review every `mcpServers` entry for command, args, env, filesystem scope, and network path before rollout.
+8. Audit Continue configuration in repositories before trusting.

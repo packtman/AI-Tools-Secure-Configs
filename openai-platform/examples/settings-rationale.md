@@ -156,6 +156,25 @@ Custom roles can combine granular permissions for delegated administration. Note
 
 ---
 
+## 4A. Runtime Tool and Eval Governance
+
+**What it covers:** Schema terms including `allowed_tools`, `mcp`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `mcp_approval_request`, `mcp_approval_response`, `response.mcp_call.completed`, `response.mcp_call.failed`, `response.mcp_call.in_progress`, `response.mcp_call_arguments.delta`, `response.mcp_call_arguments.done`, `enabled_per_call`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `checkpoint.permission`, `label_model`, `score_model`, and `reinforcement`.
+
+**Why they are not org policy JSON keys:** These names describe API request fields, MCP tool events, fine-tuning checkpoint permissions, or evaluation model fields. They are important governance signals, but they are not settings that can be dropped into `org-policy-*.json`.
+
+**Recommended controls:**
+
+| Control | Where to enforce | Reasoning |
+|---------|------------------|-----------|
+| Tool allowlists | Application code or API gateway | Prevents a workload from enabling unreviewed tools at request time. |
+| MCP approval events | SIEM alerts on audit logs and application telemetry | Detects new tool integrations and approval bypass attempts. |
+| Project enablement | Project membership and service account scoping | Keeps experimental features out of production projects until approved. |
+| Evaluation and reinforcement fields | ML platform review and model registry policy | Ensures labels, scoring models, and reinforcement jobs are tied to approved datasets. |
+
+**What goes wrong:** Treating these runtime fields as static org policy keys creates false assurance. They must be enforced where requests are created, proxied, and logged.
+
+---
+
 ## 5. SSO / OIDC Enforcement
 
 ### What It Does

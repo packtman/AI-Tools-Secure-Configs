@@ -2,6 +2,11 @@
 # Essential security only. All context providers enabled, public API endpoints.
 # Suitable for startups and individual developers.
 
+# WHAT: Human-readable config identity required by the current Continue config spec.
+# WHY: Baseline examples should be directly importable without adding metadata.
+# BREAKS IF REMOVED: Continue may reject the config or show an unnamed config.
+name: "Corporate Baseline"
+version: "1.0.0"
 schema: v1
 
 models:
@@ -30,6 +35,11 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
   - name: "web"
+
+# WHAT: Explicit MCP server inventory.
+# WHY: Baseline starts with no external tools, teams can add reviewed servers later.
+# BREAKS IF REMOVED: Developers may assume MCP is not governed and add unreviewed servers.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: false

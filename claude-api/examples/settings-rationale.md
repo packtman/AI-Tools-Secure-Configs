@@ -108,6 +108,25 @@ Every organization-level security setting explained: **what it does**, **why it 
 
 ---
 
+## 7A. Runtime Beta and SDK Governance
+
+**What it covers:** API and release-note terms such as `fast-mode-2026-02-01`, `model_group`, `mcp_oauth`, and `model_context_window_exceeded`.
+
+**Why they are not org policy JSON keys:** These terms describe beta access headers, rate-limit grouping, MCP OAuth behavior, or SDK/runtime error events. They affect how applications call Claude, but they are not static organization policy settings.
+
+**Recommended controls:**
+
+| Term | Where to govern | Reasoning |
+|------|-----------------|-----------|
+| `fast-mode-2026-02-01` | API gateway allowlist and cost review | Fast-mode beta access can change latency and cost. |
+| `model_group` | Workspace rate-limit review | Rate limits should map to approved model groups and environments. |
+| `mcp_oauth` | MCP connector approval and OAuth scope review | OAuth grants can expose external systems through tools. |
+| `model_context_window_exceeded` | Application telemetry and SIEM alerts | Repeated errors can indicate oversized prompts, data overcollection, or runaway agents. |
+
+**What goes wrong:** Adding these names to `org-policy-*.json` creates invalid policy templates. Enforce them in the calling application, gateway, and monitoring layer.
+
+---
+
 ## 8. Compliance API & Activity Feed
 
 **What it does:** Streams a feed of all organization events — API key creation, member changes, login events, configuration changes.

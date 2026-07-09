@@ -224,6 +224,66 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | Skills should not execute shell commands. |
 | Standard enterprise | `false` | Skills are useful for developer workflows. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and Agent View commands such as `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why it matters:** Background agents can perform unattended work outside the main interactive session. Treat them like a separate automation surface that needs cost monitoring, audit logging, and exception review.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Blocks unattended agent runs. |
+| Standard enterprise | `true` | Disable until pilot monitoring and support procedures exist. |
+| Developer | `false` | Allows local experimentation with user approval. |
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool that publishes session output as a private web page on claude.ai.
+
+**Why it matters:** Session output can include source snippets, internal architecture, or incident details. Disable until sharing rules and retention expectations are documented.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Keep session output local unless explicitly approved. |
+| Standard enterprise | `true` | Prevent unmanaged sharing during rollout. |
+| Developer | `false` | Convenience for low-risk collaboration. |
+
+### `disableBundledSkills`
+
+**What it does:** Removes bundled skills and workflows that ship with Claude Code. Custom project skills are controlled separately.
+
+**Why it matters:** Bundled skills expand agent behavior. Strict environments should require explicit approval for every skill source, while Moderate keeps bundled skills to preserve common workflows.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only approved skills should be available. |
+| Standard enterprise | `false` | Preserves common coding and review helpers. |
+| Developer | `false` | Maximum workflow compatibility. |
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Blocks auto-fetched claude.ai MCP connectors. Requires Claude Code 2.1.182 or later.
+
+**Why it matters:** MCP connectors can access external services and data. Admins should approve connector inventory before developers can use it.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only managed MCP allowlists are acceptable. |
+| Standard enterprise | `true` | Prevents unmanaged cloud connector data paths. |
+| Developer | `false` | Allows local connector experimentation. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Snapshots files before edits so `/rewind` can restore them.
+
+**Why it matters:** Checkpoints improve recovery after generated edits, but they also create local snapshots. Strict environments may disable them to reduce local data retention.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Minimizes local snapshots of regulated code. |
+| Standard enterprise | `true` | Preserves rollback for developer productivity. |
+| Developer | `true` | Keeps `/rewind` available. |
+
 ### `autoMemoryEnabled` / `CLAUDE_CODE_DISABLE_AUTO_MEMORY`
 
 **What it does:** Controls whether Claude Code saves learnings to disk for future sessions.

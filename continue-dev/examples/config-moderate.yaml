@@ -2,6 +2,11 @@
 # Balanced security with developer productivity. Codebase indexing enabled,
 # reasonable context providers. Use for standard enterprise teams.
 
+# WHAT: Human-readable config identity required by the current Continue config spec.
+# WHY: Moderate examples should be directly importable by standard enterprise teams.
+# BREAKS IF REMOVED: Continue may reject the config or show an unnamed config.
+name: "Corporate Moderate"
+version: "1.0.0"
 schema: v1
 
 models:
@@ -34,6 +39,11 @@ contextProviders:
   - name: "terminal"
   - name: "tree"
   - name: "codebase"
+
+# WHAT: Explicit MCP server inventory.
+# WHY: Moderate tier requires MCP servers to be reviewed before rollout.
+# BREAKS IF REMOVED: Local or team configs may add external tools without admin review.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: false
