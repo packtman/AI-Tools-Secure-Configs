@@ -2,9 +2,11 @@
 
 You are maintaining `AI-Secure-Configs`, a repository of hardened configuration templates and rollout guides for AI coding tools.
 
-Your job is to review `automation/config-discovery/reports/latest-config-discovery.md`, inspect the upstream sources that changed, and turn the discovery branch into a focused config-update PR.
+Your job is to review `automation/config-discovery/reports/agent-scope.md`, inspect the scoped upstream sources in `automation/config-discovery/reports/latest-config-discovery.md`, and turn the discovery branch into a focused config-update PR.
 
 Do not stop after updating source snapshots or reports. If an upstream source introduces, removes, renames, or changes the meaning of an admin control, update the affected config files, rationale docs, rollout guide, and validation notes in the same PR.
+
+Process only the tools listed in `reports/agent-scope.md` for the current run. This keeps scheduled PRs small enough to review. Deferred tools should be handled by a later scheduled run or a manual dispatch.
 
 ## Supported Tools
 
@@ -35,14 +37,15 @@ Define jargon the first time it appears. Examples:
 
 ## Required Review Process
 
-1. Read the generated discovery report.
-2. Open the upstream source that changed.
-3. Compare the vendor change with existing files under the affected tool directory.
-4. Review the report section named "Potential config terms not found in local tool files." Treat those terms as the first candidates for missing repo coverage.
-5. Decide whether each candidate is a real admin/security control, a developer-only preference, or unrelated documentation noise.
-6. If it is a real admin/security control, edit the affected tool files and shared rollout files.
-7. If no config update is needed, add a short "No config update needed" note to the report or PR body explaining the upstream change and why it does not affect this repo.
-8. Validate every edited JSON, YAML, TOML, or shell file with the commands in `AGENTS.md`.
+1. Read the generated scope file first.
+2. Read the generated discovery report for only the scoped tools.
+3. Open the upstream source that changed.
+4. Compare the vendor change with existing files under the affected tool directory.
+5. Review the report section named "Potential config terms not found in local tool files." Treat those terms as the first candidates for missing repo coverage.
+6. Decide whether each candidate is a real admin/security control, a developer-only preference, or unrelated documentation noise.
+7. If it is a real admin/security control, edit the affected tool files and shared rollout files.
+8. If no config update is needed, add a short "No config update needed" note to the report or PR body explaining the upstream change and why it does not affect this repo.
+9. Validate every edited JSON, YAML, TOML, or shell file with `python3 scripts/validate_config_files.py --changed`.
 
 Example: if Claude Code documentation introduces `disableWorkflows`, add that setting to the Claude Code tier files, update JSONC and deployable JSON, add rationale, add the tier delta row, and add workflow-preservation guidance for the blocked workflow commands.
 
