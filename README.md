@@ -158,6 +158,14 @@ This repo includes a scheduled config discovery loop under [`automation/config-d
 
 Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
 
+The loop is designed for continuous maintenance:
+
+1. `.github/workflows/config-discovery.yml` runs on a schedule and fingerprints official upstream sources.
+2. `automation/config-discovery/reports/agent-scope.md` limits each run to a small set of tools so PRs stay reviewable.
+3. If the GitHub-hosted maintenance agent can run, it edits tiered configs, rationale docs, rollout notes, and validation guidance.
+4. If the agent secret is unavailable, the workflow still opens a handoff PR for Cursor Automation or human review.
+5. `.github/workflows/config-validation.yml` validates deployable JSON, YAML, TOML, shell hooks, and the discovery registry on PRs.
+
 ### For Security Teams
 
 1. Use the deny lists and content exclusion patterns as a baseline.
