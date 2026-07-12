@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
-  "_comment": "MODERATE GitHub Copilot organization policy. Core features enabled, sensible content exclusion, individual plan blocked. Use for standard enterprise teams.",
+  "_comment": "MODERATE GitHub Copilot organization policy. Core features enabled, agents restricted, sensible content exclusion. Use for standard enterprise teams.",
 
   "organization": "acme-corp",
   "copilot_plan": "enterprise",
@@ -19,12 +19,35 @@
     "copilot_in_ide": "enabled",
     "copilot_chat_in_ide": "enabled",
     "copilot_chat_on_github": "enabled",
+    "copilot_in_mobile": "let_organizations_decide",
     "copilot_cli": "disabled",
+    "copilot_windows_terminal": "disabled",
     "copilot_code_review": "enabled",
-    "copilot_pull_request_summaries": "enabled",
-    "copilot_docset_management": "disabled",
-    "copilot_bing_search": "disabled",
-    "copilot_web_search": "disabled"
+    "copilot_vision": "let_organizations_decide",
+    "editor_inline_chat": "enabled",
+    "model_selection": "disabled",
+    "user_feedback_collection": "disabled"
+  },
+
+  "agent_policies": {
+    "copilot_cloud_agent": {
+      "enforcement": "select_organizations",
+      "allowed_organizations": ["engineering"]
+    },
+    "copilot_code_review_agent": "enabled",
+    "custom_agents": "let_organizations_decide",
+    "third_party_agents": "disabled"
+  },
+
+  "mcp_policies": {
+    "mcp_server_availability": "enabled",
+    "mcp_registry_url": "https://mcp-registry.internal.acme.com",
+    "strict_registry_enforcement": false
+  },
+
+  "code_review": {
+    "org_level_runner": "github-hosted",
+    "lock_runner_setting": false
   },
 
   "content_exclusions": {

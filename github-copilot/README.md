@@ -19,6 +19,16 @@ This directory contains security-hardened configurations for **GitHub Copilot** 
 
 ## Configuration Layers
 
+### Enterprise Level (AI Controls)
+
+Enterprise owners manage AI policies at:
+**Enterprise Settings → AI Controls tab**
+
+AI Controls categories:
+- **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
+- **Agents** — Cloud agent, code review agent, custom agents, third-party agents
+- **MCP** — MCP server availability, registry URL, strict enforcement
+
 ### Organization Level (GitHub Settings)
 
 Organization owners manage Copilot policies at:
@@ -27,8 +37,8 @@ Organization owners manage Copilot policies at:
 Key policy controls:
 - Enable/disable Copilot for the organization
 - Content exclusion rules
-- Feature-level toggles (chat, CLI, code review)
-- Model selection policies
+- Code review runner configuration
+- Feature-level toggles delegated from enterprise
 
 ### Repository Level
 
@@ -37,7 +47,7 @@ Repository admins can set content exclusion rules at:
 
 ### Project Level
 
-The `.github/copilot-instructions.md` file provides repository-specific instructions to Copilot, including security guidelines.
+The `.github/copilot-instructions.md` file provides repository-specific instructions to Copilot, including security guidelines. No character limit for code review instructions.
 
 ## Content Exclusion
 
@@ -54,8 +64,9 @@ Content exclusion prevents Copilot from accessing or suggesting content from spe
 ### Limitations
 
 - Does not apply to symbolic links or remote filesystems.
-- May not prevent use of semantic information (e.g., type definitions) from excluded files.
-- Maximum ~1,000 lines in instruction files (Copilot code review reads first 4,000 characters).
+- Does not apply to Copilot cloud agent.
+- Does not apply in Edit and Agent modes of Copilot Chat in VS Code and other editors.
+- Content exclusion on GitHub.com and GitHub Mobile is in public preview.
 
 ## Network Security
 
@@ -74,9 +85,14 @@ Control which Copilot plans can access the network:
 ## Deployment Checklist
 
 1. Enable Copilot Business/Enterprise at the organization level.
-2. Configure content exclusion for secrets, credentials, and sensitive files.
-3. Deploy `.github/copilot-instructions.md` to all repositories.
-4. Configure firewall rules to allow only business/enterprise Copilot traffic.
-5. Set feature policies (enable/disable chat, CLI, code review per org needs).
-6. Review and audit Copilot usage through GitHub's audit log.
-7. Train developers on responsible Copilot usage and code review practices.
+2. Configure enterprise-level AI Controls (feature, agent, and MCP policies).
+3. Configure content exclusion for secrets, credentials, and sensitive files.
+4. Deploy `.github/copilot-instructions.md` to all repositories.
+5. Configure firewall rules to allow only business/enterprise Copilot traffic.
+6. Set agent policies (disable cloud agent, custom agents, and third-party agents for regulated environments).
+7. Configure MCP registry and decide on strict enforcement.
+8. Set code review runner configuration at org level (self-hosted for sensitive environments).
+9. Create "Manage enterprise AI controls" custom role for AI governance team.
+10. Enable audit log streaming to your SIEM.
+11. Review agent session activity and audit Copilot usage regularly.
+12. Train developers on responsible Copilot usage and code review practices.

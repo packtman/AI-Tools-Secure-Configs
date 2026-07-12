@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
-  "_comment": "Windsurf enterprise policy. Deploy via registry (Windows), MDM profile (macOS), or /etc/windsurf/policy.json (Linux).",
+  "_comment": "Windsurf enterprise policy. Deploy via registry (Windows), MDM profile (macOS), or /etc/windsurf/policy.json (Linux). Configure admin-level controls in Admin Portal.",
 
   "AllowedExtensions": [
     "esbenp.prettier-vscode",
@@ -26,6 +26,24 @@
   "SecuritySettings": {
     "disableUntrustedWorkspaces": true,
     "enforceProxyStrictSSL": true,
-    "blockExternalExtensions": true
+    "blockExternalExtensions": true,
+    "disableDeploys": false,
+    "disableConversationSharing": false,
+    "enableAttributionFiltering": true
+  },
+
+  "AgentSettings": {
+    "autoExecutionLevel": "confirm_destructive",
+    "requireHumanConfirmation": false,
+    "cascadeMaxSteps": 50
+  },
+
+  "McpGovernance": {
+    "mode": "whitelist",
+    "approvedServers": [
+      "github-mcp-server",
+      "postgres-mcp-server"
+    ],
+    "blockUnapproved": true
   }
 }

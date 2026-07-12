@@ -100,6 +100,8 @@
 
   "allowManagedMcpServersOnly": false,
 
+  "allowManagedPluginsOnly": false,
+
   "forceRemoteSettingsRefresh": false,
 
   "forceLoginMethod": "claudeai",
@@ -111,6 +113,18 @@
   "disableDeepLinkRegistration": "disable",
 
   "disableWorkflows": true,
+
+  "channelsEnabled": false,
+
+  "autoMemoryEnabled": false,
+
+  "claudeMd": "",
+
+  "sandbox": {
+    "network": {
+      "allowManagedDomainsOnly": false
+    }
+  },
 
   "autoUpdatesChannel": "stable",
 
