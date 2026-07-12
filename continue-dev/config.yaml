@@ -1,9 +1,14 @@
 # Continue.dev — Secure global configuration
 # Deploy to: ~/.continue/config.yaml
+# For enterprise, manage configs via Mission Control (formerly Hub)
+# with Organization-level visibility for team-wide enforcement.
 
+name: "secure-enterprise-config"
+version: "1.0.0"
 schema: v1
 
-# Model configuration — use environment variables for API keys, NEVER inline.
+# Model configuration — use environment variables or org secrets, NEVER inline keys.
+# Reference secrets with mustache notation: ${{ secrets.SECRET_NAME }}
 models:
   - name: "default"
     provider: "openai"
@@ -34,6 +39,11 @@ contextProviders:
   - name: "terminal"
   - name: "tree"
   - name: "codebase"
+
+# MCP servers — only approved servers with explicit environment secrets.
+# MCP tools are only available in agent mode.
+# For enterprise: use org secrets for API keys, never user-level secrets for shared servers.
+mcpServers: []
 
 # Disable telemetry
 allowAnonymousTelemetry: false

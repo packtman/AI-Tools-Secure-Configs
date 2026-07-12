@@ -1,10 +1,20 @@
 # Codex CLI — STRICT configuration
 # For regulated environments where the agent should be read-only.
+# Deploy as /etc/codex/config.toml for system-wide defaults,
+# or use requirements.toml for admin-enforced constraints.
 
 sandbox_mode = "read-only"
 approval_policy = "on-request"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
+web_search = "disabled"
 
 [sandbox_workspace_write]
 network_access = false
+
+# Disable high-risk features (pinnable via requirements.toml in Enterprise)
+[features]
+browser_use = false
+computer_use = false
+memories = false
+multi_agent = false
