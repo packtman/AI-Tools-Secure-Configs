@@ -3,14 +3,21 @@
     "tool": "ChatGPT Enterprise",
     "description": "Workspace default permissions template for ChatGPT Enterprise RBAC",
     "reference": "chatgpt.com/admin → Settings and Permissions → Workspace tab",
+    "last_updated": "2026-07-12",
     "notes": "These are NOT deployed as a file — they are configured in the admin console. This template documents the recommended settings for reference and change control."
   },
   "workspace_defaults": {
     "features": {
       "chatgpt_agent": false,
+      "chatgpt_work": false,
       "canvas": true,
+      "canvas_code_execution": true,
       "codex": false,
       "codex_internet_access": false,
+      "sites": false,
+      "sites_public_publishing": false,
+      "deep_research": true,
+      "projects": true,
       "custom_gpts_create": false,
       "custom_gpts_use": true,
       "custom_gpts_publish_internal": false,
@@ -21,10 +28,11 @@
       "file_uploads": true,
       "image_generation": true,
       "voice_mode": false,
-      "advanced_voice_mode": false,
+      "voice_screen_sharing": false,
       "apps_and_actions": false,
       "data_analysis": true,
-      "record_audio": false
+      "record_audio": false,
+      "scheduled_tasks": false
     },
     "sharing": {
       "share_conversations_internal": true,
@@ -34,7 +42,8 @@
     },
     "usage_limits": {
       "enforcement": "admin_alert",
-      "level": "standard"
+      "workspace_monthly_credit_limit": null,
+      "default_per_user_level": "standard"
     }
   },
   "custom_roles": [
@@ -44,17 +53,21 @@
       "assigned_to_groups": ["engineering-leads", "data-science"],
       "permissions_override": {
         "chatgpt_agent": true,
+        "chatgpt_work": true,
         "codex": true,
         "codex_internet_access": false,
+        "sites": true,
+        "sites_public_publishing": false,
         "custom_gpts_create": true,
         "custom_gpts_publish_internal": true,
         "memory": true,
         "apps_and_actions": true,
-        "voice_mode": true
+        "voice_mode": true,
+        "scheduled_tasks": true
       },
       "usage_limits": {
         "enforcement": "hard_cap",
-        "level": "high"
+        "monthly_credit_limit_usd": 100
       }
     },
     {
@@ -62,18 +75,46 @@
       "description": "Minimal access for compliance-sensitive roles",
       "assigned_to_groups": ["finance", "legal", "hr"],
       "permissions_override": {
+        "chatgpt_work": false,
+        "sites": false,
+        "deep_research": false,
         "web_search": false,
         "file_uploads": false,
         "image_generation": false,
         "data_analysis": false,
-        "apps_and_actions": false
+        "apps_and_actions": false,
+        "scheduled_tasks": false
       },
       "usage_limits": {
         "enforcement": "hard_cap",
-        "level": "low"
+        "monthly_credit_limit_usd": 20
       }
     }
   ],
+  "agent_governance": {
+    "agent_building": "power_user_role_only",
+    "agent_publishing": "admin_approval_required",
+    "gpt_action_domain_allowlist": [
+      "*.internal.acme.com",
+      "api.github.com",
+      "api.slack.com"
+    ]
+  },
+  "apps_governance": {
+    "enabled_apps": ["google_drive", "slack"],
+    "disabled_apps": ["dropbox", "notion"],
+    "per_app_actions": {
+      "google_drive": {
+        "read": true,
+        "write": false
+      },
+      "slack": {
+        "read": true,
+        "write": true
+      }
+    },
+    "human_in_the_loop": true
+  },
   "identity": {
     "sso_enforced": true,
     "scim_enabled": true,

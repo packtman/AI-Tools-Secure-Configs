@@ -1,0 +1,83 @@
+{
+  "_meta": {
+    "tool": "GitHub Copilot Enterprise",
+    "description": "Enterprise AI Controls policy configuration reference",
+    "reference": "Enterprise Settings → AI Controls tab (Copilot, Agents, MCP)",
+    "notes": "These settings are configured in the GitHub Enterprise settings UI. This template documents the recommended Enterprise configuration for change control purposes."
+  },
+  "enterprise": {
+    "name": "Acme Corp",
+    "plan": "copilot_enterprise"
+  },
+  "copilot_policies": {
+    "enforcement_level": "enterprise",
+    "copilot_in_ide": "enabled",
+    "copilot_chat_ide": "enabled",
+    "copilot_chat_github": "enabled",
+    "copilot_mobile": "let_organizations_decide",
+    "copilot_cli": "enabled",
+    "copilot_windows_terminal": "let_organizations_decide",
+    "copilot_code_review": "enabled",
+    "copilot_vision": "let_organizations_decide",
+    "editor_inline_chat": "enabled",
+    "model_selection": "disabled",
+    "user_feedback_collection": "disabled",
+    "policies_for_enterprise_assigned_users": "disabled"
+  },
+  "agent_policies": {
+    "copilot_cloud_agent": {
+      "enforcement": "select_organizations",
+      "allowed_organizations": ["engineering", "platform-team"]
+    },
+    "copilot_code_review_agent": "enabled",
+    "custom_agents": "enabled",
+    "third_party_agents": "disabled",
+    "custom_agent_source_org": "platform-team",
+    "agent_definitions_repo": ".github-private/agents/*.md"
+  },
+  "mcp_policies": {
+    "mcp_server_availability": "enabled",
+    "mcp_registry_url": "https://mcp-registry.internal.acme.com",
+    "strict_registry_enforcement": true,
+    "repository_level_mcp_config": true
+  },
+  "content_exclusion": {
+    "_note": "Configured at organization and repository levels",
+    "organization_level": [
+      "**/*.env",
+      "**/*.pem",
+      "**/*.key",
+      "**/secrets/**",
+      "**/internal/proprietary/**"
+    ],
+    "recommended_repo_level": [
+      "config/production.*",
+      "credentials/**",
+      ".github/workflows/deploy-*"
+    ]
+  },
+  "code_review": {
+    "org_level_runner": "self-hosted",
+    "lock_runner_setting": true,
+    "auto_review_on_pr": false,
+    "custom_instructions_path": ".github/copilot-instructions.md"
+  },
+  "identity": {
+    "sso_enforced": true,
+    "scim_enabled": true,
+    "ip_allowlist": ["10.0.0.0/8", "172.16.0.0/12"],
+    "custom_role": {
+      "name": "AI Controls Manager",
+      "permission": "manage_enterprise_ai_controls"
+    }
+  },
+  "monitoring": {
+    "audit_log_streaming": {
+      "enabled": true,
+      "destination": "splunk",
+      "endpoint": "https://splunk.internal.acme.com/services/collector"
+    },
+    "agent_session_review": "daily",
+    "usage_metrics_review": "quarterly"
+  }
+}

@@ -1,6 +1,6 @@
 # Cross-Tool SSO Deployment Checklist
 
-A unified checklist for deploying SSO across Claude, Cursor, ChatGPT, and Gemini for a consistent identity posture.
+A unified checklist for deploying SSO across Claude, Cursor, ChatGPT, Gemini, GitHub Copilot, and Windsurf for a consistent identity posture.
 
 ---
 
@@ -105,6 +105,55 @@ A unified checklist for deploying SSO across Claude, Cursor, ChatGPT, and Gemini
 ### Platform Note
 
 > Gemini inherits Google Workspace's authentication. If you already have SSO/MFA configured for Workspace, Gemini is automatically covered. No separate Gemini-specific SSO exists.
+
+---
+
+## GitHub Copilot (Enterprise)
+
+### Setup
+
+- [ ] Navigate to Enterprise Settings → Authentication → SAML single sign-on
+- [ ] Configure SAML SSO for the enterprise (or use existing GitHub Enterprise Cloud SSO)
+- [ ] Enable SCIM provisioning via IdP (sync users and teams)
+- [ ] Assign Copilot seats to SCIM-synced teams
+- [ ] Configure IP allowlist if applicable (Enterprise → Authentication → IP allow list)
+- [ ] Test Copilot access with pilot users on SAML-authenticated accounts
+
+### Enforcement
+
+- [ ] Require SAML SSO for the enterprise
+- [ ] Verify SCIM sync provisions correct team memberships
+- [ ] Confirm Copilot seat assignment follows team membership
+- [ ] Set up "Manage enterprise AI controls" custom role for AI governance admins
+- [ ] Verify deprovisioned users automatically lose Copilot access
+
+### Platform Note
+
+> GitHub Copilot inherits GitHub Enterprise Cloud's authentication. SSO configured at the enterprise level covers all GitHub products including Copilot. No separate Copilot-specific SSO configuration exists.
+
+---
+
+## Windsurf (Enterprise)
+
+### Setup
+
+- [ ] Navigate to Windsurf Admin Portal → SSO configuration
+- [ ] Configure SAML connection with your IdP (Okta, Microsoft Entra ID, or Google)
+- [ ] Test SP-initiated SSO login with pilot admin and user accounts
+- [ ] Enable SCIM provisioning and sync initial user/group set
+- [ ] Map IdP groups to Windsurf teams
+
+### Enforcement
+
+- [ ] Verify SSO login works for all team members
+- [ ] Confirm SCIM group sync maps to correct Windsurf teams and roles
+- [ ] Verify new provisioned users get correct role assignments
+- [ ] Generate service keys with scoped permissions for API integrations
+- [ ] Confirm deprovisioned users (removed from IdP) lose Windsurf access
+
+### Platform Note
+
+> Windsurf only supports SP-initiated SSO; IdP-initiated SSO is NOT supported. Users must start the login flow from the Windsurf application.
 
 ---
 

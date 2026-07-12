@@ -3,6 +3,7 @@
     "tool": "Claude (Desktop & Web)",
     "description": "Claude Team/Enterprise admin console policy reference",
     "reference": "claude.ai → Admin Settings → Claude Code → Managed settings",
+    "last_updated": "2026-07-12",
     "notes": "Server-managed settings are configured in the admin console and delivered to clients at auth time. This template documents the recommended Enterprise configuration for change control purposes."
   },
   "organization": {
@@ -43,7 +44,22 @@
       "disableAutoMode": "disable"
     },
     "allowManagedPermissionRulesOnly": true,
+    "allowManagedMcpServersOnly": true,
+    "allowManagedPluginsOnly": true,
     "channelsEnabled": false,
+    "forceRemoteSettingsRefresh": true,
+    "claudeMd": "Follow security guidelines. Never commit secrets. Use approved package registries only.",
+    "sandbox": {
+      "network": {
+        "allowedDomains": [
+          "*.github.com",
+          "*.npmjs.org",
+          "*.pypi.org",
+          "registry.terraform.io",
+          "*.internal.acme.com"
+        ]
+      }
+    },
     "allowedMcpServers": [
       {
         "name": "github",
@@ -66,14 +82,25 @@
     "disableAutoUpdates": false,
     "autoUpdaterEnforcementHours": 24
   },
+  "capabilities": {
+    "_delivery": "claude.ai → Admin Settings → Capabilities",
+    "code_execution_and_file_creation": true,
+    "allow_network_egress": false,
+    "artifacts": true,
+    "remote_control": false,
+    "channels": false
+  },
   "data_governance": {
     "training_on_data": false,
     "data_residency": "us",
-    "retention_policy": "enterprise_default"
+    "retention_policy": "enterprise_default",
+    "zero_data_retention": true
   },
   "monitoring": {
     "audit_logs": true,
     "usage_analytics": true,
+    "contribution_metrics": true,
+    "compliance_api": true,
     "siem_export": {
       "enabled": true,
       "destination": "splunk"

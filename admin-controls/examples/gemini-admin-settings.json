@@ -3,6 +3,7 @@
     "tool": "Google Gemini (Workspace)",
     "description": "Google Admin Console Gemini feature access matrix",
     "reference": "admin.google.com → Generative AI → Gemini for Workspace / Gemini Enterprise",
+    "last_updated": "2026-07-12",
     "notes": "These are NOT deployed as a file — they are configured in the Google Admin Console. This template documents the recommended settings for reference and change control."
   },
   "gemini_app": {
@@ -51,11 +52,16 @@
       }
     },
     "workspace_intelligence": {
+      "_note": "Launched April 2026 — controls which data sources Gemini can actively search",
       "gmail": true,
       "drive": true,
       "calendar": true,
       "chat": false,
       "vids": false
+    },
+    "smart_features": {
+      "admin_default": "on",
+      "allow_user_override": true
     }
   },
   "additional_services": {
@@ -64,11 +70,27 @@
       "scope": "specific_groups",
       "enabled_groups": ["research-team", "documentation"]
     },
+    "notebooklm_plus": {
+      "enabled": false
+    },
     "google_vids": {
       "enabled": false
     },
     "gemini_in_appsheet": {
       "enabled": false
+    },
+    "gemini_in_appsheet_solutions": {
+      "enabled": false
+    },
+    "workspace_studio": {
+      "enabled": false
+    },
+    "workspace_apps_in_gemini": {
+      "enabled": true
+    },
+    "gemini_cli": {
+      "enabled": true,
+      "_note": "Included with Gemini Enterprise access"
     }
   },
   "security": {

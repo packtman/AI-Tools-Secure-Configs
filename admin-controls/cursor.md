@@ -54,6 +54,7 @@ Admin controls cover identity management, security enforcement, spend governance
 | Restrict Cloud Agents | Control which users can create Cloud Agents |
 | Restrict analytics | Limit analytics dashboard to admins only |
 | Disable BYOK | Prevent users from using their own API keys |
+| Global agent run settings | Configure system-level rules for all agent sessions |
 
 ---
 
@@ -239,10 +240,36 @@ Cursor Organizations (launched June 2026) provides a company-level governance co
 | Capability | Description |
 |------------|-------------|
 | Multi-team management | Manage all teams from one dashboard |
-| Spend rollup | View consolidated spend and token usage across teams |
+| Spend rollup | View consolidated spend and token usage across teams; filter by team, user, service account, or cloud agent |
 | Per-team governance | Separate security, budget, model access per team |
 | Centralized audit | Organization-wide audit log aggregation |
 | Feature settings per team | Enable/disable features independently per team |
+| Organization Groups | Cross-team cohorts (e.g., Engineering, Contractors, Pilot Users) for org-wide policy |
+| Organization API | Programmatic management of org-level settings |
+| Reconciliation model | "Most permissive wins" when reconciling org-group and team-group settings |
+
+### Organization Hierarchy
+
+```
+Organization (company-level container)
+    ├── Organization Groups (cross-team cohorts for policy)
+    ├── Team A (operating unit — department, region, etc.)
+    │     ├── Directory Groups (SCIM-synced)
+    │     ├── Members (with team-level roles)
+    │     └── Team Settings (security, spend, models, features)
+    ├── Team B
+    │     └── ...
+    └── Organization Settings (shared identity, admin, org-wide)
+```
+
+### Organization Roles
+
+| Role | Scope | Capabilities |
+|------|-------|-------------|
+| Org Admin | Organization | Manage org settings, membership, shared identity, view all teams |
+| Team Admin | Team | Manage team settings, members, team-level policies |
+| Team Owner | Team | Full team access including billing |
+| Member | Team | Use Cursor within team-defined policies |
 
 ---
 

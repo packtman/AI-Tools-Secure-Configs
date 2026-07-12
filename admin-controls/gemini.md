@@ -57,15 +57,27 @@ Each service can be controlled per organizational unit or per group.
 
 Location: `Generative AI → Gemini for Workspace → Workspace Intelligence`
 
-Controls which Workspace services can be actively searched to power generative AI:
+Launched April 2026, Workspace Intelligence is the underlying AI system that gives Gemini real-time understanding of work across Google Workspace. Admin controls determine which data sources Gemini can actively search.
 
 | Setting | Effect |
 |---------|--------|
-| Gmail intelligence | Allow Gemini to reference email content |
-| Drive intelligence | Allow Gemini to reference Drive files |
-| Calendar intelligence | Allow Gemini to reference calendar events |
-| Chat intelligence | Allow Gemini to reference Chat messages |
+| Gmail intelligence | Allow Gemini to actively search email content |
+| Drive intelligence | Allow Gemini to actively search Drive files (Docs, Sheets, Slides) |
+| Calendar intelligence | Allow Gemini to actively search calendar events |
+| Chat intelligence | Allow Gemini to actively search Chat messages |
+| Vids intelligence | Allow Gemini to actively search Google Vids content |
 | Per-service toggle | Independent on/off for each data source |
+| Scope | Configurable per domain, OU, or group |
+
+> **Note:** Disabling a source only prevents *active* searching. Users can still reference specific content (e.g., a named file) in prompts. Changes may take up to 48 hours to take full effect. Workspace Intelligence settings do not govern the standalone Gemini app, NotebookLM, or Gemini for Education — those are controlled separately.
+
+### Smart Features & Personalization
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Smart features default | Admin Console → Apps → Google Workspace → Settings | Set organization default for user-facing smart features |
+| User override allowed | Same location | Allow/block users from changing their smart features setting |
+| Workspace data in Gemini app | Generative AI → Gemini app | Control whether Gemini app can access Workspace data via extension |
 
 ### Additional AI Services
 
@@ -75,8 +87,19 @@ Controls which Workspace services can be actively searched to power generative A
 | NotebookLM Plus | Generative AI → NotebookLM | Enable premium features |
 | Google Vids | Generative AI → Google Vids | Enable/disable video creation |
 | Gemini in AppSheet | Generative AI → App Creation | Enable AI-assisted app creation |
+| Gemini in AppSheet Solutions | Generative AI → App Creation | Enable AI-powered solutions in AppSheet |
 | Gemini CLI | Generative AI → Gemini Enterprise | Included with Enterprise access |
 | AI meeting notes | Generative AI → Meet | Allow Gemini to take meeting notes |
+| Google Workspace Studio | Generative AI → Workspace Studio | Enable AI workflow builder |
+| Workspace apps in Gemini | Generative AI → Gemini app | Control whether users can use Workspace app extension in Gemini |
+
+### API & Third-Party Controls
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| API controls | Security → API Controls | Control third-party app access and OAuth scopes |
+| Block Gemini from Studio via API | Security → API Controls | Prevent Workspace Studio from using Gemini via API |
+| Third-party AI integrations | Security → API Controls | Manage OAuth grants to AI-related third-party apps |
 
 ---
 
