@@ -35,8 +35,10 @@ contextProviders:
   - name: "tree"
 
 # WHAT: Defines MCP servers available to Continue agents.
-# WHY: Strict keeps MCP disabled because MCP servers can execute external tools and reach other systems.
-# BREAKS IF REMOVED: A local or workspace config can introduce an unreviewed tool bridge.
+# WHY: Strict keeps MCP disabled because MCP servers can execute external tools
+# and reach other systems.
+# BREAKS IF REMOVED: A local or workspace config can introduce an unreviewed
+# tool bridge.
 mcpServers: []
 
 allowAnonymousTelemetry: false

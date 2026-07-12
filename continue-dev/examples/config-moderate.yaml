@@ -38,8 +38,10 @@ contextProviders:
   - name: "codebase"
 
 # WHAT: Defines MCP servers available to Continue agents.
-# WHY: Moderate keeps this empty until IT approves server packages, credentials, and network scope.
-# BREAKS IF REMOVED: Developers may add local MCP servers outside the rollout review path.
+# WHY: Moderate keeps this empty until IT approves server packages, credentials,
+# and network scope.
+# BREAKS IF REMOVED: Developers may add local MCP servers outside the rollout
+# review path.
 mcpServers: []
 
 allowAnonymousTelemetry: false

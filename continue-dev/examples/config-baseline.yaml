@@ -34,8 +34,10 @@ contextProviders:
   - name: "web"
 
 # WHAT: Defines MCP servers available to Continue agents.
-# WHY: Baseline defaults to none so teams consciously opt in to servers that execute external tools.
-# BREAKS IF REMOVED: Users may not notice that MCP is unset and may add unreviewed servers locally.
+# WHY: Baseline defaults to none so teams consciously opt in to servers that
+# execute external tools.
+# BREAKS IF REMOVED: Users may not notice that MCP is unset and may add
+# unreviewed servers locally.
 mcpServers: []
 
 allowAnonymousTelemetry: false
