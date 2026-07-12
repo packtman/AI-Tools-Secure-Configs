@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
-  "_comment": "Reference document for GitHub Copilot organization policy settings. Configure via Organization Settings → Copilot → Policies & features.",
+  "_comment": "Reference document for GitHub Copilot organization/enterprise policy settings. Configure via Enterprise Settings → AI Controls tab (Copilot, Agents, MCP) and Organization Settings → Copilot.",
 
   "organization": "acme-corp",
 
@@ -17,18 +17,47 @@
   },
 
   "feature_policies": {
+    "_location": "Enterprise Settings → AI Controls → Copilot",
     "copilot_in_ide": "enabled",
     "copilot_chat_in_ide": "enabled",
     "copilot_chat_on_github": "enabled",
+    "copilot_in_mobile": "let_organizations_decide",
     "copilot_cli": "disabled",
+    "copilot_windows_terminal": "disabled",
     "copilot_code_review": "enabled",
-    "copilot_pull_request_summaries": "enabled",
-    "copilot_docset_management": "disabled",
-    "copilot_bing_search": "disabled",
-    "copilot_web_search": "disabled"
+    "copilot_vision": "let_organizations_decide",
+    "editor_inline_chat": "enabled",
+    "model_selection": "disabled",
+    "user_feedback_collection": "disabled"
+  },
+
+  "agent_policies": {
+    "_location": "Enterprise Settings → AI Controls → Agents",
+    "copilot_cloud_agent": {
+      "enforcement": "select_organizations",
+      "allowed_organizations": ["engineering"]
+    },
+    "copilot_code_review_agent": "enabled",
+    "custom_agents": "enabled",
+    "third_party_agents": "disabled"
+  },
+
+  "mcp_policies": {
+    "_location": "Enterprise Settings → AI Controls → MCP",
+    "mcp_server_availability": "enabled",
+    "mcp_registry_url": "",
+    "strict_registry_enforcement": false
+  },
+
+  "code_review": {
+    "_location": "Organization Settings → Copilot → Code review",
+    "org_level_runner": "github-hosted",
+    "lock_runner_setting": false,
+    "custom_instructions_path": ".github/copilot-instructions.md"
   },
 
   "content_exclusions": {
+    "_location": "Organization/Repository Settings → Copilot → Content exclusion",
     "global_patterns": [
       "**/.env",
       "**/.env.*",

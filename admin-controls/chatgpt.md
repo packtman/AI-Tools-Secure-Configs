@@ -81,19 +81,24 @@ These defaults apply to all users without a custom role:
 | Permission Category | Controls |
 |--------------------|----------|
 | ChatGPT Agent | Enable/disable autonomous agent mode |
-| Canvas | Enable/disable collaborative coding/writing canvas |
-| Codex | Enable/disable Codex code assistant |
+| ChatGPT Work | Enable/disable long-running agentic tasks (research, file creation, multi-app workflows) |
+| Canvas | Enable/disable collaborative coding/writing canvas (includes code execution toggle) |
+| Codex | Enable/disable Codex cloud-based software engineering agent |
 | Codex internet access | Allow Codex to access the internet |
+| Sites | Enable/disable ChatGPT Sites (hosted web app builder); public publishing separate toggle |
+| Deep Research | Enable/disable multi-step web research agent |
 | Custom GPTs — Create | Allow users to build custom GPTs |
 | Custom GPTs — Use | Allow users to use shared GPTs |
+| Projects | Enable/disable project workspaces for organizing conversations |
 | Memory | Allow ChatGPT to remember across conversations |
 | Web search | Allow real-time web search |
 | File uploads | Allow file attachment in conversations |
 | Image generation | Allow DALL-E image generation |
-| Voice mode | Allow Advanced Voice Mode |
+| Voice mode | Allow Advanced Voice Mode (screen/video sharing toggle separate) |
 | Apps & actions | Allow ChatGPT to use connected apps (email, calendar, etc.) |
 | Data analysis | Allow code interpreter / data analysis |
 | Record (audio) | Allow audio recording features |
+| Scheduled tasks | Allow agents to run on schedules |
 
 ### Custom Roles (Enterprise)
 
@@ -105,34 +110,63 @@ Location: `Settings and Permissions → Custom Roles` tab
 | Assign to groups | Apply role to one or more workspace groups |
 | Permission inheritance | Users inherit the most permissive setting across all assigned roles |
 
-### Usage Limits per Role (Enterprise)
+### Usage Limits (Enterprise)
+
+Location: `Workspace settings → Usage limits`
 
 | Setting | Options | Effect |
 |---------|---------|--------|
-| Usage limit level | None / Low / Standard / High / Custom | Weekly per-user credit cap |
+| Workspace-level limit | Monthly credit cap | Hard cap on total workspace AI usage |
+| Group-level limit | Monthly credit cap per group | Limit by SCIM-synced group |
+| Per-user limit | Monthly credit cap per user | Individual spending control |
 | Enforcement mode | Admin Alert / Hard Cap | Alert-only or hard block at limit |
-| Alert delivery | Weekly email digest to owners | Notify when users approach limits |
+| Increase requests | User-initiated | Users can request limit increases; admins approve |
+| Alert delivery | Email digest to owners | Notify when users approach limits |
 
 ---
 
-## 3. GPT Governance
+## 3. GPT & Agent Governance
 
 ### Custom GPT Controls
 
 | Setting | Location | Effect |
 |---------|----------|--------|
 | GPT creation | Workspace defaults or RBAC | Allow/block users from creating GPTs |
-| GPT sharing scope | Workspace settings | Internal only vs. public sharing |
+| GPT sharing scope | Workspace settings | Internal only, private invite, or public sharing |
 | GPT publishing approval | Workspace settings | Require admin review before publishing |
-| Third-party GPTs | Workspace settings | Allow/block GPT Store GPTs |
+| Third-party GPTs | Workspace settings | Allow/block GPT Store GPTs; approve specific GPTs |
+| GPT action domain allowlist | Workspace settings | Restrict GPT actions to approved domains only |
+| GPT ownership transfer | Workspace settings | Transfer GPT ownership between users |
 
-### App & Action Governance
+### Workspace Agent Governance
 
 | Setting | Location | Effect |
 |---------|----------|--------|
-| Connected apps | Workspace settings | Enable/disable app integrations (Google, Microsoft, etc.) |
-| Action execution | Workspace settings | Allow ChatGPT to take actions via apps |
-| Per-app control | Workspace settings | Granular enable/disable per integration |
+| Agent building | Permissions & Roles / RBAC | Control who can build agents |
+| Agent publishing | Permissions & Roles / RBAC | Control who can publish workspace agents |
+| Agent app access | Workspace settings → Apps | Control which apps/tools agents can use |
+| Per-app action constraints | Workspace settings → Apps | Restrict specific read/write actions per app |
+| Human-in-the-loop | Workspace settings → Apps | Require user confirmation for consequential actions |
+| Agent natural language constraints | Agent builder UI | Define action boundaries in natural language |
+
+### App & Connector Governance
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Connected apps | Workspace settings → Apps | Enable/disable app integrations (Google Drive, Slack, etc.) |
+| Action execution | Workspace settings → Apps | Allow ChatGPT/agents to take actions via apps |
+| Per-app control | Workspace settings → Apps | Granular enable/disable per integration |
+| Per-app role access | Permissions & Roles / RBAC | Restrict app access to specific roles |
+| Read/write action granularity | Workspace settings → Apps → Manage actions | Toggle individual read and write actions per app |
+| Plugin governance | Workspace settings → Plugins | Search, filter, enable/disable plugins; manage by role/category |
+
+### Sites Governance
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Sites enablement | Permissions & Roles | Enable/disable Sites feature (off by default in Enterprise) |
+| Public publishing | Workspace settings | Allow/block public URL publishing (off by default in Enterprise) |
+| Site management | Workspace settings → Sites | View, disable, or remove published sites |
 
 ---
 
@@ -191,6 +225,8 @@ Location: `Settings and Permissions → Custom Roles` tab
 | Per-user/team breakdown | Enterprise |
 | Cost attribution | Enterprise |
 | Model usage distribution | Enterprise |
+| Credit usage (workspace/group/user) | Enterprise |
+| Agent session metrics | Enterprise |
 
 ### Audit Logs (Enterprise)
 
@@ -241,11 +277,16 @@ For organizations with multiple ChatGPT workspaces:
 - [ ] Enable Enterprise Key Management (EKM)
 - [ ] Select appropriate data residency region
 - [ ] Disable: web search, file uploads, connected apps, image generation (review per compliance needs)
+- [ ] Disable: ChatGPT Work, Sites, agents, scheduled tasks
 - [ ] Create restrictive default role — disable most features
 - [ ] Create specific roles per department with only needed features
-- [ ] Set hard usage caps per role
+- [ ] Set hard per-user monthly credit caps
 - [ ] Block Custom GPT creation (or require admin approval)
 - [ ] Block third-party GPTs from GPT Store
+- [ ] Configure GPT action domain allowlist (approved domains only)
+- [ ] Restrict agent building and publishing to admin-approved roles
+- [ ] Configure per-app read/write action granularity
+- [ ] Enable human-in-the-loop for consequential agent actions
 - [ ] Configure Compliance API export to your DLP/archival system
 - [ ] Route audit logs to SIEM
 - [ ] Request BAA for HIPAA if applicable
@@ -255,11 +296,13 @@ For organizations with multiple ChatGPT workspaces:
 - [ ] Enforce SSO for all users
 - [ ] Enable SCIM with group sync
 - [ ] Set conversation retention to 90 days (adjust per policy)
-- [ ] Create default role with core features enabled
-- [ ] Create elevated roles for power users (agents, Codex, apps)
-- [ ] Set standard usage limits with admin alerts
+- [ ] Create default role with core features enabled (canvas, web search, deep research)
+- [ ] Create elevated roles for power users (agents, Work, Codex, Sites, apps)
+- [ ] Set monthly credit limits with admin alerts
 - [ ] Allow internal Custom GPT sharing, block public
+- [ ] Enable Sites for internal use only (disable public publishing)
 - [ ] Vet and enable specific connected apps only
+- [ ] Configure per-app action controls (read-only for sensitive apps)
 - [ ] Review analytics monthly for adoption and anomalies
 - [ ] Set up Compliance API for quarterly reviews
 
@@ -271,6 +314,7 @@ For organizations with multiple ChatGPT workspaces:
 - [ ] Limit connected apps to vetted integrations
 - [ ] Review workspace analytics monthly
 - [ ] Set GPT sharing to workspace-internal only
+- [ ] Set workspace-level monthly credit limit
 
 ---
 

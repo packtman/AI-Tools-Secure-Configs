@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "tool": "Windsurf Enterprise (Codeium)",
+    "description": "Windsurf Admin Portal configuration reference",
+    "reference": "Windsurf Admin Portal → Security, Features, Teams",
+    "notes": "These settings are configured in the Windsurf Admin Portal. This template documents the recommended Enterprise configuration for change control purposes."
+  },
+  "organization": {
+    "name": "Acme Corp",
+    "plan": "enterprise",
+    "deployment_mode": "cloud"
+  },
+  "identity": {
+    "sso": {
+      "enabled": true,
+      "protocol": "saml",
+      "provider": "okta",
+      "sp_initiated_only": true
+    },
+    "scim": {
+      "enabled": true,
+      "provider": "okta",
+      "auto_deprovision": true,
+      "group_sync": true
+    }
+  },
+  "security": {
+    "auto_execution_level": "confirm_destructive",
+    "mcp_servers": {
+      "mode": "whitelist",
+      "approved_servers": [
+        "github-mcp-server",
+        "postgres-mcp-server",
+        "jira-mcp-server"
+      ]
+    },
+    "conversation_sharing": false,
+    "attribution_filtering": true,
+    "secret_scanning": true,
+    "codeiumignore_enforced": true,
+    "codeiumignore_patterns": [
+      "**/*.env",
+      "**/*.pem",
+      "**/*.key",
+      "**/secrets/**",
+      "**/node_modules/**"
+    ]
+  },
+  "features": {
+    "web_search": true,
+    "deploys": false,
+    "cascade_agent": true,
+    "supercomplete": true,
+    "model_access": {
+      "mode": "per_team",
+      "default_models": ["claude-sonnet-4", "gpt-4o"],
+      "restricted_models": []
+    }
+  },
+  "rbac": {
+    "roles": [
+      {
+        "name": "Senior Engineer",
+        "permissions": {
+          "auto_execution": "full",
+          "mcp_write": true,
+          "deploys": true
+        }
+      },
+      {
+        "name": "Junior Developer",
+        "permissions": {
+          "auto_execution": "confirm_all",
+          "mcp_write": false,
+          "deploys": false
+        }
+      },
+      {
+        "name": "Analyst",
+        "permissions": {
+          "auto_execution": "disabled",
+          "mcp_write": false,
+          "deploys": false
+        }
+      }
+    ]
+  },
+  "monitoring": {
+    "audit_logging": true,
+    "usage_analytics": true,
+    "api_reporting": true,
+    "service_keys": [
+      {
+        "name": "siem-integration",
+        "permissions": ["read_audit_logs", "read_usage"],
+        "scope": "organization"
+      }
+    ]
+  }
+}

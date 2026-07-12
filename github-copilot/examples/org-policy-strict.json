@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/github-copilot/org-policy.json",
-  "_comment": "STRICT GitHub Copilot organization policy. Most features disabled, broad content exclusion, individual plan traffic blocked. Use for regulated industries.",
+  "_comment": "STRICT GitHub Copilot organization policy. Most features disabled, agents blocked, strict MCP registry, broad content exclusion. Use for regulated industries.",
 
   "organization": "acme-corp",
   "copilot_plan": "enterprise",
@@ -15,12 +15,32 @@
     "copilot_in_ide": "enabled",
     "copilot_chat_in_ide": "enabled",
     "copilot_chat_on_github": "disabled",
+    "copilot_in_mobile": "disabled",
     "copilot_cli": "disabled",
+    "copilot_windows_terminal": "disabled",
     "copilot_code_review": "disabled",
-    "copilot_pull_request_summaries": "disabled",
-    "copilot_docset_management": "disabled",
-    "copilot_bing_search": "disabled",
-    "copilot_web_search": "disabled"
+    "copilot_vision": "disabled",
+    "editor_inline_chat": "enabled",
+    "model_selection": "disabled",
+    "user_feedback_collection": "disabled"
+  },
+
+  "agent_policies": {
+    "copilot_cloud_agent": "disabled",
+    "copilot_code_review_agent": "disabled",
+    "custom_agents": "disabled",
+    "third_party_agents": "disabled"
+  },
+
+  "mcp_policies": {
+    "mcp_server_availability": "disabled",
+    "mcp_registry_url": "",
+    "strict_registry_enforcement": true
+  },
+
+  "code_review": {
+    "org_level_runner": "self-hosted",
+    "lock_runner_setting": true
   },
 
   "content_exclusions": {

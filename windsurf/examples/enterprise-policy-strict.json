@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
-  "_comment": "STRICT Windsurf enterprise policy. No extensions, workspace trust enforced, telemetry off, external extensions blocked. Use for regulated environments.",
+  "_comment": "STRICT Windsurf enterprise policy. No extensions, agents restricted, MCP locked down, auto-execution disabled. Use for regulated environments.",
 
   "AllowedExtensions": [],
 
@@ -21,6 +21,21 @@
     "enforceProxyStrictSSL": true,
     "blockExternalExtensions": true,
     "blockLocalMcpServers": true,
-    "disableWebSearch": true
+    "disableWebSearch": true,
+    "disableDeploys": true,
+    "disableConversationSharing": true,
+    "enableAttributionFiltering": true
+  },
+
+  "AgentSettings": {
+    "autoExecutionLevel": "disabled",
+    "requireHumanConfirmation": true,
+    "cascadeMaxSteps": 10
+  },
+
+  "McpGovernance": {
+    "mode": "whitelist",
+    "approvedServers": [],
+    "blockUnapproved": true
   }
 }

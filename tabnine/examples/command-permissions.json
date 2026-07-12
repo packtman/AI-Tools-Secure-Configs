@@ -1,8 +1,25 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/tabnine/command-permissions.json",
-  "_comment": "Tabnine command permission configuration. Defines what commands the AI agent can execute and whether approval is required.",
+  "_comment": "Tabnine command permission configuration. Defines what commands the AI agent can execute and whether approval is required. Configure via Admin Console → Settings → Native Tools or via system settings JSON.",
 
   "default_permission": "require-confirmation",
+
+  "security": {
+    "disableYoloMode": true,
+    "secureModeEnabled": true,
+    "mcpEnabled": true,
+    "workspaceScopedRestrictions": true,
+    "folderTrustDefault": "untrusted"
+  },
+
+  "native_tools": {
+    "_comment": "Configured in Admin Console → Settings → Native Tools",
+    "Run": "require-confirmation",
+    "Apply": "require-confirmation",
+    "Create": "require-confirmation"
+  },
+
+  "approval_mode": "default",
 
   "command_categories": {
     "git": "auto-approve",

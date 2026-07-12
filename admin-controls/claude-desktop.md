@@ -54,7 +54,7 @@ Claude Desktop inherits organizational policy from the admin console and can add
 
 ## 2. Feature Governance (Managed Settings)
 
-Managed settings are delivered from the admin console and override all local configuration. They apply uniformly to all users in the organization.
+Managed settings are delivered from the admin console and override all local configuration. They apply uniformly to all users in the organization. Server-managed settings refresh hourly during active sessions.
 
 ### Admin Console → Claude Code → Managed Settings
 
@@ -70,7 +70,12 @@ These settings control Claude Code and Claude Desktop behavior:
 | `allowedMcpServers` | Array | MCP server allowlist (blocks all others) |
 | `deniedMcpServers` | Array | MCP server denylist |
 | `allowManagedMcpServersOnly` | Boolean | Only managed MCP server lists apply |
+| `allowManagedPluginsOnly` | Boolean | Only managed plugin lists apply; user plugins ignored |
 | `channelsEnabled` | Boolean | Allow Claude channels feature |
+| `claudeMd` | String | Inject mandatory system instructions into every session |
+| `forceRemoteSettingsRefresh` | Boolean | Block session startup until server-managed settings confirm |
+| `forceLoginOrgUUID` | String | Enforce organization membership at login (Enterprise) |
+| `sandbox.network.allowedDomains` | Array | Restrict network egress to approved domains only |
 
 ### Claude Desktop–Specific Policy Keys
 
@@ -86,6 +91,36 @@ These are deployed via MDM or the admin console for Claude Desktop:
 | `disableAutoUpdates` | Boolean | Disable automatic updates |
 | `autoUpdaterEnforcementHours` | Integer | Hours before force-restart for pending update (1–72) |
 
+### Organization Capabilities (Admin Console)
+
+Location: `claude.ai → Admin Settings → Capabilities`
+
+| Setting | Type | Effect |
+|---------|------|--------|
+| Code execution and file creation | Toggle | Enable/disable code execution environment |
+| Allow network egress | Toggle | Allow code execution to access the internet |
+| Artifacts | Toggle (Enterprise) | Enable/disable artifact creation |
+| Remote Control | Toggle | Allow remote control access (Admin-enabled on Team/Enterprise) |
+| Channels | Toggle | Allow collaborative channels feature |
+
+### Feature Availability by Plan
+
+| Feature | Pro | Max | Team | Enterprise |
+|---------|-----|-----|------|------------|
+| Claude Code on the web | ✓ | ✓ | ✓ | ✓ |
+| Routines (scheduled tasks) | ✓ | ✓ | ✓ | ✓ |
+| Remote Control | ✓ | ✓ | Admin-enabled | Admin-enabled |
+| Channels | ✓ | ✓ | Admin-enabled | Admin-enabled |
+| Computer use | ✓ | ✓ | ✗ | ✗ |
+| Code Review | ✗ | ✗ | ✓ | ✓ |
+| Artifacts | ✓ | ✓ | ✓ | Admin-enabled |
+| Analytics dashboard & API | ✗ | ✗ | ✓ | ✓ |
+| Server-managed settings | ✗ | ✗ | ✓ | ✓ |
+| SSO | ✗ | ✗ | ✓ | ✓ |
+| SCIM | ✗ | ✗ | ✗ | ✓ |
+| Compliance API | ✗ | ✗ | ✗ | ✓ |
+| Zero Data Retention | ✗ | ✗ | ✗ | ✓ |
+
 ---
 
 ## 3. Data Governance
@@ -97,6 +132,7 @@ These are deployed via MDM or the admin console for Claude Desktop:
 | Training opt-out | Automatic on Team/Enterprise | Conversations never used for model training |
 | Data retention | Admin Settings → Data & Privacy | Configure retention window or indefinite |
 | Conversation history | Admin Settings → Data & Privacy | Control whether history is stored server-side |
+| Zero Data Retention | Admin Settings (Enterprise) | No conversation data persisted server-side |
 
 ### Data Residency (Enterprise)
 
@@ -110,7 +146,16 @@ These are deployed via MDM or the admin console for Claude Desktop:
 | Certification | Plan |
 |---------------|------|
 | SOC 2 Type II | Team+ |
+| ISO 27001 | Enterprise |
 | HIPAA (BAA available) | Enterprise |
+
+### Compliance API (Enterprise)
+
+| Capability | Description |
+|------------|-------------|
+| Conversation export | Bulk export conversation data for compliance review |
+| Admin action logs | Export admin and security event logs |
+| Integration | Feed data to DLP/archival/SIEM systems |
 
 ---
 
@@ -124,6 +169,7 @@ These are deployed via MDM or the admin console for Claude Desktop:
 | Admin actions | Settings changes, role assignments, policy updates |
 | User activity | Conversation creation, tool usage, file uploads |
 | Security events | Permission changes, API key actions |
+| Agent activity | Claude Code sessions, tool invocations |
 
 ### Usage Analytics
 
@@ -133,6 +179,8 @@ These are deployed via MDM or the admin console for Claude Desktop:
 | Messages per user | Team+ |
 | Model usage breakdown | Team+ |
 | Cost per user/team | Enterprise |
+| Contribution metrics | Team+ |
+| Analytics API | Team+ |
 
 ---
 
@@ -188,18 +236,33 @@ Deploy via Jamf, Kandji, Mosyle, or any MDM supporting configuration profiles.
 Claude enforces a strict hierarchy where admin controls always win:
 
 ```
-Server-managed settings (Admin Console)     ← Highest priority
+Server-managed settings (Admin Console push)       ← Highest priority
     ↓
 MDM / OS-level policies (plist, registry)
     ↓
 File-based managed settings (managed-settings.json)
     ↓
-User-level settings (~/.claude/)
+Windows user registry (HKCU\SOFTWARE\Policies\ClaudeCode)
     ↓
-Project-level settings (.claude/)            ← Lowest priority
+Command line flags
+    ↓
+Local project settings (.claude/settings.local.json)
+    ↓
+Shared project settings (.claude/settings.json)
+    ↓
+User-level settings (~/.claude/settings.json)      ← Lowest priority
 ```
 
-Within the managed tier, the first source delivering a non-empty configuration wins. Sources do not merge across tiers.
+Within the managed tier, the first source delivering a non-empty configuration wins. Sources do not merge across tiers. A small set of cross-source lock keys (e.g., sandbox allowlist locks) are honored when any admin-controlled source sets them.
+
+### Managed Settings Delivery Paths
+
+| Mechanism | Delivery | Platforms |
+|-----------|----------|-----------|
+| Server-managed | claude.ai admin console (or self-hosted gateway) | All |
+| plist / registry | macOS: `com.anthropic.claudecode`; Windows: `HKLM\SOFTWARE\Policies\ClaudeCode` | macOS, Windows |
+| File-based | macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`; Linux: `/etc/claude-code/managed-settings.json`; Windows: `C:\Program Files\ClaudeCode\managed-settings.json` | All |
+| Windows user registry | `HKCU\SOFTWARE\Policies\ClaudeCode` | Windows |
 
 ---
 

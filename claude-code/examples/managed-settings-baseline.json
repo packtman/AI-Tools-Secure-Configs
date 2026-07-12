@@ -57,9 +57,11 @@
   "disableAutoMode": "allow",
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
+  "allowManagedPluginsOnly": false,
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
+  "channelsEnabled": true,
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",

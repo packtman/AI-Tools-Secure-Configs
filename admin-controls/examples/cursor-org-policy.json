@@ -3,11 +3,17 @@
     "tool": "Cursor Enterprise",
     "description": "Organization-level governance settings for Cursor Enterprise",
     "reference": "cursor.com/settings → Organization dashboard",
-    "notes": "These are configured in the Cursor dashboard and enforced server-side. MDM policies (AllowedTeamId, AllowedExtensions) are deployed separately via device management."
+    "last_updated": "2026-07-12",
+    "notes": "These are configured in the Cursor dashboard and enforced server-side. MDM policies (AllowedTeamId, AllowedExtensions) are deployed separately via device management. Organizations launched June 2026."
   },
   "organization": {
     "name": "Acme Corp",
-    "governance_level": "enterprise"
+    "governance_level": "enterprise",
+    "structure": {
+      "org_groups": ["Engineering", "Contractors", "Pilot Users"],
+      "teams": ["platform-team", "frontend-team", "data-team", "contractors"],
+      "reconciliation_model": "most_permissive_wins"
+    }
   },
   "security": {
     "privacy_mode": {
@@ -113,7 +119,19 @@
     "audit_logs_enabled": true,
     "analytics_enabled": true,
     "ai_code_tracking": true,
-    "conversation_analytics": true
+    "conversation_analytics": true,
+    "spend_rollup": {
+      "filter_by": ["team", "user", "service_account", "cloud_agent"]
+    }
+  },
+  "agent_settings": {
+    "global_agent_rules": [
+      "Always follow security guidelines in @security.mdc",
+      "Never commit secrets or credentials",
+      "Use approved package registries only"
+    ],
+    "restrict_cloud_agents": true,
+    "restrict_cli_access": false
   },
   "mdm_enforcement": {
     "_note": "Deploy these via Jamf/Intune in addition to dashboard settings",
