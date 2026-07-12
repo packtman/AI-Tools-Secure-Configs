@@ -127,7 +127,15 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | Aspect | Detail |
 |--------|--------|
 | **What it does** | Continue.dev supports Model Context Protocol servers as tools, extending the agent's capabilities with external integrations. |
-| **Recommended** | Audit and scope all MCP servers. Use only approved servers. |
+| **Recommended** | Keep `mcpServers: []` by default, then add only approved and scoped servers. |
+
+### Tiered Default
+
+| Tier | `mcpServers` value | Why |
+|------|--------------------|-----|
+| Baseline | `[]` | Keeps the starting config safe while allowing teams to opt in after reviewing a server. |
+| Moderate | `[]` | Requires IT approval for server package, credentials, filesystem scope, and network access. |
+| Strict | `[]` | Disables MCP because MCP servers can execute external tools and reach other systems. |
 
 ### Scoping and Auditing
 
@@ -151,7 +159,20 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 
 ### Misconfiguration Risk
 
-An unscoped filesystem MCP server gives the agent access to the entire filesystem. A shell-execution MCP server gives the agent arbitrary command execution. A database MCP server with write access allows the agent to modify production data. Each unaudited MCP server is an additional attack surface.
+Removing `mcpServers: []` or replacing it with an unreviewed server can silently grant the agent new tool access. An unscoped filesystem MCP server gives the agent access to the entire filesystem. A shell-execution MCP server gives the agent arbitrary command execution. A database MCP server with write access allows the agent to modify production data. Each unaudited MCP server is an additional attack surface.
+
+---
+
+## 5.1 Required `config.yaml` Metadata
+
+| Setting | What it does | Recommended value | Why |
+|---------|--------------|-------------------|-----|
+| `name` | Human-readable config name shown in Continue config surfaces. | Tier-specific descriptive name | Helps admins and developers confirm which managed profile is active. |
+| `version` | Version of the local configuration document. | `1.0.0` for repo examples | Gives admins a simple change marker when distributing updated templates. |
+
+### Misconfiguration Risk
+
+The current Continue.dev reference marks `name`, `version`, and `schema` as required. Omitting `name` or `version` can make copied templates fail validation or appear ambiguous in config selection screens.
 
 ---
 

@@ -111,6 +111,11 @@
   "disableDeepLinkRegistration": "disable",
 
   "disableWorkflows": true,
+  "disableAgentView": true,
+  "disableArtifact": true,
+  "disableBundledSkills": true,
+  "disableClaudeAiConnectors": true,
+  "fileCheckpointingEnabled": true,
 
   "autoUpdatesChannel": "stable",
 

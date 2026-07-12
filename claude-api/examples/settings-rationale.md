@@ -88,6 +88,20 @@ Every organization-level security setting explained: **what it does**, **why it 
 
 **What happens without rotation:** A key leaked 6 months ago still works. You have no way to know it was compromised until it's used maliciously.
 
+### API Key Expiration
+
+**What it does:** Sets an `expires_at` timestamp when creating API keys and Admin API keys. Keys can also be created with no expiration (`expires_at: null`) if "Never" is selected.
+
+**Why it matters:** Expiration converts key lifecycle from an honor-system rotation process into an enforced control. A forgotten key eventually stops working instead of remaining valid indefinitely.
+
+| Environment | `api_key_expiration_required` | `allow_never_expiring_keys` | Reasoning |
+|-------------|-------------------------------|-----------------------------|-----------|
+| Baseline | `false` | `true` | Keeps low-friction startup workflows, but admins should still inventory long-lived keys. |
+| Moderate | `true` | `false` | Enterprise keys should expire on schedule and use the `expires_at` field for alerting. |
+| Strict | `true` | `false` | Regulated environments should not allow indefinite bearer tokens. |
+
+**What breaks if too strict:** Services with manual secret rotation can fail when a key expires. Mitigate by alerting owners at least 14 days before expiration and testing rotation in staging.
+
 ---
 
 ## 7. Rate Limits & Spend Controls
@@ -105,6 +119,46 @@ Every organization-level security setting explained: **what it does**, **why it 
 | `tokens_per_minute` | Prevents token-heavy abuse | Large prompts consume more budget per request. |
 | `monthly_budget_usd` | Hard cost boundary | CFO-friendly: maximum spend is guaranteed. |
 | `alert_thresholds` (50/75/90%) | Early warning | Time to investigate before the cap is hit. |
+
+### Model Group Rate Limits
+
+**What it does:** The Rate Limits API can return entries with `group_type: "model_group"`, meaning the limit applies to a family of models listed in the response.
+
+**Why it matters:** New models may share a rate-limit bucket. Admins should alert and capacity-plan by model group, not only by individual model name.
+
+| Environment | Recommended handling |
+|-------------|----------------------|
+| Baseline | Review model-group limits during monthly spend checks. |
+| Moderate | Track model-group limits per workspace and alert on saturation. |
+| Strict | Require approval before adding models to production workloads if they share a constrained model group. |
+
+---
+
+## 7.1 MCP Tunnels
+
+**What it does:** MCP tunnels expose internal MCP servers through Anthropic-assigned tunnel domains. The research-preview API uses the `mcp-tunnels-2026-06-22` beta header and WIF scope `workspace:manage_tunnels`. Older Admin API integrations used `mcp-tunnels-2026-05-19` and `org:manage_tunnels` during the migration window.
+
+**Why it matters:** A tunnel bridges external Claude API infrastructure to an internal tool server. Tunnel tokens are credentials, and registered CA certificates define which internal gateway is trusted.
+
+| Environment | `mcp_tunnels.enabled` | Token rotation | Certificate rotation | Reasoning |
+|-------------|-----------------------|----------------|----------------------|-----------|
+| Baseline | `false` | 30 days if approved | 90 days if approved | Research-preview tunnels require explicit opt-in even in flexible environments. |
+| Moderate | `false` | 30 days if approved | 90 days if approved | Standard enterprise needs workspace owner approval, WIF scope review, and SIEM alerts first. |
+| Strict | `false` | 14 days if approved | 60 days if approved | Regulated environments should avoid tunnel exposure unless a compensating control package is approved. |
+
+**What breaks if enabled without review:** Internal tools can become reachable through a tunnel domain, tunnel tokens can be mishandled like static secrets, and certificate expiry can break MCP traffic unexpectedly.
+
+---
+
+## 7.2 Release Note Terms With No Org Policy Change
+
+| Term | Triage |
+|------|--------|
+| `fast-mode-2026-02-01` | Fast mode is a premium model speed feature controlled by request headers and account access. Keep disabled unless an API gateway or workload owner explicitly approves premium usage. |
+| `mcp_oauth` | Applies to Claude Managed Agents vault credentials. It is relevant only if Managed Agents are deployed, not to the base Claude API org-policy examples. |
+| `LanguageModel` / `LanguageModelSession` | Swift SDK type names for Apple Foundation Models integration. No organization policy setting is required. |
+| `model_context_window_exceeded` | Error/event naming for context-window handling. Monitor if useful, but no config template change is needed. |
+| `policy_violation_investigation` | CMEK content preservation reason code. Security teams should recognize it in logs, but it is not a rollout config key. |
 
 ---
 

@@ -109,6 +109,11 @@
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableAgentView": true,
+  "disableArtifact": true,
+  "disableBundledSkills": true,
+  "disableClaudeAiConnectors": true,
+  "fileCheckpointingEnabled": false,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",

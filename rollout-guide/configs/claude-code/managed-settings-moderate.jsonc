@@ -173,6 +173,39 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables background agents and Agent View.
+  // WHY: Background agents can continue work outside the visible foreground session.
+  //      Moderate tier blocks them until admins define audit coverage and ownership.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude agents, --bg, /background,
+  //      or the on-demand supervisor.
+  "disableAgentView": true,
+
+  // WHAT: Disables publishing session output as a private claude.ai Artifact page.
+  // WHY: Artifact publishing is a code and prompt egress path. Keep it off until
+  //      legal, retention, and access-review controls are approved.
+  // BREAKS IF SET TO TRUE: Developers cannot share Claude Code session output through
+  //      the Artifact tool.
+  "disableArtifact": true,
+
+  // WHAT: Disables bundled skills and bundled workflows shipped with Claude Code.
+  // WHY: Bundled automation can change between releases. Moderate tier keeps the
+  //      rollout surface stable until IT reviews new skills.
+  // BREAKS IF SET TO TRUE: Built-in bundled skills and workflow helpers are unavailable.
+  "disableBundledSkills": true,
+
+  // WHAT: Blocks claude.ai MCP connectors from being auto-fetched or connected.
+  // WHY: Cloud connectors are an MCP tool surface. Moderate tier requires explicit
+  //      managed MCP review instead of inheriting cloud-side connectors automatically.
+  // BREAKS IF SET TO TRUE: Developers cannot use claude.ai-hosted connectors unless
+  //      IT deploys an approved MCP configuration.
+  "disableClaudeAiConnectors": true,
+
+  // WHAT: Keeps local edit checkpoints enabled so /rewind can restore files.
+  // WHY: Moderate tier preserves rollback workflow while deny rules block sensitive
+  //      file access. Strict disables this to avoid extra local code snapshots.
+  // BREAKS IF SET TO FALSE: Developers lose /rewind recovery for file edits.
+  "fileCheckpointingEnabled": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

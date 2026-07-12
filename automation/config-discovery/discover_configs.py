@@ -379,6 +379,17 @@ def source_snapshot(
     return base
 
 
+def refresh_local_candidate_coverage(snapshot: dict[str, Any], local_tool_text: str) -> dict[str, Any]:
+    candidates = snapshot.get("config_candidates")
+    if not isinstance(candidates, list):
+        return snapshot
+    refreshed = dict(snapshot)
+    refreshed["config_candidates_missing_locally"] = [
+        candidate for candidate in candidates if candidate not in local_tool_text
+    ]
+    return refreshed
+
+
 def classify_change(previous: dict[str, Any] | None, current: dict[str, Any]) -> str | None:
     if not previous:
         return "new-source-baseline"
@@ -390,6 +401,8 @@ def classify_change(previous: dict[str, Any] | None, current: dict[str, Any]) ->
         return "http-status-changed"
     if current.get("sha256") and current.get("sha256") != previous.get("sha256"):
         return "content-changed"
+    if current.get("config_candidates_missing_locally") != previous.get("config_candidates_missing_locally"):
+        return "local-coverage-changed"
     return None
 
 
@@ -430,6 +443,7 @@ def run_discovery(args: argparse.Namespace) -> int:
         previous = previous_sources.get(source_id, {})
         metadata, body = fetch_source(source, previous, args.timeout)
         current = source_snapshot(source, metadata, body, previous, changed_at, local_text_by_tool[source["tool_id"]])
+        current = refresh_local_candidate_coverage(current, local_text_by_tool[source["tool_id"]])
         change_type = classify_change(previous or None, current)
 
         if change_type:
@@ -469,7 +483,7 @@ def render_report(changes: list[dict[str, Any]], registry: dict[str, Any]) -> st
     lines: list[str] = [
         "# Config Discovery Report",
         "",
-        "This report was generated because one or more watched upstream sources changed.",
+        "This report was generated because one or more watched upstream sources changed or local coverage changed.",
         "Use `automation/config-discovery/agent-prompt.md` to turn these signals into a focused config update PR.",
         "",
         "## Summary",

@@ -8,7 +8,16 @@
       "rate_limits": {
         "requests_per_minute": 500,
         "input_tokens_per_minute": 200000,
-        "output_tokens_per_minute": 100000
+        "output_tokens_per_minute": 100000,
+        "model_group_overrides": [
+          {
+            "group_type": "model_group",
+            "models": ["claude-opus-4-20250514"],
+            "requests_per_minute": 100,
+            "input_tokens_per_minute": 50000,
+            "output_tokens_per_minute": 25000
+          }
+        ]
       },
       "spend_controls": {
         "monthly_budget_usd": 10000,
@@ -22,7 +31,16 @@
       "rate_limits": {
         "requests_per_minute": 100,
         "input_tokens_per_minute": 50000,
-        "output_tokens_per_minute": 25000
+        "output_tokens_per_minute": 25000,
+        "model_group_overrides": [
+          {
+            "group_type": "model_group",
+            "models": ["claude-sonnet-4-20250514"],
+            "requests_per_minute": 50,
+            "input_tokens_per_minute": 25000,
+            "output_tokens_per_minute": 12500
+          }
+        ]
       },
       "spend_controls": {
         "monthly_budget_usd": 2000,
