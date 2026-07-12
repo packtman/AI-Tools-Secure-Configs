@@ -56,6 +56,10 @@ Defaults:
 
 Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 
+### MCP Server Defaults
+
+`mcpServers: []` is intentional in the tiered configs. MCP (Model Context Protocol) servers are tool bridges that can read files, call APIs, or run local commands depending on the server. Add servers only after IT approves the package source, credentials, filesystem scope, and network destinations.
+
 ## Deployment Checklist
 
 1. Deploy `~/.continue/config.yaml` with secure defaults on all developer machines.
@@ -64,4 +68,5 @@ Secrets are referenced using mustache notation: `${{ secrets.SECRET_NAME }}`
 4. Deploy `.continuerc.json` to all repositories for project-level overrides.
 5. Train developers on permission modes (`--readonly` for code review).
 6. Never store API keys in `config.yaml` — use environment variables or org secrets.
-7. Audit Continue configuration in repositories before trusting.
+7. Keep `mcpServers: []` until each MCP server has an owner, scope, and audit plan.
+8. Audit Continue configuration in repositories before trusting.

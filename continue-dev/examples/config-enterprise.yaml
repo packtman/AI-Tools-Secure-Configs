@@ -1,6 +1,8 @@
 # Continue.dev — Enterprise configuration
 # Includes proxy settings and private model endpoints.
 
+name: Enterprise Continue.dev configuration
+version: 1.0.0
 schema: v1
 
 models:
@@ -35,6 +37,10 @@ contextProviders:
   - name: "diff"
   - name: "tree"
   - name: "codebase"
+
+# MCP servers are disabled by default until IT approves server packages,
+# credentials, filesystem scope, and network destinations.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: false

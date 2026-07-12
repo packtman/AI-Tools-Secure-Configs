@@ -1,6 +1,8 @@
 # Continue.dev — Secure global configuration
 # Deploy to: ~/.continue/config.yaml
 
+name: Secure global Continue.dev configuration
+version: 1.0.0
 schema: v1
 
 # Model configuration — use environment variables for API keys, NEVER inline.
@@ -34,6 +36,10 @@ contextProviders:
   - name: "terminal"
   - name: "tree"
   - name: "codebase"
+
+# MCP servers are tool bridges. Keep empty until each server package,
+# credentials, filesystem scope, and network access have been reviewed.
+mcpServers: []
 
 # Disable telemetry
 allowAnonymousTelemetry: false

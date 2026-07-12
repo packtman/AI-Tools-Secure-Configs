@@ -2,6 +2,8 @@
 # Maximum restrictions. Read-only tools only, bash disabled, telemetry off.
 # Use for regulated environments where AI autonomy must be minimized.
 
+name: Strict Continue.dev configuration
+version: 1.0.0
 schema: v1
 
 models:
@@ -31,6 +33,11 @@ contextProviders:
   - name: "code"
   - name: "diff"
   - name: "tree"
+
+# WHAT: Defines MCP servers available to Continue agents.
+# WHY: Strict keeps MCP disabled because MCP servers can execute external tools and reach other systems.
+# BREAKS IF REMOVED: A local or workspace config can introduce an unreviewed tool bridge.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: true

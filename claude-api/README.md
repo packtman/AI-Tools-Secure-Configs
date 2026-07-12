@@ -34,6 +34,10 @@ Anthropic issues three key types — each with different blast-radius:
 - Assign each team its own workspace with explicit member lists.
 - Use workspace-level rate limits and spend caps to contain cost overruns.
 
+### API Key Expiration
+
+Anthropic API keys and Admin API keys can include an expiration. Enterprise policies should require `expires_at` on new keys, alert on keys with `expires_at: null`, and avoid **Never** except for documented exceptions.
+
 ### Role-Based Access Control
 
 | Role | Capabilities |
@@ -52,6 +56,10 @@ Anthropic issues three key types — each with different blast-radius:
 - Stream activity feeds to your SIEM via the `/v1/compliance/activity` endpoint.
 - Treat Compliance Access Keys like production database credentials — store in a secrets manager, never in source control.
 
+### MCP Tunnels (Research Preview)
+
+MCP tunnels expose internal MCP servers through Anthropic tunnel domains. Keep them disabled by default. If a workspace needs tunnels, require WIF scope `workspace:manage_tunnels`, scoped tunnel ownership, connector token rotation, CA certificate rotation, and SIEM alerts on tunnel lifecycle events.
+
 ## Deployment Checklist
 
 1. Enforce SSO via your identity provider (SAML/OIDC) for all console access.
@@ -60,5 +68,7 @@ Anthropic issues three key types — each with different blast-radius:
 4. Assign minimal roles to each member.
 5. Set rate limits and spend notifications on every workspace.
 6. Rotate API keys on a defined schedule (90 days recommended).
-7. Enable Compliance API and forward activity logs to your SIEM.
-8. Disable unused workspaces promptly.
+7. Set expiration dates on new API keys and alert on keys without `expires_at`.
+8. Keep MCP tunnels disabled unless approved by security and the workspace owner.
+9. Enable Compliance API and forward activity logs to your SIEM.
+10. Disable unused workspaces promptly.

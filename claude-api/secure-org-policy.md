@@ -24,6 +24,7 @@ Use this document as a checklist and reference when hardening your Anthropic org
 - [ ] **Secrets manager** — Store all keys in HashiCorp Vault, AWS Secrets Manager, or equivalent.
 - [ ] **No keys in code** — Scan repositories with tools like `trufflehog` or `gitleaks`.
 - [ ] **Rotation schedule** — Rotate standard API keys every 90 days; admin keys every 60 days.
+- [ ] **Expiration required:** Set `expires_at` on every new API key and Admin API key; avoid "Never" except documented exceptions.
 - [ ] **Revoke on departure** — Immediately revoke keys when a team member leaves.
 
 ## 4. Rate Limits & Spend Controls
@@ -44,9 +45,12 @@ Use this document as a checklist and reference when hardening your Anthropic org
 - [ ] **TLS enforcement** — All API calls use HTTPS (default; never override).
 - [ ] **IP allowlisting** — If supported, restrict API access to your corporate egress IPs.
 - [ ] **Proxy configuration** — Route API traffic through your corporate proxy for inspection.
+- [ ] **MCP tunnels:** Keep research-preview MCP tunnels disabled until the workspace owner documents the internal server, WIF scope, token rotation, CA certificate rotation, and SIEM logging plan.
 
 ## 7. Monitoring & Incident Response
 
 - [ ] **Anomaly alerts** — Set up alerts for unusual usage spikes (token volume, error rates).
 - [ ] **Audit log review** — Review admin actions weekly.
+- [ ] **Key expiration alerts:** Alert on API keys with `expires_at: null` and keys within 14 days of expiration.
+- [ ] **MCP tunnel alerts:** Alert on tunnel creation, token reveal, token rotation, certificate changes, and archive events.
 - [ ] **Incident runbook** — Document steps to revoke keys, disable workspaces, and notify stakeholders.

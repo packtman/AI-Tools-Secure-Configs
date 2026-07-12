@@ -167,6 +167,86 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Disables background agents and Agent View, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate tier):** Background agents can continue work outside the visible foreground session. Moderate tier blocks them until admins have audit coverage, ownership rules, and an exception process.
+
+**What breaks if set to true:** Developers cannot use background agents or Agent View.
+
+**Strict difference:** Also `true`, because Strict does not allow unattended background coding agents.
+
+**Baseline difference:** `false`, allowing background agents for low-risk developer experimentation.
+
+---
+
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables publishing session output as a private claude.ai Artifact page.
+
+**Why (Moderate tier):** Artifact publishing is a code and prompt egress path. Keep it disabled until legal, retention, and access-review controls are approved.
+
+**What breaks if set to true:** Developers cannot use the Artifact tool to share Claude Code session output.
+
+**Strict difference:** Also `true`, because Strict blocks extra sharing surfaces.
+
+**Baseline difference:** `false`, allowing individual users to share after reviewing content.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `true`
+
+**What:** Disables bundled skills and bundled workflows shipped with Claude Code.
+
+**Why (Moderate tier):** Bundled automation can change between releases. Disabling it keeps the rollout surface stable until IT reviews new skills.
+
+**What breaks if set to true:** Built-in bundled skills and workflow helpers are unavailable.
+
+**Strict difference:** Also `true`, because Strict allows only reviewed automation.
+
+**Baseline difference:** `false`, preserving productivity features for lower-risk use.
+
+---
+
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Blocks claude.ai MCP connectors from being auto-fetched or connected. Explicit `--mcp-config` servers and managed MCP files are unaffected.
+
+**Why (Moderate tier):** Cloud connectors are another MCP tool surface. Moderate tier requires explicit managed MCP review instead of inheriting cloud-side connectors automatically.
+
+**What breaks if set to true:** Developers cannot use claude.ai-hosted connectors unless IT deploys an approved MCP configuration.
+
+**Strict difference:** Also `true`, because Strict allows only IT-approved MCP servers.
+
+**Baseline difference:** `false`, allowing connector experimentation with user review.
+
+---
+
+## `fileCheckpointingEnabled`
+
+**Value:** `true`
+
+**What:** Keeps local edit checkpoints enabled so `/rewind` can restore files.
+
+**Why (Moderate tier):** Checkpoints preserve developer recovery while deny rules block sensitive file access.
+
+**What breaks if set to false:** Developers lose `/rewind` recovery for file edits.
+
+**Strict difference:** `false`, because Strict avoids extra local snapshots of code.
+
+**Baseline difference:** `true`, maximizing recovery and productivity.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

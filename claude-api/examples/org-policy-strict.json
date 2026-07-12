@@ -15,7 +15,10 @@
     "max_members_per_workspace": 10,
     "default_member_role": "workspace_user",
     "api_key_max_age_days": 30,
-    "require_key_rotation": true
+    "require_key_rotation": true,
+    "api_key_expiration_required": true,
+    "allow_never_expiring_keys": false,
+    "api_key_expiration_warning_days": 7
   },
 
   "rate_limits": {
@@ -36,5 +39,14 @@
   "data_controls": {
     "zero_data_retention": true,
     "disable_training_on_data": true
+  },
+
+  "mcp_tunnels": {
+    "enabled": false,
+    "approval_required": true,
+    "required_wif_scope": "workspace:manage_tunnels",
+    "allowed_workspace_ids": [],
+    "token_rotation_days": 14,
+    "certificate_rotation_days": 60
   }
 }

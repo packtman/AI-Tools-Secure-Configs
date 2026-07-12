@@ -100,6 +100,74 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and Agent View, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor. Equivalent environment control: `CLAUDE_CODE_DISABLE_AGENT_VIEW=1`.
+
+**Why it matters:** Background agents can continue work outside the foreground session, which increases audit and approval complexity. Enterprises should pilot this separately from normal interactive Claude Code use.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No unattended background coding agents until audit events and ownership are proven. |
+| Standard enterprise | `true` | Keep the first rollout focused on interactive sessions with visible prompts. |
+| Developer | `false` | Allow local experimentation where the user accepts responsibility for background work. |
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which can publish session output as a private web page on claude.ai. Equivalent environment control: `CLAUDE_CODE_DISABLE_ARTIFACT=1`.
+
+**Why it matters:** Artifact publishing is a data egress path for code, prompts, and generated output. It should stay disabled until legal, data retention, and access-review controls are documented.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Prevents accidental publication of sensitive project context. |
+| Standard enterprise | `true` | Avoids a new sharing surface during the initial rollout. |
+| Developer | `false` | Allows sharing when the individual developer is responsible for content review. |
+
+### `disableBundledSkills`
+
+**What it does:** Disables bundled skills and workflows shipped with Claude Code while leaving built-in commands available. Equivalent environment control: `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1`.
+
+**Why it matters:** Bundled skills can change tool behavior between releases. Disabling them in managed enterprise tiers keeps the automation surface stable until IT reviews new skills.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only reviewed skills and workflows should run. |
+| Standard enterprise | `true` | Reduces rollout surprises while teams learn core Claude Code behavior. |
+| Developer | `false` | Preserves productivity features for low-risk use. |
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Blocks claude.ai MCP connectors from being auto-fetched or connected. Explicit `--mcp-config` servers and managed MCP files are unaffected. Requires Claude Code v2.1.182 or later.
+
+**Why it matters:** Cloud connectors are another MCP tool surface. Enterprises should use managed MCP allowlists and connector review instead of inheriting cloud-side connectors automatically.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only IT-approved MCP servers should connect. |
+| Standard enterprise | `true` | Keeps MCP governance in the managed config and approval workflow. |
+| Developer | `false` | Allows connector experimentation with user review. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Controls file snapshots before edits so `/rewind` can restore changes. Equivalent environment control to disable: `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING=1`.
+
+**Why it matters:** Checkpoints are useful for developer recovery, but they persist copies of code on disk. High-security environments may need to avoid extra local copies.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Avoids storing additional file snapshots on disk. |
+| Standard enterprise | `true` | Preserves rollback workflow while other controls limit sensitive file access. |
+| Developer | `true` | Maximizes recovery and productivity. |
+
+### Model and IDE environment variables from discovery
+
+**What they do:** `ANTHROPIC_MODEL` and `CLAUDE_MODEL` choose a model for a session. `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, and `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` tune local IDE integration and notifications.
+
+**Why they are not tier settings:** These variables are user or session preferences, not durable managed security controls. Model governance should use managed model allowlists and identity controls, not per-user environment variables.
+
+**What breaks if forced globally:** Developers can be locked to the wrong model, IDE extension installation can fail on supported workstations, or away-summary behavior can conflict with local notification preferences.
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

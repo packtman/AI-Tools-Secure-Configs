@@ -57,6 +57,12 @@ Every setting below explains **what it does**, **why you should care**, and **th
 | Non-developer users | `false` | Business users have no need for coding tools. Prevents accidental exposure. |
 | Developer teams | `true` | Core functionality. Pair with Claude Code managed-settings.json for governance. |
 
+### Claude Code MCP helper variables are not Desktop policy keys
+
+`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, and `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` belong to Claude Code MCP server helper scripts and runtime behavior. They are not keys for `claude_desktop_config.json`, macOS managed preferences, or Windows policy registry values.
+
+Do not add them to Claude Desktop tier files. If a desktop deployment also launches Claude Code MCP helpers, document those variables in the Claude Code managed MCP rollout instead, with server ownership, timeout expectations, and SIEM logging.
+
 ---
 
 ## `secureVmFeaturesEnabled`
