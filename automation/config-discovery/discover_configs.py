@@ -406,7 +406,8 @@ def run_discovery(args: argparse.Namespace) -> int:
             print(f"registry error: {error}", file=sys.stderr)
         return 2
 
-    source_count = len(iter_sources(registry))
+    sources = iter_sources(registry)
+    source_count = len(sources)
     if args.check:
         print(f"registry ok: {len(registry['tools'])} tools, {source_count} sources")
         return 0
@@ -420,12 +421,17 @@ def run_discovery(args: argparse.Namespace) -> int:
         {"schema_version": 1, "generated_by": "automation/config-discovery/discover_configs.py", "sources": {}},
     )
     previous_sources = previous_state.get("sources", {})
-    new_sources = dict(previous_sources)
+    current_source_ids = {source["source_id"] for source in sources}
+    new_sources = {
+        source_id: snapshot
+        for source_id, snapshot in previous_sources.items()
+        if source_id in current_source_ids
+    }
     changes: list[dict[str, Any]] = []
     changed_at = utc_now()
     local_text_by_tool = {tool["id"]: load_local_tool_text(tool, repo_root) for tool in registry["tools"]}
 
-    for source in iter_sources(registry):
+    for source in sources:
         source_id = source["source_id"]
         previous = previous_sources.get(source_id, {})
         metadata, body = fetch_source(source, previous, args.timeout)

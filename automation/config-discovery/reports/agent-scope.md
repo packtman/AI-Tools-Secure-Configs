@@ -10,30 +10,10 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (1 of 1 tools with missing terms)
 
-### Claude Code
+### Gemini CLI
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
-
-### Claude Code
-
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
-
-### Continue.dev
-
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Source: Gemini CLI settings reference
+  - Missing terms: `advanced.autoConfigureMemory`, `agents.browser.blockFileUploads`, `context.fileFiltering.enableFuzzySearch`, `context.fileFiltering.enableRecursiveFileSearch`, `experimental.autoMemory`, `experimental.gemmaModelRouter.autoStartServer`, `experimental.gemmaModelRouter.enabled`, `experimental.modelSteering`, `experimental.voice.activationMode`, `experimental.voice.whisperModel`, `experimental.voiceMode`, `general.defaultApprovalMode`, `general.enableAutoUpdate`, `general.enableNotifications`, `general.plan.enabled`
+  - (9 more terms in the full report)
