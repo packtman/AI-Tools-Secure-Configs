@@ -17,6 +17,8 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 | `reports/agent-scope.md` | Focused work list for the maintenance agent (max N tools per run). |
 | `build_agent_scope.py` | Builds `agent-scope.md` from missing-term sections in the report. |
 | `.github/workflows/config-discovery.yml` | Scheduled workflow that runs the scanner and opens or updates a PR. |
+| `.github/workflows/config-validation.yml` | Pull request workflow that validates deployable config syntax and discovery registry health. |
+| `scripts/validate_config_files.py` | Reusable validator for JSON, YAML, TOML, shell hooks, and workflow files. |
 
 ## How the Loop Works
 
@@ -25,10 +27,11 @@ The goal is not to dump every vendor setting into the repo. The goal is to creat
 3. It compares the normalized response fingerprint, HTTP status, and fetch error state with `state/source-snapshots.json`.
 4. If nothing changed, the workflow exits without a commit.
 5. If one or more sources changed, the scanner updates the state and writes `reports/latest-config-discovery.md`.
-6. The workflow commits those files to `automation/config-maintenance` and opens or updates a discovery branch.
-7. A Cursor Cloud automation should run `agent-prompt.md` on that branch. That agent reads the report, checks the upstream source, updates affected tiered configs and rollout docs, validates the files, commits the real config changes, and pushes the final PR branch.
+6. The workflow commits those files to a run-specific branch named `automation/config-maintenance-<run-id>-<attempt>` and opens a discovery PR.
+7. If `ANTHROPIC_API_KEY` is available, the workflow runs the config-maintenance agent against the scoped report, validates edited config files, commits real config changes, and pushes the PR branch.
+8. If `ANTHROPIC_API_KEY` is unavailable, the workflow still opens a discovery handoff PR for Cursor Automation or human review so the upstream change signal is not lost.
 
-GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for the final config-update PR behavior.
+GitHub Actions alone can detect and stage the source-change signal. It cannot safely decide the security posture for a brand-new vendor setting without an AI review step. Use the Cursor Cloud automation prompt in this directory for handoff PRs or for repositories that do not expose `ANTHROPIC_API_KEY` to GitHub Actions.
 
 ## Adding a Source
 
@@ -57,6 +60,8 @@ python3 automation/config-discovery/discover_configs.py \
   --state automation/config-discovery/state/source-snapshots.json \
   --report automation/config-discovery/reports/latest-config-discovery.md \
   --check
+
+python3 scripts/validate_config_files.py
 ```
 
 Run an offline smoke check without network access or file writes:
