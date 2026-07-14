@@ -199,7 +199,7 @@ Every tool in this repository provides three configuration tiers — **Strict**,
 | Tool | Strict | Moderate | Baseline |
 |------|--------|----------|----------|
 | Claude Code | `managed-settings-strict.json` | `managed-settings-moderate.json` | `managed-settings-baseline.json` |
-| Codex CLI | `config-strict.toml` | `config-moderate.toml` | `config-baseline.toml` |
+| Codex CLI | `config-strict.toml` / `requirements-strict.toml` | `config-moderate.toml` / `requirements-moderate.toml` | `config-baseline.toml` / `requirements-baseline.toml` |
 | Codex Desktop | `config-strict.toml` / `requirements-strict.toml` | `config-moderate.toml` / `requirements-moderate.toml` | `config-baseline.toml` / `requirements-baseline.toml` |
 | Cursor | `permissions-strict.json` | `permissions-moderate.json` | `permissions-baseline.json` |
 | Claude Desktop | `config-strict.json` | `config-moderate.json` | `config-baseline.json` |

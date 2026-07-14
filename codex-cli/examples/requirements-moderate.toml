@@ -1,0 +1,26 @@
+# Codex CLI MODERATE admin-enforced requirements
+# Requires Codex 0.138.0 or later for managed permission-profile enforcement.
+# Deploy to /etc/codex/requirements.toml on Unix, the Windows system path,
+# cloud-managed requirements, or macOS MDM.
+
+# WHAT: Allows cautious and standard interactive approval behavior.
+# WHY: Enterprise developers retain normal workflows while unattended execution remains blocked.
+# BREAKS: Removing this permits approval bypass; omitting "untrusted" can disrupt high-review projects.
+allowed_approval_policies = ["untrusted", "on-request"]
+
+# WHAT: Permits only OpenAI-cached search results, while disabled remains implicitly allowed.
+# WHY: Cached search supports common research without unrestricted live external retrieval.
+# BREAKS: Dependency research may miss very recent information; broader modes increase egress risk.
+allowed_web_search_modes = ["cached"]
+
+# WHAT: Selects workspace-scoped read and write access at startup.
+# WHY: Most development needs file edits but not access outside the active workspace.
+# BREAKS: A read-only default prevents edits; a denied or misspelled profile makes policy resolution fail.
+default_permissions = ":workspace"
+
+# WHAT: Allows read-only and workspace profiles, and denies every omitted profile.
+# WHY: Developers can review or edit code without obtaining full-system access.
+# BREAKS: Removing this table allows unrestricted profiles; removing ":workspace" blocks normal coding.
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true

@@ -5,6 +5,25 @@ For each setting: what it does, why it matters, recommended values, and failure 
 
 ---
 
+## Admin-Enforced Permission Profiles
+
+Codex 0.138.0 and later can enforce a complete permission-profile allowlist in
+`requirements.toml`. Unlike `config.toml`, requirements constrain choices that
+users, projects, and CLI overrides cannot weaken.
+
+| Setting | What it does | Why it is set | What breaks if misconfigured |
+|---------|--------------|---------------|------------------------------|
+| `default_permissions` | Selects the permission profile used when a managed run starts. | Strict starts read-only; Moderate and Baseline start workspace-scoped so normal editing works. | A denied or unknown default cannot be selected. Omitting it makes startup behavior less predictable. |
+| `[allowed_permission_profiles]` | Defines the complete list of selectable built-in and custom profiles. | Every tier omits `:danger-full-access`, which denies full host access and future profiles until reviewed. | Removing the table leaves profile selection unconstrained. Omitting `:workspace` blocks agent edits. |
+| `allowed_approval_policies` | Limits supported human-review modes. | Moderate and Strict remove `never` so a prompt injection cannot act unattended. | Overly narrow values interrupt automation; allowing `never` removes a review layer. |
+| `allowed_web_search_modes` | Limits cached, indexed, and live web retrieval. | Higher tiers reduce external query disclosure and egress. | An empty list permits only disabled search; broad values can send sensitive query text externally. |
+
+Permission-profile allowlists require Codex 0.138.0 or later. Earlier clients
+ignore `allowed_permission_profiles` and managed `default_permissions`, so an
+endpoint upgrade is an enforcement prerequisite, not an optional rollout step.
+
+---
+
 ## 1. Sandbox Mode (`sandbox_mode`)
 
 Controls the filesystem and network access granted to the Codex agent's tool-execution environment.
@@ -639,4 +658,6 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 | Hooks | Full suite | PreToolUse + PostToolUse | Optional |
 | `--yolo` | Blocked by policy | Blocked by policy | Discouraged |
 | Profile | `strict` | `standard` | `research` |
+| Managed default permissions | `:read-only` | `:workspace` | `:workspace` |
+| Allowed managed profiles | `:read-only` | `:read-only`, `:workspace` | `:read-only`, `:workspace` |
 | Project trust | Explicit review required | Trusted after review | Trusted after review |
