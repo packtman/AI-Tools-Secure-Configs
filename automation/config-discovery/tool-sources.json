@@ -160,16 +160,43 @@
       ],
       "tier_files": {
         "strict": [
-          "codex-cli/examples/config-strict.toml"
+          "codex-cli/examples/config-strict.toml",
+          "codex-cli/examples/requirements-strict.toml"
         ],
         "moderate": [
-          "codex-cli/examples/config-moderate.toml"
+          "codex-cli/examples/config-moderate.toml",
+          "codex-cli/examples/requirements-moderate.toml"
         ],
         "baseline": [
-          "codex-cli/examples/config-baseline.toml"
+          "codex-cli/examples/config-baseline.toml",
+          "codex-cli/examples/requirements-baseline.toml"
         ]
       },
       "sources": [
+        {
+          "name": "OpenAI Codex configuration reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
+          "watch_for": [
+            "requirements.toml",
+            "permission profiles",
+            "allowed_permission_profiles",
+            "default_permissions",
+            "sandbox"
+          ]
+        },
+        {
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "watch_for": [
+            "admin-enforced requirements",
+            "managed configuration",
+            "allowed_permission_profiles",
+            "MDM",
+            "minimum version"
+          ]
+        },
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
