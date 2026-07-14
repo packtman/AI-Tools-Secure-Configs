@@ -1,0 +1,26 @@
+# Codex CLI BASELINE admin-enforced requirements
+# Requires Codex 0.138.0 or later for managed permission-profile enforcement.
+# Deploy to /etc/codex/requirements.toml on Unix, the Windows system path,
+# cloud-managed requirements, or macOS MDM.
+
+# WHAT: Allows all documented approval styles, including unattended execution.
+# WHY: Baseline teams keep automation workflows while the permission profile limits filesystem reach.
+# BREAKS: Removing this leaves approval behavior unconstrained; "never" must not be paired with full-system access.
+allowed_approval_policies = ["untrusted", "on-request", "never"]
+
+# WHAT: Permits cached, indexed, and live search, while disabled remains implicitly allowed.
+# WHY: Baseline prioritizes research workflows and relies on workspace containment for the minimum guardrail.
+# BREAKS: Live search can expose query content externally; narrowing this list can disrupt current research.
+allowed_web_search_modes = ["cached", "indexed", "live"]
+
+# WHAT: Selects workspace-scoped read and write access at startup.
+# WHY: Baseline users need normal code editing without default full-system access.
+# BREAKS: Omitting this makes startup behavior less predictable; a denied profile cannot become the default.
+default_permissions = ":workspace"
+
+# WHAT: Allows read-only and workspace profiles, and denies every omitted profile.
+# WHY: The baseline still blocks the full-system profile and any future profile until reviewed.
+# BREAKS: Removing this table allows users to select danger-full-access and future unreviewed profiles.
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true

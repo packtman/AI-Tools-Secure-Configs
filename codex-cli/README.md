@@ -8,17 +8,31 @@ This directory contains security-hardened configurations for **OpenAI Codex CLI*
 |------|---------|
 | `config.toml` | Secure user-level configuration (`~/.codex/config.toml`) |
 | `project-config.toml` | Secure project-level configuration (`.codex/config.toml`) |
+| `enterprise-policy.md` | Phased rollout, deployment, rollback, audit, and workflow guidance |
 | `examples/config-strict.toml` | **Strict** — Maximum-restriction configuration |
 | `examples/config-moderate.toml` | **Moderate** — Balanced development configuration |
 | `examples/config-baseline.toml` | **Baseline** — Essential security only (startups, individual devs) |
+| `examples/requirements-strict.toml` | **Strict** admin-enforced permission requirements |
+| `examples/requirements-moderate.toml` | **Moderate** admin-enforced permission requirements |
+| `examples/requirements-baseline.toml` | **Baseline** admin-enforced permission requirements |
 | `examples/system-config.toml` | System-wide defaults (`/etc/codex/config.toml`) |
+| `examples/settings-rationale.md` | Security rationale and failure modes |
 
-## Configuration Hierarchy (highest → lowest priority)
+## Configuration Hierarchy
 
-1. **Command-line arguments** — Override everything for a single invocation
-2. **Project config** — `.codex/config.toml` (loaded only for trusted projects)
-3. **User config** — `~/.codex/config.toml`
-4. **System config** — `/etc/codex/config.toml` (Unix only)
+`config.toml` provides defaults. Admin-enforced `requirements.toml` constrains
+security-sensitive choices and cannot be bypassed by a project file or CLI
+override. Managed permission profiles require Codex 0.138.0 or later.
+
+Requirements are composed from these sources, from lower to higher precedence:
+
+1. **System requirements:** `/etc/codex/requirements.toml` on Unix or `%ProgramData%\OpenAI\Codex\requirements.toml` on Windows
+2. **Cloud-managed requirements:** Assigned through Codex managed configuration
+3. **Legacy managed config requirements:** Compatibility layer for older deployments
+4. **macOS MDM requirements:** `com.openai.codex:requirements_toml_base64`
+
+See [`enterprise-policy.md`](enterprise-policy.md) for exact deployment,
+validation, rollback, and SIEM guidance.
 
 ## Key Security Concepts
 
@@ -54,9 +68,9 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 
 ## Deployment Checklist
 
-1. Deploy `/etc/codex/config.toml` on all developer machines for organization-wide defaults.
-2. Set `sandbox_mode = "workspace-write"` as the maximum allowed mode.
-3. Set `approval_policy = "on-request"` for strict environments.
-4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
-5. Disable network access unless explicitly required.
+1. Upgrade every managed endpoint to Codex 0.138.0 or later.
+2. Select one `requirements-<tier>.toml` file and test it with a pilot group.
+3. Deploy it as `requirements.toml` through cloud policy, MDM, or the system path.
+4. Use `/debug-config` in Codex to confirm `default_permissions` and the permission allowlist.
+5. Deploy `config.toml` separately for defaults such as credential storage.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
