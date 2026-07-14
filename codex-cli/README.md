@@ -26,10 +26,10 @@ override. Managed permission profiles require Codex 0.138.0 or later.
 
 Requirements are composed from these sources, from lower to higher precedence:
 
-1. **System requirements** — `/etc/codex/requirements.toml` on Unix or `%ProgramData%\OpenAI\Codex\requirements.toml` on Windows
-2. **Cloud-managed requirements** — Assigned through Codex managed configuration
-3. **Legacy managed config requirements** — Compatibility layer for older deployments
-4. **macOS MDM requirements** — `com.openai.codex:requirements_toml_base64`
+1. **System requirements:** `/etc/codex/requirements.toml` on Unix or `%ProgramData%\OpenAI\Codex\requirements.toml` on Windows
+2. **Cloud-managed requirements:** Assigned through Codex managed configuration
+3. **Legacy managed config requirements:** Compatibility layer for older deployments
+4. **macOS MDM requirements:** `com.openai.codex:requirements_toml_base64`
 
 See [`enterprise-policy.md`](enterprise-policy.md) for exact deployment,
 validation, rollback, and SIEM guidance.
