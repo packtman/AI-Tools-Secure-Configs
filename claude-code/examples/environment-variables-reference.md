@@ -38,6 +38,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | Override the model used by subagents and workflow agents | Do not use as a security boundary; enforce `availableModels` in managed settings |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
 ## MCP & Tools
@@ -47,6 +48,9 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `MCP_TIMEOUT` | MCP server startup timeout (ms) | `10000` |
 | `MAX_MCP_OUTPUT_TOKENS` | Max token output from MCP tools | `10000` (default) |
 | `MCP_TOOL_TIMEOUT` | MCP tool execution timeout (ms) | `60000` |
+| `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | Abort an MCP tool that sends no response or progress notification within this interval (ms) | Keep the five-minute default; never set `0` org-wide |
+
+`CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` are inputs that Claude Code injects when it runs an MCP `headersHelper`. They are not administrator policy variables and should not be preconfigured in endpoint profiles.
 
 ## Sandbox
 
