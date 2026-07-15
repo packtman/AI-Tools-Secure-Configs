@@ -100,6 +100,34 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `autoMode.classifyAllShell`
+
+**What it does:** Routes every shell command through the auto-mode classifier while auto mode is active, including commands that would otherwise match an allow rule.
+
+**Why it matters:** Baseline permits auto mode for developer flexibility. Classifying all shell commands closes the gap where an allow rule could skip the classifier.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Not needed | Auto mode is disabled. |
+| Standard enterprise | Not needed | Auto mode is disabled. |
+| Developer | `true` | Keeps auto mode available while reviewing all shell commands. |
+
+**What breaks if removed:** Allowed shell commands can bypass the auto-mode classifier. Setting it to `true` can increase prompts for routine commands while auto mode is active.
+
+### `disableSideloadFlags`
+
+**What it does:** Rejects `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` at startup. In-process SDK MCP entries remain supported.
+
+**Why it matters:** Strict marketplace and MCP policy can be bypassed for one session through sideload flags unless the flags are disabled.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Prevent one-session plugin, agent, and MCP policy bypass. |
+| Standard enterprise | Not set | Preserve local plugin and MCP testing with normal approval controls. |
+| Developer | Not set | Preserve local experimentation. |
+
+**What breaks if enabled:** Developers cannot test local plugins, custom agent files, or external MCP config files through CLI flags. Use an IT-reviewed managed marketplace, managed agent, or approved `.mcp.json` entry instead.
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
@@ -197,6 +225,46 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | Regulated | `true` | Strict network control. Only approved registries and APIs. |
 | Standard enterprise | `false` | Let users approve new domains via prompts during development. |
+
+### `sandbox.credentials.envVars`
+
+**What it does:** Removes selected secret environment variables from sandboxed command environments. Strict protects common AI, cloud, source-control, package, and database credentials. Moderate protects Claude Code's own API credentials.
+
+**Why it matters:** A Read deny rule does not stop a Bash command from printing an inherited environment variable. This control closes that credential-exposure path inside the sandbox.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Deny common credential variables | Sandboxed commands should not receive reusable credentials. |
+| Standard enterprise | Deny `ANTHROPIC_API_KEY` and `ANTHROPIC_AUTH_TOKEN` | Build tools do not need Claude Code's own credentials. |
+| Developer | Not set | Baseline does not require sandboxing and preserves local build environments. |
+
+**What breaks if expanded carelessly:** Private package installs, cloud CLIs, and integration tests can fail when their credentials are denied. Use `mask` mode with approved `injectHosts`, or run the credentialed step outside the AI session through an approved workflow.
+
+---
+
+## Version Enforcement
+
+### `minimumVersion`
+
+**What it does:** Prevents background updates and `claude update` from installing a release below the configured value. It does not block an already-running older client.
+
+**Why it matters:** The existing `2.1.38` floor prevents updater-driven downgrades below the server-managed settings baseline.
+
+**What breaks if removed:** A release-channel change can install an older version. Do not treat this key as endpoint compliance enforcement.
+
+### `requiredMinimumVersion`
+
+**What it does:** Refuses startup when Claude Code is older than the configured version. Recovery commands such as `claude update`, `claude install`, and `claude doctor` remain available.
+
+**Why it matters:** Moderate requires 2.1.187 for sandbox credential isolation. Strict requires 2.1.193 for `disableSideloadFlags`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"2.1.193"` | Ensures sideload blocking and sandbox credential controls are understood. |
+| Standard enterprise | `"2.1.187"` | Ensures sandbox credential controls are understood. |
+| Developer | Not set | Avoid blocking startup in the flexibility-first tier. |
+
+**What breaks if set too high:** Clients stop at startup until an approved version is installed. Versions that predate this setting ignore it, so MDM must upgrade endpoints before the floor is relied on.
 
 ---
 

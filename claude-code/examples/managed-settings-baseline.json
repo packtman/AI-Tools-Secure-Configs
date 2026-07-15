@@ -55,6 +55,9 @@
 
   "allowManagedPermissionRulesOnly": false,
   "disableAutoMode": "allow",
+  "autoMode": {
+    "classifyAllShell": true
+  },
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "allowManagedPluginsOnly": false,

@@ -24,7 +24,7 @@
         {
           "name": "Managed settings documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+          "url": "https://code.claude.com/docs/en/settings.md",
           "watch_for": [
             "managed settings",
             "permissions",
@@ -36,7 +36,7 @@
         {
           "name": "Hooks documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+          "url": "https://code.claude.com/docs/en/hooks.md",
           "watch_for": [
             "PreToolUse",
             "PostToolUse",
@@ -48,13 +48,25 @@
         {
           "name": "Dynamic workflows documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
+          "url": "https://code.claude.com/docs/en/workflows.md",
           "watch_for": [
             "dynamic workflows",
             "disableWorkflows",
             "CLAUDE_CODE_DISABLE_WORKFLOWS",
             "ultracode",
             "managed settings"
+          ]
+        },
+        {
+          "name": "Claude Code changelog",
+          "kind": "changelog",
+          "url": "https://code.claude.com/docs/en/changelog.md",
+          "watch_for": [
+            "managed settings",
+            "sandbox",
+            "permissions",
+            "MCP",
+            "security"
           ]
         }
       ]
@@ -129,7 +141,7 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
           "watch_for": [
             "policy",
             "organization",
@@ -141,7 +153,7 @@
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",

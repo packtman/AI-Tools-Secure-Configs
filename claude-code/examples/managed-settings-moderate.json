@@ -102,12 +102,25 @@
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",
+  "requiredMinimumVersion": "2.1.187",
 
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": false,
+    "credentials": {
+      "envVars": [
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "mode": "deny"
+        },
+        {
+          "name": "ANTHROPIC_AUTH_TOKEN",
+          "mode": "deny"
+        }
+      ]
+    },
     "filesystem": {
       "denyRead": [
         "~/.ssh",

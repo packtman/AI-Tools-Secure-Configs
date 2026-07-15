@@ -179,6 +179,18 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `minimumVersion` / `requiredMinimumVersion`
+
+**Values:** `"2.1.38"` / `"2.1.187"`
+
+**What:** `minimumVersion` prevents the built-in updater from installing an older release. `requiredMinimumVersion` is the hard startup floor and refuses to run an older client.
+
+**Why (Moderate tier):** Sandbox credential isolation requires Claude Code 2.1.187 or later. The hard floor prevents older clients from silently running without that control.
+
+**What breaks if wrong:** A floor above the version available through the organization's approved update channel blocks startup. Upgrade the pilot group first, validate with `claude doctor`, then deploy the floor.
+
+---
+
 ## `sandbox` settings
 
 ### `sandbox.enabled: true`
@@ -192,6 +204,16 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
+
+### `sandbox.credentials.envVars`
+
+**Values:** `ANTHROPIC_API_KEY` and `ANTHROPIC_AUTH_TOKEN`, each with `mode: "deny"`
+
+**What:** Removes Claude Code's own API credentials from the environment inherited by sandboxed commands.
+
+**Why (Moderate tier):** Build and test commands do not need the credentials used by Claude Code itself. Hiding them prevents a prompt-injected command from stealing the token.
+
+**What breaks if removed:** Sandboxed scripts can read and exfiltrate the tokens. Expanding this list to build credentials such as `NPM_TOKEN` can break private package installs. For those credentials, use `mask` mode with approved `injectHosts` after testing the sandbox TLS proxy.
 
 ---
 

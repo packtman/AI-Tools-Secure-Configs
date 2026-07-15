@@ -92,7 +92,7 @@
 | 11 | GitHub Copilot Enterprise/Business seats provisioned for pilot teams | IT Ops | [ ] |
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
-| 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 14 | Pilot endpoints upgraded before policy: Claude Code >= 2.1.187 for Moderate, Copilot Chat >= 0.17 | IT Ops | [ ] |
 
 ---
 
@@ -121,6 +121,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code versions older than 2.1.187 will stop at startup and direct you to the approved update path.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -148,6 +149,8 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 Restart Claude Code after removal. Settings revert to user/project defaults immediately.
 
 If using server-managed settings (Admin Console): navigate to Claude.ai Admin Settings, remove or reset the managed settings JSON. Changes propagate on next CLI startup.
+
+If only the new version or credential controls cause an outage, roll back the `requiredMinimumVersion` key or the `sandbox.credentials` block instead of removing the entire policy. Preserve a signed copy of the previous JSON, redeploy it through the same MDM channel, restart Claude Code, and confirm the previous settings source in `/status`.
 
 #### Cursor Rollback
 
@@ -232,7 +235,9 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `disableBypassPermissionsMode` | Not set | `"disable"` | `"disable"` | Moderate and Strict both block the dangerous skip-permissions flag |
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
+| `autoMode.classifyAllShell` | `true` | Not needed | Not needed | Baseline keeps auto mode available but routes every shell command through its classifier |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `disableSideloadFlags` | Not set | Not set | `true` | Strict blocks CLI flags that can sideload plugins, agents, or MCP configuration for one session |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -240,10 +245,12 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
+| `sandbox.credentials.envVars` | Not set | Deny Claude Code API credentials | Deny common AI, cloud, source-control, package, and database credentials | Strict removes reusable credentials from sandboxed commands; Moderate avoids breaking build credentials |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
+| `requiredMinimumVersion` | Not set | `"2.1.187"` | `"2.1.193"` | Enterprise tiers block clients too old to understand their sandbox and sideload controls |
 
 ### 3.2 Cursor
 
@@ -301,6 +308,11 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 2. OR deploy the file to `C:\Program Files\ClaudeCode\managed-settings.json` via an Intune Win32 app
 3. Assign to the pilot device group first
 
+**Workspace ONE:**
+1. On macOS, deploy a Custom Settings profile for preference domain `com.anthropic.claudecode`, or package the JSON at the managed file path.
+2. On Windows, use Product Provisioning to deploy the file or write the machine policy `Settings` value under `HKLM\SOFTWARE\Policies\ClaudeCode`.
+3. Use a pilot Smart Group, confirm `/status` reports the expected policy channel, then expand assignment.
+
 **Linux:**
 1. Use your configuration management tool (Ansible, Chef, Puppet) to place the file at `/etc/claude-code/managed-settings.json`
 2. Set permissions: `root:root 644`
@@ -315,8 +327,13 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 #### Validation
 
 ```bash
+# Validate policy syntax and version compatibility
+claude doctor
+# Expected: no managed-settings validation errors
+
 # Verify managed settings are loaded
-claude config list --managed
+# In an interactive session, run /status
+# Expected: Setting sources includes Enterprise managed settings and its delivery channel
 
 # Check that bypass mode is blocked
 claude --dangerously-skip-permissions
@@ -328,7 +345,7 @@ claude --dangerously-skip-permissions
 
 # Check version meets minimum
 claude --version
-# Expected: version >= 2.1.38
+# Expected for Moderate: version >= 2.1.187
 
 # Verify org login
 claude auth status
@@ -584,6 +601,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code below the required version | Older clients do not understand sandbox credential isolation | Install the approved version through MDM or run `claude update` if IT permits self-service updates. Recovery commands remain available below the floor. | Claude Code |
+| Claude Code sideload flags (Strict only) | `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` can bypass managed intake for one session | Publish reviewed plugins and agents through the managed marketplace, and add reviewed MCP servers to managed configuration. | Claude Code (Strict) |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +616,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `sandbox.credentials.envVars` | A private package install or cloud integration test needs a protected token | Do not add build credentials to the Moderate deny list. For Strict exceptions, prefer `mask` mode with approved `injectHosts`, or move the credentialed step to an approved CI job. |
+| `requiredMinimumVersion` | A stable-channel endpoint has not received the required release | Upgrade the endpoint before applying the floor. If rollout sequencing failed, remove only this key through MDM, upgrade, validate with `claude doctor`, then restore it. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

@@ -109,6 +109,7 @@
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableSideloadFlags": true,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",
@@ -116,6 +117,7 @@
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",
+  "requiredMinimumVersion": "2.1.193",
 
   "autoMemoryEnabled": false,
 
@@ -124,6 +126,50 @@
     "autoAllowBashIfSandboxed": false,
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": true,
+    "credentials": {
+      "envVars": [
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "mode": "deny"
+        },
+        {
+          "name": "ANTHROPIC_AUTH_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "mode": "deny"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "mode": "deny"
+        },
+        {
+          "name": "AWS_SESSION_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "AZURE_CLIENT_SECRET",
+          "mode": "deny"
+        },
+        {
+          "name": "GITHUB_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "GH_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "NPM_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "DATABASE_URL",
+          "mode": "deny"
+        }
+      ]
+    },
     "filesystem": {
       "denyRead": [
         "~/",

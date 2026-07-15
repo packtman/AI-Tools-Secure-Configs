@@ -183,9 +183,12 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
+| `disableSideloadFlags` | Block one-session plugin, agent, and MCP sideload flags |
 | `channelsEnabled` | Enable/disable channels |
+| `requiredMinimumVersion` | Refuse startup below an approved security floor |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
+| `sandbox.credentials.envVars` | Hide selected secret variables from sandboxed commands |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
@@ -196,7 +199,8 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `minimumVersion` to prevent updater downgrades.
+- [ ] Set `requiredMinimumVersion` to enforce a tested startup floor.
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
 
 ### Phase 2: Permissions
@@ -204,6 +208,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Upgrade endpoints before setting `requiredMinimumVersion`; validate the pilot with `claude doctor`.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
@@ -212,6 +217,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] Protect Claude Code credentials with `sandbox.credentials.envVars`; test private package and cloud CLI workflows before adding their variables.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
