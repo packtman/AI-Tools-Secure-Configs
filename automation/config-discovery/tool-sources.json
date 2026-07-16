@@ -234,13 +234,11 @@
           "kind": "repository",
           "url": "https://developers.openai.com/codex/config-reference.md",
           "watch_for": [
-            "config",
+            "requirements.toml",
+            "managed hooks",
             "sandbox",
             "approval",
-            "model",
-            "profiles",
-            "requirements.toml",
-            "managed hooks"
+            "profiles"
           ]
         }
       ]
