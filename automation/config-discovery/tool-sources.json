@@ -173,7 +173,7 @@
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/README.md",
           "watch_for": [
             "config",
             "sandbox",
@@ -220,7 +220,7 @@
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/README.md",
           "watch_for": [
             "desktop",
             "managed",
