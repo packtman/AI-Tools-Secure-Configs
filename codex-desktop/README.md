@@ -51,6 +51,7 @@ Requirements are constraints that **users cannot override**. They control securi
 - Web search mode restrictions
 - MCP server allowlists
 - Feature flag pins
+- Managed-only lifecycle hook enforcement
 - Command rules (prompt/forbidden)
 - Filesystem deny-read rules
 
@@ -109,9 +110,15 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `browser_use` | Browser Use and Browser Agent |
 | `in_app_browser` | In-app browser pane |
 | `computer_use` | Computer Use (macOS only) |
-| `codex_hooks` | Lifecycle hooks |
+| `hooks` | Lifecycle hooks (`codex_hooks` is a deprecated alias) |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+
+### Lifecycle Hook Governance
+
+Lifecycle hooks are scripts that Codex runs before or after defined agent events. Strict deployments set top-level `allow_managed_hooks_only = true` in `requirements.toml`. This skips hooks from user, project, session, and plugin sources while preserving hooks delivered through administrator-managed layers.
+
+The setting is valid only in `requirements.toml`. Putting it in `config.toml` does not enable managed-only enforcement. Set `[features].hooks = true` when managed policy or audit hooks must run, and distribute their scripts separately through Mobile Device Management (MDM) or endpoint management.
 
 ### Protected Paths
 
@@ -140,6 +147,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] For Strict, set `allow_managed_hooks_only = true` and inventory blocked developer hooks
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
@@ -155,3 +163,4 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set up RBAC via ChatGPT Enterprise workspace settings
 - [ ] Periodically audit drift between local configs and managed policies
 - [ ] Review MCP server access and tool permission grants
+- [ ] Use `/hooks` to verify that Strict endpoints show only managed hooks
