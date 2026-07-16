@@ -502,7 +502,7 @@
         {
           "name": "Google Cloud organization policies",
           "kind": "docs",
-          "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview",
+          "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview.md",
           "watch_for": [
             "organization policy",
             "constraints",
