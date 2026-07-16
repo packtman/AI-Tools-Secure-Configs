@@ -8,6 +8,11 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
+# WHAT: Ignore user, project, session, and plugin hooks while allowing hooks from managed layers.
+# WHY: Strict deployments must prevent unreviewed hook scripts from running with developer privileges.
+# BREAKS: Personal and repository hooks stop running; removing this key re-enables unmanaged hooks.
+allow_managed_hooks_only = true
+
 # Disable all extended features
 [features]
 browser_use = false
@@ -15,6 +20,10 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Keep the lifecycle hook engine available for administrator-managed policy and audit hooks.
+# WHY: Strict deployments need auditable managed hooks even though all unmanaged hooks are blocked.
+# BREAKS: Setting this to false disables managed compliance hooks as well as developer hooks.
+hooks = true
 
 # Deny reads to sensitive directories
 [permissions.filesystem]

@@ -83,7 +83,7 @@
         {
           "name": "Team administration documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/account/teams/admin-dashboard",
+          "url": "https://cursor.com/docs/account/teams/dashboard",
           "watch_for": [
             "admin",
             "team",
@@ -95,7 +95,7 @@
         {
           "name": "MCP documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/tools/mcp",
+          "url": "https://cursor.com/docs/mcp",
           "watch_for": [
             "MCP",
             "server",
@@ -173,7 +173,7 @@
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/README.md",
           "watch_for": [
             "config",
             "sandbox",
@@ -220,7 +220,7 @@
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/README.md",
           "watch_for": [
             "desktop",
             "managed",
@@ -232,12 +232,12 @@
         {
           "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://developers.openai.com/codex/config-reference.md",
           "watch_for": [
-            "config",
+            "requirements.toml",
+            "managed hooks",
             "sandbox",
             "approval",
-            "model",
             "profiles"
           ]
         }
@@ -500,7 +500,7 @@
         {
           "name": "Google Cloud organization policies",
           "kind": "docs",
-          "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview",
+          "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview.md",
           "watch_for": [
             "organization policy",
             "constraints",

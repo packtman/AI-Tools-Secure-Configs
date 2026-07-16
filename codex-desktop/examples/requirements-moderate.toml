@@ -11,7 +11,7 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
-codex_hooks = true
+hooks = true
 
 # Deny reads to credential files
 [permissions.filesystem]

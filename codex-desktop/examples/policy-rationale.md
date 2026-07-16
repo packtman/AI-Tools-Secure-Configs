@@ -112,6 +112,24 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `hooks` and `allow_managed_hooks_only`
+
+**What they do:** `[features].hooks` enables lifecycle hooks. Top-level `allow_managed_hooks_only` in `requirements.toml` skips hooks from user, project, session, and plugin sources while preserving hooks from administrator-managed layers.
+
+**Why they matter:** Hook scripts run with the developer's privileges. A repository or plugin hook that has not passed security review can execute commands, read available data, or change files outside the intended workflow.
+
+**What breaks if misconfigured or removed:** Enabling managed-only mode blocks personal and repository automation. Removing it on Strict endpoints re-enables unreviewed hooks. Setting `[features].hooks = false` also disables administrator-managed audit and policy hooks.
+
+| Environment | `[features].hooks` | `allow_managed_hooks_only` | Reasoning |
+|-------------|--------------------|----------------------------|-----------|
+| Regulated | `true` | `true` | Run only centrally reviewed hooks, including policy and audit hooks. |
+| Standard enterprise | `true` | Not set | Preserve trusted team hooks while relying on hook review and endpoint monitoring. |
+| Individual developers | `true` | Not set | Preserve local automation with normal hook trust prompts. |
+
+`allow_managed_hooks_only` is supported only in `requirements.toml`. Adding it to `config.toml` does not enforce the restriction. `hooks` is the canonical feature name; `codex_hooks` is a deprecated alias and should not be used in new deployments.
+
+---
+
 ## `mcp_servers` (in requirements.toml)
 
 **What it does:** Defines which MCP (Model Context Protocol) servers the agent is allowed to use.
@@ -168,7 +186,7 @@ web_search = "cached"
 browser_use = false
 computer_use = false
 memories = false
-codex_hooks = true
+hooks = true
 ```
 
 ### Developer Teams
@@ -183,6 +201,6 @@ browser_use = true
 in_app_browser = true
 computer_use = false
 memories = true
-codex_hooks = true
+hooks = true
 multi_agent = true
 ```

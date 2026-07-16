@@ -35,7 +35,7 @@ browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
-codex_hooks = true
+hooks = true
 multi_agent = true
 
 # Shell environment — only forward essential variables to spawned commands.
