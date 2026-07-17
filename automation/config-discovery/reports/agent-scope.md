@@ -12,5 +12,5 @@ Do not attempt to review unchanged tools or sources with no missing local terms 
 
 ## No scoped tools
 
-All source sections with missing candidates are marked `Review outcome: resolved`.
+No 'Potential config terms not found' sections were found.
 No additional config review is required for this report.
