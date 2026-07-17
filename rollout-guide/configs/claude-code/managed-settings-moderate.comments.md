@@ -167,6 +167,102 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Disables background agents and Agent View, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why:** Moderate tier keeps the initial rollout focused on interactive sessions with visible approval prompts. Background agents need separate SIEM coverage, ownership, and cleanup procedures.
+
+**What breaks:** Developers cannot run Claude Code work in the background or use Agent View.
+
+**Strict difference:** Also `true`, because regulated endpoints do not permit unattended coding agents.
+
+**Baseline difference:** `false`, allowing background agents for low-risk developer experimentation.
+
+---
+
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables publishing session output as a private claude.ai Artifact page.
+
+**Why:** Artifact publishing is a data egress and sharing surface. Legal, retention, and access review should approve it before enterprise use.
+
+**What breaks:** Developers cannot publish Claude Code output through Artifacts.
+
+**Strict difference:** Also `true`, preventing publication of regulated project context.
+
+**Baseline difference:** `false`, allowing individual users to share after reviewing content.
+
+---
+
+## `disableBundledSkills`
+
+**Value:** `true`
+
+**What:** Disables bundled skills and bundled workflows shipped with Claude Code.
+
+**Why:** Bundled automation can change between releases. Moderate tier keeps it out of scope until IT reviews new skills.
+
+**What breaks:** Bundled productivity skills are unavailable. Built-in, project, plugin, and managed skills remain available.
+
+**Strict difference:** Also `true`, because only reviewed automation should run.
+
+**Baseline difference:** `false`, preserving productivity features for lower-risk use.
+
+---
+
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Blocks claude.ai MCP connectors from being auto-fetched or connected. Explicit `--mcp-config` servers and managed MCP files are unaffected.
+
+**Why:** Connector access should follow the same inventory, credential, and data-flow review as endpoint-managed MCP servers.
+
+**What breaks:** Cloud connector workflows do not connect until an admin changes policy. Explicit and managed MCP servers continue to work.
+
+**Strict difference:** Also `true`, because only IT-approved MCP servers should connect.
+
+**Baseline difference:** `false`, allowing connector experimentation with user review.
+
+---
+
+## `disableSideloadFlags`
+
+**Value:** `true`
+
+**What:** Rejects `--plugin-dir`, `--plugin-url`, `--agents`, and most `--mcp-config` command-line flags. In-process SDK MCP entries remain supported.
+
+**Why:** These flags can load integrations for one session without using the managed marketplace, agent, and MCP review paths.
+
+**What breaks:** Developers cannot sideload plugins, agents, or external MCP configuration for a single run.
+
+**Strict difference:** Also `true`, preventing per-session bypass of managed integration controls.
+
+**Baseline difference:** `false`, preserving local experimentation in lower-risk use.
+
+---
+
+## `fileCheckpointingEnabled`
+
+**Value:** `true`
+
+**What:** Saves local file snapshots before edits so `/rewind` can restore code changes.
+
+**Why:** Moderate tier preserves fast recovery from agent edits on encrypted, managed endpoints.
+
+**What breaks:** Setting this to `false` prevents `/rewind` from restoring code changes.
+
+**Strict difference:** `false`, avoiding additional local copies of sensitive code.
+
+**Baseline difference:** `true`, preserving recovery for lower-risk use.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

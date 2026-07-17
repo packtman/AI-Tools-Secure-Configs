@@ -184,6 +184,12 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
+| `disableAgentView` | Disable background agents and Agent View |
+| `disableArtifact` | Disable publishing session output to claude.ai Artifacts |
+| `disableBundledSkills` | Disable bundled skills and bundled workflows |
+| `disableClaudeAiConnectors` | Disable automatic claude.ai MCP connector loading |
+| `disableSideloadFlags` | Block one-session plugin, agent, and MCP sideload flags |
+| `fileCheckpointingEnabled` | Enable or disable local edit checkpoints |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
@@ -204,6 +210,10 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableAgentView: true` until background agents have audit coverage and owner review.
+- [ ] Set `disableArtifact: true` unless publishing session output to claude.ai is approved.
+- [ ] Set `disableClaudeAiConnectors: true` until claude.ai MCP connectors are reviewed.
+- [ ] Set `disableSideloadFlags: true` to prevent one-session integration bypasses.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

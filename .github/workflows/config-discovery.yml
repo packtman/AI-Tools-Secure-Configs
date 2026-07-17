@@ -98,19 +98,22 @@ jobs:
           git push --force-with-lease -u origin "${PR_BRANCH}"
 
       - name: Verify Claude API key
+        id: agent-key
         if: steps.discovery.outputs.run_agent == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -euo pipefail
           if [ -z "${ANTHROPIC_API_KEY}" ]; then
-            echo "::error::Repository secret ANTHROPIC_API_KEY is missing, empty, or unavailable to this workflow."
-            exit 1
+            echo "::warning::Repository secret ANTHROPIC_API_KEY is unavailable. Opening a discovery-only PR for Cursor Automation or human review."
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "available=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Run config maintenance agent
         id: agent
-        if: steps.discovery.outputs.run_agent == 'true'
+        if: steps.discovery.outputs.run_agent == 'true' && steps.agent-key.outputs.available == 'true'
         continue-on-error: true
         uses: anthropics/claude-code-action@v1
         env:
@@ -131,7 +134,7 @@ jobs:
             1. Process only tools listed in `agent-scope.md`. Do not review all 14 tools in one run.
             2. For each real admin or security control, update **strict, moderate, and baseline** tier files with tier-appropriate values.
             3. Update rationale, README tables, rollout tier deltas, and `tool-sources.json` tier_files when you add paths.
-            4. If no config update is needed for a scoped tool, add a concise "No config update needed" note to the discovery report.
+            4. After reviewing each scoped source, add `Review outcome: resolved` and state which controls were added or why no config update was needed.
             5. Keep deployable JSON valid. Use JSONC plus `.comments.md` where comments are needed.
             6. Do not include secrets, tokens, org IDs, tenant IDs, team IDs, or production hostnames.
             7. Do not use em dash characters in prose or comments.
@@ -192,7 +195,7 @@ jobs:
           cat > pr-body.md <<'PR_BODY'
           ## Automated config maintenance update
 
-          The scheduled config discovery workflow detected changes in one or more watched upstream sources, then ran the config-maintenance agent against the generated report.
+          The scheduled config discovery workflow detected changes in one or more watched upstream sources. When `ANTHROPIC_API_KEY` was available, it also ran the config-maintenance agent against the generated report. Otherwise, this PR is the handoff to Cursor Automation or a human reviewer.
 
           Review:
 

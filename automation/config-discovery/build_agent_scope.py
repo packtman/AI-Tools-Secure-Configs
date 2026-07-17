@@ -11,6 +11,7 @@ import sys
 
 SECTION_RE = re.compile(r"^### (.+?): (.+)$", re.MULTILINE)
 MISSING_BLOCK = "Potential config terms not found in local tool files:"
+RESOLVED_MARKER = "Review outcome: resolved"
 
 
 def build_scope(report_text: str, max_tools: int) -> str:
@@ -22,7 +23,7 @@ def build_scope(report_text: str, max_tools: int) -> str:
         "1. Read the cited missing terms and the upstream URL from the full discovery report.",
         "2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.",
         "3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.",
-        "4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.",
+        "4. Mark each reviewed source with `Review outcome: resolved` and explain what changed or why no config update was needed.",
         "5. Validate edited JSON, YAML, and TOML before finishing.",
         "",
         "Do not attempt to review unchanged tools or sources with no missing local terms in this run.",
@@ -30,15 +31,19 @@ def build_scope(report_text: str, max_tools: int) -> str:
     ]
 
     sections: list[tuple[str, str, list[str]]] = []
-    parts = report_text.split("### ")
-    for part in parts[1:]:
-        header_line, _, body = part.partition("\n")
-        if ":" not in header_line:
-            continue
-        tool_name, source_name = header_line.split(":", 1)
+    found_missing_block = False
+    matches = list(SECTION_RE.finditer(report_text))
+    for index, match in enumerate(matches):
+        tool_name, source_name = match.groups()
         tool_name = tool_name.strip()
         source_name = source_name.strip()
+        body_start = match.end()
+        body_end = matches[index + 1].start() if index + 1 < len(matches) else len(report_text)
+        body = report_text[body_start:body_end]
         if MISSING_BLOCK not in body:
+            continue
+        found_missing_block = True
+        if RESOLVED_MARKER in body:
             continue
         after = body.split(MISSING_BLOCK, 1)[1].strip()
         terms_block = after.split("\n\n", 1)[0]
@@ -47,40 +52,43 @@ def build_scope(report_text: str, max_tools: int) -> str:
             sections.append((tool_name, source_name, terms))
 
     if not sections:
-        lines.extend(
-            [
-                "## No scoped tools",
-                "",
-                "No 'Potential config terms not found' sections were found.",
-                "Add 'No config update needed' notes for changed sources in the discovery report, then exit.",
-                "",
-            ]
-        )
+        lines.extend(["## No scoped tools", ""])
+        if found_missing_block:
+            lines.append("All source sections with missing candidates are marked `Review outcome: resolved`.")
+        else:
+            lines.append("No 'Potential config terms not found' sections were found.")
+        lines.extend(["No additional config review is required for this report.", ""])
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    by_tool: dict[str, list[tuple[str, list[str]]]] = {}
+    for tool_name, source_name, terms in sections:
+        by_tool.setdefault(tool_name, []).append((source_name, terms))
+
+    limited_tools = list(by_tool.items())[:max_tools]
+    lines.append(f"## Tools to process ({len(limited_tools)} of {len(by_tool)} with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name, sources in limited_tools:
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+        for source_name, terms in sources:
+            lines.append(f"- Source: {source_name}")
+            lines.append(f"  - Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
+            if len(terms) > 15:
+                lines.append(f"  - ({len(terms) - 15} more terms in the full report)")
         lines.append("")
 
-    if len(sections) > max_tools:
+    if len(by_tool) > max_tools:
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(by_tool) - max_tools} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name, sources in list(by_tool.items())[max_tools:]:
+            source_names = ", ".join(source_name for source_name, _ in sources)
+            lines.append(f"- {tool_name} ({source_names})")
         lines.append("")
 
     return "\n".join(lines)

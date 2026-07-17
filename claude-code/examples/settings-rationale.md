@@ -100,6 +100,90 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and Agent View, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor. Equivalent environment control: `CLAUDE_CODE_DISABLE_AGENT_VIEW=1`.
+
+**Why it matters:** Background agents can continue work outside the foreground session, which increases audit, ownership, and approval complexity.
+
+**What breaks if misconfigured or removed:** Setting it to `true` removes background and parallel-agent workflows. Removing it from an enterprise policy can let unattended agents run before SIEM coverage and cleanup ownership are ready.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No unattended background coding agents until audit events and ownership are proven. |
+| Standard enterprise | `true` | Keep the first rollout focused on interactive sessions with visible prompts. |
+| Developer | `false` | Allow local experimentation where the user accepts responsibility for background work. |
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which can publish session output as a private web page on claude.ai. Equivalent environment control: `CLAUDE_CODE_DISABLE_ARTIFACT=1`.
+
+**Why it matters:** Artifact publishing is a data egress path for code, prompts, and generated output. It should stay disabled until legal, retention, and access-review controls are documented.
+
+**What breaks if misconfigured or removed:** Setting it to `true` removes Artifact publishing. Removing it can let users publish sensitive project context to a new sharing surface.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Prevents accidental publication of sensitive project context. |
+| Standard enterprise | `true` | Avoids a new sharing surface during the initial rollout. |
+| Developer | `false` | Allows sharing when the individual developer is responsible for content review. |
+
+### `disableBundledSkills`
+
+**What it does:** Disables bundled skills and workflows shipped with Claude Code. Built-in commands remain available, while plugin, project, and managed skills are unaffected. Equivalent environment control: `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1`.
+
+**Why it matters:** Bundled skills can change tool behavior between releases. Disabling them in managed enterprise tiers keeps the automation surface stable until IT reviews new skills.
+
+**What breaks if misconfigured or removed:** Setting it to `true` removes bundled productivity skills and workflows. Removing it can expose users to newly bundled automation before security review.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only reviewed skills and workflows should run. |
+| Standard enterprise | `true` | Reduces rollout surprises while teams learn core Claude Code behavior. |
+| Developer | `false` | Preserves productivity features for low-risk use. |
+
+### `disableClaudeAiConnectors`
+
+**What it does:** Blocks claude.ai MCP connectors from being auto-fetched or connected. Explicit `--mcp-config` servers and managed MCP files are unaffected. Requires Claude Code 2.1.182 or later.
+
+**Why it matters:** Cloud connectors are another MCP tool surface. Enterprises should use managed MCP review instead of inheriting cloud-side connectors automatically.
+
+**What breaks if misconfigured or removed:** Setting it to `true` blocks connector-backed workflows. Removing it can connect cloud-configured tools outside the endpoint's managed MCP inventory.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Only IT-approved MCP servers should connect. |
+| Standard enterprise | `true` | Keeps connector onboarding in the managed review workflow. |
+| Developer | `false` | Allows connector experimentation with user review. |
+
+### `disableSideloadFlags`
+
+**What it does:** Rejects the `--plugin-dir`, `--plugin-url`, `--agents`, and most `--mcp-config` command-line flags. In-process SDK MCP entries remain supported. Requires Claude Code 2.1.193 or later.
+
+**Why it matters:** These flags can load a plugin, agent, or MCP server for one session without using the managed marketplace and MCP review paths.
+
+**What breaks if misconfigured or removed:** Setting it to `true` blocks one-session sideloading. Removing it can let users bypass approved plugin, agent, and MCP inventories.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Prevent per-session bypass of managed extension and MCP controls. |
+| Standard enterprise | `true` | Require new integrations to use the normal review and deployment path. |
+| Developer | `false` | Preserve local experimentation in lower-risk environments. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Controls local file snapshots before edits so `/rewind` can restore changes. Equivalent environment control to disable: `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING=1`.
+
+**Why it matters:** Checkpoints help developers recover from bad edits, but they persist additional copies of source code on disk.
+
+**What breaks if misconfigured or removed:** Setting it to `false` prevents `/rewind` from restoring code changes. Leaving it enabled on a regulated endpoint can violate local data-retention requirements.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Avoid extra local snapshots of sensitive code. Use version control for recovery. |
+| Standard enterprise | `true` | Preserve fast recovery from agent edits on encrypted, managed endpoints. |
+| Developer | `true` | Recovery value outweighs local retention risk on lower-risk projects. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

@@ -24,7 +24,7 @@
         {
           "name": "Managed settings documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+          "url": "https://code.claude.com/docs/en/settings.md",
           "watch_for": [
             "managed settings",
             "permissions",
@@ -36,7 +36,7 @@
         {
           "name": "Hooks documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+          "url": "https://code.claude.com/docs/en/hooks.md",
           "watch_for": [
             "PreToolUse",
             "PostToolUse",
@@ -48,7 +48,7 @@
         {
           "name": "Dynamic workflows documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
+          "url": "https://code.claude.com/docs/en/workflows.md",
           "watch_for": [
             "dynamic workflows",
             "disableWorkflows",
@@ -129,7 +129,7 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
           "watch_for": [
             "policy",
             "organization",
@@ -141,13 +141,25 @@
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",
             "patterns",
             "excluded",
             "audit"
+          ]
+        },
+        {
+          "name": "Content exclusion audit documentation",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/review-changes.md",
+          "watch_for": [
+            "content exclusion",
+            "audit log",
+            "copilot.content_exclusion_changed",
+            "organization",
+            "repository"
           ]
         }
       ]
@@ -171,9 +183,9 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex configuration reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
             "config",
             "sandbox",
@@ -218,9 +230,9 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex config basics",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-basic",
           "watch_for": [
             "desktop",
             "managed",
@@ -232,7 +244,7 @@
         {
           "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md",
           "watch_for": [
             "config",
             "sandbox",
@@ -442,9 +454,9 @@
       },
       "sources": [
         {
-          "name": "Gemini CLI repository",
+          "name": "Gemini CLI settings reference",
           "kind": "repository",
-          "url": "https://github.com/google-gemini/gemini-cli",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/reference/configuration.md",
           "watch_for": [
             "settings.json",
             "sandbox",
@@ -454,9 +466,9 @@
           ]
         },
         {
-          "name": "Gemini CLI documentation",
+          "name": "Gemini CLI enterprise controls",
           "kind": "docs",
-          "url": "https://cloud.google.com/gemini/docs/codeassist/gemini-cli",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/admin/enterprise-controls.md",
           "watch_for": [
             "configuration",
             "settings",
@@ -488,7 +500,7 @@
         {
           "name": "Vertex AI Gemini safety settings",
           "kind": "docs",
-          "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters",
+          "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/configure-safety-filters",
           "watch_for": [
             "safety settings",
             "harm category",
@@ -530,15 +542,15 @@
       },
       "sources": [
         {
-          "name": "Claude Desktop MCP documentation",
+          "name": "Claude Desktop enterprise configuration",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+          "url": "https://support.claude.com/en/articles/12622667-enterprise-configuration-for-claude-desktop",
           "watch_for": [
             "Claude Desktop",
             "MCP",
-            "server",
+            "isLocalDevMcpEnabled",
             "configuration",
-            "allowlist"
+            "managed preferences"
           ]
         },
         {

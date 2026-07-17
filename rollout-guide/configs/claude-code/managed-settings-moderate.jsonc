@@ -173,6 +173,44 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables background agents and Agent View.
+  // WHY: Unattended agents add audit, ownership, and approval complexity that should
+  //      be piloted separately from interactive sessions.
+  // BREAKS IF TRUE: claude agents, --bg, /background, and the supervisor are unavailable.
+  "disableAgentView": true,
+
+  // WHAT: Disables publishing session output as a private claude.ai Artifact page.
+  // WHY: Artifact publishing is a data egress and sharing surface that requires
+  //      legal, retention, and access review before enterprise use.
+  // BREAKS IF TRUE: Developers cannot publish Claude Code output as Artifacts.
+  "disableArtifact": true,
+
+  // WHAT: Removes bundled skills and bundled workflows from Claude Code.
+  // WHY: Bundled automation can change between releases and should be reviewed before
+  //      it enters the managed enterprise workflow.
+  // BREAKS IF TRUE: Bundled productivity skills are unavailable. Built-in, project,
+  //      plugin, and managed skills are unaffected.
+  "disableBundledSkills": true,
+
+  // WHAT: Stops claude.ai MCP connectors from being fetched or connected automatically.
+  // WHY: Connector access should follow the same inventory and security review as
+  //      endpoint-managed MCP servers.
+  // BREAKS IF TRUE: Cloud connector workflows do not connect. Explicit MCP config and
+  //      managed MCP servers remain available.
+  "disableClaudeAiConnectors": true,
+
+  // WHAT: Rejects --plugin-dir, --plugin-url, --agents, and most --mcp-config flags.
+  // WHY: These one-session flags can bypass managed marketplace, agent, and MCP review.
+  // BREAKS IF TRUE: Developers cannot sideload plugins, agents, or external MCP config
+  //      for a single run. In-process SDK MCP entries continue to work.
+  "disableSideloadFlags": true,
+
+  // WHAT: Saves local snapshots before edits so /rewind can restore code changes.
+  // WHY: Moderate tier keeps recovery available on encrypted, managed endpoints.
+  // BREAKS IF FALSE: /rewind cannot restore file changes. Strict sets this false to
+  //      avoid retaining additional local copies of sensitive code.
+  "fileCheckpointingEnabled": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -193,8 +231,9 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.193 is required for disableSideloadFlags.
+  // BREAKS IF LOWER: Older clients can ignore the sideload control.
+  "minimumVersion": "2.1.193",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
