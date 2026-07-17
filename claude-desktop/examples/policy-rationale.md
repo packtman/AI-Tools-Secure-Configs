@@ -101,6 +101,14 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## Claude Code MCP Variables Are Not Desktop Policy Keys
+
+`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`, and `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` belong to Claude Code helper scripts, MCP runtime behavior, or LLM gateway compatibility. They are not keys for `claude_desktop_config.json`, macOS managed preferences, or Windows policy registry values.
+
+Do not add them to Claude Desktop tier files. For desktop policy, use the documented `isLocalDevMcpEnabled`, extension, Claude Code integration, secure VM, and update controls. If a desktop deployment also launches Claude Code, document those environment variables in the Claude Code rollout with server ownership, timeout expectations, and SIEM logging.
+
+---
+
 ## Summary: Recommended Profiles
 
 ### Maximum Lockdown (Regulated)

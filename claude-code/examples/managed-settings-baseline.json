@@ -61,6 +61,12 @@
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
+  "disableAgentView": false,
+  "disableArtifact": false,
+  "disableBundledSkills": false,
+  "disableClaudeAiConnectors": false,
+  "disableSideloadFlags": false,
+  "fileCheckpointingEnabled": true,
   "channelsEnabled": true,
 
   "autoUpdatesChannel": "stable",
