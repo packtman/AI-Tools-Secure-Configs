@@ -41,7 +41,7 @@ Define jargon the first time it appears. Examples:
 4. Review the report section named "Potential config terms not found in local tool files." Treat those terms as the first candidates for missing repo coverage.
 5. Decide whether each candidate is a real admin/security control, a developer-only preference, or unrelated documentation noise.
 6. If it is a real admin/security control, edit the affected tool files and shared rollout files.
-7. If no config update is needed, add a short "No config update needed" note to the report or PR body explaining the upstream change and why it does not affect this repo.
+7. After reviewing every candidate in a source section, add `Review outcome: resolved` plus a short note to that report section. State which controls were added or why no config update was needed.
 8. Validate every edited JSON, YAML, TOML, or shell file with the commands in `AGENTS.md`.
 
 Example: if Claude Code documentation introduces `disableWorkflows`, add that setting to the Claude Code tier files, update JSONC and deployable JSON, add rationale, add the tier delta row, and add workflow-preservation guidance for the blocked workflow commands.
