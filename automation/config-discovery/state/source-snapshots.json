@@ -668,31 +668,6 @@
         "... {% data reusables.enterprise-accounts.ai-controls-tab %} 1. Navigate to the page containing the policies you want to manage: * To view policies for **AI agents**, in the sidebar, click {% octicon \"agent\" aria-hidden=\"true\" aria-label=\"agent\" %} **Agents**. * To view policies for **{% data variables.product.prodname_copilot_short %}**, in the sidebar, click {% ..."
       ]
     },
-    "google-gemini:Google Cloud organization policies": {
-      "config_candidates": [],
-      "config_candidates_missing_locally": [],
-      "content_length": 124087,
-      "content_type": "text/html; charset=utf-8",
-      "etag": null,
-      "final_url": "https://docs.cloud.google.com/organization-policy/overview",
-      "hash_basis": "normalized-source-v1",
-      "kind": "docs",
-      "last_changed_at": "2026-07-18T13:28:32+00:00",
-      "last_modified": "Thu, 16 Jul 2026 17:43:09 GMT",
-      "name": "Google Cloud organization policies",
-      "sha256": "133a9ffce1e9b8fc81144ef5b93d4403e03100bb444b315fc60b9f2aec0f44df",
-      "status": 200,
-      "title_or_prefix": "Organization Policy overview | Google Cloud Documentation Skip to main content Technology areas close AI and ML Applicat",
-      "tool_display_name": "Google Gemini",
-      "tool_id": "google-gemini",
-      "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview.md",
-      "watch_snippets": [
-        "Organization Policy overview | Google Cloud Documentation Skip to main content Technology areas close AI and ML Application development Application hosting Compute Data analytics and pipelines Databa ...",
-        "... nce Resources Cross-product tools More Console Discover Product overview Hierarchy evaluation Get started Enforce an organization policy Create resource restrictions Create custom constraints Create organization policies Test custom constraints with Gemini Cloud Assist Test organization policies Apply organization policies Scope organization policies with tags Manage b ...",
-        "... licies Scope organization policies with tags Manage baseline constraints Configure service restrictions Restrict IAM service account usage Restrict service usage Restrict resource locations Disable Cloud Logging for the Cloud Healthcare API Restrict identities Domain-restricted sharing Restrict identities with domain-restricted sharing Monitor Audit logging for Organ ...",
-        "... rict resource locations Disable Cloud Logging for the Cloud Healthcare API Restrict identities Domain-restricted sharing Restrict identities with domain-restricted sharing Monitor Audit logging for Organization Policy Troubleshoot Troubleshoot organization policies AI and ML Application development Application hosting Compute Data analytics and pipelines Database ..."
-      ]
-    },
     "google-gemini:Google Cloud organization policy constraints": {
       "config_candidates": [
         "allowAnyGKEPath"
