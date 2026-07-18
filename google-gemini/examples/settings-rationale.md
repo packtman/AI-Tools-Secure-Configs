@@ -14,6 +14,7 @@ Safety filters are applied **per API request** using the `safety_settings` array
 | `HARM_CATEGORY_HATE_SPEECH` | Content promoting violence or discrimination based on protected attributes | `BLOCK_MEDIUM_AND_ABOVE` | Prevents generation of discriminatory content. Low-confidence false positives (blocked by `BLOCK_LOW_AND_ABOVE`) would interfere with DEI training materials or policy discussions. |
 | `HARM_CATEGORY_SEXUALLY_EXPLICIT` | Sexual content, graphic descriptions | `BLOCK_MEDIUM_AND_ABOVE` | Enterprise environments have zero tolerance for explicit content. Medium threshold catches clear violations without blocking medical, educational, or HR-related content. |
 | `HARM_CATEGORY_DANGEROUS_CONTENT` | Instructions for weapons, self-harm, illegal activities | `BLOCK_MEDIUM_AND_ABOVE` | Blocks genuinely dangerous instructions while permitting security research discussions, penetration testing guidance, and incident response content. |
+| `HARM_CATEGORY_JAILBREAK` | Prompts that attempt to bypass model defenses | `BLOCK_MEDIUM_AND_ABOVE` | This Vertex AI-only classifier is off by default. Moderate blocks likely bypass attempts while preserving most legitimate prompt-security research. |
 
 ### Threshold Comparison
 
@@ -26,7 +27,18 @@ Safety filters are applied **per API request** using the `safety_settings` array
 
 ### Misconfiguration Risk
 
-Setting filters to `BLOCK_NONE` or `BLOCK_ONLY_HIGH` exposes the organization to generated harassment, hate speech, or dangerous instructions. This creates legal liability, HR violations, and reputational damage. Filters must be set **in application code on every request** — they are not server-side defaults.
+Setting filters to `BLOCK_NONE` or `BLOCK_ONLY_HIGH` exposes the organization to generated harassment, hate speech, or dangerous instructions. Omitting `HARM_CATEGORY_JAILBREAK` leaves its classifier off. This creates legal liability, HR violations, reputational damage, and a larger prompt-bypass surface. Filters must be set **in application code on every request** because they are not server-side defaults.
+
+### Jailbreak Tier Values
+
+| Tier | Value | Workflow impact |
+|------|-------|-----------------|
+| Baseline | `BLOCK_ONLY_HIGH` | Blocks high-confidence bypass attempts with the lowest false-positive risk. |
+| Moderate | `BLOCK_MEDIUM_AND_ABOVE` | Blocks likely bypass attempts and may affect prompt-security testing. |
+| Strict | `BLOCK_LOW_AND_ABOVE` | Blocks low-confidence attempts and has the highest false-positive rate. |
+
+For an approved red-team exercise, use an isolated Vertex AI project and a time-bounded exception.
+Do not lower the production threshold for all developers.
 
 ---
 

@@ -472,7 +472,7 @@
         {
           "name": "Gemini CLI documentation",
           "kind": "docs",
-          "url": "https://cloud.google.com/gemini/docs/codeassist/gemini-cli",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/settings.md",
           "watch_for": [
             "configuration",
             "settings",
@@ -504,7 +504,7 @@
         {
           "name": "Vertex AI Gemini safety settings",
           "kind": "docs",
-          "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters",
+          "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters.md",
           "watch_for": [
             "safety settings",
             "harm category",
@@ -514,9 +514,9 @@
           ]
         },
         {
-          "name": "Google Cloud organization policies",
+          "name": "Google Cloud organization policy constraints",
           "kind": "docs",
-          "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview",
+          "url": "https://docs.cloud.google.com/organization-policy/reference/org-policy-constraints.md",
           "watch_for": [
             "organization policy",
             "constraints",

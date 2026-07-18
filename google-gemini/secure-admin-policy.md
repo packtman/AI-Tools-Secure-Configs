@@ -11,6 +11,7 @@
 ## 2. Safety & Content Filtering
 
 - [ ] **Safety filters** — Apply `BLOCK_MEDIUM_AND_ABOVE` or stricter for all categories.
+- [ ] **Jailbreak filter**: Set `HARM_CATEGORY_JAILBREAK` explicitly; Vertex AI leaves it off by default.
 - [ ] **Application-layer validation** — Implement content moderation in your application layer.
 - [ ] **PII detection** — Enable PII scanning on inputs before sending to the API.
 - [ ] **Output validation** — Validate model outputs before presenting to end users.
