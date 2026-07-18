@@ -19,6 +19,10 @@
       {
         "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
         "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_JAILBREAK",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
       }
     ],
     "strict": [
@@ -36,6 +40,10 @@
       },
       {
         "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_LOW_AND_ABOVE"
+      },
+      {
+        "category": "HARM_CATEGORY_JAILBREAK",
         "threshold": "BLOCK_LOW_AND_ABOVE"
       }
     ]

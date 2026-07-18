@@ -8,6 +8,11 @@ This directory contains security-hardened configurations for **GitHub Copilot** 
 |------|---------|
 | `copilot-instructions.md` | Secure `.github/copilot-instructions.md` template |
 | `content-exclusion.md` | Content exclusion configuration guide |
+| `examples/managed-settings-strict.json` | Deployable Strict enterprise managed settings |
+| `examples/managed-settings-moderate.json` | Deployable Moderate enterprise managed settings |
+| `examples/managed-settings-baseline.json` | Deployable Baseline enterprise managed settings |
+| `examples/managed-settings-*.jsonc` | Commented copies with what, why, and breakage rationale |
+| `examples/managed-settings-*.comments.md` | Audit rationale for each managed setting |
 | `examples/org-policy-strict.json` | **Strict** — Most features disabled, broad exclusions (regulated) |
 | `examples/org-policy-moderate.json` | **Moderate** — Core features enabled, sensible exclusions (enterprise) |
 | `examples/org-policy-baseline.json` | **Baseline** — Most features enabled, minimal exclusions (startups) |
@@ -28,6 +33,27 @@ AI Controls categories:
 - **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
 - **Agents** — Cloud agent, code review agent, custom agents, third-party agents
 - **MCP** — MCP server availability, registry URL, strict enforcement
+
+### Enterprise Managed Settings
+
+GitHub Copilot supports a vendor-defined `managed-settings.json` file for Copilot CLI and VS Code.
+Use it in addition to AI Controls for client-side permission, plugin marketplace, and OpenTelemetry
+policy. OpenTelemetry is a standard for exporting usage events to an approved collector.
+
+Deployment channels, from highest to lowest precedence:
+
+1. Native MDM: `HKLM\SOFTWARE\Policies\GitHubCopilot` on Windows or managed preferences in the
+   `com.github.copilot` domain on macOS.
+2. Server-managed: `copilot/managed-settings.json` in the selected organization's
+   `.github-private` repository.
+3. File-based: `/Library/Application Support/GitHubCopilot/managed-settings.json` on macOS,
+   `%ProgramFiles%\GitHubCopilot\managed-settings.json` on Windows, or
+   `/etc/github-copilot/managed-settings.json` on Linux.
+4. User settings.
+
+File-based settings must be root-owned, must not be world-writable, and must not be a symbolic link.
+Server and MDM policy refreshes within about one hour. Restart the client, sign in again, or run
+`Developer: Sync Account Policy` in VS Code to force a policy refresh during a pilot.
 
 ### Organization Level (GitHub Settings)
 
@@ -91,8 +117,11 @@ Control which Copilot plans can access the network:
 5. Configure firewall rules to allow only business/enterprise Copilot traffic.
 6. Set agent policies (disable cloud agent, custom agents, and third-party agents for regulated environments).
 7. Configure MCP registry and decide on strict enforcement.
-8. Set code review runner configuration at org level (self-hosted for sensitive environments).
+8. Keep Copilot code review on a GitHub-hosted runner with its firewall enabled. Self-hosted code
+   review runners do not support GitHub's firewall, so use them only with equivalent network controls.
 9. Create "Manage enterprise AI controls" custom role for AI governance team.
 10. Enable audit log streaming to your SIEM.
 11. Review agent session activity and audit Copilot usage regularly.
-12. Train developers on responsible Copilot usage and code review practices.
+12. Deploy the selected `managed-settings-*.json` template through server management, MDM, or a
+    root-owned file, and validate bypass mode and telemetry behavior.
+13. Train developers on responsible Copilot usage and code review practices.

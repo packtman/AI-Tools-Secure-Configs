@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+  "strictKnownMarketplaces": [],
+  "telemetry": {
+    "enabled": true,
+    "endpoint": "https://otel-collector.example.com",
+    "protocol": "http/protobuf",
+    "captureContent": false,
+    "lockCaptureContent": true,
+    "serviceName": "github-copilot",
+    "resourceAttributes": {
+      "deployment.environment": "regulated"
+    }
+  }
+}

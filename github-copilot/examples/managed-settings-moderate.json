@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/approved-copilot-plugins",
+      "ref": "PINNED_COMMIT_SHA"
+    }
+  ],
+  "telemetry": {
+    "enabled": true,
+    "endpoint": "https://otel-collector.example.com",
+    "protocol": "http/protobuf",
+    "captureContent": false,
+    "lockCaptureContent": true,
+    "serviceName": "github-copilot",
+    "resourceAttributes": {
+      "deployment.environment": "enterprise"
+    }
+  }
+}

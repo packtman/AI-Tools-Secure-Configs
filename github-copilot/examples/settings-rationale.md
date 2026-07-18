@@ -5,6 +5,57 @@
 
 ---
 
+## 0. Enterprise `managed-settings.json`
+
+GitHub Copilot Enterprise supports a managed settings file for Copilot CLI and VS Code. It is a
+vendor-defined, enforceable client policy, unlike the `org-policy-*.json` planning worksheets in
+this repository. The same JSON schema works through server-managed, native MDM, and file-based
+deployment.
+
+Official references:
+
+- [Enterprise managed settings reference](https://docs.github.com/copilot/reference/enterprise-managed-settings-reference)
+- [Configuring enterprise-managed settings](https://docs.github.com/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-agents/configure-enterprise-managed-settings)
+
+### 0.1 `permissions.disableBypassPermissionsMode`
+
+| Aspect | Detail |
+|--------|--------|
+| **What it does** | The value `"disable"` blocks Copilot CLI `--yolo`, `--allow-all`, `/yolo`, and `/allow-all`, and locks off VS Code global auto-approve. |
+| **Why it matters** | Bypass mode removes approval prompts for commands, files, and URLs. Prompt injection can then turn a Copilot response into an immediate workstation action. |
+| **Recommended value** | `"disable"` for Baseline, Moderate, and Strict. |
+| **Misconfiguration risk** | Omitting the key lets users enable broad allow-all behavior. GitHub states that individual flags such as `--allow-all-tools` and `--allow-all-paths` are not blocked, so retain endpoint monitoring. |
+
+### 0.2 `strictKnownMarketplaces`
+
+| Aspect | Detail |
+|--------|--------|
+| **What it does** | Restricts plugin installation to the listed marketplaces. An empty array blocks every marketplace. |
+| **Why it matters** | Plugins add executable code and external data flows. A pinned enterprise source provides a review and rollback point. |
+| **Recommended value** | Baseline: not set. Moderate: one or more reviewed sources pinned by `ref`. Strict: `[]` until an exception is approved. |
+| **Misconfiguration risk** | An invalid source blocks approved plugins. A moving branch or broad host pattern weakens supply-chain review. |
+
+### 0.3 `telemetry`
+
+| Aspect | Detail |
+|--------|--------|
+| **What it does** | Exports Copilot usage telemetry to an OpenTelemetry collector and can lock content capture off. |
+| **Why it matters** | Metadata supports rollout monitoring and incident investigation. Prompt or response capture can copy source code and secrets into a SIEM. |
+| **Recommended value** | Moderate and Strict: enable export, use an approved endpoint, set `captureContent: false`, and set `lockCaptureContent: true`. Baseline: not set unless a collector is available. |
+| **Misconfiguration risk** | A wrong endpoint creates an audit gap. `captureContent: true` may export sensitive content. Do not commit collector tokens because GitHub does not expand environment variables in this file. |
+
+### Managed Settings Tier Delta
+
+| Setting | Baseline | Moderate | Strict | Reason for difference |
+|---------|----------|----------|--------|-----------------------|
+| `permissions.disableBypassPermissionsMode` | `"disable"` | `"disable"` | `"disable"` | Broad allow-all behavior is unsafe at every tier. |
+| `strictKnownMarketplaces` | Not set | Pinned approved marketplace | `[]` | Moderate preserves reviewed plugins. Strict starts with complete marketplace lockdown. |
+| `telemetry.enabled` | Not set | `true` | `true` | Enterprise tiers require centralized rollout evidence. |
+| `telemetry.captureContent` | Not set | `false`, locked | `false`, locked | Metadata is useful, but exporting prompts or responses creates unnecessary data exposure. |
+| `telemetry.resourceAttributes` | Not set | `enterprise` | `regulated` | The tag lets the collector apply tier-specific routing and retention. |
+
+---
+
 ## 1. Organization-Level Feature Policies
 
 Feature policies are configured at **Organization Settings → Copilot → Policies & features**. Each toggle controls whether a capability is available to seated members.
@@ -42,8 +93,14 @@ Feature policies are configured at **Organization Settings → Copilot → Polic
 |--------|--------|
 | **What it does** | Enables Copilot to review pull requests and provide AI-generated review comments on diffs. |
 | **Why it matters** | AI code review catches classes of bugs and security issues that human reviewers miss under time pressure: SQL injection patterns, hardcoded secrets, missing input validation, insecure deserialization. It acts as a safety net, not a replacement for human review. |
-| **Recommended value** | `enabled` in all environments. This is a security-positive feature. |
-| **Misconfiguration risk** | Disabling removes a free layer of automated security review. There is no meaningful downside to enabling it — the worst case is a false positive review comment. |
+| **Recommended value** | Enable after validating repository instructions, setup steps, and network policy. Keep the default firewall enabled on GitHub-hosted runners. |
+| **Misconfiguration risk** | Disabling removes an automated review layer. Enabling on a self-hosted runner without equivalent egress controls removes GitHub's code review firewall and can expose internal services. |
+
+Copilot code review has a firewall enabled by default on GitHub-hosted runners. The firewall is
+configured independently from Copilot cloud agent under repository or organization Copilot
+settings. Self-hosted code review runners do not support this firewall. Use the dedicated
+`.github/workflows/copilot-code-review.yml` setup file for code review. If it is absent, GitHub
+falls back to `.github/workflows/copilot-setup-steps.yml`.
 
 ### 1.5 `copilot_pull_request_summaries` — PR Summaries
 

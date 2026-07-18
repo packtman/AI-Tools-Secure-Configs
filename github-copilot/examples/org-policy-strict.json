@@ -39,7 +39,7 @@
   },
 
   "code_review": {
-    "org_level_runner": "self-hosted",
+    "org_level_runner": "github-hosted",
     "lock_runner_setting": true
   },
 

@@ -33,7 +33,7 @@
 ### Example organization exclusion rules
 
 ```yaml
-# Block secrets across all repositories
+# Block secrets and infrastructure state across all repositories
 "*":
   - "**/.env"
   - "**/.env.*"
@@ -41,9 +41,6 @@
   - "**/*.pem"
   - "**/*.key"
   - "**/credentials*"
-
-# Block infrastructure state files
-"*":
   - "**/terraform.tfstate"
   - "**/terraform.tfstate.backup"
   - "**/terraform.tfvars"
@@ -57,27 +54,26 @@
   - "**"
 ```
 
-## Enterprise-Level Exclusion
+## API Deployment
 
-Enterprise owners can set exclusions via:
-1. **Enterprise Settings → Copilot → Content exclusion**
-2. REST API (API version `2026-03-10`):
+The public-preview REST API manages organization rules. The endpoint is singular
+`content_exclusion`; GitHub does not publish an enterprise endpoint for this payload.
 
 ```bash
 curl -L \
   -X PUT \
   -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2026-03-10" \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
-  https://api.github.com/enterprises/ENTERPRISE/copilot/content_exclusions \
+  https://api.github.com/orgs/ORG/copilot/content_exclusion \
   -d '{
-    "repositories": [
-      {
-        "name": "acme/*",
-        "paths": ["**/.env", "**/.env.*", "**/secrets/**"]
-      }
-    ]
+    "*": ["**/.env", "**/.env.*", "**/secrets/**"],
+    "payroll-service": ["**"]
   }'
 ```
+
+The API does not preserve comments and does not support duplicate keys. Keep the reviewed source
+in version control, avoid duplicate repository keys, and send the complete desired rule set.
 
 ## Verification
 
