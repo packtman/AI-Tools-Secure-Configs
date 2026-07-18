@@ -115,21 +115,25 @@
       ],
       "tier_files": {
         "strict": [
-          "github-copilot/examples/org-policy-strict.json"
+          "github-copilot/examples/org-policy-strict.json",
+          "github-copilot/examples/managed-settings-strict.json"
         ],
         "moderate": [
           "github-copilot/examples/org-policy-moderate.json",
-          "rollout-guide/configs/github-copilot/org-policy-moderate.json"
+          "github-copilot/examples/managed-settings-moderate.json",
+          "rollout-guide/configs/github-copilot/org-policy-moderate.json",
+          "rollout-guide/configs/github-copilot/managed-settings-moderate.json"
         ],
         "baseline": [
-          "github-copilot/examples/org-policy-baseline.json"
+          "github-copilot/examples/org-policy-baseline.json",
+          "github-copilot/examples/managed-settings-baseline.json"
         ]
       },
       "sources": [
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies.md",
           "watch_for": [
             "policy",
             "organization",
@@ -141,13 +145,25 @@
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",
             "patterns",
             "excluded",
             "audit"
+          ]
+        },
+        {
+          "name": "Enterprise managed settings reference",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/reference/enterprise-managed-settings-reference.md",
+          "watch_for": [
+            "disableBypassPermissionsMode",
+            "strictKnownMarketplaces",
+            "telemetry",
+            "captureContent",
+            "managed settings"
           ]
         }
       ]

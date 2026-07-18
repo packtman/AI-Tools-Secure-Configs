@@ -1,0 +1,11 @@
+// GitHub Copilot enterprise managed settings: BASELINE tier.
+// Deploy as managed-settings.json after stripping comments.
+{
+  "permissions": {
+    // WHAT: Disables Copilot CLI and VS Code bypass, YOLO, and global auto-approve modes.
+    // WHY: A hardened baseline still requires approval before broad command, file, or URL access.
+    // BREAKS: Removing this lets users enable allow-all behavior. Individual allow-all flags remain
+    // available, so retain endpoint monitoring and review Copilot client updates.
+    "disableBypassPermissionsMode": "disable"
+  }
+}

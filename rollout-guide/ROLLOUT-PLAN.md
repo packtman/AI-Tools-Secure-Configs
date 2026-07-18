@@ -35,6 +35,8 @@
 - Claude Code managed-settings-moderate.json to pilot endpoints
 - Cursor permissions-moderate.json + settings.json to pilot endpoints
 - GitHub Copilot org policy (Moderate) scoped to a pilot team
+- GitHub Copilot managed-settings-moderate.json through the server-managed channel, with MDM
+  deployment tested on one macOS and one Windows pilot device
 
 **Exit criteria to proceed:**
 - [ ] Zero security incidents (no credential exposure, no unauthorized network access)
@@ -93,6 +95,8 @@
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
 | 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 15 | GitHub Copilot MDM paths verified: `com.github.copilot` on macOS and `HKLM\SOFTWARE\Policies\GitHubCopilot` on Windows | IT Ops | [ ] |
+| 16 | Copilot OpenTelemetry metadata reaches the approved collector with content capture confirmed off | Security | [ ] |
 
 ---
 
@@ -116,7 +120,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
-3. **GitHub Copilot**: Web/Bing search is disabled in Copilot Chat. Content exclusion rules now prevent Copilot from reading `.env` files, secrets directories, and cryptographic keys. Completions are disabled for `.ini` and `.properties` files.
+3. **GitHub Copilot**: Web/Bing search is disabled in Copilot Chat. Content exclusion rules now prevent Copilot from reading `.env` files, secrets directories, and cryptographic keys. Completions are disabled for `.ini` and `.properties` files. Copilot bypass and YOLO modes are disabled. Plugins must come from the approved enterprise marketplace.
 
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
@@ -124,6 +128,8 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
+- Copilot plugins from personal or unapproved marketplaces will not install.
+- Copilot's broad `--yolo` and `--allow-all` modes will be rejected. Normal per-action approval remains available.
 
 **What is NOT affected:**
 - All standard build/test/lint commands work normally
@@ -169,6 +175,17 @@ For permissions.json: remove `~/.cursor/permissions.json` to revert to defaults.
 | Content exclusion | Organization Settings -> Copilot -> Content exclusion: remove added patterns |
 | Firewall rules | Remove the block on `*.individual.githubcopilot.com` from firewall/proxy |
 | Seat management | Switch from `selected_teams` back to `all_members` if needed |
+| Server-managed settings | Revert `copilot/managed-settings.json` in the selected `.github-private` repository |
+| macOS MDM | Remove the managed preferences payload for `com.github.copilot` |
+| Windows MDM | Remove `HKLM\SOFTWARE\Policies\GitHubCopilot` values deployed for Copilot |
+| File-based macOS | Restore or remove `/Library/Application Support/GitHubCopilot/managed-settings.json` |
+| File-based Windows | Restore or remove `%ProgramFiles%\GitHubCopilot\managed-settings.json` |
+| File-based Linux | Restore or remove `/etc/github-copilot/managed-settings.json` |
+
+Native MDM has higher precedence than server-managed and file-based settings. Remove or revert the
+highest-precedence channel first, then run `Developer: Sync Account Policy` in VS Code or restart
+Copilot CLI. Keep `permissions.disableBypassPermissionsMode` in place during rollback unless the
+incident specifically requires removing it.
 
 #### Communication Template for Rollback
 
@@ -216,6 +233,17 @@ See file: [`rollout-guide/configs/github-copilot/org-policy-moderate.jsonc`](con
 ### 2.6 GitHub Copilot: `.github/copilot-instructions.md`
 
 See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](configs/github-copilot/copilot-instructions.md)
+
+### 2.7 GitHub Copilot: `managed-settings-moderate.json`
+
+See deployable file:
+[`rollout-guide/configs/github-copilot/managed-settings-moderate.json`](configs/github-copilot/managed-settings-moderate.json)
+
+See commented file:
+[`rollout-guide/configs/github-copilot/managed-settings-moderate.jsonc`](configs/github-copilot/managed-settings-moderate.jsonc)
+
+See rationale:
+[`rollout-guide/configs/github-copilot/managed-settings-moderate.comments.md`](configs/github-copilot/managed-settings-moderate.comments.md)
 
 ---
 
@@ -274,6 +302,12 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `excluded_repositories` | None | 3 sensitive repos | 5+ sensitive repos | Strict excludes more repos from AI processing |
 | `block_individual_traffic` | `true` | `true` | `true` | All tiers block shadow AI via personal accounts |
 | `allow_business_traffic` | `true` | `true` | `false` | Strict limits to enterprise-only hostname |
+| `permissions.disableBypassPermissionsMode` | `"disable"` | `"disable"` | `"disable"` | Broad allow-all behavior is unsafe at every tier |
+| `strictKnownMarketplaces` | Not set | One reviewed source pinned by `ref` | `[]` | Moderate preserves approved plugins; Strict blocks all plugin marketplaces until an exception is approved |
+| `telemetry.enabled` | Not set | `true` | `true` | Enterprise tiers require centralized rollout evidence |
+| `telemetry.captureContent` | Not set | `false`, locked | `false`, locked | Metadata supports monitoring without exporting prompts, responses, or code |
+| `telemetry.resourceAttributes` | Not set | `enterprise` | `regulated` | Collector tags support tier-specific routing and retention |
+| Code review firewall | GitHub-hosted default | GitHub-hosted, enabled | Feature disabled; if excepted, GitHub-hosted and enabled | Self-hosted code review runners do not support GitHub's firewall |
 
 ---
 
@@ -469,37 +503,69 @@ Cursor does not have built-in audit logging comparable to Claude Code hooks. Com
 
 #### Configuration Paths
 
-GitHub Copilot is configured at three levels, all through the GitHub web interface or API:
+GitHub Copilot uses server policy plus enterprise managed client settings:
 
-| Level | Where to Configure |
-|-------|--------------------|
-| Enterprise | Enterprise Settings -> Copilot -> Policies |
-| Organization | Organization Settings -> Copilot -> Policies & features |
-| Repository | Repository Settings -> Code & automation -> Copilot |
+| Level or channel | Where to configure |
+|------------------|--------------------|
+| Enterprise AI Controls | Enterprise Settings -> AI Controls |
+| Organization policy | Organization Settings -> Copilot -> Policies & features |
+| Repository policy | Repository Settings -> Code & automation -> Copilot |
+| Server-managed client settings | `copilot/managed-settings.json` in the selected organization's `.github-private` repository |
+| macOS file-based settings | `/Library/Application Support/GitHubCopilot/managed-settings.json` |
+| Windows file-based settings | `%ProgramFiles%\GitHubCopilot\managed-settings.json` |
+| Linux file-based settings | `/etc/github-copilot/managed-settings.json` |
+| macOS native MDM | Managed preferences domain `com.github.copilot` |
+| Windows native MDM | `HKLM\SOFTWARE\Policies\GitHubCopilot` |
 
-There are no local files to deploy for org policy. IDE-level settings go in VS Code/Cursor settings.json (see Section 4.2).
+Native MDM wins over server-managed settings, which win over file-based settings, which win over
+user settings. File-based settings must be root-owned, must not be world-writable, and must not be
+a symbolic link.
 
 #### MDM Guidance
 
-GitHub Copilot org policies are configured server-side (GitHub.com). MDM is not needed for the org policy itself. However, MDM is useful for:
-1. Deploying IDE settings that configure the Copilot extension (proxy, SSL, language enablement)
-2. Enforcing minimum Copilot extension versions
-3. Blocking the Copilot Individual extension if your org uses Copilot Business/Enterprise
+GitHub Copilot org policies remain server-side, but native MDM can now enforce the same
+`managed-settings.json` keys on a device regardless of which account the developer selects.
+
+**Jamf and Workspace ONE on macOS:**
+
+1. Use managed preferences domain `com.github.copilot`.
+2. Store scalar keys using their dot-separated names.
+3. Store structured settings such as `strictKnownMarketplaces` and `telemetry` as JSON strings.
+4. Scope the payload to the pilot group, then verify it before expansion.
+
+**Intune or Group Policy on Windows:**
+
+1. Deploy values under `HKLM\SOFTWARE\Policies\GitHubCopilot`.
+2. Store scalar keys using their dot-separated names.
+3. Store structured settings as JSON strings.
+4. Assign to the pilot device group before org-wide deployment.
+
+If native MDM serialization is not available, package the deployable JSON file at the documented
+OS path. For Linux, deploy the file with configuration management and set ownership to `root:root`
+and mode `0644`.
 
 #### Deployment Steps
 
 1. **Enable Copilot Enterprise/Business** at Organization Settings -> Copilot
-2. **Set seat management** to `selected_teams`, add your engineering teams
-3. **Disable features** per the Moderate policy:
+2. **Create enterprise managed settings** from `managed-settings-moderate.json`:
+   - Replace `YOUR-ORG/approved-copilot-plugins` and `PINNED_COMMIT_SHA`
+   - Replace `https://otel-collector.example.com` with the approved collector
+   - Do not add exporter tokens to the repository
+3. **Deploy managed settings** through the selected `.github-private` repository, native MDM, or a
+   root-owned file. Use MDM for account-switch-resistant endpoint enforcement.
+4. **Set seat management** to `selected_teams`, add your engineering teams
+5. **Disable features** per the Moderate policy:
    - Copilot CLI: disabled
    - Web search: disabled
    - Bing search: disabled
    - Docset management: disabled
-4. **Configure content exclusion** at Organization Settings -> Copilot -> Content exclusion:
+6. **Configure content exclusion** at Organization Settings -> Copilot -> Content exclusion:
    - Add all patterns from `org-policy-moderate.json` content_exclusions.global_patterns
    - Add sensitive repositories to excluded_repositories
-5. **Deploy `.github/copilot-instructions.md`** to all repositories (via script or PR)
-6. **Configure firewall rules**:
+7. **Deploy `.github/copilot-instructions.md`** to all repositories (via script or PR)
+8. **Keep the Copilot code review firewall enabled** under Repository Settings -> Copilot ->
+   Internet access. Use a GitHub-hosted runner unless equivalent network isolation is documented.
+9. **Configure firewall rules**:
    ```
    # Allow (HTTPS 443)
    *.enterprise.githubcopilot.com
@@ -511,7 +577,7 @@ GitHub Copilot org policies are configured server-side (GitHub.com). MDM is not 
    # Block
    *.individual.githubcopilot.com
    ```
-7. **Deploy VS Code/Cursor Copilot settings** via `.vscode/settings.json` in repos
+10. **Deploy VS Code/Cursor Copilot settings** via `.vscode/settings.json` in repos
 
 #### Validation
 
@@ -535,6 +601,17 @@ gh api /orgs/YOUR_ORG/copilot
 # Verify minimum extension version
 # In VS Code: Extensions panel -> GitHub Copilot -> check version
 # Expected: Copilot Chat >= 0.17
+
+# Force an MDM or server-policy refresh in VS Code
+# Command Palette -> Developer: Sync Account Policy
+
+# Verify broad bypass is blocked in Copilot CLI
+copilot --yolo
+# Expected: managed policy rejects bypass mode
+
+# Verify a file-based policy is protected on Linux
+stat -c '%U:%G %a %N' /etc/github-copilot/managed-settings.json
+# Expected: root:root, not world-writable, and not a symbolic link
 ```
 
 #### Audit Logging
@@ -552,6 +629,11 @@ gh api \
 Pipe the output to your SIEM ingest pipeline (Splunk HEC, Elastic Filebeat, Azure Sentinel connector).
 
 GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azure Event Hubs, Google Cloud Storage, Splunk, Datadog.
+
+The Moderate managed settings template also exports metadata-only OpenTelemetry events. Confirm
+`captureContent` is `false` and `lockCaptureContent` is `true` before connecting the collector.
+Do not send collector authorization tokens through a committed JSON file. Add them at deployment
+time through an approved secret-delivery control, or use mutual TLS.
 
 **What to alert on:**
 | Event | Severity | Meaning |
@@ -582,6 +664,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `rm -rf <path>` (Strict only) | Data destruction | In Moderate tier, specific dangerous patterns like `rm -rf /` are blocked but `rm` generally works. In Strict, all `rm` is blocked; use `git clean` or manually delete. | Claude Code (Strict) |
 | Copilot CLI (`gh copilot suggest`) | Generated shell commands on shared systems | Use Copilot Chat in the IDE instead. It generates code snippets you can review before running. | Copilot |
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
+| Copilot bypass, YOLO, or global auto-approve mode | Broad command, file, and URL access removes the normal approval boundary | Keep per-action approval enabled. For repeated approved tasks, request a narrowly scoped tool or path exception instead of allow-all mode. | Copilot CLI, Copilot Chat in VS Code |
+| Copilot plugin from an unapproved marketplace | Plugin code and external data flows have not passed supply-chain review | Submit the plugin source and pinned revision for security review, then add only that marketplace through change control. | Copilot CLI, Copilot Chat in VS Code |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
 
@@ -597,6 +681,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `strictKnownMarketplaces` blocks a needed Copilot plugin | A team depends on a plugin that is not in the enterprise marketplace | Review the plugin permissions and source, pin an immutable revision, test it in the pilot group, and add the narrow source through a time-bounded exception. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -613,7 +698,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 3. If approved:
    - For Claude Code: add to project-level `.claude/settings.json` (if `allowManagedPermissionRulesOnly` is false) OR add to managed-settings.d/ drop-in
    - For Cursor: add to permissions.json or .vscode/settings.json
-   - For Copilot: modify content exclusion or feature policy at org level
+   - For Copilot: modify content exclusion or feature policy at org level. For a plugin exception,
+     add only the reviewed source and pinned revision to enterprise managed settings.
 
 4. Document the exception in your security register with an expiration date (recommend 90 days, then re-review)
 

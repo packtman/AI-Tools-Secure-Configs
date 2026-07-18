@@ -1,0 +1,38 @@
+// GitHub Copilot enterprise managed settings: MODERATE tier.
+// Replace all uppercase placeholders, then strip comments and deploy as managed-settings.json.
+{
+  "permissions": {
+    // WHAT: Disables Copilot CLI and VS Code bypass, YOLO, and global auto-approve modes.
+    // WHY: Moderate permits agent workflows only when normal approval boundaries remain active.
+    // BREAKS: Removing this lets users grant broad command, file, and URL access without prompts.
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  // WHAT: Limits plugin installation to one enterprise-reviewed GitHub marketplace.
+  // WHY: A pinned repository prevents unreviewed plugin marketplaces from adding executable code.
+  // BREAKS: An invalid repository or ref blocks approved plugins. A moving or broad source weakens
+  // supply-chain review. Replace both placeholders before deployment.
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/approved-copilot-plugins",
+      "ref": "PINNED_COMMIT_SHA"
+    }
+  ],
+
+  // WHAT: Exports metadata-only OpenTelemetry events to the enterprise collector.
+  // WHY: Moderate needs SIEM visibility without copying prompts, responses, or tool content.
+  // BREAKS: A wrong endpoint causes an audit gap. Enabling captureContent may export source code or
+  // secrets. GitHub does not expand environment variables here, so do not put tokens in this file.
+  "telemetry": {
+    "enabled": true,
+    "endpoint": "https://otel-collector.example.com",
+    "protocol": "http/protobuf",
+    "captureContent": false,
+    "lockCaptureContent": true,
+    "serviceName": "github-copilot",
+    "resourceAttributes": {
+      "deployment.environment": "enterprise"
+    }
+  }
+}

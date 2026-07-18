@@ -1,0 +1,32 @@
+// GitHub Copilot enterprise managed settings: STRICT tier.
+// Replace the collector URL, then strip comments and deploy as managed-settings.json.
+{
+  "permissions": {
+    // WHAT: Disables Copilot CLI and VS Code bypass, YOLO, and global auto-approve modes.
+    // WHY: Strict requires an approval boundary for every agent action covered by the client.
+    // BREAKS: Removing this lets users grant broad command, file, and URL access without prompts.
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  // WHAT: An empty strict marketplace list blocks installation from every plugin marketplace.
+  // WHY: Strict permits no plugin code until security approves and pins a source.
+  // BREAKS: Existing marketplace plugins become unavailable. Add only reviewed, pinned sources
+  // through change control if the organization needs plugins.
+  "strictKnownMarketplaces": [],
+
+  // WHAT: Exports metadata-only OpenTelemetry events and locks content capture off.
+  // WHY: Strict needs centralized evidence without copying regulated code or prompts to the SIEM.
+  // BREAKS: A wrong endpoint causes an audit gap. Enabling captureContent may export regulated data.
+  // GitHub does not expand environment variables here, so do not put tokens in this file.
+  "telemetry": {
+    "enabled": true,
+    "endpoint": "https://otel-collector.example.com",
+    "protocol": "http/protobuf",
+    "captureContent": false,
+    "lockCaptureContent": true,
+    "serviceName": "github-copilot",
+    "resourceAttributes": {
+      "deployment.environment": "regulated"
+    }
+  }
+}
