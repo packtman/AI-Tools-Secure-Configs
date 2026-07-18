@@ -420,7 +420,13 @@ def run_discovery(args: argparse.Namespace) -> int:
         {"schema_version": 1, "generated_by": "automation/config-discovery/discover_configs.py", "sources": {}},
     )
     previous_sources = previous_state.get("sources", {})
-    new_sources = dict(previous_sources)
+    active_source_ids = {source["source_id"] for source in iter_sources(registry)}
+    removed_source_ids = sorted(set(previous_sources) - active_source_ids)
+    new_sources = {
+        source_id: snapshot
+        for source_id, snapshot in previous_sources.items()
+        if source_id in active_source_ids
+    }
     changes: list[dict[str, Any]] = []
     changed_at = utc_now()
     local_text_by_tool = {tool["id"]: load_local_tool_text(tool, repo_root) for tool in registry["tools"]}
@@ -439,6 +445,17 @@ def run_discovery(args: argparse.Namespace) -> int:
             new_sources[source_id] = previous
 
     if not changes:
+        if removed_source_ids:
+            write_json(
+                state_path,
+                {
+                    "schema_version": 1,
+                    "generated_by": "automation/config-discovery/discover_configs.py",
+                    "sources": new_sources,
+                },
+            )
+            print(f"pruned {len(removed_source_ids)} removed source snapshots")
+            return 0
         print("no upstream source changes detected")
         return 0
 
