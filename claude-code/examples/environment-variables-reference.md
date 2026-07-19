@@ -36,9 +36,16 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
+| `ANTHROPIC_MODEL` | Override the model for the session | Use only an organization-approved model ID; prefer managed `model`, `availableModels`, and `enforceAvailableModels` for policy |
+| `CLAUDE_CODE_DISABLE_AGENT_VIEW` | Disable background agents and agent view | `1` for Moderate and Strict; prefer managed `disableAgentView: true` so users cannot bypass it |
+| `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` | Show a session recap after the terminal is idle | `0` where terminal recaps could expose sensitive context; otherwise leave unset |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Connect automatically to a running IDE | Leave unset unless IT has approved the IDE integration |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Prevent automatic IDE extension installation | `1` when extensions are deployed and versioned centrally |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
+
+`CLAUDE_MODEL` is not a Claude Code environment variable. Hook processes receive the active model only in the optional `model` field of `SessionStart` input. Hooks inherit `ANTHROPIC_MODEL` if the parent shell set it, but that value does not change after a user switches models with `/model`.
 
 ## MCP & Tools
 
@@ -70,6 +77,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "HTTPS_PROXY": "https://proxy.corp.example.com:8443",
     "NO_PROXY": "localhost,127.0.0.1,.corp.example.com",
@@ -87,6 +95,8 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
+    "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
+    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "DISABLE_AUTOUPDATER": "1"
   }

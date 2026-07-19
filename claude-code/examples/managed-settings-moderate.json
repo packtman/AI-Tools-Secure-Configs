@@ -93,6 +93,7 @@
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableAgentView": true,
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
