@@ -114,6 +114,8 @@
 
   "disableWorkflows": true,
 
+  "disableAgentView": true,
+
   "channelsEnabled": false,
 
   "autoMemoryEnabled": false,

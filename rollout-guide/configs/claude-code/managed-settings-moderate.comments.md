@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableAgentView`
+
+**Value:** `true`
+
+**What:** Disables background agents and agent view commands, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor.
+
+**Why (Moderate tier):** Background agents can continue outside the main terminal flow. Keep them disabled until the organization has audit coverage, repository scope, usage limits, and an exception owner.
+
+**What breaks if set to true:** Developers cannot start or manage background agents. Normal foreground Claude Code sessions still work.
+
+**Strict difference:** Also `true`, because regulated environments require the same pilot and monitoring controls.
+
+**Baseline difference:** `false`, preserving local background-agent workflows.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

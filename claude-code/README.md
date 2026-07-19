@@ -142,8 +142,11 @@ Hooks execute at specific points in Claude Code's lifecycle. Security-relevant h
 | `PostToolUse` | Scan for leaked secrets, audit log commands |
 | `Stop` | Session-end audit summary |
 | `ConfigChange` | Log configuration modifications |
+| `InstructionsLoaded` | Record which CLAUDE.md and `.claude/rules/*.md` files entered context |
 
 Hook types: `command` (shell), `http` (webhook), `mcp_tool`, `prompt` (LLM), `agent`.
+
+The example command hooks require `bash` and `jq`. The `InstructionsLoaded` example logs file metadata only, never instruction contents, to `${CLAUDE_AUDIT_LOG_DIR:-/var/log/claude-code}/instructions-audit.jsonl`. Ship that JSON Lines file with the endpoint SIEM agent. The hook is observability-only and cannot block or modify instruction loading.
 
 See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use examples.
 
@@ -220,6 +223,7 @@ See `examples/mcp-security.md` for the complete security guide.
 
 ### Phase 5: Hooks & Monitoring
 - [ ] Deploy audit logging hooks (PostToolUse).
+- [ ] Deploy instruction-load audit logging (InstructionsLoaded).
 - [ ] Deploy secret-scanning hooks (PostToolUse for Write|Edit).
 - [ ] Deploy destructive command blocking hooks (PreToolUse for Bash).
 - [ ] Set `allowedHttpHookUrls` to restrict hook destinations.

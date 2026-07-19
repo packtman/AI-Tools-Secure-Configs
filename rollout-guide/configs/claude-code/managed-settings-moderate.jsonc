@@ -173,6 +173,14 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables background agents and agent view commands such as claude agents,
+  //      --bg, /background, and the on-demand supervisor.
+  // WHY: Background work can continue outside the main terminal flow. Moderate tier
+  //      keeps it off until audit coverage, repository scope, and usage limits exist.
+  // BREAKS IF SET TO TRUE: Developers cannot start or manage background agents. Use
+  //      foreground sessions, or grant a time-bound pilot exception.
+  "disableAgentView": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

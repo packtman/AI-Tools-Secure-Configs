@@ -100,6 +100,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Disables background agents and agent view commands, including `claude agents`, `--bg`, `/background`, and the on-demand supervisor. Equivalent environment control: `CLAUDE_CODE_DISABLE_AGENT_VIEW=1`.
+
+**Why it matters:** Background agents can continue outside the main terminal flow. That changes audit expectations and can surprise developers who expect all actions to remain visible in the foreground session.
+
+**What breaks if misconfigured or removed:** Setting it to `true` removes background-agent workflows. Setting it to `false` before audit and repository-scope controls are ready can leave autonomous work outside the expected monitoring path.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No autonomous background work without formal monitoring and a defined repository scope. |
+| Standard enterprise | `true` | Disable until admins define usage monitoring, limits, and exception handling. |
+| Developer | `false` | Preserve local background-agent workflows with normal permission prompts. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

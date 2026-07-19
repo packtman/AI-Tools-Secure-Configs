@@ -80,6 +80,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+Maintenance decision (2026-07-19): added `disableAgentView` to all three managed-settings tiers and documented the equivalent `CLAUDE_CODE_DISABLE_AGENT_VIEW` environment variable. `ANTHROPIC_MODEL` is documented as a session override, but model policy should use managed model controls. The IDE connection, away-summary, and extension-install variables are documented in the environment reference and were not added to tier files because they are endpoint preferences, not required security controls.
+
 ### Claude Code: Hooks documentation
 
 - Change type: `fingerprint-method-changed`
@@ -121,6 +123,8 @@ Potential config terms not found in local tool files:
 `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Maintenance decision (2026-07-19): `CLAUDE_MODEL` is not a Claude Code environment variable, and inherited `ANTHROPIC_MODEL` does not track `/model` changes, so neither was added as a hook control. Added an `InstructionsLoaded` audit hook instead because the changed upstream source explicitly identifies it as the observability event for loaded instruction files.
 
 ### Claude Code: Dynamic workflows documentation
 

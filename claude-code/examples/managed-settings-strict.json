@@ -109,6 +109,7 @@
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableAgentView": true,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",
