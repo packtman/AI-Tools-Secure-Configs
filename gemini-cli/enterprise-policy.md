@@ -253,8 +253,8 @@ If a user has a different authentication method configured, they will be prompte
 
 Available auth types:
 - `oauth-personal` — Google login (recommended for enterprise)
-- `gemini-api-key` — Gemini API key authentication
-- `vertex-ai` — Vertex AI using Application Default Credentials or `GOOGLE_APPLICATION_CREDENTIALS`
+- `gemini-api-key`: Gemini API key authentication
+- `vertex-ai`: Vertex AI using Application Default Credentials or `GOOGLE_APPLICATION_CREDENTIALS`
 
 ---
 
