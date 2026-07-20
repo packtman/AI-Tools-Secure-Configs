@@ -431,26 +431,56 @@
       ],
       "tier_files": {
         "strict": [
-          "gemini-cli/examples/settings-strict.json"
+          "gemini-cli/examples/settings-strict.json",
+          "gemini-cli/examples/admin-policy-strict.toml"
         ],
         "moderate": [
-          "gemini-cli/examples/settings-moderate.json"
+          "gemini-cli/examples/settings-moderate.json",
+          "gemini-cli/examples/admin-policy-moderate.toml"
         ],
         "baseline": [
-          "gemini-cli/examples/settings-baseline.json"
+          "gemini-cli/examples/settings-baseline.json",
+          "gemini-cli/examples/admin-policy-baseline.toml"
         ]
       },
       "sources": [
         {
-          "name": "Gemini CLI repository",
+          "name": "Gemini CLI settings schema",
           "kind": "repository",
-          "url": "https://github.com/google-gemini/gemini-cli",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json",
           "watch_for": [
-            "settings.json",
+            "disableYoloMode",
+            "environmentVariableRedaction",
+            "hooksConfig",
             "sandbox",
             "MCP",
-            "telemetry",
-            "security"
+            "adminPolicyPaths"
+          ]
+        },
+        {
+          "name": "Gemini CLI policy engine",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/reference/policy-engine.md",
+          "watch_for": [
+            "Admin",
+            "decision",
+            "deny",
+            "ask_user",
+            "commandPrefix",
+            "mcpName"
+          ]
+        },
+        {
+          "name": "Gemini CLI enterprise admin controls",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/admin/enterprise-controls.md",
+          "watch_for": [
+            "Strict Mode",
+            "Extensions",
+            "MCP",
+            "allowlist",
+            "Required MCP Servers",
+            "Unmanaged Capabilities"
           ]
         },
         {

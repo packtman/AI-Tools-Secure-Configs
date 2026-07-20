@@ -23,6 +23,20 @@ For single-value settings, **system overrides win**. For arrays/objects (`mcpSer
 
 ---
 
+## Enterprise Admin Controls
+
+For Gemini Code Assist enterprise users, the Google Management Console provides organization-level controls that cannot be overridden locally. Prefer these controls over endpoint JSON when available:
+
+- Strict Mode: enabled, blocks YOLO mode.
+- Extensions: disabled unless an approved workflow requires them.
+- MCP: disabled for Strict, or enabled with an explicit remote-server allowlist for Moderate.
+- Required MCP Servers: use only for mandatory remote `sse` or `http` services. Do not store client secrets in local files.
+- Unmanaged Capabilities: disabled to block Agent Skills unless reviewed.
+
+The runtime `admin.*` fields are populated from the management service. Do not copy them into local `settings.json` templates.
+
+---
+
 ## File Locations
 
 ### System Overrides (Admin-Enforced)
@@ -65,6 +79,17 @@ sudo tee /etc/gemini-cli/settings.json > /dev/null << 'EOF'
       "timeout": 5000
     }
   },
+  "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    }
+  },
+  "hooksConfig": {
+    "enabled": true
+  },
   "telemetry": {
     "enabled": true,
     "target": "gcp",
@@ -106,9 +131,18 @@ sudo tee "/Library/Application Support/GeminiCli/settings.json" > /dev/null << '
     }
   },
   "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "auth": {
       "enforcedType": "oauth-personal"
     }
+  },
+  "hooksConfig": {
+    "enabled": true
   },
   "telemetry": {
     "enabled": true,
@@ -131,7 +165,7 @@ sudo chown root:wheel "/Library/Application Support/GeminiCli/settings.json"
 For additional macOS isolation, set the `SEATBELT_PROFILE` environment variable:
 
 ```bash
-export SEATBELT_PROFILE=strict
+export SEATBELT_PROFILE=strict-proxied
 ```
 
 Or deploy a custom `.sb` profile in project `.gemini/` directories.
@@ -162,6 +196,17 @@ $settings = @"
       "command": "C:\\Program Files\\corp-tools\\mcp-server.exe",
       "timeout": 5000
     }
+  },
+  "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    }
+  },
+  "hooksConfig": {
+    "enabled": true
   },
   "telemetry": {
     "enabled": true,
@@ -208,8 +253,8 @@ If a user has a different authentication method configured, they will be prompte
 
 Available auth types:
 - `oauth-personal` — Google login (recommended for enterprise)
-- `api-key` — API key authentication
-- `service-account` — Service account credentials (CI/CD)
+- `gemini-api-key`: Gemini API key authentication
+- `vertex-ai`: Vertex AI using Application Default Credentials or `GOOGLE_APPLICATION_CREDENTIALS`
 
 ---
 
@@ -256,6 +301,22 @@ This prevents users from adding unauthorized MCP servers, and restricts each ser
 
 ---
 
+## Admin Tool Policies
+
+The policy engine uses TOML files to enforce `allow`, `deny`, and `ask_user` decisions. The legacy `tools.exclude` JSON setting is deprecated.
+
+| OS | Protected admin policy directory |
+|----|----------------------------------|
+| Linux | `/etc/gemini-cli/policies` |
+| macOS | `/Library/Application Support/GeminiCli/policies` |
+| Windows | `C:\ProgramData\gemini-cli\policies` |
+
+Deploy one matching file from `examples/admin-policy-<tier>.toml`. On Linux and macOS, make the directory root-owned and not writable by group or other users. On Windows, remove Write, Modify, and Full Control from Users and Everyone. Gemini CLI ignores standard admin policies when these checks fail.
+
+Supplemental paths passed with `--admin-policy` or `adminPolicyPaths` do not receive the same ownership checks. Do not use them as the enterprise enforcement boundary.
+
+---
+
 ## Security Recommendations
 
 ### For Maximum Lockdown (Regulated Environments)
@@ -264,9 +325,13 @@ This prevents users from adding unauthorized MCP servers, and restricts each ser
 2. Set `tools.sandbox = "docker"` for container isolation
 3. Set `mcp.allowed = []` to disable all MCP servers
 4. Set `security.auth.enforcedType` to require corporate auth
-5. Set `telemetry.logPrompts = false` 
-6. Disable auto-updates if IT must approve versions
-7. Use `SEATBELT_PROFILE=strict` on macOS for additional isolation
+5. Set `security.disableYoloMode = true` and `security.disableAlwaysAllow = true`
+6. Enable `security.environmentVariableRedaction`
+7. Set `hooksConfig.enabled = false` unless IT deploys approved hooks
+8. Set `telemetry.logPrompts = false`
+9. Set `general.enableAutoUpdate = false` if IT must approve versions
+10. Deploy `admin-policy-strict.toml`
+11. Use `SEATBELT_PROFILE=strict-proxied` on macOS for additional isolation
 
 ### For Development Environments
 
@@ -276,3 +341,5 @@ This prevents users from adding unauthorized MCP servers, and restricts each ser
 4. Enable telemetry for audit purposes (without prompt logging)
 5. Allow Google login authentication only
 6. Deploy project-level `.geminiignore` to protect sensitive file patterns
+7. Disable YOLO mode and enable environment-variable redaction
+8. Deploy `admin-policy-moderate.toml`

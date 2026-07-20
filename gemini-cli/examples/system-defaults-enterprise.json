@@ -3,7 +3,7 @@
 
   "general": {
     "vimMode": false,
-    "disableAutoUpdate": false
+    "enableAutoUpdate": true
   },
 
   "ui": {
@@ -21,9 +21,18 @@
   },
 
   "security": {
+    "disableYoloMode": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "folderTrust": {
       "enabled": true
     }
+  },
+
+  "hooksConfig": {
+    "enabled": true
   },
 
   "telemetry": {
