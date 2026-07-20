@@ -2,7 +2,7 @@
   "_comment": "Secure Gemini CLI configuration template. Deploy to ~/.gemini/settings.json for user-level settings, or to the system overrides path for enterprise enforcement.",
 
   "general": {
-    "disableAutoUpdate": false
+    "enableAutoUpdate": true
   },
 
   "privacy": {
@@ -35,9 +35,19 @@
   "mcpServers": {},
 
   "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "folderTrust": {
       "enabled": true
     }
+  },
+
+  "hooksConfig": {
+    "enabled": true
   },
 
   "telemetry": {

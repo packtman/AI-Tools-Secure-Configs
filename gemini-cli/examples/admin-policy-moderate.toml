@@ -1,0 +1,36 @@
+# Gemini CLI moderate admin policy for standard enterprise development.
+# Deploy in the OS-specific admin policy directory documented in deployment-guide.md.
+
+# WHAT: Blocks shell command prefixes associated with privilege escalation or destructive host changes.
+# WHY: These commands can escape normal project scope or cause irreversible damage.
+# WHAT BREAKS: Developers cannot use Gemini to run sudo, switch users, format disks, or issue broad recursive deletion and permission changes.
+[[rule]]
+commandPrefix = ["sudo", "su ", "rm -rf /", "mkfs", "chmod 777"]
+decision = "deny"
+priority = 900
+denyMessage = "This command is blocked by enterprise policy. Use an approved manual change process."
+
+# WHAT: Requires confirmation before every other shell command.
+# WHY: Human review limits prompt-injection impact while preserving builds, tests, and source-control workflows.
+# WHAT BREAKS: Removing this rule can let a more permissive user rule auto-run shell commands.
+[[rule]]
+toolName = "run_shell_command"
+decision = "ask_user"
+priority = 200
+
+# WHAT: Requires confirmation before Gemini writes or replaces files.
+# WHY: Review prevents silent source changes while keeping normal agent editing available.
+# WHAT BREAKS: Developers see an approval prompt for each write operation.
+[[rule]]
+toolName = ["write_file", "replace"]
+decision = "ask_user"
+priority = 200
+
+# WHAT: Requires confirmation before any MCP tool call.
+# WHY: MCP calls can read or change external systems beyond the local sandbox.
+# WHAT BREAKS: Automated MCP workflows pause for approval and headless MCP calls are denied.
+[[rule]]
+toolName = "*"
+mcpName = "*"
+decision = "ask_user"
+priority = 200

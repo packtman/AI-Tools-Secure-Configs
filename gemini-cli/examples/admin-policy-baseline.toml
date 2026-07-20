@@ -1,0 +1,11 @@
+# Gemini CLI baseline admin policy for developer-focused environments.
+# Deploy in the OS-specific admin policy directory documented in deployment-guide.md.
+
+# WHAT: Blocks a small set of catastrophic shell command prefixes.
+# WHY: Baseline keeps broad tool access but still prevents obvious host destruction and privilege escalation.
+# WHAT BREAKS: Gemini cannot use sudo, switch users, format disks, delete from filesystem roots, or make files world-writable.
+[[rule]]
+commandPrefix = ["sudo", "su ", "rm -rf /", "mkfs", "chmod 777"]
+decision = "deny"
+priority = 900
+denyMessage = "This destructive command is blocked by baseline enterprise policy."

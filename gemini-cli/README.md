@@ -18,6 +18,9 @@ This directory contains comprehensive, security-hardened configurations for **Go
 | `examples/settings-strict.json` | **Strict** — Maximum lockdown (regulated environments) |
 | `examples/settings-moderate.json` | **Moderate** — Balanced security for enterprise teams |
 | `examples/settings-baseline.json` | **Baseline** — Essential security (startups, individual devs) |
+| `examples/admin-policy-strict.toml` | Strict admin policy: deny shell, file changes, and MCP tools |
+| `examples/admin-policy-moderate.toml` | Moderate admin policy: deny destructive commands and require approval |
+| `examples/admin-policy-baseline.toml` | Baseline admin policy: deny catastrophic shell commands |
 | `examples/system-settings-enterprise.json` | System-level override file for enterprise deployment |
 | `examples/system-defaults-enterprise.json` | System-level defaults file |
 | `examples/deployment-guide.md` | Multi-platform deployment guide |
@@ -52,16 +55,27 @@ For single-value settings, the system overrides file has the **final say**. For 
 
 ### Tool Access Control
 
-Gemini CLI provides two mechanisms for controlling which tools the AI can use:
+Gemini CLI provides settings allowlists and an admin policy engine for controlling which tools the AI can use:
 
 | Setting | Type | Description |
 |---------|------|-------------|
 | `tools.core` | Allowlist | Only these tools are available (most secure) |
-| `tools.exclude` | Blocklist | These tools are blocked (less secure) |
 | `tools.allowed` | Auto-approve list | These tools bypass confirmation dialog |
 | `tools.sandbox` | Isolation | Execute tools in Docker/Podman sandbox |
 
-**Security recommendation:** Use `tools.core` (allowlist) over `tools.exclude` (blocklist).
+The legacy `tools.exclude` setting is deprecated. Use `tools.core` for a tool allowlist and deploy `examples/admin-policy-<tier>.toml` for enforced `allow`, `deny`, or `ask_user` decisions.
+
+### Admin Policy Engine
+
+Admin policy TOML files override user policy files. Standard directories are:
+
+| OS | Admin policy directory |
+|----|------------------------|
+| macOS | `/Library/Application Support/GeminiCli/policies` |
+| Windows | `C:\ProgramData\gemini-cli\policies` |
+| Linux | `/etc/gemini-cli/policies` |
+
+On macOS and Linux, the directory must be owned by root and not writable by group or other users. On Windows, remove Write, Modify, and Full Control from standard users. Gemini CLI ignores the standard admin policy directory when these ownership checks fail.
 
 ### MCP Server Governance
 
@@ -89,7 +103,7 @@ macOS also supports Seatbelt (`sandbox-exec`) profiles via `SEATBELT_PROFILE`:
 | Profile | Description |
 |---------|-------------|
 | `permissive-open` | Restricts writes to project folder (default) |
-| `strict` | Declines operations by default |
+| `strict-proxied` | Declines operations by default and routes network access through the proxy |
 | Custom | User-defined `.sb` profile in `.gemini/` |
 
 ### Authentication Enforcement
@@ -100,6 +114,10 @@ macOS also supports Seatbelt (`sandbox-exec`) profiles via `SEATBELT_PROFILE`:
 | `security.auth.selectedType` | Currently selected auth type |
 | `security.auth.useExternal` | Whether to use external auth flow |
 | `security.folderTrust.enabled` | Whether folder trust is enabled |
+| `security.disableYoloMode` | Prevents the no-confirmation YOLO approval mode |
+| `security.disableAlwaysAllow` | Prevents persistent user approvals |
+| `security.environmentVariableRedaction.enabled` | Removes likely secrets from hook environments |
+| `hooksConfig.enabled` | Enables or disables hook execution |
 
 ### Telemetry Control
 
@@ -133,12 +151,15 @@ The existing `google-gemini/` directory covers Gemini API safety settings and GC
 - [ ] Set `tools.sandbox = "docker"` to enforce sandboxed execution
 - [ ] Define `mcp.allowed` to restrict MCP servers to approved list
 - [ ] Set `security.auth.enforcedType` to require corporate authentication
+- [ ] Deploy the matching `admin-policy-<tier>.toml` to the protected admin policy directory
+- [ ] Set `security.disableYoloMode = true` to prevent approval bypass
 
 ### Phase 2: Privacy & Telemetry
 - [ ] Set `telemetry.logPrompts = false` to avoid capturing sensitive prompts
 - [ ] Set `privacy.usageStatisticsEnabled = false` unless explicitly approved
 - [ ] Configure telemetry to point at your OTLP collector if audit logging is needed
-- [ ] Disable auto-updates if IT needs to test versions: `general.disableAutoUpdate = true`
+- [ ] Enable environment-variable redaction before allowing hooks
+- [ ] Disable auto-updates if IT needs to test versions: `general.enableAutoUpdate = false`
 
 ### Phase 3: Project-Level Controls
 - [ ] Deploy `.gemini/settings.json` to repositories with project-specific restrictions

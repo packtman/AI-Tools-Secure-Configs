@@ -1,0 +1,21 @@
+# Gemini CLI strict admin policy for regulated environments.
+# Deploy in the OS-specific admin policy directory documented in deployment-guide.md.
+
+# WHAT: Blocks shell commands and file-changing built-in tools at the admin tier.
+# WHY: Strict deployments require read-only agent behavior even if a user changes approval mode.
+# WHAT BREAKS: Gemini cannot edit files, run builds, execute tests, or use terminal commands.
+[[rule]]
+toolName = ["run_shell_command", "write_file", "replace"]
+decision = "deny"
+priority = 900
+denyMessage = "Strict enterprise policy permits read-only tools only."
+
+# WHAT: Blocks every tool exposed by every MCP server.
+# WHY: MCP tools can reach external systems and are outside the strict local read-only boundary.
+# WHAT BREAKS: Gemini cannot query issue trackers, databases, or other MCP integrations.
+[[rule]]
+toolName = "*"
+mcpName = "*"
+decision = "deny"
+priority = 900
+denyMessage = "MCP tools are disabled by strict enterprise policy."
