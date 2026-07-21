@@ -268,6 +268,18 @@ MCP servers provide Copilot with additional context by serving structured data f
 | **Network exposure** | MCP servers typically run locally or on internal networks. Ensure they are not exposed to the public internet. |
 | **Authentication** | MCP servers should require authentication. An unauthenticated server on the local network can be exploited by any process. |
 
+### MCP Admin Policy
+
+| Policy key | What it does | Tier guidance | What breaks or remains exposed |
+|------------|--------------|---------------|-------------------------------|
+| `mcp_servers_in_copilot` | Enables or disables MCP for users with Copilot seats. | Disable for Strict. Enable for Moderate and Baseline only after server review. | Disabling it removes all MCP workflows. Enabling it exposes external tools and data sources. |
+| `mcp_registry_url` | Publishes the organization's approved server catalog to supported clients. | Set an internal registry URL for Moderate. It is optional for Baseline and unused when Strict disables MCP. | A wrong URL prevents discovery. A compromised registry can direct clients to malicious servers. |
+| `restrict_mcp_access_to_registry_servers` | Chooses `allow_all` or `registry_only` when MCP is enabled. | Use `registry_only` for Moderate and `allow_all` only for Baseline. | `registry_only` blocks unlisted integrations. `allow_all` provides no organization server restriction. |
+
+GitHub documents that `registry_only` currently matches server names or IDs and can be bypassed by editing local configuration. It does not prevent installation of non-registry servers. For Strict, disable MCP and use endpoint and network controls rather than claiming strict registry enforcement.
+
+Allowlist support also varies by client version and does not apply to Copilot cloud agent. Validate each IDE and CLI version before rollout, and govern cloud-agent MCP separately through repository or custom-agent configuration.
+
 ---
 
 ## 6. Seat Management

@@ -1,0 +1,48 @@
+{
+  "general": {
+    "defaultApprovalMode": "default",
+    "debugKeystrokeLogging": false,
+    "devtools": false
+  },
+  "tools": {
+    "enableRemoteCodeSearch": false,
+    "sandbox": true
+  },
+  "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "enablePermanentToolApproval": false,
+    "autoAddToPolicyByDefault": false,
+    "blockGitExtensions": true,
+    "folderTrust": {
+      "enabled": true
+    },
+    "enableConseca": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": [],
+      "blocked": [
+        "ANTHROPIC_API_KEY",
+        "AWS_SECRET_ACCESS_KEY",
+        "GITHUB_TOKEN",
+        "OPENAI_API_KEY"
+      ]
+    }
+  },
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true
+    }
+  },
+  "telemetry": {
+    "enabled": false,
+    "logPrompts": false
+  },
+  "hooksConfig": {
+    "enabled": true
+  },
+  "skills": {
+    "enabled": true
+  }
+}

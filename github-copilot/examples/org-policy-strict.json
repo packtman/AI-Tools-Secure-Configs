@@ -33,9 +33,9 @@
   },
 
   "mcp_policies": {
-    "mcp_server_availability": "disabled",
+    "mcp_servers_in_copilot": "disabled",
     "mcp_registry_url": "",
-    "strict_registry_enforcement": true
+    "restrict_mcp_access_to_registry_servers": "not_applicable"
   },
 
   "code_review": {
