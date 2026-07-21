@@ -27,7 +27,7 @@ Enterprise owners manage AI policies at:
 AI Controls categories:
 - **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
 - **Agents** — Cloud agent, code review agent, custom agents, third-party agents
-- **MCP** — MCP server availability, registry URL, and `Allow all` or `Registry only` access
+- **MCP**: MCP server availability, registry URL, and `Allow all` or `Registry only` access
 
 GitHub's current MCP allowlist matches server names or IDs and can be bypassed by editing local configuration. Strict enforcement that prevents installation of non-registry servers is not available. Disable MCP for Strict deployments until GitHub documents stronger enforcement.
 
