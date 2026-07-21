@@ -7,6 +7,11 @@ This directory contains security-hardened configurations for **Tabnine** (Enterp
 | File | Purpose |
 |------|---------|
 | `secure-admin-policy.md` | Admin security policy checklist |
+| `CLI-ROLLOUT.md` | Phased rollout, tier deltas, deployment, validation, rollback, and workflow-preservation guidance |
+| `examples/settings-strict.json` | **Strict** Tabnine CLI admin-enforced system settings |
+| `examples/settings-moderate.json` | **Moderate** Tabnine CLI admin-enforced system settings |
+| `examples/settings-baseline.json` | **Baseline** Tabnine CLI admin-enforced system settings |
+| `examples/settings.comments.md` | Key-by-key rationale for the deployable system settings JSON |
 | `examples/command-permissions-strict.json` | **Strict** — Read-only commands only, all writes disabled (regulated) |
 | `examples/command-permissions-moderate.json` | **Moderate** — Read/test auto-approved, writes need confirmation (enterprise) |
 | `examples/command-permissions-baseline.json` | **Baseline** — Common dev commands auto-approved (startups) |
@@ -57,10 +62,13 @@ Enterprise admins can connect private LLM instances:
 ## Deployment Checklist
 
 1. Deploy Tabnine Enterprise with SSO integration.
-2. Configure command permissions — default to `require-confirmation`.
-3. Enable workspace-scoped restrictions.
-4. Set up private LLM endpoints if not using Tabnine's hosted models.
-5. Configure RBAC roles for admins and installation admins.
-6. Enable SMTP for user management notifications.
-7. Review and restrict model access to approved models only.
-8. Monitor usage via the admin dashboard.
+2. Select one `examples/settings-{tier}.json` file and follow `CLI-ROLLOUT.md`.
+3. Deploy it to the admin-enforced system settings path through MDM.
+4. Configure command permissions with `require-confirmation` as the enterprise default.
+5. Configure MCP Governance in the Admin Console. Do not rely on endpoint JSON alone.
+6. Enable workspace-scoped restrictions and verify folder trust.
+7. Set up private LLM endpoints if not using Tabnine's hosted models.
+8. Configure RBAC roles for admins and installation admins.
+9. Enable SMTP for user management notifications.
+10. Review and restrict model access to approved models only.
+11. Monitor usage through the admin dashboard and an organization-owned telemetry collector.

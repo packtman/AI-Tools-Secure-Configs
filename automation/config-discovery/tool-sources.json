@@ -342,38 +342,53 @@
       ],
       "tier_files": {
         "strict": [
-          "tabnine/examples/command-permissions-strict.json"
+          "tabnine/examples/command-permissions-strict.json",
+          "tabnine/examples/settings-strict.json"
         ],
         "moderate": [
-          "tabnine/examples/command-permissions-moderate.json"
+          "tabnine/examples/command-permissions-moderate.json",
+          "tabnine/examples/settings-moderate.json"
         ],
         "baseline": [
-          "tabnine/examples/command-permissions-baseline.json"
+          "tabnine/examples/command-permissions-baseline.json",
+          "tabnine/examples/settings-baseline.json"
         ]
       },
       "sources": [
         {
-          "name": "Tabnine admin documentation",
+          "name": "Tabnine CLI settings reference",
           "kind": "docs",
-          "url": "https://docs.tabnine.com/",
+          "url": "https://docs.tabnine.com/main/getting-started/tabnine-cli/features/settings/settings-reference.md",
           "watch_for": [
-            "admin",
-            "policy",
-            "command",
-            "workspace",
-            "privacy"
+            "disableYoloMode",
+            "folderTrust",
+            "environmentVariableRedaction",
+            "sandbox",
+            "skills.enabled"
           ]
         },
         {
-          "name": "Tabnine enterprise documentation",
+          "name": "Tabnine MCP governance",
           "kind": "docs",
-          "url": "https://www.tabnine.com/enterprise",
+          "url": "https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/mcp-governance.md",
           "watch_for": [
-            "enterprise",
-            "private",
-            "deployment",
-            "security",
-            "policy"
+            "MCP Governance",
+            "Allow-list only",
+            "Block all",
+            "remote",
+            "Command Regex"
+          ]
+        },
+        {
+          "name": "Tabnine release notes",
+          "kind": "changelog",
+          "url": "https://docs.tabnine.com/main/administering-tabnine/release-notes.md",
+          "watch_for": [
+            "Settings",
+            "Policy",
+            "Admin Controls",
+            "MCP",
+            "Agent Skills"
           ]
         }
       ]
