@@ -27,7 +27,9 @@ Enterprise owners manage AI policies at:
 AI Controls categories:
 - **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
 - **Agents** — Cloud agent, code review agent, custom agents, third-party agents
-- **MCP** — MCP server availability, registry URL, strict enforcement
+- **MCP** — MCP server availability, registry URL, and `Allow all` or `Registry only` access
+
+GitHub's current MCP allowlist matches server names or IDs and can be bypassed by editing local configuration. Strict enforcement that prevents installation of non-registry servers is not available. Disable MCP for Strict deployments until GitHub documents stronger enforcement.
 
 ### Organization Level (GitHub Settings)
 
@@ -90,7 +92,7 @@ Control which Copilot plans can access the network:
 4. Deploy `.github/copilot-instructions.md` to all repositories.
 5. Configure firewall rules to allow only business/enterprise Copilot traffic.
 6. Set agent policies (disable cloud agent, custom agents, and third-party agents for regulated environments).
-7. Configure MCP registry and decide on strict enforcement.
+7. Configure MCP registry and select `Registry only` for Moderate. Disable MCP for Strict.
 8. Set code review runner configuration at org level (self-hosted for sensitive environments).
 9. Create "Manage enterprise AI controls" custom role for AI governance team.
 10. Enable audit log streaming to your SIEM.

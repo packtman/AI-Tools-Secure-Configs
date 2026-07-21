@@ -40,9 +40,9 @@
   },
 
   "mcp_policies": {
-    "mcp_server_availability": "enabled",
+    "mcp_servers_in_copilot": "enabled",
     "mcp_registry_url": "https://mcp-registry.internal.acme.com",
-    "strict_registry_enforcement": false
+    "restrict_mcp_access_to_registry_servers": "registry_only"
   },
 
   "code_review": {
