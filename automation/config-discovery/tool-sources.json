@@ -493,15 +493,39 @@
           ]
         },
         {
-          "name": "Gemini CLI documentation",
-          "kind": "docs",
-          "url": "https://cloud.google.com/gemini/docs/codeassist/gemini-cli",
+          "name": "Gemini CLI settings schema",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json",
           "watch_for": [
-            "configuration",
-            "settings",
-            "tools",
+            "disableYoloMode",
+            "environmentVariableRedaction",
             "sandbox",
-            "authentication"
+            "hooksConfig",
+            "skills"
+          ]
+        },
+        {
+          "name": "Gemini CLI enterprise controls",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/admin/enterprise-controls.md",
+          "watch_for": [
+            "admin",
+            "system settings",
+            "managed",
+            "policy",
+            "security"
+          ]
+        },
+        {
+          "name": "Gemini CLI policy engine",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/reference/policy-engine.md",
+          "watch_for": [
+            "policy",
+            "allow",
+            "deny",
+            "tool",
+            "priority"
           ]
         }
       ]
@@ -525,15 +549,15 @@
       },
       "sources": [
         {
-          "name": "Vertex AI Gemini safety settings",
-          "kind": "docs",
-          "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters",
+          "name": "Vertex AI Gemini safety reference",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/GoogleCloudPlatform/vertex-ai-samples/main/skills/genai-sdk/references/safety.md",
           "watch_for": [
-            "safety settings",
-            "harm category",
-            "threshold",
-            "blocked",
-            "filters"
+            "SafetySetting",
+            "HarmCategory",
+            "HarmBlockThreshold",
+            "BLOCK_LOW_AND_ABOVE",
+            "BLOCK_NONE"
           ]
         },
         {
