@@ -43,11 +43,17 @@ Add an entry to `tool-sources.json` under the relevant tool:
     "policy",
     "managed settings",
     "permissions"
+  ],
+  "candidate_allowlist": [
+    "disableUnsafeMode",
+    "allowedMcpServers"
   ]
 }
 ```
 
 Use official vendor sources when possible. Prefer stable markdown, raw files, API endpoints, or pages that are specific to configuration, admin policy, managed settings, MCP, permissions, sandboxing, network controls, privacy, audit logs, or content exclusion. Avoid generic marketing pages when a reference page exists, because page chrome changes can create noisy PRs.
+
+`candidate_allowlist` is optional. Use it for large reference pages whose unrelated model or runtime variables would crowd out the security controls named in `watch_for`. It limits only the missing-term review list, not fingerprinting or keyword snippets.
 
 ## Local Validation
 

@@ -100,6 +100,22 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### Background task controls
+
+**What they do:** `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=0` keeps long MCP tool calls in the foreground. `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` disables every background task path, including Bash and subagent `run_in_background`, automatic backgrounding, and Ctrl+B.
+
+**Why they matter:** On Claude Code 2.1.212 or later, a main-conversation MCP call moves to the background after two minutes by default. The call can keep changing an external system while Claude starts other work. Tiered controls make that concurrency explicit.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` | No hidden or concurrent task execution. Every Bash, subagent, and MCP operation remains visible until it finishes or is cancelled. |
+| Standard enterprise | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=0` | Prevent implicit MCP concurrency while preserving intentional Ctrl+B backgrounding for long developer tasks. |
+| Developer | Neither variable set | Keep the vendor default and maximum workflow flexibility. |
+
+**What breaks if the Strict control is set:** Ctrl+B and every `run_in_background` option become unavailable. Long-running commands and subagents must finish in the foreground.
+
+**What breaks if the Moderate control is removed:** Long MCP calls use the vendor default and automatically leave the foreground after two minutes, so external side effects may overlap with later work.
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
@@ -123,6 +139,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | Only IT-approved MCP servers. |
 | Standard enterprise | `false` | Let teams use project MCP servers with approval dialogs. |
 | Developer | `false` | Maximum flexibility. |
+
+### `CLAUDE_CODE_MCP_ALLOWLIST_ENV`
+
+**What it does:** Starts stdio MCP servers with a safe baseline environment plus only variables explicitly configured for that server.
+
+**Why it matters:** By default, a local MCP server inherits the developer's shell environment. That can expose unrelated cloud, package registry, or service credentials to a compromised server.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All environments | `"1"` | Require each MCP server to declare the minimum environment it needs. |
+
+**What breaks if set:** MCP servers that depended on undeclared shell variables can fail to start or authenticate. Add the required names to the server's `env` configuration and resolve secret values through the approved secrets manager.
 
 ### `forceRemoteSettingsRefresh`
 
@@ -160,6 +188,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
 | All enterprise | Set to your org UUID | Prevents policy bypass via alternate accounts. |
+
+### `requiredMinimumVersion`
+
+**What it does:** Blocks Claude Code startup when the installed version is below the managed floor. The recovery commands `claude update`, `claude install`, and `claude doctor` remain available.
+
+**Why it matters:** The older `minimumVersion` key prevents automatic downgrades but never blocks an outdated client from starting. Moderate and Strict require 2.1.212 so every active client understands the automatic MCP backgrounding control.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"2.1.212"` or a newer security-approved release | Hard floor keeps background task and security behavior consistent. |
+| Standard enterprise | `"2.1.212"` or a newer pilot-tested release | Guarantees support for `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`. |
+| Developer | Keep `minimumVersion` as an updater floor | Baseline prioritizes startup availability and does not depend on managed MCP backgrounding. |
+
+**What breaks if set too high:** Older clients refuse to start until IT deploys a compliant version. Test the floor on every supported OS and retain an approved installer before rollout.
 
 ---
 
