@@ -42,7 +42,7 @@ managed-settings.d/
 {
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "YOUR_ORG_UUID",
-  "minimumVersion": "2.1.38",
+  "requiredMinimumVersion": "2.1.212",
   "autoUpdatesChannel": "stable"
 }
 ```
@@ -133,6 +133,8 @@ managed-settings.d/
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
+    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0",
     "OTEL_METRICS_EXPORTER": "otlp",
     "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otel.corp.example.com:4318"
   }

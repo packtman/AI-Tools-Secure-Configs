@@ -29,6 +29,7 @@
             "managed settings",
             "permissions",
             "disableBypassPermissionsMode",
+            "requiredMinimumVersion",
             "sandbox",
             "MCP"
           ]
@@ -55,6 +56,25 @@
             "CLAUDE_CODE_DISABLE_WORKFLOWS",
             "ultracode",
             "managed settings"
+          ]
+        },
+        {
+          "name": "Environment variables documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/env-vars.md",
+          "watch_for": [
+            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
+            "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+            "CLAUDE_AUTO_BACKGROUND_TASKS",
+            "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS",
+            "CLAUDE_CODE_MCP_ALLOWLIST_ENV"
+          ],
+          "candidate_allowlist": [
+            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
+            "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+            "CLAUDE_AUTO_BACKGROUND_TASKS",
+            "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS",
+            "CLAUDE_CODE_MCP_ALLOWLIST_ENV"
           ]
         }
       ]
@@ -529,18 +549,6 @@
         ]
       },
       "sources": [
-        {
-          "name": "Claude Desktop MCP documentation",
-          "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
-          "watch_for": [
-            "Claude Desktop",
-            "MCP",
-            "server",
-            "configuration",
-            "allowlist"
-          ]
-        },
         {
           "name": "Claude Desktop support documentation",
           "kind": "docs",

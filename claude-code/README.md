@@ -168,10 +168,25 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 | `enableAllProjectMcpServers` | Auto-approve project `.mcp.json` servers |
 | `enabledMcpjsonServers` | Pre-approve specific project servers |
 | `disabledMcpjsonServers` | Block specific project servers |
+| `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` | Prevent stdio servers from inheriting undeclared shell credentials |
 
 Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wide MCP servers.
 
 See `examples/mcp-security.md` for the complete security guide.
+
+---
+
+## Background Task Governance
+
+Claude Code 2.1.212 and later automatically moves a main-conversation MCP call to the background after two minutes. The call remains subject to its wall-clock and idle timeouts, but Claude can begin other work before it settles.
+
+| Tier | Managed `env` control | Workflow effect |
+|------|-----------------------|-----------------|
+| Baseline | None | Vendor default, including automatic MCP backgrounding |
+| Moderate | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS: "0"` | No implicit MCP backgrounding; intentional Ctrl+B backgrounding remains |
+| Strict | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"` | No automatic or explicit Bash, subagent, or MCP background tasks |
+
+Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do not understand the new MCP control cannot start. Baseline retains the softer `minimumVersion` updater floor. See `examples/settings-rationale.md` and `examples/environment-variables-reference.md` for threat, rollback, and gateway compatibility guidance.
 
 ---
 
@@ -196,7 +211,7 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `requiredMinimumVersion` for a startup-blocking enterprise floor; `minimumVersion` only prevents updater downgrades.
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
 
 ### Phase 2: Permissions
@@ -217,6 +232,8 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
 - [ ] Deploy `managed-mcp.json` for org-wide MCP servers.
 - [ ] Consider `allowManagedMcpServersOnly: true` for strict environments.
+- [ ] Set `CLAUDE_CODE_MCP_ALLOWLIST_ENV: "1"` and declare each server's required environment explicitly.
+- [ ] Set the tier-appropriate background task control and test a long MCP call on Claude Code 2.1.212 or later.
 
 ### Phase 5: Hooks & Monitoring
 - [ ] Deploy audit logging hooks (PostToolUse).

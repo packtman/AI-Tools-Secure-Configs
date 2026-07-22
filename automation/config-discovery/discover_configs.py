@@ -183,6 +183,13 @@ def validate_registry(registry: dict[str, Any], repo_root: pathlib.Path | None =
             watch_for = source.get("watch_for")
             if not isinstance(watch_for, list) or not watch_for:
                 errors.append(f"{source_prefix}.watch_for must be a non-empty list")
+            candidate_allowlist = source.get("candidate_allowlist")
+            if candidate_allowlist is not None and (
+                not isinstance(candidate_allowlist, list)
+                or not candidate_allowlist
+                or not all(isinstance(value, str) and value for value in candidate_allowlist)
+            ):
+                errors.append(f"{source_prefix}.candidate_allowlist must be a non-empty list of strings")
 
     return errors
 
@@ -360,7 +367,11 @@ def source_snapshot(
 
     text = canonical_source_text(body, metadata.get("content_type"))
     content_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    candidates = extract_config_candidates(text)
+    candidate_allowlist = source.get("candidate_allowlist")
+    if candidate_allowlist:
+        candidates = [candidate for candidate in candidate_allowlist if candidate in text]
+    else:
+        candidates = extract_config_candidates(text)
     missing_candidates = [candidate for candidate in candidates if candidate not in local_tool_text]
     base.update(
         {
@@ -372,6 +383,7 @@ def source_snapshot(
             "content_type": metadata.get("content_type"),
             "title_or_prefix": extract_title(text),
             "watch_snippets": extract_snippets(text, source.get("watch_for", [])),
+            "candidate_allowlist": candidate_allowlist,
             "config_candidates": candidates,
             "config_candidates_missing_locally": missing_candidates,
         }
@@ -384,6 +396,8 @@ def classify_change(previous: dict[str, Any] | None, current: dict[str, Any]) ->
         return "new-source-baseline"
     if current.get("hash_basis") != previous.get("hash_basis"):
         return "fingerprint-method-changed"
+    if current.get("candidate_allowlist") != previous.get("candidate_allowlist"):
+        return "candidate-filter-changed"
     if current.get("error") != previous.get("error"):
         return "fetch-status-changed"
     if current.get("status") != previous.get("status"):
