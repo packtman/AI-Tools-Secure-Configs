@@ -24,7 +24,7 @@
         {
           "name": "Managed settings documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+          "url": "https://code.claude.com/docs/en/settings.md",
           "watch_for": [
             "managed settings",
             "permissions",
@@ -36,7 +36,7 @@
         {
           "name": "Hooks documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+          "url": "https://code.claude.com/docs/en/hooks.md",
           "watch_for": [
             "PreToolUse",
             "PostToolUse",
@@ -48,7 +48,7 @@
         {
           "name": "Dynamic workflows documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
+          "url": "https://code.claude.com/docs/en/workflows.md",
           "watch_for": [
             "dynamic workflows",
             "disableWorkflows",
@@ -83,25 +83,25 @@
         {
           "name": "Team administration documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/account/teams/admin-dashboard",
+          "url": "https://cursor.com/docs/account/teams/admin-api",
           "watch_for": [
-            "admin",
-            "team",
-            "policy",
-            "audit",
-            "privacy"
+            "audit-logs",
+            "team_settings",
+            "mcp_server_config",
+            "privacy_mode",
+            "remove-member"
           ]
         },
         {
           "name": "MCP documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/tools/mcp",
+          "url": "https://cursor.com/docs/mcp",
           "watch_for": [
             "MCP",
-            "server",
-            "tools",
+            "allowlist",
+            "network controls",
             "approval",
-            "allowlist"
+            "marketplace"
           ]
         }
       ]
@@ -232,13 +232,13 @@
         {
           "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
             "config",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "requirements",
+            "allow_managed"
           ]
         }
       ]
@@ -311,19 +311,19 @@
         {
           "name": "Windsurf documentation",
           "kind": "docs",
-          "url": "https://docs.windsurf.com/",
+          "url": "https://docs.devin.ai/desktop/enterprise-policies.md",
           "watch_for": [
             "enterprise",
             "policy",
-            "Cascade",
-            "MCP",
-            "admin"
+            "AllowedExtensions",
+            "UpdateMode",
+            "managed"
           ]
         },
         {
           "name": "Windsurf changelog",
           "kind": "changelog",
-          "url": "https://windsurf.com/changelog",
+          "url": "https://docs.devin.ai/desktop/changelog",
           "watch_for": [
             "policy",
             "admin",
@@ -355,19 +355,19 @@
         {
           "name": "Tabnine admin documentation",
           "kind": "docs",
-          "url": "https://docs.tabnine.com/",
+          "url": "https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/native-tools.md",
           "watch_for": [
             "admin",
-            "policy",
-            "command",
-            "workspace",
-            "privacy"
+            "Run",
+            "Apply",
+            "Create",
+            "Auto-approve"
           ]
         },
         {
           "name": "Tabnine enterprise documentation",
           "kind": "docs",
-          "url": "https://www.tabnine.com/enterprise",
+          "url": "https://docs.tabnine.com/main/welcome/readme/tabnine-subscription-plans/enterprise-private-installation.md",
           "watch_for": [
             "enterprise",
             "private",
@@ -400,7 +400,7 @@
         {
           "name": "Amazon Q Developer administration guide",
           "kind": "docs",
-          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security-iam.html",
           "watch_for": [
             "administrator",
             "policy",
@@ -412,7 +412,7 @@
         {
           "name": "Amazon Q Developer IAM reference",
           "kind": "docs",
-          "url": "https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security_iam_id-based-policy-examples.html",
           "watch_for": [
             "Actions",
             "Condition keys",
@@ -532,25 +532,27 @@
         {
           "name": "Claude Desktop MCP documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+          "url": "https://code.claude.com/docs/en/desktop.md",
           "watch_for": [
             "Claude Desktop",
-            "MCP",
-            "server",
-            "configuration",
-            "allowlist"
+            "managed settings",
+            "enterprise configuration",
+            "sshHostAllowlist",
+            "managedMcpServers",
+            "MDM"
           ]
         },
         {
           "name": "Claude Desktop support documentation",
           "kind": "docs",
-          "url": "https://support.anthropic.com/en/",
+          "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
           "watch_for": [
             "Claude Desktop",
-            "settings",
-            "enterprise",
-            "admin",
-            "data"
+            "desktop extensions",
+            "Admin Controls",
+            "allowlist",
+            "system policies",
+            "sensitive"
           ]
         }
       ]
@@ -632,7 +634,7 @@
         {
           "name": "Anthropic API release notes",
           "kind": "changelog",
-          "url": "https://platform.claude.com/docs/en/release-notes/api.md",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview.md",
           "watch_for": [
             "rate limit",
             "workspace",
