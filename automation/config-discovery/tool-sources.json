@@ -173,13 +173,13 @@
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
             "config",
             "sandbox",
             "approval",
-            "model",
-            "MCP"
+            "requirements",
+            "managed"
           ]
         },
         {
@@ -220,19 +220,19 @@
         {
           "name": "OpenAI Codex repository",
           "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "url": "https://developers.openai.com/codex/enterprise/admin-setup",
           "watch_for": [
-            "desktop",
-            "managed",
-            "config",
+            "local runtime",
             "requirements",
-            "MDM"
+            "workspace access",
+            "compliance",
+            "rollout"
           ]
         },
         {
           "name": "OpenAI Codex config reference",
           "kind": "repository",
-          "url": "https://developers.openai.com/codex/config-reference",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
           "watch_for": [
             "config",
             "sandbox",
