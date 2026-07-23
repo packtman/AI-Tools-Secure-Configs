@@ -38,6 +38,11 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
+| `CLAUDE_CODE_DISABLE_ARTIFACT` | Disable publishing session output as claude.ai artifacts | `1` for Moderate and Strict |
+| `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | Disable Claude-provided skills and workflows | `1` for Strict only |
+| `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` | Disable local file snapshots used by `/rewind` | `1` for Strict only |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Keep Bash, subagent, and MCP work in the foreground | `1` for Moderate and Strict |
+| `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` | Strip beta headers and beta tool fields for incompatible gateways | Conditional, not a tier default |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
 ## MCP & Tools
@@ -46,7 +51,9 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `MCP_TIMEOUT` | MCP server startup timeout (ms) | `10000` |
 | `MAX_MCP_OUTPUT_TOKENS` | Max token output from MCP tools | `10000` (default) |
-| `MCP_TOOL_TIMEOUT` | MCP tool execution timeout (ms) | `60000` |
+| `MCP_TOOL_TIMEOUT` | Overall MCP tool execution timeout (ms), default is about 28 hours | Set per approved server workload |
+| `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | Abort MCP calls with no response or progress | Keep transport defaults unless validated |
+| `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | Delay before MCP calls move to the background, `0` disables only MCP auto-backgrounding | Do not set when all background tasks are disabled |
 
 ## Sandbox
 
@@ -70,6 +77,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "HTTPS_PROXY": "https://proxy.corp.example.com:8443",
     "NO_PROXY": "localhost,127.0.0.1,.corp.example.com",
@@ -87,6 +95,10 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
+    "CLAUDE_CODE_DISABLE_ARTIFACT": "1",
+    "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS": "1",
+    "CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING": "1",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "DISABLE_AUTOUPDATER": "1"
   }
