@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows and artifact publishing are disabled in the Moderate tier. Long-running Bash, subagent, and MCP work stays in the foreground so you can see when it is active.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +121,8 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code cannot publish session output as an artifact page. Use the approved documentation or review platform.
+- Claude Code background tasks are unavailable. Long-running work occupies the active session until it finishes.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -148,6 +150,8 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 Restart Claude Code after removal. Settings revert to user/project defaults immediately.
 
 If using server-managed settings (Admin Console): navigate to Claude.ai Admin Settings, remove or reset the managed settings JSON. Changes propagate on next CLI startup.
+
+For a targeted rollback of this update, restore the previous managed JSON, or remove `disableArtifact`, `requiredMinimumVersion`, and `env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys.
 
 #### Cursor Rollback
 
@@ -233,6 +237,11 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `disableArtifact` | Not set | `true` | `true` | Moderate and Strict keep session-derived content inside approved repository and documentation workflows |
+| `disableBundledSkills` | Not set | `false` | `true` | Strict limits model-visible orchestration to reviewed custom or managed skills |
+| `fileCheckpointingEnabled` | Default (`true`) | Default (`true`) | `false` | Strict minimizes persistent source snapshots; other tiers preserve `/rewind` recovery |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Not set | `"1"` | `"1"` | Moderate and Strict keep Bash, subagent, and MCP activity visible in the foreground |
+| Version floor | `minimumVersion: "2.1.38"` | `requiredMinimumVersion: "2.1.212"` | `requiredMinimumVersion: "2.1.212"` | Enterprise tiers block startup on clients that cannot consistently enforce the configured login and background-task controls |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -309,7 +318,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 #### Alternative: Server-Managed Settings (No MDM Required)
 1. Navigate to Claude.ai -> Admin Settings -> Claude Code -> Managed Settings
 2. Paste the JSON config into the editor
-3. Requires Claude for Teams or Enterprise plan, Claude Code >= 2.1.38
+3. Requires Claude for Teams or Enterprise plan. Update pilot clients to Claude Code >= 2.1.212 before deploying this Moderate policy.
 4. Settings are fetched on each CLI startup (no file deployment needed)
 
 #### Validation
@@ -328,7 +337,12 @@ claude --dangerously-skip-permissions
 
 # Check version meets minimum
 claude --version
-# Expected: version >= 2.1.38
+# Expected: version >= 2.1.212
+
+# Confirm artifact publishing and background tasks are disabled
+claude config list --managed
+# Expected: disableArtifact=true, requiredMinimumVersion=2.1.212,
+# and env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1
 
 # Verify org login
 claude auth status
@@ -584,6 +598,10 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code artifact publishing | Session-derived code or connected-tool data would be copied to a separately stored, shareable web page | Publish through the approved documentation or code-review platform. Request an artifact pilot only after retention, sharing, and audit controls are reviewed. | Claude Code |
+| Claude Code background tasks | Concurrent work can continue outside the operator's immediate focus | Keep the session open until the command, subagent, or MCP call completes. Run an approved long-lived service in a separate supervised terminal when needed. | Claude Code |
+| Claude Code bundled skills (Strict only) | Unreviewed bundled orchestration is outside the regulated skill allowlist | Use organization-reviewed custom or managed skills. Use normal prompts and approved test commands when no skill exists. | Claude Code (Strict) |
+| Claude Code code rewind (Strict only) | Local checkpoint snapshots retain additional source copies | Commit small changes to Git and use `git diff` plus a reviewed revert to recover. | Claude Code (Strict) |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +615,9 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `disableArtifact: true` | Developer wants to share an interactive review page | Use the approved documentation platform. An exception requires retention, sharing-scope, connector, and audit-log review. |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"` | A build or MCP call occupies the active session for a long time | Prefer a supervised separate terminal for approved long-lived processes. Pilot exceptions should be team-scoped and retain foreground visibility for sensitive repositories. |
+| `disableBundledSkills: true` (Strict) | Developer relies on `/run`, `/verify`, `/debug`, or `/code-review` | Package a reviewed equivalent as a managed skill, or use the underlying approved commands directly. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

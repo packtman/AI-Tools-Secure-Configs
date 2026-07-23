@@ -173,6 +173,13 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Disables Artifact publishing from Claude Code sessions to claude.ai.
+  // WHY: Moderate tier prevents source code or session-derived data from being copied
+  //      to a separately stored, shareable web page outside the repository workflow.
+  // BREAKS IF SET TO TRUE: Developers cannot publish interactive artifact pages from
+  //      Claude Code. Use the approved documentation or review platform instead.
+  "disableArtifact": true,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -191,10 +198,12 @@
   // WHY: Prevents preview/beta versions that may have different security behavior.
   "autoUpdatesChannel": "stable",
 
-  // WHAT: Enforces a minimum CLI version.
-  // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  // WHAT: Blocks Claude Code startup below version 2.1.212.
+  // WHY: This policy relies on login enforcement across every first-party surface and
+  //      the current background-task controls available in version 2.1.212.
+  // BREAKS IF SET ABOVE THE DEPLOYED VERSION: Claude Code exits until the endpoint is
+  //      updated. Validate the pilot fleet before raising this floor.
+  "requiredMinimumVersion": "2.1.212",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
@@ -248,10 +257,13 @@
   },
 
   // WHAT: Environment variables set for all Claude Code sessions.
-  // WHY: Disables telemetry (data minimization) and disables auto-memory
-  //      (prevents persistent AI context that could contain sensitive data).
+  // WHY: Disables telemetry and auto-memory for data minimization, and keeps Bash,
+  //      subagent, and MCP work in the foreground for visible operator supervision.
+  // BREAKS IF BACKGROUND TASKS ARE DISABLED: Long commands and subagents occupy the
+  //      active session until completion, and Ctrl+B backgrounding is unavailable.
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
   }
 }

@@ -30,14 +30,12 @@ def build_scope(report_text: str, max_tools: int) -> str:
     ]
 
     sections: list[tuple[str, str, list[str]]] = []
-    parts = report_text.split("### ")
-    for part in parts[1:]:
-        header_line, _, body = part.partition("\n")
-        if ":" not in header_line:
-            continue
-        tool_name, source_name = header_line.split(":", 1)
-        tool_name = tool_name.strip()
-        source_name = source_name.strip()
+    matches = list(SECTION_RE.finditer(report_text))
+    for index, match in enumerate(matches):
+        body_end = matches[index + 1].start() if index + 1 < len(matches) else len(report_text)
+        body = report_text[match.end() : body_end]
+        tool_name = match.group(1).strip()
+        source_name = match.group(2).strip()
         if MISSING_BLOCK not in body:
             continue
         after = body.split(MISSING_BLOCK, 1)[1].strip()
@@ -58,29 +56,35 @@ def build_scope(report_text: str, max_tools: int) -> str:
         )
         return "\n".join(lines)
 
-    limited = sections[:max_tools]
-    lines.append(f"## Tools to process ({len(limited)} of {len(sections)} with missing terms)")
+    tools: dict[str, list[tuple[str, list[str]]]] = {}
+    for tool_name, source_name, terms in sections:
+        tools.setdefault(tool_name, []).append((source_name, terms))
+
+    limited = list(tools.items())[:max_tools]
+    lines.append(f"## Tools to process ({len(limited)} of {len(tools)} with missing terms)")
     lines.append("")
-    for tool_name, source_name, terms in limited:
+    for tool_name, sources in limited:
         lines.append(f"### {tool_name}")
         lines.append("")
-        lines.append(f"- Source: {source_name}")
-        lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
-        if len(terms) > 15:
-            lines.append(f"- ({len(terms) - 15} more terms in the full report)")
+        for source_name, terms in sources:
+            lines.append(f"- Source: {source_name}")
+            lines.append(f"- Missing terms: {', '.join(f'`{t}`' for t in terms[:15])}")
+            if len(terms) > 15:
+                lines.append(f"- ({len(terms) - 15} more terms in the full report)")
         lines.append("")
 
-    if len(sections) > max_tools:
+    if len(tools) > max_tools:
         lines.extend(
             [
-                f"## Deferred ({len(sections) - max_tools} tools)",
+                f"## Deferred ({len(tools) - max_tools} tools)",
                 "",
                 "These tools also have missing terms but are deferred to a follow-up run:",
                 "",
             ]
         )
-        for tool_name, source_name, _ in sections[max_tools:]:
-            lines.append(f"- {tool_name} ({source_name})")
+        for tool_name, sources in list(tools.items())[max_tools:]:
+            source_names = ", ".join(source_name for source_name, _ in sources)
+            lines.append(f"- {tool_name} ({source_names})")
         lines.append("")
 
     return "\n".join(lines)

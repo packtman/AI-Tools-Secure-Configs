@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableArtifact`
+
+**Value:** `true`
+
+**What:** Disables the Artifact tool, which publishes session output as a separately stored web page on claude.ai.
+
+**Why (Moderate tier):** Prevents source code and session-derived data from leaving the repository review workflow or becoming shareable through an artifact link.
+
+**What breaks if set to true:** Developers cannot publish interactive artifact pages from Claude Code. Publish approved documentation or review output through the organization's existing platform instead.
+
+**Strict difference:** Also `true`, because Strict does not permit this additional publication surface.
+
+**Baseline difference:** Not set, so the account and organization defaults apply and each new artifact still requires a publish approval.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`
@@ -176,6 +192,18 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 **Why:** Ensures all usage is under your org's managed identity, billing, and data processing agreement. Prevents personal accounts that bypass managed settings.
 
 **What breaks if wrong:** If `forceLoginOrgUUID` has the wrong UUID, all users are locked out of Claude Code.
+
+---
+
+## `requiredMinimumVersion`
+
+**Value:** `"2.1.212"`
+
+**What:** Blocks Claude Code startup on older clients while leaving update, install, and doctor commands available for recovery.
+
+**Why:** The Moderate policy relies on version 2.1.212 behavior for consistent first-party login enforcement and background-task controls. The older `minimumVersion` key prevents downgrade but does not block startup.
+
+**What breaks if set above the deployed version:** Claude Code exits until the endpoint is updated. Validate the pilot fleet before raising the floor.
 
 ---
 
@@ -202,3 +230,6 @@ Disables telemetry. Data minimization principle.
 
 ### `CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1"`
 Prevents Claude Code from saving learnings to disk. Reduces risk of sensitive context persisting across sessions.
+
+### `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"`
+Keeps Bash commands, subagents, and MCP calls in the foreground so the operator can see when they are active. Long-running work occupies the current session until completion, and Ctrl+B backgrounding is unavailable.
