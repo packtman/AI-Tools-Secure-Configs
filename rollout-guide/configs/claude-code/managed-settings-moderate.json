@@ -83,10 +83,13 @@
   "disableRemoteControl": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableAgentView": true,
+  "disableArtifact": true,
+  "awaySummaryEnabled": false,
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "requiredMinimumVersion": "2.1.212",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -113,6 +116,9 @@
   },
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
+    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
   }
 }

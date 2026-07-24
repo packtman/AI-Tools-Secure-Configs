@@ -24,23 +24,61 @@
         {
           "name": "Managed settings documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+          "url": "https://code.claude.com/docs/en/settings.md",
           "watch_for": [
             "managed settings",
             "permissions",
             "disableBypassPermissionsMode",
+            "disableAgentView",
+            "disableArtifact",
             "sandbox",
             "MCP"
+          ],
+          "candidate_allowlist": [
+            "disableAgentView",
+            "disableArtifact",
+            "disableBundledSkills",
+            "fileCheckpointingEnabled",
+            "awaySummaryEnabled",
+            "requiredMinimumVersion",
+            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
+            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
+            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
+            "CLAUDE_CODE_AUTO_CONNECT_IDE"
+          ]
+        },
+        {
+          "name": "Environment variables documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/env-vars.md",
+          "watch_for": [
+            "CLAUDE_CODE_DISABLE_AGENT_VIEW",
+            "CLAUDE_CODE_DISABLE_ARTIFACT",
+            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
+            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
+            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
+            "managed settings"
+          ],
+          "candidate_allowlist": [
+            "CLAUDE_CODE_DISABLE_AGENT_VIEW",
+            "CLAUDE_CODE_DISABLE_ARTIFACT",
+            "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS",
+            "CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING",
+            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
+            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
+            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
+            "CLAUDE_CODE_AUTO_CONNECT_IDE"
           ]
         },
         {
           "name": "Hooks documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+          "url": "https://code.claude.com/docs/en/hooks.md",
           "watch_for": [
             "PreToolUse",
             "PostToolUse",
             "ConfigChange",
+            "InstructionsLoaded",
             "audit",
             "permissions"
           ]
@@ -48,7 +86,7 @@
         {
           "name": "Dynamic workflows documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
+          "url": "https://code.claude.com/docs/en/workflows.md",
           "watch_for": [
             "dynamic workflows",
             "disableWorkflows",
@@ -129,19 +167,20 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
           "watch_for": [
             "policy",
             "organization",
             "Copilot Chat",
             "content exclusion",
-            "CLI"
+            "CLI",
+            "MCP"
           ]
         },
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",
@@ -171,15 +210,16 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex configuration reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference.md",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "MCP"
+            "approval_policy",
+            "sandbox_mode",
+            "web_search",
+            "features",
+            "permissions",
+            "managed"
           ]
         },
         {
@@ -187,11 +227,12 @@
           "kind": "releases",
           "url": "https://api.github.com/repos/openai/codex/releases?per_page=10",
           "watch_for": [
-            "configuration",
-            "security",
             "sandbox",
-            "policy",
-            "permissions"
+            "approval",
+            "managed",
+            "permissions",
+            "hooks",
+            "MCP"
           ]
         }
       ]
@@ -218,27 +259,27 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex enterprise admin setup",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/admin-setup",
           "watch_for": [
-            "desktop",
+            "admin",
             "managed",
-            "config",
-            "requirements",
-            "MDM"
+            "enterprise",
+            "policy",
+            "SSO"
           ]
         },
         {
-          "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "profiles"
+            "managed configuration",
+            "requirements.toml",
+            "hooks",
+            "allow_managed_hooks_only",
+            "MDM"
           ]
         }
       ]
@@ -530,27 +571,27 @@
       },
       "sources": [
         {
-          "name": "Claude Desktop MCP documentation",
+          "name": "Claude Desktop documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+          "url": "https://code.claude.com/docs/en/desktop.md",
           "watch_for": [
             "Claude Desktop",
             "MCP",
-            "server",
-            "configuration",
-            "allowlist"
+            "connectors",
+            "enterprise",
+            "policy"
           ]
         },
         {
-          "name": "Claude Desktop support documentation",
+          "name": "Claude Desktop local MCP support",
           "kind": "docs",
-          "url": "https://support.anthropic.com/en/",
+          "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
           "watch_for": [
+            "MCP",
+            "local",
             "Claude Desktop",
-            "settings",
-            "enterprise",
-            "admin",
-            "data"
+            "security",
+            "permissions"
           ]
         }
       ]

@@ -183,6 +183,13 @@ def validate_registry(registry: dict[str, Any], repo_root: pathlib.Path | None =
             watch_for = source.get("watch_for")
             if not isinstance(watch_for, list) or not watch_for:
                 errors.append(f"{source_prefix}.watch_for must be a non-empty list")
+            candidate_allowlist = source.get("candidate_allowlist")
+            if candidate_allowlist is not None and (
+                not isinstance(candidate_allowlist, list)
+                or not candidate_allowlist
+                or not all(isinstance(value, str) and value for value in candidate_allowlist)
+            ):
+                errors.append(f"{source_prefix}.candidate_allowlist must be a non-empty list of strings")
 
     return errors
 
@@ -360,7 +367,11 @@ def source_snapshot(
 
     text = canonical_source_text(body, metadata.get("content_type"))
     content_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    candidates = extract_config_candidates(text)
+    candidate_allowlist = source.get("candidate_allowlist")
+    if candidate_allowlist:
+        candidates = [candidate for candidate in candidate_allowlist if candidate in text]
+    else:
+        candidates = extract_config_candidates(text)
     missing_candidates = [candidate for candidate in candidates if candidate not in local_tool_text]
     base.update(
         {
@@ -372,6 +383,7 @@ def source_snapshot(
             "content_type": metadata.get("content_type"),
             "title_or_prefix": extract_title(text),
             "watch_snippets": extract_snippets(text, source.get("watch_for", [])),
+            "candidate_allowlist": candidate_allowlist,
             "config_candidates": candidates,
             "config_candidates_missing_locally": missing_candidates,
         }
@@ -384,6 +396,8 @@ def classify_change(previous: dict[str, Any] | None, current: dict[str, Any]) ->
         return "new-source-baseline"
     if current.get("hash_basis") != previous.get("hash_basis"):
         return "fingerprint-method-changed"
+    if current.get("candidate_allowlist") != previous.get("candidate_allowlist"):
+        return "candidate-filter-changed"
     if current.get("error") != previous.get("error"):
         return "fetch-status-changed"
     if current.get("status") != previous.get("status"):
@@ -420,10 +434,11 @@ def run_discovery(args: argparse.Namespace) -> int:
         {"schema_version": 1, "generated_by": "automation/config-discovery/discover_configs.py", "sources": {}},
     )
     previous_sources = previous_state.get("sources", {})
-    new_sources = dict(previous_sources)
+    new_sources: dict[str, Any] = {}
     changes: list[dict[str, Any]] = []
     changed_at = utc_now()
     local_text_by_tool = {tool["id"]: load_local_tool_text(tool, repo_root) for tool in registry["tools"]}
+    active_source_ids = {source["source_id"] for source in iter_sources(registry)}
 
     for source in iter_sources(registry):
         source_id = source["source_id"]
@@ -437,6 +452,18 @@ def run_discovery(args: argparse.Namespace) -> int:
             changes.append({"source_id": source_id, "change_type": change_type, "snapshot": current})
         else:
             new_sources[source_id] = previous
+
+    pruned = sorted(set(previous_sources) - active_source_ids)
+    if pruned and not changes:
+        # Persist the pruned state even when no watched source content changed.
+        new_state = {
+            "schema_version": 1,
+            "generated_by": "automation/config-discovery/discover_configs.py",
+            "sources": new_sources,
+        }
+        write_json(state_path, new_state)
+        print(f"pruned {len(pruned)} obsolete source snapshots; no upstream source changes detected")
+        return 0
 
     if not changes:
         print("no upstream source changes detected")

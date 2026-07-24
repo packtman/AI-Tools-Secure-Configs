@@ -100,6 +100,48 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableAgentView`
+
+**What it does:** Turns off background agents and agent view (`claude agents`, `--bg`, `/background`, and the on-demand supervisor). Equivalent environment control: `CLAUDE_CODE_DISABLE_AGENT_VIEW=1`.
+
+**Why it matters:** Background agents continue working without continuous operator attention. That expands the window for unintended shell, MCP, or network actions after a prompt-injection or misconfigured permission.
+
+**What breaks:** Developers cannot run background agent sessions or supervise parallel agents from agent view. Use foreground Claude Code sessions instead.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Keep all agent work interactive and visible. |
+| Standard enterprise | `true` | Prefer foreground sessions until a monitored background-agent pilot exists. |
+| Developer | `false` | Allow local background-agent experimentation. |
+
+### `disableArtifact`
+
+**What it does:** Disables the Artifact tool, which publishes session output as a separately stored, shareable web page on claude.ai. Equivalent environment control: `CLAUDE_CODE_DISABLE_ARTIFACT=1`.
+
+**Why it matters:** Artifact content can include source code and data from connected tools. Disabling it keeps review output inside approved repository and documentation workflows.
+
+**What breaks:** Developers cannot publish interactive artifact pages from Claude Code.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Removes an additional storage and sharing surface. |
+| Standard enterprise | `true` | Require publication through approved documentation or review systems. |
+| Developer | `false` | Preserve the permission-gated artifact workflow. |
+
+### `awaySummaryEnabled`
+
+**What it does:** Shows a one-line session recap when the user returns after being away. Equivalent environment override: `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` (`0` forces off, `1` forces on).
+
+**Why it matters:** Recaps summarize recent session activity and can surface sensitive code or secrets on a shared screen.
+
+**What breaks:** Setting `false` (or env `0`) removes the return-to-terminal recap. Session history and `/resume` remain available when those features are enabled.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Avoid unexpected on-screen summaries of sensitive work. |
+| Standard enterprise | `false` | Reduce shoulder-surfing and shared-terminal exposure. |
+| Developer | `true` | Preserve the productivity recap. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
@@ -224,6 +266,34 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | Skills should not execute shell commands. |
 | Standard enterprise | `false` | Skills are useful for developer workflows. |
 
+### `disableBundledSkills`
+
+**What it does:** Removes Claude Code's bundled skills and workflows from the model. Custom and plugin skills remain available. Equivalent environment control: `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1`.
+
+**Why it matters:** Strict environments can reduce model-visible orchestration to only organization-reviewed skills.
+
+**What breaks:** Bundled skills such as `/run`, `/verify`, `/debug`, and `/code-review` are unavailable. `/doctor` remains available.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Restrict orchestration to reviewed custom or managed skills. |
+| Standard enterprise | `false` | Preserve common development and verification workflows. |
+| Developer | `false` | Preserve all bundled productivity features. |
+
+### `fileCheckpointingEnabled`
+
+**What it does:** Controls local file snapshots used by `/rewind` to restore edits. Equivalent environment disable: `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING=1`.
+
+**Why it matters:** Snapshot files persist source content with the session and increase the amount of sensitive code stored on the endpoint.
+
+**What breaks:** Setting `false` removes code restore from `/rewind`. Git remains the supported recovery mechanism.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Minimize persistent source copies on endpoints. |
+| Standard enterprise | `true` (default) | Recovery value outweighs the local storage risk. |
+| Developer | `true` (default) | Preserve fast local recovery. |
+
 ### `autoMemoryEnabled` / `CLAUDE_CODE_DISABLE_AUTO_MEMORY`
 
 **What it does:** Controls whether Claude Code saves learnings to disk for future sessions.
@@ -239,9 +309,75 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 
 **What it does:** Skips writing session transcripts to disk.
 
-**Why it matters:** Session transcripts contain full conversations — prompts, responses, code, and possibly sensitive data. If the machine is compromised, transcripts are a high-value target.
+**Why it matters:** Session transcripts contain full conversations: prompts, responses, code, and possibly sensitive data. If the machine is compromised, transcripts are a high-value target.
 
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
 | Regulated | `1` | No session history on disk. |
 | Standard enterprise | Not set | Session history aids debugging and productivity. |
+
+### `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`
+
+**What it does:** Disables Bash and subagent `run_in_background`, automatic backgrounding, MCP backgrounding, and the Ctrl+B shortcut.
+
+**Why it matters:** Foreground execution keeps autonomous work visible and prevents concurrent tasks from continuing while the developer focuses elsewhere.
+
+**What breaks:** Long commands and subagents occupy the active session until they finish. Developers cannot use Ctrl+B to background them.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"1"` | Keep all agent work visible and synchronous. |
+| Standard enterprise | `"1"` | Preserve operator awareness while broader agent controls mature. |
+| Developer | Not set | Preserve background-task productivity. |
+
+### `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+
+**What it does:** Skips auto-installation of the Claude Code IDE extension. Equivalent setting: `autoInstallIdeExtension: false`.
+
+**Why it matters:** Unreviewed IDE extension installs can change editor behavior and expand the AI tool surface outside MDM-controlled software catalogs.
+
+**What breaks:** Developers must install the approved IDE extension through the organization's software channel.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"1"` | Only MDM or software-catalog installs. |
+| Standard enterprise | `"1"` | Keep extension rollout managed. |
+| Developer | Not set | Allow convenience auto-install. |
+
+### `CLAUDE_CODE_AUTO_CONNECT_IDE`
+
+**What it does:** Overrides automatic IDE connection when Claude Code starts outside an IDE terminal. Equivalent setting: `autoConnectIde`.
+
+**Why it matters:** Auto-connecting to an IDE from an external terminal can attach Claude Code to an unexpected editor session and broaden context sharing.
+
+**What breaks:** Setting `"false"` requires an explicit IDE connection when launching from an external terminal.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"false"` | Require deliberate IDE attachment. |
+| Standard enterprise | Not set | Default auto-connect behavior is acceptable with managed login. |
+| Developer | Not set | Preserve convenience. |
+
+### `requiredMinimumVersion`
+
+**What it does:** Blocks startup when the installed Claude Code version is below the managed floor. Update, install, and doctor commands remain available for recovery.
+
+**Why it matters:** `minimumVersion` only prevents future downgrades and does not stop an already-old client from starting. Policies that rely on newer controls need a hard startup floor.
+
+**What breaks:** Setting the floor above the deployed fleet version prevents Claude Code from starting until clients update.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"2.1.212"` or later validated version | Ensures current agent-view, artifact, and background-task enforcement. |
+| Standard enterprise | `"2.1.212"` or later validated version | Ensures the Moderate policy controls are implemented by the client. |
+| Developer | Keep `minimumVersion` only | Avoid blocking startup while still preventing accidental downgrade. |
+
+### Terms intentionally not pinned in tier files
+
+These discovery terms are real documentation tokens but are not enterprise security controls for this repo's tiers:
+
+| Term | Why it is not pinned |
+|------|----------------------|
+| `ANTHROPIC_MODEL` | Model selection preference. Pinning a model can break teams that use Bedrock, Vertex, Foundry, or approved model allowlists. |
+| `CLAUDE_MODEL` | Not a valid managed settings or hooks control. Treat as documentation noise if it appears in discovery. |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | Subagent model routing preference, not a threat control. Leave unset unless an org model governance standard requires it. |
