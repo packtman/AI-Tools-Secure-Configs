@@ -61,6 +61,9 @@
   "disableRemoteControl": false,
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
+  "disableAgentView": false,
+  "disableArtifact": false,
+  "awaySummaryEnabled": true,
   "channelsEnabled": true,
 
   "autoUpdatesChannel": "stable",

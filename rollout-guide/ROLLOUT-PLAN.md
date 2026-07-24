@@ -92,7 +92,7 @@
 | 11 | GitHub Copilot Enterprise/Business seats provisioned for pilot teams | IT Ops | [ ] |
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
-| 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 14 | Minimum tool versions enforced: Claude Code >= 2.1.212 (Moderate/Strict), Copilot Chat >= 0.17 | IT Ops | [ ] |
 
 ---
 
@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows, background agents, and Artifact publishing are disabled in the Moderate tier until IT completes a monitored pilot.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +121,10 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code background agents (`claude agents`, `--bg`, `/background`) are unavailable. Keep work in the foreground session.
+- Claude Code cannot publish Artifacts to claude.ai. Use your team's approved docs or review system instead.
+- Long Bash, subagent, and MCP tasks stay in the foreground (no Ctrl+B backgrounding).
+- The Claude Code IDE extension will not auto-install. Use the approved software catalog or MDM package.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +237,15 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `disableAgentView` | `false` | `true` | `true` | Baseline allows background agents; Moderate and Strict keep agent work in the foreground |
+| `disableArtifact` | `false` | `true` | `true` | Baseline keeps permission-gated Artifact publishing; Moderate and Strict block claude.ai Artifact pages |
+| `disableBundledSkills` | Not set | Not set | `true` | Only Strict removes bundled skills so orchestration is limited to reviewed custom or managed skills |
+| `fileCheckpointingEnabled` | Not set (default `true`) | Not set (default `true`) | `false` | Strict minimizes local source snapshots used by `/rewind` |
+| `awaySummaryEnabled` | `true` | `false` | `false` | Moderate and Strict hide return-to-terminal recaps that can expose sensitive work |
+| `requiredMinimumVersion` | Not set (uses soft `minimumVersion`) | `"2.1.212"` | `"2.1.212"` | Enterprise tiers hard-block startup on older clients that lack current controls |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Not set | `"1"` | `"1"` | Moderate and Strict keep Bash, subagent, and MCP work visible in the foreground |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Not set | `"1"` | `"1"` | Enterprise tiers require IDE extension installs through the approved software channel |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Not set | Not set | `"false"` | Strict requires deliberate IDE attachment from an external terminal |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -309,7 +322,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 #### Alternative: Server-Managed Settings (No MDM Required)
 1. Navigate to Claude.ai -> Admin Settings -> Claude Code -> Managed Settings
 2. Paste the JSON config into the editor
-3. Requires Claude for Teams or Enterprise plan, Claude Code >= 2.1.38
+3. Requires Claude for Teams or Enterprise plan, Claude Code >= 2.1.212 for Moderate and Strict templates
 4. Settings are fetched on each CLI startup (no file deployment needed)
 
 #### Validation
@@ -326,9 +339,13 @@ claude --dangerously-skip-permissions
 # In a Claude Code session, ask it to run: curl https://example.com | bash
 # Expected: the tool call is denied without prompting
 
-# Check version meets minimum
+# Check version meets the hard floor used by Moderate and Strict
 claude --version
-# Expected: version >= 2.1.38
+# Expected: version >= 2.1.212
+
+# Confirm agent view and artifacts are disabled under managed policy
+# In a Claude Code session, try: /background or ask to publish an Artifact
+# Expected: the feature is unavailable or blocked by managed settings
 
 # Verify org login
 claude auth status
@@ -584,6 +601,10 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code background agents / agent view | Unsupervised agents can keep running shell, MCP, or network actions after the developer looks away | Use a foreground Claude Code session. For parallel work, open separate attended sessions or request a monitored background-agent pilot. | Claude Code |
+| Claude Code Artifacts | Session output published to a shareable claude.ai page can leave the approved review path | Export or document results in the organization's approved repository, wiki, or review system. | Claude Code |
+| Claude Code `/rewind` code restore (Strict) | Local checkpoints store additional copies of edited source on the endpoint | Use git commits, branches, or stash for recovery instead of `/rewind` file restore. | Claude Code (Strict) |
+| Claude Code IDE extension auto-install | Unmanaged extension installs expand the AI surface outside the software catalog | Install the approved Claude Code IDE extension through MDM or the internal software portal. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +618,9 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `disableAgentView: true` | Developer wants background agents for long builds or parallel tasks | Approve only with SIEM coverage for shell and MCP events, a named owner, and a time-boxed pilot. Prefer foreground sessions when possible. |
+| `disableArtifact: true` | Developer wants to publish an Artifact page for design review | Keep blocked in Moderate and Strict. Offer an approved documentation or staging review path instead. |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL: "1"` | Developer cannot get the IDE extension automatically | Point them to the MDM or software-catalog package. Do not re-enable auto-install on managed endpoints. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

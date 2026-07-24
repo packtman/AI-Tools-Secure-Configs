@@ -7,11 +7,6 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
 
   "permissions": {
-    // WHAT: Auto-approve read-only tools without prompting the user.
-    // WHY: These tools cannot modify files, execute commands, or exfiltrate data.
-    //      Auto-approving them keeps the developer workflow fast for safe operations.
-    // BREAKS IF REMOVED: Every file read, search, or directory listing will prompt
-    //      the user, making Claude Code unusably slow.
     "allow": [
       "Read",
       "Grep",
@@ -19,13 +14,6 @@
       "LS",
       "Diff"
     ],
-
-    // WHAT: Require user approval before running these tools.
-    // WHY: Write, Edit, and Bash can modify files and execute commands. WebFetch can
-    //      make network requests. MCP tools have arbitrary capabilities. The user must
-    //      review each action before it runs.
-    // BREAKS IF REMOVED: These tools would either be auto-allowed (dangerous) or
-    //      denied (blocks all useful work).
     "ask": [
       "Write",
       "Edit",
@@ -34,47 +22,28 @@
       "WebFetch",
       "mcp__*"
     ],
-
-    // WHAT: Permanently block these patterns. No user, project, or managed override
-    //      can allow them.
-    // WHY: Each pattern blocks a specific, concrete threat. See comments below.
     "deny": [
-      // -- Remote code execution via piped downloads --
       "Bash(curl * | bash)",
       "Bash(curl * | sh)",
       "Bash(wget * | bash)",
       "Bash(wget * | sh)",
-
-      // -- System destruction --
       "Bash(rm -rf /)",
       "Bash(rm -rf /*)",
       "Bash(rm -rf ~)",
       "Bash(rm -rf ~/*)",
-
-      // -- Permission escalation and broad permission grants --
       "Bash(chmod 777 *)",
       "Bash(chmod -R 777 *)",
       "Bash(sudo *)",
       "Bash(su *)",
-
-      // -- Arbitrary code execution bypassing shell parsing --
       "Bash(eval *)",
       "Bash(exec *)",
-
-      // -- Network backdoors and reverse shells --
       "Bash(nc *)",
       "Bash(ncat *)",
       "Bash(netcat *)",
-
-      // -- Interpreter-based code execution (bypasses Bash pattern matching) --
       "Bash(python* -c *)",
       "Bash(python* -m http.server*)",
       "Bash(node -e *)",
-
-      // -- Background process persistence --
       "Bash(nohup *)",
-
-      // -- Reading credential and secret files --
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)",
@@ -95,8 +64,6 @@
       "Read(~/.git-credentials)",
       "Read(//etc/shadow)",
       "Read(//etc/passwd)",
-
-      // -- Writing to credential stores and shell configs --
       "Write(~/.ssh/**)",
       "Write(~/.aws/**)",
       "Write(~/.config/gcloud/**)",
@@ -113,119 +80,86 @@
       "Write(./**/*.pem)",
       "Write(./**/*.key)"
     ],
-
-    // WHAT: Prevents users from launching Claude Code with --dangerously-skip-permissions.
-    // WHY: Bypass mode skips ALL permission prompts, giving the AI unrestricted shell
-    //      access. There is no legitimate enterprise use case for this on managed machines.
-    // BREAKS IF REMOVED: Users could bypass every deny rule above with a single flag.
     "disableBypassPermissionsMode": "disable"
   },
 
-  // WHAT: Prevents project-level settings from overriding managed permission rules.
-  // WHY: Set to false in Moderate tier so teams can add project-specific rules (they
-  //      can tighten but not loosen managed deny rules). Set to true in Strict tier.
-  // BREAKS IF SET TO TRUE: Teams cannot add project-specific allow/ask rules for
-  //      their workflows (e.g., allowing specific build commands).
+  // WHAT: When true, ignore user and project permission rules.
+  //   // WHY: Moderate allows teams to add project-specific rules while managed deny still wins.
+  //   // BREAKS IF true: Project allow/ask/deny rules stop applying.
   "allowManagedPermissionRulesOnly": false,
 
-  // WHAT: Disables "auto mode," which auto-approves tool calls with background safety
-  //      checks. Auto mode is a research preview feature.
-  // WHY: The background safety classifier may not catch all dangerous actions. In
-  //      enterprise, every tool call should have human review.
-  // BREAKS IF SET TO "allow": Tool calls may execute without user approval, relying
-  //      on an experimental classifier.
+  // WHAT: Controls auto mode, which auto-approves tools with background checks.
+  //   // WHY: Auto mode is still a research preview and can approve risky actions.
+  //   // BREAKS IF allow: Tools may run without interactive approval.
   "disableAutoMode": "disable",
 
-  // WHAT: Allows user/project hooks to run alongside managed hooks.
-  // WHY: Set to false so teams can define their own hooks (linting, testing) while
-  //      managed hooks (audit, secret scanning) always run.
-  // BREAKS IF SET TO TRUE: Teams lose the ability to add project-specific hooks for
-  //      their CI/build workflows.
+  // WHAT: When true, only managed hooks run.
+  //   // WHY: Moderate lets project hooks aid local quality gates.
+  //   // BREAKS IF true: Project PreToolUse/PostToolUse hooks stop running.
   "allowManagedHooksOnly": false,
 
-  // WHAT: Allows user/project MCP servers alongside managed ones.
-  // WHY: Set to false so teams can use project-level MCP servers with approval dialogs.
-  //      MCP tool calls still go through the "ask" permission above.
-  // BREAKS IF SET TO TRUE: Teams cannot connect to any MCP server not in the managed
-  //      allowlist.
+  // WHAT: When true, only managed MCP allowlists connect.
+  //   // WHY: Moderate keeps project MCP usable with approval prompts.
+  //   // BREAKS IF true: Project .mcp.json servers will not connect.
   "allowManagedMcpServersOnly": false,
 
-  // WHAT: Blocks the remote control feature, which allows external tools to send
-  //      commands to Claude Code sessions.
-  // WHY: Remote control could be abused for prompt injection from untrusted sources.
-  // BREAKS IF REMOVED: External tools or scripts could inject prompts into active
-  //      Claude Code sessions.
+  // WHAT: Blocks remote control of Claude Code sessions.
+  //   // WHY: Prevents external prompt or command injection into a local session.
+  //   // BREAKS IF false: Remote controllers can drive the agent.
   "disableRemoteControl": true,
 
-  // WHAT: Prevents Claude Code from registering as a protocol handler for deep links.
-  // WHY: Deep links (e.g., claude-code://) from untrusted websites could trigger
-  //      Claude Code actions without the user's awareness.
-  // BREAKS IF SET TO "allow": Clicking a crafted link in a browser could open Claude
-  //      Code and trigger actions.
+  // WHAT: Controls deep-link handler registration.
+  //   // WHY: Disable reduces unexpected session starts from untrusted links.
+  //   // BREAKS IF allow: OS handlers may register for Claude Code deep links.
   "disableDeepLinkRegistration": "disable",
 
   // WHAT: Disables dynamic workflows and bundled workflow commands.
-  // WHY: Dynamic workflows are a research preview for long-running, parallel agent
-  //      work. Moderate tier keeps normal Claude Code workflows available, but blocks
-  //      this higher-autonomy mode until the admin has a pilot and usage controls.
-  //      Equivalent environment control: CLAUDE_CODE_DISABLE_WORKFLOWS=1.
-  // BREAKS IF SET TO TRUE: Developers cannot use workflow commands, the workflow
-  //      keyword will not trigger runs, and ultracode is removed from the effort menu.
+  //   // WHY: Long-running multi-agent workflows need a monitored pilot first.
+  //   // BREAKS IF true: workflow commands and ultracode are unavailable.
   "disableWorkflows": true,
 
-  // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
-  // WHY: Ensures all usage is under your organization's managed identity and billing.
-  //      Prevents personal account usage that bypasses managed settings.
-  // BREAKS IF REMOVED: Users could log in with personal accounts that are not subject
-  //      to your org's policies.
+  // WHAT: Turns off background agents and agent view.
+  //   // WHY: Background agents expand unsupervised shell, MCP, and network activity.
+  //   // BREAKS IF true: claude agents, --bg, and /background are unavailable.
+  "disableAgentView": true,
+
+  // WHAT: Disables publishing session output as claude.ai Artifacts.
+  //   // WHY: Keeps source and session data out of an extra shareable web surface.
+  //   // BREAKS IF true: Developers cannot publish Artifact pages from Claude Code.
+  "disableArtifact": true,
+
+  // WHAT: Shows a one-line session recap after the user returns.
+  //   // WHY: Recaps can expose sensitive work on shared screens.
+  //   // BREAKS IF false: No automatic away-summary line appears.
+  "awaySummaryEnabled": false,
+
+  // WHAT: Forces login through Claude.ai or Console.
+  //   // WHY: Keeps identity inside the managed org path.
+  //   // BREAKS IF wrong: Users may be unable to authenticate.
   "forceLoginMethod": "claudeai",
 
-  // WHAT: Restricts login to accounts belonging to your specific organization.
-  // WHY: Even with forceLoginMethod, a user could log in to a different org's Claude.ai
-  //      account. This locks to your org only.
-  // BREAKS IF WRONG UUID: All users will be unable to authenticate. Verify the UUID
-  //      in Claude.ai Admin Settings before deploying.
+  // WHAT: Restricts login to one organization UUID.
+  //   // WHY: Blocks personal accounts that bypass managed settings.
+  //   // BREAKS IF wrong UUID: All users are locked out.
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
-  // WHAT: Restricts auto-updates to the stable channel.
-  // WHY: Prevents preview/beta versions that may have different security behavior.
+  // WHAT: Restricts auto-updates to a channel.
+  //   // WHY: Stable avoids preview behavior changes mid-rollout.
   "autoUpdatesChannel": "stable",
 
-  // WHAT: Enforces a minimum CLI version.
-  // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  // WHAT: Hard startup floor for Claude Code.
+  //   // WHY: Older clients ignore newer managed controls.
+  //   // BREAKS IF above fleet version: Claude Code exits until clients update.
+  "requiredMinimumVersion": "2.1.212",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
-  // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
-  //      commands physically cannot access restricted paths (enforced by macOS Seatbelt
-  //      or Linux bubblewrap, not by Claude Code itself).
+  // WHY: Defense-in-depth even if permission rules are bypassed by prompt injection.
   "sandbox": {
     "enabled": true,
-
-    // WHAT: Auto-approve Bash commands if they will run inside the sandbox.
-    // WHY: Reduces prompt fatigue. The sandbox restricts what the command can do,
-    //      so the risk of auto-approval is mitigated by OS-level isolation.
-    // BREAKS IF SET TO FALSE: Every Bash command prompts the user, even safe ones
-    //      like "ls" or "cat" (significant productivity impact).
     "autoAllowBashIfSandboxed": true,
-
-    // WHAT: Prevents Claude Code from retrying failed sandboxed commands outside
-    //      the sandbox.
-    // WHY: This escape hatch weakens the sandbox. A crafted failure scenario could
-    //      trick a user into approving an unsandboxed dangerous command.
     "allowUnsandboxedCommands": false,
-
-    // WHAT: If the sandbox cannot start (missing bubblewrap, Seatbelt issue), allow
-    //      Claude Code to continue without sandboxing.
-    // WHY: Set to false in Moderate so work is not blocked by sandbox setup issues.
-    //      Set to true in Strict (fail-closed).
-    // BREAKS IF SET TO TRUE: Claude Code will refuse to run if the sandbox is
-    //      unavailable (could block work during OS updates or on unsupported systems).
     "failIfUnavailable": false,
-
     "filesystem": {
-      // WHAT: Paths that sandboxed commands cannot read.
       "denyRead": [
         "~/.ssh",
         "~/.aws",
@@ -233,13 +167,11 @@
         "//etc/shadow",
         "//etc/sudoers"
       ],
-      // WHAT: Paths that sandboxed commands cannot write to.
       "denyWrite": [
         "~/",
         "//etc/",
         "//var/"
       ],
-      // WHAT: Paths that sandboxed commands CAN write to (exceptions to denyWrite).
       "allowWrite": [
         ".",
         "/tmp"
@@ -247,11 +179,14 @@
     }
   },
 
-  // WHAT: Environment variables set for all Claude Code sessions.
-  // WHY: Disables telemetry (data minimization) and disables auto-memory
-  //      (prevents persistent AI context that could contain sensitive data).
+  // WHAT: Environment variables applied to every Claude Code session.
+  // WHY: Enforces telemetry off, no auto-memory, foreground-only tasks, no away recap,
+  //      and no IDE extension auto-install.
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
+    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
   }
 }
