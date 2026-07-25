@@ -1,22 +1,83 @@
-# Codex Desktop App — STRICT admin-enforced requirements
+# Codex Desktop App - STRICT admin-enforced requirements
 # Users CANNOT override these constraints. Deploy via cloud-managed config,
 # macOS MDM, or system file (/etc/codex/requirements.toml).
+# Requires Codex 0.138.0 or later for managed permission-profile enforcement.
 # For regulated environments (finance, healthcare, government).
 
+# WHAT: Limits approval behavior to explicit user review.
+# WHY: Strict environments require a human decision before supported risky actions.
+# BREAKS: Removing this allows unattended execution; an unsupported value can block startup policy resolution.
 allowed_approval_policies = ["untrusted", "on-request"]
+
+# WHAT: Legacy sandbox allowlist for older clients; writable modes intentionally omitted.
+# WHY: Regulated review workflows must not allow workspace mutation by default.
+# BREAKS: On 0.138+, pair with default_permissions = ":read-only"; writable sandboxes are denied.
 allowed_sandbox_modes = ["read-only"]
+
+# WHAT: Allows only disabled web search (disabled is always implicitly allowed).
+# WHY: Strict environments must prevent source-code or prompt data reaching external search services.
+# BREAKS: Developers cannot use Codex web search and must use separately approved research tools.
 allowed_web_search_modes = []
+
+# WHAT: Selects the built-in read-only permission profile at startup.
+# WHY: Regulated review workflows must not let the agent modify workspace or system files.
+# BREAKS: Omitting this can select a writable default; naming a denied profile makes the requirement invalid.
+default_permissions = ":read-only"
+
+# WHAT: Forces United States data residency where the client supports it.
+# WHY: Regulated deployments often require residency controls for audit and contractual reasons.
+# BREAKS: Users outside the approved residency path may fail authentication or policy load.
 enforce_residency = "us"
 
-# Disable all extended features
+# WHAT: Disables Appshots for managed users.
+# WHY: Screen capture can include secrets, PHI, or regulated content from other windows.
+# BREAKS: Visual debugging via Appshots is unavailable.
+allow_appshots = false
+
+# WHAT: Disables device remote control for managed users.
+# WHY: Remote control expands remote execution beyond the local sandbox threat model.
+# BREAKS: Remote assistance workflows stop until separately approved.
+allow_remote_control = false
+
+# WHAT: Allows only managed lifecycle hooks and ignores user or project hook configs.
+# WHY: Strict audit requires enterprise-delivered hooks only.
+# BREAKS: Personal or project hooks are ignored; missing managed_dir scripts cause hook failures.
+allow_managed_hooks_only = true
+
+# WHAT: Defines the complete set of permission profiles users may select.
+# WHY: Omitting writable profiles denies them now and also denies future built-ins by default.
+# BREAKS: Removing this table lets users select any available profile, including full-system access.
+[allowed_permission_profiles]
+":read-only" = true
+
+# WHAT: Disables all extended desktop capabilities.
+# WHY: Browser, computer use, memories, and multi-agent expand data movement and persistence risk.
+# BREAKS: Feature-dependent workflows fail and need approved alternatives outside Codex.
 [features]
 browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+hooks = true
 
-# Deny reads to sensitive directories
+# WHAT: Experimental managed network allowlist for sandbox networking (validate before Windows rollout).
+# WHY: Strict tier requires admin-owned egress destinations when any sandbox networking is enabled.
+# BREAKS: Domains not listed are denied; enabling without tested client support can block sessions.
+# NOTE: experimental_network is experimental and Windows support is limited. Pilot on macOS/Linux first.
+[experimental_network]
+enabled = true
+managed_allowed_domains_only = true
+allowed_domains = [
+  "api.openai.com",
+]
+denied_domains = [
+  "*.exfil.example.com",
+]
+
+# WHAT: Denies reads to sensitive directories and credential patterns.
+# WHY: Strict review agents must not read secrets even in read-only mode.
+# BREAKS: Legitimate secret inspection fails; use vault workflows outside the agent.
 [permissions.filesystem]
 deny_read = [
   "/etc/shadow",
@@ -29,7 +90,9 @@ deny_read = [
   "**/*.key",
 ]
 
-# Block dangerous commands
+# WHAT: Forbids destructive, network, privilege, and git-mutation commands.
+# WHY: Strict environments treat these as out-of-policy for agent execution.
+# BREAKS: Developers must run these commands in a separately approved terminal outside Codex.
 [rules]
 prefix_rules = [
   { pattern = [{ any_of = ["rm", "rmdir"] }], decision = "forbidden", justification = "Destructive file operations are not permitted." },
@@ -38,6 +101,7 @@ prefix_rules = [
   { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
 ]
 
-# No MCP servers allowed
-# (empty mcp_servers table disables all MCP)
+# WHAT: Empty MCP allowlist disables all MCP servers.
+# WHY: Strict tier rejects third-party tool bridges unless separately approved and redeployed.
+# BREAKS: All MCP integrations stop working.
 [mcp_servers]

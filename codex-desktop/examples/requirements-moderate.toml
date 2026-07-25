@@ -1,19 +1,62 @@
-# Codex Desktop App — MODERATE admin-enforced requirements
+# Codex Desktop App - MODERATE admin-enforced requirements
 # Users CANNOT override these constraints. Deploy via cloud-managed config,
 # macOS MDM, or system file (/etc/codex/requirements.toml).
+# Requires Codex 0.138.0 or later for managed permission-profile enforcement.
 # For standard enterprise development teams.
 
+# WHAT: Allows cautious and standard interactive approval behavior.
+# WHY: Enterprise developers retain normal workflows while unattended execution remains blocked.
+# BREAKS: Removing this permits approval bypass; omitting "untrusted" can disrupt high-review projects.
 allowed_approval_policies = ["untrusted", "on-request"]
+
+# WHAT: Keeps legacy sandbox allowlist for older clients that still use sandbox_mode.
+# WHY: Mixed fleets may not all support permission profiles yet; this blocks danger-full-access.
+# BREAKS: On 0.138+, prefer allowed_permission_profiles; keeping both is compatible during rollout.
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+
+# WHAT: Permits only OpenAI-cached search results (disabled remains implicitly allowed).
+# WHY: Cached search supports common research without unrestricted live external retrieval.
+# BREAKS: Dependency research may miss very recent information; broader modes increase egress risk.
 allowed_web_search_modes = ["cached"]
 
-# Disable high-risk features but allow core development
+# WHAT: Selects workspace-scoped read and write access at startup.
+# WHY: Most development needs file edits but not access outside the active workspace.
+# BREAKS: A read-only default prevents edits; a denied or misspelled profile makes policy resolution fail.
+default_permissions = ":workspace"
+
+# WHAT: Disables Appshots for managed users.
+# WHY: Screen capture features can leak secrets from IDE windows into agent context.
+# BREAKS: Visual debugging workflows that rely on Appshots need an exception process.
+allow_appshots = false
+
+# WHAT: Disables device remote control for managed users.
+# WHY: Remote control expands remote execution risk beyond local coding workflows.
+# BREAKS: Remote assistance workflows stop until separately approved.
+allow_remote_control = false
+
+# WHAT: Allows only managed lifecycle hooks and ignores user or project hook configs.
+# WHY: Enterprise audit hooks must not be bypassed by local hook overrides.
+# BREAKS: Developers cannot add personal hooks; deliver approved hooks via managed_dir.
+allow_managed_hooks_only = true
+
+# WHAT: Allows read-only and workspace profiles, and denies every omitted profile.
+# WHY: Developers can review or edit code without obtaining full-system access.
+# BREAKS: Removing this table allows unrestricted profiles; removing ":workspace" blocks normal coding.
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true
+
+# WHAT: Disables high-risk features but keeps managed hooks available.
+# WHY: Browser and computer control expand prompt-injection blast radius; hooks support audit.
+# BREAKS: Browser-driven workflows fail; removing hooks=true can skip managed hook enforcement.
 [features]
 browser_use = false
 computer_use = false
-codex_hooks = true
+hooks = true
 
-# Deny reads to credential files
+# WHAT: Denies reads of common credential files.
+# WHY: Credential theft via prompt injection is a concrete Moderate-tier threat.
+# BREAKS: Legitimate reads of key material fail; use secrets manager or approved break-glass paths.
 [permissions.filesystem]
 deny_read = [
   "~/.ssh/id_*",
@@ -22,7 +65,9 @@ deny_read = [
   "**/*.key",
 ]
 
-# Require approval for risky commands
+# WHAT: Requires approval for risky commands and forbids privilege escalation.
+# WHY: Stops silent git force-push, recursive delete, and sudo paths in standard enterprise use.
+# BREAKS: Developers see extra prompts; forbidden sudo needs local-terminal fallbacks.
 [rules]
 prefix_rules = [
   { pattern = [{ token = "git" }, { any_of = ["push", "force-push"] }], decision = "prompt", justification = "Require review before pushing to remote." },
@@ -30,7 +75,9 @@ prefix_rules = [
   { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
 ]
 
-# Only approved MCP servers
+# WHAT: Allowlists only audited MCP servers by identity.
+# WHY: MCP is a high-risk tool bridge; Moderate permits known-good servers only.
+# BREAKS: Unlisted MCP servers are disabled even if present in user config.
 [mcp_servers.filesystem]
 identity = { command = "npx" }
 
