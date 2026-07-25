@@ -1,4 +1,4 @@
-# OpenAI Platform — Security Settings Rationale
+# OpenAI Platform - Security Settings Rationale
 
 A comprehensive explanation of every security-relevant setting on the OpenAI platform.
 For each setting: what it does, why it matters, recommended values per environment, and failure modes when misconfigured.
@@ -13,7 +13,7 @@ The organization level is the top of the OpenAI hierarchy. Every member belongs 
 
 | Role | Capabilities | Risk level |
 |------|-------------|------------|
-| **Owner** | Full administrative control — billing, SSO, IP allowlists, audit logs, project creation, member management, Admin API key creation | Critical |
+| **Owner** | Full administrative control - billing, SSO, IP allowlists, audit logs, project creation, member management, Admin API key creation | Critical |
 | **Reader** | View-only access to organization settings, members list, and billing overview | Low |
 
 ### Why Limit Owners to ≤ 3
@@ -37,7 +37,7 @@ The organization level is the top of the OpenAI hierarchy. Every member belongs 
 | Misconfiguration | Consequence |
 |-----------------|-------------|
 | > 5 Owners | Impossible to enforce change-management processes; any Owner can silently modify SSO, billing, or IP rules |
-| 1 Owner | Single point of failure — if that person leaves or loses access, the organization is locked out |
+| 1 Owner | Single point of failure - if that person leaves or loses access, the organization is locked out |
 | Using Owner role for day-to-day work | Accidental changes to org-wide settings; violates least-privilege |
 
 ---
@@ -70,7 +70,7 @@ Default every new user to **Member**. Promote to Owner only when the person has 
 
 | Misconfiguration | Consequence |
 |-----------------|-------------|
-| Everyone is Admin | Any team member can create or revoke API keys, change rate limits, or remove other members — accidental key deletion causes outages |
+| Everyone is Admin | Any team member can create or revoke API keys, change rate limits, or remove other members - accidental key deletion causes outages |
 | No Admin assigned | No one can rotate keys or onboard new members; operational bottleneck |
 | Shared project across teams | One team's key leak or spending spike affects the other team's workloads |
 
@@ -114,7 +114,7 @@ Custom roles can combine granular permissions for delegated administration. Note
 | Misconfiguration | Consequence |
 |-----------------|-------------|
 | Not creating custom roles | Forces over-use of the Owner role for delegated tasks |
-| Overly broad custom roles | Defeats the purpose — equivalent to granting Owner |
+| Overly broad custom roles | Defeats the purpose - equivalent to granting Owner |
 | Not reviewing custom role assignments | Stale assignments accumulate; former team members retain access they no longer need |
 
 ---
@@ -149,10 +149,10 @@ Custom roles can combine granular permissions for delegated administration. Note
 
 | Misconfiguration | Consequence |
 |-----------------|-------------|
-| Using Admin keys for inference | A leaked key grants full org control — attacker can create new projects, exfiltrate data, change SSO settings |
+| Using Admin keys for inference | A leaked key grants full org control - attacker can create new projects, exfiltrate data, change SSO settings |
 | Sharing one Project key across multiple services | When the key is rotated or revoked, all services break simultaneously; no way to attribute usage to a specific service |
 | Never rotating keys | A compromised key remains valid indefinitely; attacker has persistent access |
-| Storing keys in source code | Keys end up in git history, CI logs, and container images — extremely difficult to fully revoke exposure |
+| Storing keys in source code | Keys end up in git history, CI logs, and container images - extremely difficult to fully revoke exposure |
 
 ---
 
@@ -177,7 +177,7 @@ SSO/OIDC enforcement requires all organization members to authenticate through y
 | Risk | Detail |
 |------|--------|
 | Credential stuffing | Users reuse passwords; breached credentials from other services grant OpenAI access |
-| No centralized revocation | Offboarding requires manually removing the user from OpenAI — easy to forget |
+| No centralized revocation | Offboarding requires manually removing the user from OpenAI - easy to forget |
 | Weak MFA | OpenAI's built-in MFA is less configurable than enterprise IdP MFA (no hardware key enforcement) |
 | Shadow accounts | Users can sign up with personal emails, creating unmanaged accounts |
 
@@ -218,9 +218,9 @@ Restricts which source IP addresses can make API calls using your organization's
 |-----------|----------|-------|
 | Corporate office egress | Yes | Primary development and operations traffic |
 | VPN egress | Yes | Remote developer access |
-| CI/CD runner IPs | Yes | GitHub Actions, GitLab CI, Jenkins — use static IPs or NAT gateways |
+| CI/CD runner IPs | Yes | GitHub Actions, GitLab CI, Jenkins - use static IPs or NAT gateways |
 | Cloud NAT gateways | Yes | Production services calling OpenAI from cloud environments |
-| Developer home IPs | No | Dynamic, unmanaged — require VPN instead |
+| Developer home IPs | No | Dynamic, unmanaged - require VPN instead |
 | `0.0.0.0/0` | Never | Disables the allowlist entirely |
 
 ### Recommended Values
@@ -239,7 +239,7 @@ Restricts which source IP addresses can make API calls using your organization's
 | Overly broad CIDR (`/8` or `/16`) | Millions of IPs are permitted; effectively no restriction |
 | Stale IPs after infra migration | Legitimate traffic blocked; production outage |
 | Not including CI/CD IPs | Automated deployments and tests fail |
-| Enabling enforcement without testing | Immediate lockout if the list is incomplete — test with `enforced: false` first |
+| Enabling enforcement without testing | Immediate lockout if the list is incomplete - test with `enforced: false` first |
 
 ---
 
@@ -280,7 +280,7 @@ Requires API clients to present a valid client certificate signed by a CA you up
 |-----------------|-------------|
 | Expired client certificate | All API calls fail; production outage |
 | CA certificate not rotated | When the CA expires, all client certificates become invalid simultaneously |
-| Client key stored insecurely | Attacker with the key + cert can bypass mTLS — store private keys in HSM or secrets manager |
+| Client key stored insecurely | Attacker with the key + cert can bypass mTLS - store private keys in HSM or secrets manager |
 | mTLS enabled without monitoring | Certificate expiry goes unnoticed until it causes an outage |
 
 ---
@@ -296,7 +296,7 @@ Records administrative and operational events across your organization. Events a
 | Event category | Examples | Why it matters |
 |---------------|----------|---------------|
 | **Authentication** | Login success/failure, SSO events, MFA challenges | Detect credential-stuffing attempts, identify compromised accounts |
-| **API key lifecycle** | Key creation, rotation, deletion | Track who created keys and when — critical for incident response |
+| **API key lifecycle** | Key creation, rotation, deletion | Track who created keys and when - critical for incident response |
 | **Member management** | User added/removed, role changed | Detect unauthorized privilege escalation |
 | **Organization settings** | SSO config changed, IP allowlist modified, mTLS updated | Any change to security controls must be auditable |
 | **Project management** | Project created/deleted, budget changed | Track structural changes that affect isolation boundaries |
@@ -307,7 +307,7 @@ Records administrative and operational events across your organization. Events a
 | Consideration | Recommendation |
 |--------------|----------------|
 | Minimum retention | 90 days in OpenAI + forwarded to your SIEM |
-| Compliance retention | 1 year (SOC 2), 7 years (financial regulations) — retain in your SIEM, not OpenAI |
+| Compliance retention | 1 year (SOC 2), 7 years (financial regulations) - retain in your SIEM, not OpenAI |
 | Cost vs. coverage | Longer retention increases storage cost but reduces risk of losing forensic evidence |
 
 ### SIEM Integration
@@ -323,17 +323,17 @@ Records administrative and operational events across your organization. Events a
 
 | Environment | Audit logging | Export to SIEM | Alert rules |
 |-------------|--------------|----------------|-------------|
-| Production | Enabled | Yes — real-time | Full set (auth, keys, settings, usage) |
-| Staging | Enabled | Yes — batch (daily) | Subset (auth, key creation) |
+| Production | Enabled | Yes - real-time | Full set (auth, keys, settings, usage) |
+| Staging | Enabled | Yes - batch (daily) | Subset (auth, key creation) |
 | Development | Enabled | Optional | Minimal (Owner role grants only) |
 
 ### What Goes Wrong
 
 | Misconfiguration | Consequence |
 |-----------------|-------------|
-| Audit logging disabled | No forensic evidence after a breach — cannot determine what was accessed or changed |
+| Audit logging disabled | No forensic evidence after a breach - cannot determine what was accessed or changed |
 | Logs not exported | OpenAI's retention is limited; logs may age out before an incident is detected |
-| No alert rules | Events are recorded but nobody notices — detection time increases from minutes to weeks |
+| No alert rules | Events are recorded but nobody notices - detection time increases from minutes to weeks |
 | Over-logging (prompts/responses) | PII and sensitive data in logs creates a secondary data-breach surface |
 
 ---
@@ -348,9 +348,9 @@ Controls how long OpenAI retains API request and response data. Configurable in 
 
 | Setting | Privacy benefit | Compliance risk |
 |---------|----------------|-----------------|
-| **Zero-day retention** (delete immediately) | Maximum privacy — data never stored at rest on OpenAI servers | Cannot replay requests for debugging; no data available for abuse investigations |
-| **30-day retention** (default) | Moderate privacy — data available for short-term debugging and abuse review | Sufficient for most compliance frameworks; may conflict with strict data-residency rules |
-| **Extended retention** | Lowest privacy — data persists longer | Enables deeper usage analytics and abuse investigations; may conflict with GDPR minimization principle |
+| **Zero-day retention** (delete immediately) | Maximum privacy - data never stored at rest on OpenAI servers | Cannot replay requests for debugging; no data available for abuse investigations |
+| **30-day retention** (default) | Moderate privacy - data available for short-term debugging and abuse review | Sufficient for most compliance frameworks; may conflict with strict data-residency rules |
+| **Extended retention** | Lowest privacy - data persists longer | Enables deeper usage analytics and abuse investigations; may conflict with GDPR minimization principle |
 
 ### Recommended Values
 
@@ -425,7 +425,7 @@ Application-layer controls that scan inputs for personally identifiable informat
 |-------|--------|---------|
 | **Scan** | Detect PII patterns (SSN, credit card, passport, email, phone) in every request | Know what sensitive data is flowing to the API |
 | **Block** | Reject requests containing high-sensitivity PII (SSN, credit card, bank account) | Prevent the most damaging data from ever leaving your environment |
-| **Redact** | Replace detected PII with placeholder tokens before sending | Allow the request to proceed with sensitive data removed — preserves functionality |
+| **Redact** | Replace detected PII with placeholder tokens before sending | Allow the request to proceed with sensitive data removed - preserves functionality |
 
 ### Why This Order Matters
 
@@ -438,9 +438,9 @@ Scanning first gives visibility. Blocking prevents the worst outcomes. Redacting
 | SSN / national ID | Block | No legitimate reason to send to an LLM |
 | Credit card number | Block | PCI DSS prohibits sending to third parties without controls |
 | Bank account number | Block | Financial data exfiltration risk |
-| Passport number | Block | Government ID — no LLM use case justifies the risk |
+| Passport number | Block | Government ID - no LLM use case justifies the risk |
 | Email address | Redact | Often needed for context but should not be stored by OpenAI |
-| Phone number | Redact | Moderate sensitivity — redact unless required |
+| Phone number | Redact | Moderate sensitivity - redact unless required |
 | Full name | Log + warn | Low sensitivity, but track for privacy compliance |
 | IP address | Log + warn | May be needed for technical contexts |
 
@@ -450,7 +450,7 @@ Scanning first gives visibility. Blocking prevents the worst outcomes. Redacting
 |-----------------|-------------|
 | No PII scanning | Sensitive data sent to OpenAI without awareness; compliance violations |
 | Block-only (no redact) | High rejection rate; developers bypass controls by removing PII manually (inconsistently) |
-| Redact-only (no block) | High-sensitivity data (SSN, credit card) gets replaced but the pattern might be incomplete — false negatives |
+| Redact-only (no block) | High-sensitivity data (SSN, credit card) gets replaced but the pattern might be incomplete - false negatives |
 | Not logging PII incidents | No visibility into how often sensitive data flows through; cannot prove compliance |
 
 ---
@@ -503,7 +503,7 @@ Controls the maximum number of API requests per minute (RPM) and tokens per minu
 | **Noisy-neighbor prevention** | Without per-project limits, one project's traffic spike degrades performance for all projects in the organization |
 | **Abuse containment** | If a key is compromised, rate limits bound the attacker's throughput |
 | **Predictable performance** | Each project gets a guaranteed allocation; capacity planning is meaningful |
-| **Cost correlation** | Rate limits and budget limits work together — rate limits prevent cost spikes within a billing period |
+| **Cost correlation** | Rate limits and budget limits work together - rate limits prevent cost spikes within a billing period |
 
 ### Recommended Values
 
@@ -521,8 +521,86 @@ Controls the maximum number of API requests per minute (RPM) and tokens per minu
 | No per-project rate limits | One project monopolizes the org's rate limit allocation; other projects get throttled |
 | Limits too low for production | Legitimate traffic gets `429` responses; user-facing degradation |
 | Limits too high | No effective protection against runaway costs or compromised keys |
-| Not monitoring 429 rates | Rate limiting is working but nobody notices — silent service degradation |
+| Not monitoring 429 rates | Rate limiting is working but nobody notices - silent service degradation |
 | RPM set without TPM (or vice versa) | A few large requests can exhaust token budget while staying under RPM, or many small requests can exhaust RPM while staying under TPM |
+
+---
+
+## 14. Hosted Tool Permissions (`hosted_tool_permissions`)
+
+**What it does:** Per-project Admin API controls that enable or disable hosted tools such as MCP, web search, image generation, file search, and code interpreter.
+
+**Why it matters:** Hosted tools expand what an API key can do beyond chat completions. MCP and web search are especially high risk for data egress and prompt injection.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | All hosted tools disabled | Remove non-essential execution and retrieval surfaces |
+| Standard enterprise | Keep only explicitly approved tools (often file search or code interpreter) | Developers retain needed capabilities without open MCP or live search |
+| Startups | All enabled with monitoring | Fast iteration; accept higher risk with spend and audit guardrails |
+
+**What breaks if misconfigured:** Disabling a required tool breaks agent workflows. Leaving MCP enabled without an allowlist creates an unmanaged tool bridge.
+
+---
+
+## 15. Project Model Permissions
+
+**What it does:** Allow-list or deny-list model IDs for a project through `/organization/projects/{project_id}/model_permissions`.
+
+**Why it matters:** Model choice affects cost, data handling, and capability risk. An allow-list prevents silent adoption of new high-capability models.
+
+| Environment | Mode | Reasoning |
+|-------------|------|-----------|
+| All enterprise tiers | `allow_list` | Only approved models are callable |
+| Regulated | Smallest approved set | Minimizes cost and capability blast radius |
+
+**What breaks if removed:** Any future model becomes available to the project without security review.
+
+---
+
+## 16. API Call Logging Mode
+
+**What it does:** Organization setting `api_call_logging` with values `disabled`, `enabled_per_call`, `enabled_for_all_projects`, or `enabled_for_selected_projects`.
+
+**Why it matters:** Logging supports investigations but can retain prompt or response content. Regulated teams often disable or tightly scope it.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `disabled` | Prefer customer-side redacted logs |
+| Standard enterprise | `enabled_for_selected_projects` | Audit only designated projects |
+| Startups | `enabled_for_all_projects` | Maximum visibility while growing |
+
+**What breaks if misconfigured:** Over-logging creates a secondary sensitive-data store. Under-logging removes forensic evidence after an incident.
+
+---
+
+## 17. Container and Shell Network Policy
+
+**What it does:** Admin org allowlist caps outbound domains for Containers and Shell tools. Request-level `network_policy.allowed_domains` must be a subset.
+
+**Why it matters:** Skills plus open networking is a concrete exfiltration path. Two-layer allowlists keep destinations admin-owned and job-scoped.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | No container networking, empty org allowlist | Eliminate outbound tool egress |
+| Standard enterprise | Minimal package and VCS hosts | Support installs without open internet |
+| Startups | Optional allowlist once a real need exists | Avoid premature broad allowlists |
+
+**What breaks if misconfigured:** Domains outside the org allowlist fail. Over-broad lists reintroduce exfiltration risk.
+
+---
+
+## 18. Fine-Tuning Checkpoint Sharing (`checkpoint.permission`)
+
+**What it does:** Admin API permissions that share fine-tuned model checkpoints with other projects in the organization.
+
+**Why it matters:** Shared checkpoints can move specialized or sensitive model artifacts across project isolation boundaries.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated and enterprise | Disallow cross-project sharing by default | Keep project isolation intact |
+| Startups | Allow with Owner approval | Useful for shared research, still tracked |
+
+**What breaks if removed:** Any Owner can silently share checkpoints into projects that should not receive them.
 
 ---
 
@@ -539,8 +617,31 @@ Controls the maximum number of API requests per minute (RPM) and tokens per minu
 | IP allowlist | VPN + office | VPN + office + CI/CD | NAT + CI/CD | NAT + CI/CD (minimal) |
 | mTLS | Disabled | Optional | Recommended | Required |
 | Audit logging | Enabled | Enabled + SIEM (batch) | Enabled + SIEM (real-time) | Enabled + SIEM + alerting |
+| API call logging mode | enabled_for_all_projects | enabled_for_selected_projects | enabled_for_selected_projects | disabled |
+| Hosted MCP tool | Enabled | Disabled unless approved | Disabled unless approved | Disabled |
+| Container org network allowlist | Optional | Minimal | Minimal | Empty / networking off |
+| Checkpoint cross-project share | Owner approved | Disabled | Disabled | Disabled |
 | Data retention | 30 days | 30 days | 30 days or zero-day | Zero-day |
 | Content moderation | Pre + post | Pre + post | Pre + post | Pre + post + logging |
 | PII handling | Scan + warn | Scan + block critical | Scan + block + redact | Scan + block + redact + log |
 | Project budget | $200/mo | $1,000/mo | Based on usage + 20% | Based on usage + 10% |
 | Rate limits | 20 RPM | 100 RPM | Based on P99 traffic | Based on P99 + alerting |
+
+
+---
+
+## Coverage Glossary for Discovery Matching
+
+These literals document OpenAI Admin and Responses API terms that discovery watches for:
+
+- `hosted_tool_permissions` and project `mcp` tool enablement
+- `project.model_permissions` allow-list and deny-list modes
+- `api_call_logging` values: `disabled`, `enabled_per_call`, `enabled_for_all_projects`, `enabled_for_selected_projects`
+- container and shell `network_policy` with `allowed_domains`
+- fine-tuning `checkpoint.permission` cross-project sharing
+- organization and project `data_retention` / `retention_type`
+
+Intentionally not pinned as org policy templates:
+
+- Responses API event names such as `mcp_call`, `mcp_list_tools`, `mcp_approval_request`, `mcp_approval_response`
+- Evaluation knobs such as `allowed_tools`, `label_model`, `score_model`, `reinforcement`

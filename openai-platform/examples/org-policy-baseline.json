@@ -7,7 +7,9 @@
     "sso_enabled": false,
     "mfa_required": false,
     "audit_logging_enabled": true,
-    "max_organization_owners": 5
+    "max_organization_owners": 5,
+    "threads_ui_visibility": "ANY_ROLE",
+    "usage_dashboard_visibility": "ANY_ROLE"
   },
 
   "default_project_policy": {
@@ -29,6 +31,34 @@
     "o3-mini"
   ],
 
+  "project_model_permissions": {
+    "mode": "allow_list",
+    "model_ids": [
+      "gpt-4o",
+      "gpt-4o-mini",
+      "o3-mini"
+    ]
+  },
+
+  "hosted_tool_permissions": {
+    "file_search": { "enabled": true },
+    "web_search": { "enabled": true },
+    "image_generation": { "enabled": true },
+    "mcp": { "enabled": true },
+    "code_interpreter": { "enabled": true }
+  },
+
+  "container_network_policy": {
+    "org_allowlist_enforced": false,
+    "allowed_domains": [],
+    "require_request_network_policy": true
+  },
+
+  "fine_tuning_checkpoint_sharing": {
+    "cross_project_sharing_allowed": true,
+    "require_owner_approval": true
+  },
+
   "content_filtering": {
     "moderation_enabled": true,
     "pre_check_user_input": false,
@@ -43,6 +73,9 @@
   "data_controls": {
     "log_prompts": false,
     "log_responses": false,
-    "data_retention_days": 90
+    "data_retention_days": 90,
+    "retention_type": "modified_abuse_monitoring",
+    "api_call_logging": "enabled_for_all_projects",
+    "api_call_logging_project_ids": []
   }
 }

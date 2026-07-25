@@ -12,7 +12,9 @@
     ],
     "mfa_required": true,
     "audit_logging_enabled": true,
-    "max_organization_owners": 3
+    "max_organization_owners": 3,
+    "threads_ui_visibility": "OWNERS",
+    "usage_dashboard_visibility": "OWNERS"
   },
 
   "default_project_policy": {
@@ -33,6 +35,37 @@
     "gpt-4o-mini"
   ],
 
+  "project_model_permissions": {
+    "mode": "allow_list",
+    "model_ids": [
+      "gpt-4o",
+      "gpt-4o-mini"
+    ]
+  },
+
+  "hosted_tool_permissions": {
+    "file_search": { "enabled": true },
+    "web_search": { "enabled": false },
+    "image_generation": { "enabled": false },
+    "mcp": { "enabled": false },
+    "code_interpreter": { "enabled": true }
+  },
+
+  "container_network_policy": {
+    "org_allowlist_enforced": true,
+    "allowed_domains": [
+      "pypi.org",
+      "files.pythonhosted.org",
+      "github.com"
+    ],
+    "require_request_network_policy": true
+  },
+
+  "fine_tuning_checkpoint_sharing": {
+    "cross_project_sharing_allowed": false,
+    "require_owner_approval": true
+  },
+
   "content_filtering": {
     "moderation_enabled": true,
     "pre_check_user_input": true,
@@ -49,6 +82,11 @@
   "data_controls": {
     "log_prompts": false,
     "log_responses": false,
-    "data_retention_days": 30
+    "data_retention_days": 30,
+    "retention_type": "modified_abuse_monitoring",
+    "api_call_logging": "enabled_for_selected_projects",
+    "api_call_logging_project_ids": [
+      "proj_REPLACE_WITH_AUDIT_PROJECT"
+    ]
   }
 }
