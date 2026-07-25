@@ -1,39 +1,33 @@
 # Agent scope for this run
 
-Process only the tools listed below. For each tool:
+Processed on 2026-07-25 for branch `cusor/automated-ai-config-rollout-710d`.
 
-1. Read the cited missing terms and the upstream URL from the full discovery report.
-2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.
-3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.
-4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.
-5. Validate edited JSON, YAML, and TOML before finishing.
+## Completed in this run
 
-Do not attempt to review unchanged tools or sources with no missing local terms in this run.
+### Codex Desktop
 
-## Tools to process (4 of 5 with missing terms)
+- Added Codex 0.138.0+ permission-profile requirements, remote-control/Appshots controls, managed-hooks-only, and Strict experimental network allowlist.
+- Updated managed defaults, rationale, enterprise policy, README, and discovery watchers.
 
-### Claude Code
+### OpenAI Platform
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
-
-### Claude Code
-
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+- Added hosted tool permissions, model permissions, API call logging modes, container/shell network allowlist, checkpoint sharing, and retention fields across all tiers.
+- Documented Admin API and dashboard deployment plus tier deltas.
 
 ### Continue.dev
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
+- Added explicit empty `mcpServers: []` to tier and enterprise example configs.
+
+## Deferred
+
+### Claude Code
+
+- Missing agent/IDE/artifact/away-summary terms are already handled in open PR #68. Avoid duplicate edits on this branch.
 
 ### Claude Desktop
 
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+- Missing terms are Claude Code MCP helper env vars from a shared docs URL. No Claude Desktop config keys to add.
 
-## Deferred (1 tools)
+### Claude API
 
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Release-note terms such as `fast-mode-2026-02-01` and `mcp_oauth` deferred to a later scoped run.

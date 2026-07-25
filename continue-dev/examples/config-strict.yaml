@@ -34,3 +34,8 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: true
+
+# WHAT: Explicit empty MCP server list for Continue agents.
+# WHY: Strict forbids MCP tool bridges unless a later change-controlled allowlist is added.
+# BREAKS: Removing this hides MCP posture; any later server add should be treated as a tier change.
+mcpServers: []

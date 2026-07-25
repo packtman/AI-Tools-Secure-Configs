@@ -38,3 +38,8 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: false
+
+# WHAT: Explicit MCP server allowlist for Continue agents.
+# WHY: Enterprise starts empty; add only Mission Control or IT-audited servers with org secrets.
+# BREAKS: Without this key, MCP governance is unclear and ad-hoc servers can accumulate.
+mcpServers: []
