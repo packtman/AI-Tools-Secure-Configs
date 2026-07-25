@@ -1,4 +1,4 @@
-# OpenAI Platform — Network Security Configuration
+# OpenAI Platform: Network Security Configuration
 
 ## IP Allowlisting
 
@@ -31,6 +31,56 @@ curl -X POST https://api.openai.com/v1/organization/ip-allowlist \
 - Include CI/CD runner IPs for automated workloads.
 - Test with `enforced: false` before enabling enforcement.
 - Maintain an updated list as network infrastructure changes.
+
+---
+
+## Container and Shell Org Network Allowlist
+
+Containers and Shell tools use a two-layer network control:
+
+1. Organization allowlist (admin dashboard): the maximum set of outbound domains.
+2. Request-level `network_policy`: must be a subset of the org allowlist.
+
+### Why It Matters
+
+Open network access from skills or shell tools is a high-risk exfiltration path. The org allowlist is the ceiling; applications still must declare a narrower request policy.
+
+### Recommended Values
+
+| Environment | Org allowlist | Request policy |
+|-------------|---------------|----------------|
+| Regulated | Empty or disabled networking | Do not enable container networking |
+| Standard enterprise | Minimal trusted package and VCS hosts only | Subset of org allowlist per job |
+| Startups | Optional; start empty and add only proven needs | Always set `network_policy` when networking is enabled |
+
+### Validation
+
+```bash
+# Expect failure when request domains are outside the org allowlist.
+curl -L 'https://api.openai.com/v1/responses' \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "tools": [{
+      "type": "shell",
+      "environment": {
+        "type": "container_auto",
+        "network_policy": {
+          "type": "allowlist",
+          "allowed_domains": ["evil.example"]
+        }
+      }
+    }],
+    "input": "ping an unapproved domain"
+  }'
+```
+
+### What Breaks If Misconfigured
+
+- Over-broad org allowlists defeat the control.
+- Missing request-level `network_policy` can leave networking unavailable or too open depending on product defaults.
+- Allowlisting attacker-writable destinations enables prompt-injection-driven exfiltration.
 
 ---
 

@@ -1,4 +1,4 @@
-# OpenAI Codex Desktop App — Secure Admin Configuration
+# OpenAI Codex Desktop App - Secure Admin Configuration
 
 This directory contains comprehensive, security-hardened configurations for the **OpenAI Codex Desktop App** (OpenAI's desktop application for AI-assisted coding), targeting administrators who need to enforce sandbox restrictions, approval policies, MCP server governance, and enterprise-wide deployment via managed configuration.
 
@@ -15,9 +15,9 @@ This directory contains comprehensive, security-hardened configurations for the 
 
 | File | Purpose |
 |------|---------|
-| `examples/config-strict.toml` | **Strict** — Maximum lockdown (regulated environments) |
-| `examples/config-moderate.toml` | **Moderate** — Balanced security for enterprise teams |
-| `examples/config-baseline.toml` | **Baseline** — Essential security (startups, individual devs) |
+| `examples/config-strict.toml` | **Strict** - Maximum lockdown (regulated environments) |
+| `examples/config-moderate.toml` | **Moderate** - Balanced security for enterprise teams |
+| `examples/config-baseline.toml` | **Baseline** - Essential security (startups, individual devs) |
 | `examples/requirements-strict.toml` | **Strict** admin-enforced requirements |
 | `examples/requirements-moderate.toml` | **Moderate** admin-enforced requirements |
 | `examples/requirements-baseline.toml` | **Baseline** admin-enforced requirements |
@@ -42,14 +42,18 @@ Project-level overrides: `.codex/config.toml` in the repository root (loaded onl
 
 The Codex Desktop App uses a layered configuration system with two enforcement mechanisms:
 
-### 1. Requirements (`requirements.toml`) — Admin-Enforced Constraints
+### 1. Requirements (`requirements.toml`) - Admin-Enforced Constraints
 
 Requirements are constraints that **users cannot override**. They control security-sensitive settings:
 
 - Allowed approval policies
-- Allowed sandbox modes
+- Permission profile allowlists (`allowed_permission_profiles`, `default_permissions`) on Codex 0.138.0+
+- Legacy sandbox mode allowlists for older clients
 - Web search mode restrictions
 - MCP server allowlists
+- Remote control and Appshots toggles
+- Managed-hooks-only enforcement
+- Optional experimental network allowlists (validate before Windows rollout)
 - Feature flag pins
 - Command rules (prompt/forbidden)
 - Filesystem deny-read rules
@@ -59,7 +63,7 @@ Requirements are constraints that **users cannot override**. They control securi
 2. macOS MDM via `com.openai.codex:requirements_toml_base64`
 3. System `requirements.toml` (`/etc/codex/requirements.toml` on Unix, `%ProgramData%\OpenAI\Codex\requirements.toml` on Windows)
 
-### 2. Managed Defaults (`managed_config.toml`) — Starting Values
+### 2. Managed Defaults (`managed_config.toml`) - Starting Values
 
 Managed defaults set values when Codex launches. Users can change them during a session, but defaults reapply on restart.
 
@@ -123,10 +127,10 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 
 The Codex Desktop App, CLI, and IDE extension share the same configuration system (`config.toml`) and managed configuration layers. The desktop app additionally provides:
 
-- **Browser Use** — AI can browse websites (allowlist/blocklist controlled)
-- **Computer Use** — AI can interact with desktop apps (macOS only; not available in EEA/UK/Switzerland)
-- **Codex Pets** — Visual overlays (low security risk)
-- **Context-aware suggestions** — Follow-up recommendations
+- **Browser Use** - AI can browse websites (allowlist/blocklist controlled)
+- **Computer Use** - AI can interact with desktop apps (macOS only; not available in EEA/UK/Switzerland)
+- **Codex Pets** - Visual overlays (low security risk)
+- **Context-aware suggestions** - Follow-up recommendations
 
 These features introduce additional attack surface that administrators should evaluate.
 

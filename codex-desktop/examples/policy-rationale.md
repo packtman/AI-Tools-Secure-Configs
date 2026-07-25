@@ -1,4 +1,4 @@
-# Codex Desktop App — Policy Rationale
+# Codex Desktop App - Policy Rationale
 
 Every setting below explains **what it does**, **why you should care**, and **the recommended value** for different environments.
 
@@ -12,7 +12,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
-| Regulated (finance, healthcare) | `read-only` | Agent can only read files — no writes, no network. Eliminates data modification risk. |
+| Regulated (finance, healthcare) | `read-only` | Agent can only read files - no writes, no network. Eliminates data modification risk. |
 | Standard enterprise | `workspace-write` | Allows writing within the project directory only. No network. Balances productivity with safety. |
 | Individual developers | `workspace-write` | Same as above. Never use `danger-full-access` unless in a disposable container. |
 
@@ -64,7 +64,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
 
-**Why it matters:** Computer Use is the most powerful capability — effectively giving the AI full desktop control. Prompt injection could cause unintended actions across any application.
+**Why it matters:** Computer Use is the most powerful capability - effectively giving the AI full desktop control. Prompt injection could cause unintended actions across any application.
 
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
@@ -126,6 +126,70 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `default_permissions` and `allowed_permission_profiles`
+
+**What they do:** `default_permissions` selects the startup permission profile. `allowed_permission_profiles` is the complete allowlist of profiles users may select. Omitted profiles are denied, including future built-ins.
+
+**Why it matters:** On Codex 0.138.0 and later, permission profiles replace relying only on `sandbox_mode`. Without an allowlist, users can select `:danger-full-access`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `default_permissions = ":read-only"` and only `":read-only" = true` | Review-only posture with no writable profile available. |
+| Standard enterprise | `default_permissions = ":workspace"` with `":read-only"` and `":workspace"` allowed | Normal coding without full-system access. |
+| Individual developers | Same as enterprise, still deny `:danger-full-access` | Keeps the minimum guardrail even for startups. |
+
+**What breaks if removed:** Users can select full-system access. Naming a denied profile as the default makes policy resolution fail.
+
+---
+
+## `allow_remote_control` and `allow_appshots`
+
+**What they do:** Admin requirements that disable device remote control and Appshots for managed users when set to `false`.
+
+**Why it matters:** Remote control expands remote execution risk. Appshots can capture secrets or regulated content from other windows into agent context.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Both `false` | Remove remote and screen-capture surfaces. |
+| Standard enterprise | Both `false` | Preserve local coding, block remote and capture by default. |
+| Individual developers | `allow_remote_control = false`; Appshots optional | Keep the higher-risk remote control surface closed. |
+
+**What breaks if removed:** Remote assistance or visual debugging workflows may reappear without security review.
+
+---
+
+## `allow_managed_hooks_only`
+
+**What it does:** Skips user, project, session, and plugin hooks while still loading managed hooks from requirements and managed config layers.
+
+**Why it matters:** Local hook overrides can bypass enterprise audit or policy hooks.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` with managed hook scripts delivered by MDM | Only enterprise hooks run. |
+| Standard enterprise | `true` | Prevents silent local bypass of audit hooks. |
+| Individual developers | Omit or `false` | Personal automation remains useful. |
+
+**What breaks if misconfigured:** Personal hooks stop working. If managed scripts are missing from `managed_dir`, required audit hooks fail.
+
+---
+
+## `experimental_network` (in requirements.toml)
+
+**What it does:** Admin-owned sandbox networking allowlist and denylist. Separate from the user `features.network_proxy` toggle. Does not grant command network access when the active sandbox keeps networking off.
+
+**Why it matters:** When sandbox networking is enabled, open egress enables exfiltration. Managed allowlists keep destinations admin-owned.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Enabled with `managed_allowed_domains_only = true` and a minimal allowlist | Strict egress control. Pilot on macOS/Linux first. |
+| Standard enterprise | Omit until validated on your fleet | Feature is experimental; Windows support is limited. |
+| Individual developers | Omit | Avoid unstable controls in Baseline. |
+
+**What breaks if misconfigured:** Domains outside the allowlist are denied. Enabling without tested client support can block sessions. Do not roll out broadly on Windows without local validation.
+
+---
+
 ## `deny_read` (in requirements.toml)
 
 **What it does:** Prevents the agent from reading specified file paths or patterns, even in writable sandbox modes.
@@ -145,9 +209,15 @@ Every setting below explains **what it does**, **why you should care**, and **th
 ### Maximum Lockdown (Regulated)
 
 ```toml
-sandbox_mode = "read-only"
 approval_policy = "on-request"
-web_search = "disabled"
+default_permissions = ":read-only"
+allowed_web_search_modes = []
+allow_appshots = false
+allow_remote_control = false
+allow_managed_hooks_only = true
+
+[allowed_permission_profiles]
+":read-only" = true
 
 [features]
 browser_use = false
@@ -155,34 +225,46 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+hooks = true
 ```
 
 ### Standard Enterprise
 
 ```toml
-sandbox_mode = "workspace-write"
 approval_policy = "on-request"
-web_search = "cached"
+default_permissions = ":workspace"
+allowed_web_search_modes = ["cached"]
+allow_appshots = false
+allow_remote_control = false
+allow_managed_hooks_only = true
+
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true
 
 [features]
 browser_use = false
 computer_use = false
-memories = false
-codex_hooks = true
+hooks = true
 ```
 
 ### Developer Teams
 
 ```toml
-sandbox_mode = "workspace-write"
 approval_policy = "on-request"
-web_search = "cached"
+default_permissions = ":workspace"
+allowed_web_search_modes = ["cached", "live"]
+allow_remote_control = false
+
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true
 
 [features]
 browser_use = true
 in_app_browser = true
 computer_use = false
 memories = true
-codex_hooks = true
+hooks = true
 multi_agent = true
 ```

@@ -1,4 +1,4 @@
-# Codex Desktop App — Enterprise Policy Deployment Guide
+# Codex Desktop App - Enterprise Policy Deployment Guide
 
 ## Overview
 
@@ -26,44 +26,79 @@ Admins can configure different policies for different user groups. If a user mat
 
 ### Recommended Policy Tiers
 
-**Standard Developers:**
+**Standard Developers (Codex 0.138.0+):**
 ```toml
-allowed_approval_policies = ["on-request"]
-allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_approval_policies = ["untrusted", "on-request"]
 allowed_web_search_modes = ["cached"]
+default_permissions = ":workspace"
+allow_appshots = false
+allow_remote_control = false
+allow_managed_hooks_only = true
+
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true
 
 [features]
 browser_use = false
 computer_use = false
+hooks = true
 ```
 
 **Senior/Trusted Developers:**
 ```toml
 allowed_approval_policies = ["on-request", "never"]
-allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
+default_permissions = ":workspace"
+allow_remote_control = false
+
+[allowed_permission_profiles]
+":read-only" = true
+":workspace" = true
 
 [features]
 browser_use = true
 computer_use = false
+hooks = true
 ```
 
 **Regulated Environments:**
 ```toml
 allowed_approval_policies = ["on-request"]
-allowed_sandbox_modes = ["read-only"]
-allowed_web_search_modes = ["disabled"]
+allowed_web_search_modes = []
+default_permissions = ":read-only"
+allow_appshots = false
+allow_remote_control = false
+allow_managed_hooks_only = true
+
+[allowed_permission_profiles]
+":read-only" = true
 
 [features]
 browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
+hooks = true
 ```
+
+Use `examples/requirements-*.toml` as the deployable source of truth. Keep legacy `allowed_sandbox_modes` only while older clients remain in the fleet.
+
+### What Will Break and Safe Alternatives
+
+| Blocked operation | Risk | Safe equivalent |
+|-------------------|------|-----------------|
+| Selecting `:danger-full-access` | Full filesystem and network reach | Use `:workspace` or `:read-only`; run privileged work in a separately approved terminal |
+| Device remote control | Remote execution beyond local sandbox | Use approved remote desktop or jump-host tooling outside Codex |
+| Appshots | Secrets or regulated content captured into agent context | Share redacted screenshots through approved IT channels |
+| User or project hooks when `allow_managed_hooks_only = true` | Local bypass of enterprise audit hooks | Request a managed hook addition via change control |
+| Domains outside Strict `experimental_network` allowlist | Unapproved egress / exfiltration | Request allowlist updates with destination owner and data classification |
+
+Overlap note: Codex Desktop and Codex CLI share `requirements.toml` semantics. Deploy one managed requirements source per fleet and avoid drifting Desktop-only and CLI-only copies of the same control.
 
 ---
 
-## macOS — Managed Preferences (MDM)
+## macOS - Managed Preferences (MDM)
 
 ### Preference Domain
 
@@ -113,7 +148,7 @@ defaults read com.openai.codex requirements_toml_base64 | base64 -d
 
 ---
 
-## Windows — System-Level Files
+## Windows - System-Level Files
 
 ### Requirements File Location
 
@@ -164,7 +199,7 @@ Set-Acl -Path $requirementsPath -AclObject $acl
 
 ---
 
-## Linux — System-Level Files
+## Linux - System-Level Files
 
 ### Requirements File Location
 

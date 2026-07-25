@@ -37,3 +37,8 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: false
+
+# WHAT: Explicit MCP server allowlist for Continue agents.
+# WHY: Moderate keeps MCP empty by default; add only IT-audited servers under change control.
+# BREAKS: Missing this key hides whether MCP is governed; ad-hoc servers expand tool egress risk.
+mcpServers: []

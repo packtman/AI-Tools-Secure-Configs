@@ -33,3 +33,8 @@ contextProviders:
 
 allowAnonymousTelemetry: false
 disableIndexing: false
+
+# WHAT: Explicit MCP server list for Continue agents.
+# WHY: Baseline leaves the list empty so developers add only reviewed servers.
+# BREAKS: Removing this makes MCP policy implicit; unreviewed servers can be added silently later.
+mcpServers: []

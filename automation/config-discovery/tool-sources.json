@@ -231,14 +231,26 @@
         },
         {
           "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
             "config",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "permission profiles",
+            "requirements"
+          ]
+        },
+        {
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "watch_for": [
+            "requirements.toml",
+            "allowed_permission_profiles",
+            "experimental_network",
+            "allow_remote_control",
+            "mcp_servers"
           ]
         }
       ]
@@ -590,11 +602,11 @@
           "kind": "repository",
           "url": "https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml",
           "watch_for": [
-            "admin",
-            "organization",
-            "audit",
-            "retention",
-            "policy"
+            "hosted_tool_permissions",
+            "model_permissions",
+            "network_policy",
+            "data_retention",
+            "api_call_logging"
           ]
         }
       ]
