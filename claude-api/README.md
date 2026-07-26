@@ -58,6 +58,8 @@ Anthropic issues three key types — each with different blast-radius:
 |---------|----------|----------|--------|--------|
 | `allowed_models` | sonnet-5, haiku-4-5, opus-5 | same | sonnet-5, haiku-4-5 | Strict keeps Opus off by default |
 | `mcp_tunnels.enabled` | `true` (CA required) | `false` | `false` | Tunnels expand MCP egress |
+| `fast_mode.enabled` | `true` | `false` | `false` | Premium speed preview needs FinOps approval |
+| `rate_limit_groups.prefer_model_group_caps` | `false` | `true` | `true` | Cap expensive model families |
 | `enterprise_user_management.custom_roles_enabled` | `false` | `true` | `true` | Prefer managed + custom roles |
 | `disallow_connector_always_allow` | `false` | `true` | `true` | Block skip-approval connector grants |
 | `sso_enforced` | `false` | `true` | `true` | Enterprise identity baseline |

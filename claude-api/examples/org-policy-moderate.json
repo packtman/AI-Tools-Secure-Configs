@@ -39,7 +39,17 @@
     "require_ca_certificates": true,
     "admin_scope_required": "workspace:manage_tunnels",
     "beta_header": "mcp-tunnels-2026-06-22",
+    "deprecated_admin_beta_header": "mcp-tunnels-2026-05-19",
     "prefer_api_surface": "/v1/tunnels"
+  },
+
+  "fast_mode": {
+    "enabled": false,
+    "beta_header": "fast-mode-2026-02-01"
+  },
+
+  "rate_limit_groups": {
+    "prefer_model_group_caps": true
   },
 
   "enterprise_user_management": {

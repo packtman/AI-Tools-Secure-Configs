@@ -33,12 +33,16 @@
   },
 
   "_managed_settings": {
-    "_comment": "Deploy these in Claude Code managed settings. Replace sshHostAllowlist patterns with your approved remote hosts.",
+    "_comment": "Deploy these in Claude Code managed settings. Replace sshHostAllowlist patterns with your approved remote hosts. Shared Claude Code keys (allowManagedHooksOnly, autoMode) stay in claude-code tier files.",
     "permissions.disableBypassPermissionsMode": "disable",
+    "permissions.defaultMode": "default",
     "disableAutoMode": "disable",
     "browserExternalPageTools": "disabled",
     "disableBrowserExternalNavigation": false,
     "disableMobileSimulatorTools": true,
-    "sshHostAllowlist": ["*.devboxes.example.com"]
+    "sshHostAllowlist": ["*.devboxes.example.com"],
+    "managedMcpServers": [],
+    "allowManagedHooksOnly": false,
+    "allowManagedPermissionRulesOnly": false
   }
 }

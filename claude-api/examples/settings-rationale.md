@@ -196,4 +196,30 @@ Every organization-level security setting explained: **what it does**, **why it 
 
 **What breaks if removed:** Admins grant Owner for every delegated task, and connector tools may run without approval.
 
+---
+
+## 14. Fast Mode
+
+**What it does:** Research-preview faster output generation through the `speed` parameter and `fast-mode-2026-02-01` beta header. Premium pricing applies.
+
+**Why it matters:** Fast mode can increase spend quickly on long agentic loops. Strict and Moderate keep it off until FinOps approves the premium rate.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / enterprise | `enabled: false` | Avoid unplanned premium spend. |
+| Startups | Optional | Enable only with spend alerts. |
+
+---
+
+## 15. Rate Limit `model_group` Caps
+
+**What it does:** Admin API workspace rate-limit overrides can target a `model_group` (a family of models) instead of a single surface category.
+
+**Why it matters:** Caps on a whole model family contain cost and abuse better than relying only on global RPM limits.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / enterprise | Prefer `model_group` caps for expensive families | Contains Opus-class spend. |
+| Startups | Optional | Global spend alerts may be enough. |
+
 **Risk without allowlisting:** A leaked key can be used from anywhere in the world with no restrictions.

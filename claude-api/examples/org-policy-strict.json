@@ -39,7 +39,19 @@
     "require_ca_certificates": true,
     "admin_scope_required": "workspace:manage_tunnels",
     "beta_header": "mcp-tunnels-2026-06-22",
+    "deprecated_admin_beta_header": "mcp-tunnels-2026-05-19",
     "prefer_api_surface": "/v1/tunnels"
+  },
+
+  "fast_mode": {
+    "_comment": "Fast mode (research preview) raises output speed at premium pricing via the speed parameter and fast-mode-2026-02-01 beta header.",
+    "enabled": false,
+    "beta_header": "fast-mode-2026-02-01"
+  },
+
+  "rate_limit_groups": {
+    "_comment": "Admin API rate-limit overrides may target model_group entries (a family of models) or API-surface categories.",
+    "prefer_model_group_caps": true
   },
 
   "enterprise_user_management": {

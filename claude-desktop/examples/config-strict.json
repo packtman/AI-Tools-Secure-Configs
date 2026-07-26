@@ -15,12 +15,16 @@
   },
 
   "_managed_settings": {
-    "_comment": "Deploy these in Claude Code managed settings (same file used by the Desktop Code tab). Desktop-only keys such as sshHostAllowlist are ignored by the standalone CLI.",
+    "_comment": "Deploy these in Claude Code managed settings (same file used by the Desktop Code tab). Desktop-only keys such as sshHostAllowlist are ignored by the standalone CLI. Shared keys such as allowManagedHooksOnly, allowManagedPermissionRulesOnly, and autoMode live in claude-code/examples/managed-settings-*.json.",
     "permissions.disableBypassPermissionsMode": "disable",
+    "permissions.defaultMode": "default",
     "disableAutoMode": "disable",
     "browserExternalPageTools": "disabled",
     "disableBrowserExternalNavigation": true,
     "disableMobileSimulatorTools": true,
-    "sshHostAllowlist": []
+    "sshHostAllowlist": [],
+    "managedMcpServers": [],
+    "allowManagedHooksOnly": true,
+    "allowManagedPermissionRulesOnly": true
   }
 }
