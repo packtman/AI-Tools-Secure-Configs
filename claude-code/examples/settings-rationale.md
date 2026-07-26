@@ -100,6 +100,43 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `browserExternalPageTools` / `disableBrowserExternalNavigation`
+
+**What they do:** Control the Desktop Browser pane. `"disabled"` on `browserExternalPageTools` stops Claude from reading or acting on external pages. `disableBrowserExternalNavigation: true` blocks external navigation for users and Claude (localhost previews still work).
+
+**Why it matters:** External pages are a common prompt-injection path when Claude can browse and act.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | tools `"disabled"`, navigation `true` | Hard stop on external browsing. |
+| Standard enterprise | tools `"disabled"`, navigation `false` | Developers can open docs; Claude cannot act. |
+| Developer | unset | Allow Browser tooling for web testing. |
+
+**What breaks if misconfigured:** The string `"true"` for navigation is ignored. Removing these keys restores Claude tool use on external sites.
+
+### `disableMobileSimulatorTools`
+
+**What it does:** Blocks Claude from controlling or capturing the Desktop iOS Simulator pane.
+
+**Why it matters:** Simulator access can expose app data and screenshots to the model.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / standard enterprise | `true` | Enable only for approved mobile teams. |
+| Developer / mobile teams | `false` | Required for simulator-driven workflows. |
+
+### `sshHostAllowlist`
+
+**What it does:** Restricts Desktop SSH sessions to matching hostnames. Empty array disables SSH. Desktop-only; the CLI ignores this key. Does not restrict Bash `ssh`.
+
+**Why it matters:** Unrestricted Desktop SSH can reach production hosts from developer endpoints.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `[]` | Disable Desktop SSH. |
+| Standard enterprise | Approved patterns only | Example: `["*.devboxes.example.com"]`. |
+| Developer | unset | Prefer network controls if SSH must stay open. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

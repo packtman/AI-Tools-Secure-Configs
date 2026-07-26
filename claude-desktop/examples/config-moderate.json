@@ -27,8 +27,18 @@
     "isDesktopExtensionEnabled": false,
     "isDesktopExtensionDirectoryEnabled": false,
     "isClaudeCodeForDesktopEnabled": true,
-    "secureVmFeaturesEnabled": true,
+    "secureVmFeaturesEnabled": false,
     "disableAutoUpdates": false,
     "autoUpdaterEnforcementHours": 48
+  },
+
+  "_managed_settings": {
+    "_comment": "Deploy these in Claude Code managed settings. Replace sshHostAllowlist patterns with your approved remote hosts.",
+    "permissions.disableBypassPermissionsMode": "disable",
+    "disableAutoMode": "disable",
+    "browserExternalPageTools": "disabled",
+    "disableBrowserExternalNavigation": false,
+    "disableMobileSimulatorTools": true,
+    "sshHostAllowlist": ["*.devboxes.example.com"]
   }
 }

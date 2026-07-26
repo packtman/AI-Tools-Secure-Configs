@@ -30,5 +30,10 @@
     "secureVmFeaturesEnabled": true,
     "disableAutoUpdates": false,
     "autoUpdaterEnforcementHours": 72
+  },
+
+  "_managed_settings": {
+    "_comment": "Baseline leaves Browser and SSH unrestricted so startups can experiment. Pair with Claude Code managed-settings-baseline.json for shared Code-tab controls.",
+    "disableMobileSimulatorTools": false
   }
 }

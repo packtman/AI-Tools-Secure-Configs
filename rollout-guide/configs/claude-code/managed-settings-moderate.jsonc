@@ -173,6 +173,26 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Blocks Claude tools from reading or acting on external pages in the Desktop Browser pane.
+  // WHY (Moderate): External pages are a prompt-injection path when Claude can browse and act.
+  // BREAKS IF REMOVED: Claude can use tools against external sites in Desktop Browser.
+  "browserExternalPageTools": "disabled",
+
+  // WHAT: When true, blocks all external Browser navigation for users and Claude (localhost still works).
+  // WHY (Moderate): Keep navigation available for docs; pair with browserExternalPageTools instead.
+  // BREAKS IF SET TO STRING "true": The string form is ignored by Desktop.
+  "disableBrowserExternalNavigation": false,
+
+  // WHAT: Blocks Claude from controlling or capturing the Desktop iOS Simulator pane.
+  // WHY (Moderate): Simulator access can expose app data and screenshots; enable only for mobile pilots.
+  // BREAKS IF REMOVED: Claude can drive the iOS Simulator from Desktop.
+  "disableMobileSimulatorTools": true,
+
+  // WHAT: Restricts Desktop SSH sessions to matching host patterns. Empty array disables SSH.
+  // WHY (Moderate): Limit Desktop SSH to approved remote-dev hosts only.
+  // BREAKS IF REMOVED: Users can SSH from Desktop to any reachable host. Does not restrict Bash ssh.
+  "sshHostAllowlist": ["*.devboxes.example.com"],
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

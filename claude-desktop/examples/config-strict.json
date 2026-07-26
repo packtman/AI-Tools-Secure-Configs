@@ -12,5 +12,15 @@
     "secureVmFeaturesEnabled": false,
     "disableAutoUpdates": false,
     "autoUpdaterEnforcementHours": 24
+  },
+
+  "_managed_settings": {
+    "_comment": "Deploy these in Claude Code managed settings (same file used by the Desktop Code tab). Desktop-only keys such as sshHostAllowlist are ignored by the standalone CLI.",
+    "permissions.disableBypassPermissionsMode": "disable",
+    "disableAutoMode": "disable",
+    "browserExternalPageTools": "disabled",
+    "disableBrowserExternalNavigation": true,
+    "disableMobileSimulatorTools": true,
+    "sshHostAllowlist": []
   }
 }

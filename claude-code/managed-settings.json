@@ -118,6 +118,11 @@
 
   "autoMemoryEnabled": false,
 
+  "browserExternalPageTools": "disabled",
+  "disableBrowserExternalNavigation": false,
+  "disableMobileSimulatorTools": true,
+  "sshHostAllowlist": ["*.devboxes.example.com"],
+
   "claudeMd": "",
 
   "sandbox": {

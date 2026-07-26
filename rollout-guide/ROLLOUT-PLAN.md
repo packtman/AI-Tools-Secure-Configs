@@ -233,6 +233,10 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `browserExternalPageTools` | unset | `"disabled"` | `"disabled"` | Enterprise tiers block Claude tools on external Desktop Browser pages |
+| `disableBrowserExternalNavigation` | unset | `false` | `true` | Strict hard-stops external Browser navigation; Moderate keeps docs browsing |
+| `disableMobileSimulatorTools` | `false` | `true` | `true` | Enterprise tiers block Claude control of the iOS Simulator pane |
+| `sshHostAllowlist` | unset | approved host patterns | `[]` | Moderate limits Desktop SSH; Strict disables it |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -584,6 +588,9 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Desktop Browser tools on external sites | Prompt injection from untrusted pages can cause data exfiltration or unsafe actions | Open docs yourself in a normal browser, or request an exception that leaves navigation on but keeps `browserExternalPageTools: "disabled"` | Claude Desktop / Claude Code |
+| Desktop SSH to arbitrary hosts | Desktop can open SSH sessions outside approved remote-dev hosts | Use approved hosts in `sshHostAllowlist`, or use your org's existing SSH jump-host workflow outside Desktop | Claude Desktop |
+| Desktop iOS Simulator control | Model access to device state and screenshots | Run simulator interactions yourself, or request a mobile-team exception that sets `disableMobileSimulatorTools: false` | Claude Desktop |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +604,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `browserExternalPageTools: "disabled"` | Developer needs Claude to click through a staging website in Desktop Browser | Prefer Playwright or approved test tooling outside Desktop. If required, grant a time-boxed exception and keep `disableBrowserExternalNavigation: false`. |
+| `sshHostAllowlist` friction | Developer needs Desktop SSH to a new host pattern | Add the pattern through the exception process after network/security review. Do not unset the allowlist org-wide. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

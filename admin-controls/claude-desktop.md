@@ -91,6 +91,19 @@ These are deployed via MDM or the admin console for Claude Desktop:
 | `disableAutoUpdates` | Boolean | Disable automatic updates |
 | `autoUpdaterEnforcementHours` | Integer | Hours before force-restart for pending update (1–72) |
 
+### Desktop managed settings (Code tab)
+
+Deploy through Claude Code managed settings. Official reference: [Desktop enterprise configuration](https://code.claude.com/docs/en/desktop.md#enterprise-configuration).
+
+| Key | Type | Effect |
+|-----|------|--------|
+| `browserExternalPageTools` | String | Set `"disabled"` to block Claude tools on external Browser pages |
+| `disableBrowserExternalNavigation` | Boolean | `true` blocks all external Browser navigation (JSON boolean only) |
+| `disableMobileSimulatorTools` | Boolean | `true` blocks Claude control of the iOS Simulator pane |
+| `sshHostAllowlist` | Array | Approved SSH host patterns; `[]` disables Desktop SSH |
+| `sshConfigs` | Array | Optional IT-preconfigured SSH connections shown as managed |
+| `managedMcpServers` | Array | 3P Desktop only: push MCP servers with optional `toolPolicy` |
+
 ### Organization Capabilities (Admin Console)
 
 Location: `claude.ai → Admin Settings → Capabilities`
