@@ -98,6 +98,23 @@ Machine-wide policies override per-user policies.
 
 ---
 
+## Desktop managed settings (Code tab)
+
+Deploy these through Claude Code managed settings (admin console or managed settings file). They apply to Claude Code sessions inside Desktop. Desktop-only keys such as `sshHostAllowlist` are ignored by the standalone CLI.
+
+| Key | Strict | Moderate | Baseline | Notes |
+|-----|--------|----------|----------|-------|
+| `browserExternalPageTools` | `"disabled"` | `"disabled"` | unset | Blocks Claude tools on external Browser pages |
+| `disableBrowserExternalNavigation` | `true` | `false` | unset | Must be JSON boolean `true`, not the string `"true"` |
+| `disableMobileSimulatorTools` | `true` | `true` | `false` | Blocks Claude control of the iOS Simulator pane |
+| `sshHostAllowlist` | `[]` | approved host patterns | unset | Empty array disables Desktop SSH sessions |
+| `permissions.disableBypassPermissionsMode` | `"disable"` | `"disable"` | unset | Same control as Claude Code CLI |
+| `disableAutoMode` | `"disable"` | `"disable"` | `"allow"` | Same control as Claude Code CLI |
+
+Also disable **Code in the desktop**, **Remote Control**, and **Bypass permissions mode** from the admin console at `claude.ai/admin-settings/claude-code` when those features are not approved.
+
+---
+
 ## Security Recommendations
 
 ### For maximum lockdown (regulated environments)
@@ -110,6 +127,9 @@ Machine-wide policies override per-user policies.
 6. Deploy a pre-approved `claude_desktop_config.json` via MDM with only vetted MCP servers.
 7. Set the config file to read-only to prevent user modification.
 8. Use server-managed settings from the admin console for highest-priority enforcement.
+9. Set `disableBrowserExternalNavigation = true` and `browserExternalPageTools = "disabled"`.
+10. Set `sshHostAllowlist = []` to disable Desktop SSH sessions.
+11. Set `disableMobileSimulatorTools = true`.
 
 ### For development environments
 
@@ -118,5 +138,7 @@ Machine-wide policies override per-user policies.
 3. Set `secureVmFeaturesEnabled = false` until Cowork is vetted.
 4. Set `autoUpdaterEnforcementHours = 48` — allow reasonable update window.
 5. Provide a sanctioned `claude_desktop_config.json` with pre-approved servers.
+6. Set `browserExternalPageTools = "disabled"` while leaving external navigation available for docs.
+7. Set `sshHostAllowlist` to approved remote-dev host patterns only.
 6. Instruct developers to request security review for additional MCP servers.
 7. Monitor tool permission grants through periodic audits.

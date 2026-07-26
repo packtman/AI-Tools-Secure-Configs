@@ -31,7 +31,34 @@
     "notification_emails": ["finops@acme.com"]
   },
 
-  "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"],
+  "allowed_models": ["claude-sonnet-5", "claude-haiku-4-5", "claude-opus-5"],
+
+  "mcp_tunnels": {
+    "_comment": "Keep tunnels off by default. Enable per workspace only after CA certificates are installed and manage_tunnels is limited to admins.",
+    "enabled": false,
+    "require_ca_certificates": true,
+    "admin_scope_required": "workspace:manage_tunnels",
+    "beta_header": "mcp-tunnels-2026-06-22",
+    "deprecated_admin_beta_header": "mcp-tunnels-2026-05-19",
+    "prefer_api_surface": "/v1/tunnels"
+  },
+
+  "fast_mode": {
+    "enabled": false,
+    "beta_header": "fast-mode-2026-02-01"
+  },
+
+  "rate_limit_groups": {
+    "prefer_model_group_caps": true
+  },
+
+  "enterprise_user_management": {
+    "custom_roles_enabled": true,
+    "prefer_managed_role": true,
+    "disallow_connector_always_allow": true,
+    "beta_header": "ce-user-management-2026-07-13",
+    "audit_scope": "read:org_audit"
+  },
 
   "data_controls": {
     "zero_data_retention": true,

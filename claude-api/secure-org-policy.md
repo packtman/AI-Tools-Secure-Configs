@@ -11,6 +11,8 @@ Use this document as a checklist and reference when hardening your Anthropic org
 - [ ] **MFA** — Enforce multi-factor authentication for all console users.
 - [ ] **Role assignment** — Default every new member to *Workspace User*; promote only with documented approval.
 - [ ] **Admin minimization** — Limit Organization Admin count to ≤ 3 named individuals.
+- [ ] **Custom roles (Enterprise)**: Prefer the `managed` role plus custom roles over Owner for delegated access. Group/custom-role Admin API calls need `anthropic-beta: ce-user-management-2026-07-13`.
+- [ ] **Connector tool grants**: Prefer `use` over `always_allow` for connector tool permissions.
 
 ## 2. Workspace Architecture
 
@@ -44,6 +46,8 @@ Use this document as a checklist and reference when hardening your Anthropic org
 - [ ] **TLS enforcement** — All API calls use HTTPS (default; never override).
 - [ ] **IP allowlisting** — If supported, restrict API access to your corporate egress IPs.
 - [ ] **Proxy configuration** — Route API traffic through your corporate proxy for inspection.
+- [ ] **MCP tunnels**: Keep disabled on Moderate/Strict until reviewed. Prefer `/v1/tunnels` with `mcp-tunnels-2026-06-22`, require CA certificates before MCP traffic, and limit `workspace:manage_tunnels`.
+- [ ] **Allowed models**: Pin current aliases (`claude-sonnet-5`, `claude-haiku-4-5`, optionally `claude-opus-5`). Remove retired snapshot IDs.
 
 ## 7. Monitoring & Incident Response
 

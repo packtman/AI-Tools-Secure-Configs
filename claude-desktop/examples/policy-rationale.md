@@ -101,6 +101,72 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## Desktop managed settings (Code tab)
+
+These keys are deployed through Claude Code managed settings (MDM or admin console), not through `claude_desktop_config.json`. The Desktop Code tab honors them. The standalone Claude Code CLI ignores Desktop-only keys such as `sshHostAllowlist`.
+
+### `browserExternalPageTools`
+
+**What it does:** When set to `"disabled"`, Claude cannot use tools to read or act on external pages in the Desktop Browser pane.
+
+**Why it matters:** External pages can contain prompt-injection content that tricks Claude into exfiltrating secrets or performing unsafe actions.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"disabled"` | Block Claude tool use on external sites. |
+| Standard enterprise | `"disabled"` | Users may still navigate; Claude cannot act. |
+| Developer teams | unset | Allow Browser tooling for web app testing. |
+
+**What breaks if removed:** Claude can read and act on external sites in the Browser pane, increasing prompt-injection risk.
+
+### `disableBrowserExternalNavigation`
+
+**What it does:** When set to the JSON boolean `true`, neither users nor Claude can navigate to external sites in the Browser pane. Localhost previews still work. The string `"true"` is ignored.
+
+**Why it matters:** Some orgs need a hard stop on any external browsing inside Desktop, even when Browser tools are disabled.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Eliminate external browsing surface. |
+| Standard enterprise | `false` | Prefer `browserExternalPageTools: "disabled"` so developers can open docs. |
+| Developer teams | unset / `false` | Keep external browsing for debugging. |
+
+**What breaks if misconfigured:** Setting the string `"true"` does nothing. Removing the key re-enables external navigation.
+
+### `disableMobileSimulatorTools`
+
+**What it does:** When `true`, Claude cannot control or capture the iOS Simulator pane. Users can still interact with the simulator themselves.
+
+**Why it matters:** Simulator control can expose app data, screenshots, and device state to the model.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Block model access to device state. |
+| Standard enterprise | `true` | Enable only for approved mobile teams via exception. |
+| Developer teams | `false` | Needed for iOS build and test workflows. |
+
+**What breaks if removed:** Claude can drive the iOS Simulator and capture device content.
+
+### `sshHostAllowlist`
+
+**What it does:** Restricts Desktop SSH sessions to hosts whose resolved hostname matches one of the patterns. An empty array disables SSH sessions. Managed settings only.
+
+**Why it matters:** Unrestricted SSH from Desktop can reach any host the endpoint can resolve, including production jump hosts.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `[]` | Disable Desktop SSH entirely. |
+| Standard enterprise | Approved host patterns only | Example: `["*.devboxes.example.com"]`. |
+| Developer teams | unset | Allow ad-hoc SSH; prefer pairing with network controls. |
+
+**What breaks if removed:** Users can open SSH sessions to any reachable host from Desktop. Pair with network or zero-trust controls for a hard boundary. This key does not restrict Bash `ssh` commands.
+
+### Overlap with Claude Code
+
+If you also deploy `claude-code/` managed settings, put Browser, Simulator, and SSH keys in that same managed file. Do not maintain a second conflicting copy only inside `claude_desktop_config.json` (Desktop ignores managed keys there).
+
+---
+
 ## Summary: Recommended Profiles
 
 ### Maximum Lockdown (Regulated)
@@ -113,7 +179,11 @@ Every setting below explains **what it does**, **why you should care**, and **th
   "isClaudeCodeForDesktopEnabled": false,
   "secureVmFeaturesEnabled": false,
   "disableAutoUpdates": false,
-  "autoUpdaterEnforcementHours": 24
+  "autoUpdaterEnforcementHours": 24,
+  "browserExternalPageTools": "disabled",
+  "disableBrowserExternalNavigation": true,
+  "disableMobileSimulatorTools": true,
+  "sshHostAllowlist": []
 }
 ```
 
@@ -127,7 +197,11 @@ Every setting below explains **what it does**, **why you should care**, and **th
   "isClaudeCodeForDesktopEnabled": true,
   "secureVmFeaturesEnabled": false,
   "disableAutoUpdates": false,
-  "autoUpdaterEnforcementHours": 48
+  "autoUpdaterEnforcementHours": 48,
+  "browserExternalPageTools": "disabled",
+  "disableBrowserExternalNavigation": false,
+  "disableMobileSimulatorTools": true,
+  "sshHostAllowlist": ["*.devboxes.example.com"]
 }
 ```
 
@@ -141,6 +215,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
   "isClaudeCodeForDesktopEnabled": true,
   "secureVmFeaturesEnabled": true,
   "disableAutoUpdates": false,
-  "autoUpdaterEnforcementHours": 72
+  "autoUpdaterEnforcementHours": 72,
+  "disableMobileSimulatorTools": false
 }
 ```

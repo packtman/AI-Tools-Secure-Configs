@@ -167,6 +167,64 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `browserExternalPageTools`
+
+**Value:** `"disabled"`
+
+**What:** Blocks Claude tools from reading or acting on external pages in the Desktop Browser pane. Users can still navigate.
+
+**Why (Moderate tier):** External pages are a common prompt-injection path when Claude can browse and act.
+
+**What breaks if removed:** Claude can use tools against external sites in Desktop Browser.
+
+**Strict difference:** Also `"disabled"`, and Strict pairs it with `disableBrowserExternalNavigation: true`.
+
+**Baseline difference:** Unset, so Browser tooling remains available for local web testing.
+
+---
+
+## `disableBrowserExternalNavigation`
+
+**Value:** `false`
+
+**What:** When `true`, blocks all external Browser navigation for users and Claude. Localhost previews still work. Must be the JSON boolean `true`.
+
+**Why (Moderate tier):** Keep docs browsing available; rely on `browserExternalPageTools` instead.
+
+**What breaks if set to the string `"true"`:** Desktop ignores the string form and navigation stays enabled.
+
+**Strict difference:** `true`, hard-stopping external browsing.
+
+---
+
+## `disableMobileSimulatorTools`
+
+**Value:** `true`
+
+**What:** Blocks Claude from controlling or capturing the Desktop iOS Simulator pane.
+
+**Why (Moderate tier):** Simulator access can expose app data and screenshots. Enable only for approved mobile pilots.
+
+**What breaks if removed:** Claude can drive the iOS Simulator from Desktop.
+
+---
+
+## `sshHostAllowlist`
+
+**Value:** `["*.devboxes.example.com"]` (replace with your approved hosts)
+
+**What:** Restricts Desktop SSH sessions to matching hostnames. Empty array disables SSH. Desktop-only; ignored by the standalone CLI. Does not restrict Bash `ssh`.
+
+**Why (Moderate tier):** Limit Desktop SSH to approved remote-dev hosts.
+
+**What breaks if removed:** Users can open Desktop SSH sessions to any reachable host.
+
+**Strict difference:** `[]` disables Desktop SSH entirely.
+
+**Baseline difference:** Unset (unrestricted Desktop SSH).
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

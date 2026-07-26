@@ -48,6 +48,17 @@ Changes require a full restart — no hot-reload.
 | `disableAutoUpdates` | Boolean | `false` | Disable automatic updates |
 | `autoUpdaterEnforcementHours` | Integer | `72` | Hours before force-restart for pending update (1-72) |
 
+### Desktop managed settings (Code tab)
+
+Deploy via Claude Code managed settings. See `examples/config-*.json` `_managed_settings` blocks and `../claude-code/examples/managed-settings-*.json`.
+
+| Key | Strict | Moderate | Baseline | Description |
+|-----|--------|----------|----------|-------------|
+| `browserExternalPageTools` | `"disabled"` | `"disabled"` | unset | Block Claude tools on external Browser pages |
+| `disableBrowserExternalNavigation` | `true` | `false` | unset | Block all external Browser navigation |
+| `disableMobileSimulatorTools` | `true` | `true` | `false` | Block Claude control of iOS Simulator |
+| `sshHostAllowlist` | `[]` | approved hosts | unset | Restrict or disable Desktop SSH sessions |
+
 ### Policy Deployment
 
 | Platform | Mechanism |
@@ -86,6 +97,8 @@ Each MCP server entry in `claude_desktop_config.json` grants Claude the ability 
 - [ ] Set `isLocalDevMcpEnabled: false` if MCP is not needed.
 - [ ] Set `isDesktopExtensionEnabled: false` if extensions are not needed.
 - [ ] Configure update enforcement with `autoUpdaterEnforcementHours`.
+- [ ] Deploy Desktop managed settings for Browser, Simulator, and SSH controls.
+- [ ] Align with Claude Code managed settings so Code-tab and CLI policies do not diverge.
 
 ### Phase 2: MCP Governance
 - [ ] Audit all MCP servers — review source and permissions.
@@ -97,3 +110,4 @@ Each MCP server entry in `claude_desktop_config.json` grants Claude the ability 
 - [ ] Monitor Claude Desktop tool permission grants.
 - [ ] Review and revoke overly broad tool permissions.
 - [ ] Audit installed extensions periodically.
+- [ ] Alert on unexpected Desktop SSH session targets outside `sshHostAllowlist`.

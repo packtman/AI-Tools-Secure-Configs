@@ -52,13 +52,27 @@ Anthropic issues three key types — each with different blast-radius:
 - Stream activity feeds to your SIEM via the `/v1/compliance/activity` endpoint.
 - Treat Compliance Access Keys like production database credentials — store in a secrets manager, never in source control.
 
+## Tier Delta (selected controls)
+
+| Setting | Baseline | Moderate | Strict | Reason |
+|---------|----------|----------|--------|--------|
+| `allowed_models` | sonnet-5, haiku-4-5, opus-5 | same | sonnet-5, haiku-4-5 | Strict keeps Opus off by default |
+| `mcp_tunnels.enabled` | `true` (CA required) | `false` | `false` | Tunnels expand MCP egress |
+| `fast_mode.enabled` | `true` | `false` | `false` | Premium speed preview needs FinOps approval |
+| `rate_limit_groups.prefer_model_group_caps` | `false` | `true` | `true` | Cap expensive model families |
+| `enterprise_user_management.custom_roles_enabled` | `false` | `true` | `true` | Prefer managed + custom roles |
+| `disallow_connector_always_allow` | `false` | `true` | `true` | Block skip-approval connector grants |
+| `sso_enforced` | `false` | `true` | `true` | Enterprise identity baseline |
+
 ## Deployment Checklist
 
 1. Enforce SSO via your identity provider (SAML/OIDC) for all console access.
 2. Enable SCIM provisioning to automate user lifecycle.
 3. Create workspaces per environment / team.
-4. Assign minimal roles to each member.
+4. Assign minimal roles to each member. Prefer custom roles and `managed` over Owner.
 5. Set rate limits and spend notifications on every workspace.
 6. Rotate API keys on a defined schedule (90 days recommended).
 7. Enable Compliance API and forward activity logs to your SIEM.
 8. Disable unused workspaces promptly.
+9. Keep MCP tunnels off until CA pinning and `workspace:manage_tunnels` scoping are ready.
+10. Update allowed model aliases after each Anthropic model retirement notice.

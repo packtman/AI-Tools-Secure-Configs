@@ -31,7 +31,37 @@
     "notification_emails": ["security@acme.com", "finops@acme.com"]
   },
 
-  "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414"],
+  "allowed_models": ["claude-sonnet-5", "claude-haiku-4-5"],
+
+  "mcp_tunnels": {
+    "_comment": "MCP tunnels (research preview) allocate Anthropic hostnames that route MCP traffic. Disable in Strict until CA pinning, scope review, and SIEM alerts are ready.",
+    "enabled": false,
+    "require_ca_certificates": true,
+    "admin_scope_required": "workspace:manage_tunnels",
+    "beta_header": "mcp-tunnels-2026-06-22",
+    "deprecated_admin_beta_header": "mcp-tunnels-2026-05-19",
+    "prefer_api_surface": "/v1/tunnels"
+  },
+
+  "fast_mode": {
+    "_comment": "Fast mode (research preview) raises output speed at premium pricing via the speed parameter and fast-mode-2026-02-01 beta header.",
+    "enabled": false,
+    "beta_header": "fast-mode-2026-02-01"
+  },
+
+  "rate_limit_groups": {
+    "_comment": "Admin API rate-limit overrides may target model_group entries (a family of models) or API-surface categories.",
+    "prefer_model_group_caps": true
+  },
+
+  "enterprise_user_management": {
+    "_comment": "Claude Enterprise Admin API user management. Prefer managed + custom roles over Owner for delegated access. Group/custom-role calls need the beta header.",
+    "custom_roles_enabled": true,
+    "prefer_managed_role": true,
+    "disallow_connector_always_allow": true,
+    "beta_header": "ce-user-management-2026-07-13",
+    "audit_scope": "read:org_audit"
+  },
 
   "data_controls": {
     "zero_data_retention": true,

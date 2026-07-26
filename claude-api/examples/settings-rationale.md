@@ -149,4 +149,77 @@ Every organization-level security setting explained: **what it does**, **why it 
 | Proxy routing | Gives your security team visibility into all API traffic. |
 | TLS enforcement | Default; never override. All data in transit is encrypted. |
 
+---
+
+## 11. Allowed Models (Current Catalog)
+
+**What it does:** Limits which Claude model IDs workspaces and API keys may call.
+
+**Why it matters:** Retired model IDs such as `claude-sonnet-4-20250514` and `claude-opus-4-20250514` return errors after retirement. Pinning current aliases avoids silent breakage and keeps high-cost models off by default.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `claude-sonnet-5`, `claude-haiku-4-5` | Enough capability without highest-cost Opus by default. |
+| Standard enterprise | Add `claude-opus-5` | Allow Opus for approved agentic work. |
+| Startups | Same as enterprise | Prefer aliases over dated snapshot IDs. |
+
+**What breaks if removed:** Teams keep calling retired IDs, or spend spikes on unrestricted Opus/Fable access.
+
+---
+
+## 12. MCP Tunnels
+
+**What it does:** The Tunnels API (`/v1/tunnels`, beta header `mcp-tunnels-2026-06-22`) allocates Anthropic hostnames that route MCP server traffic. New tunnels reject MCP traffic until at least one CA certificate is added. Scope: `workspace:manage_tunnels`.
+
+**Why it matters:** Tunnels expand the MCP network path. Without CA pinning and admin-only creation, they can become an unmonitored egress channel for tool traffic.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `enabled: false` | No tunnel surface until reviewed. |
+| Standard enterprise | `enabled: false` by default | Enable per workspace with CA certs and SIEM alerts. |
+| Startups | `enabled: true` with CA required | Allow experiments without skipping certificate pinning. |
+
+**What breaks if misconfigured:** Creating tunnels without CA certs looks successful but MCP traffic is rejected. Using the old `/v1/organizations/tunnels` Admin API surface during migration may confuse automation.
+
+---
+
+## 13. Enterprise User Management and Custom Roles
+
+**What it does:** Claude Enterprise Admin API endpoints manage members, invites, groups, and custom roles. Group and custom-role requests require `anthropic-beta: ce-user-management-2026-07-13`. Members can be assigned the `managed` role so permissions come from custom roles attached to groups. Connector tool grants support `use` or `always_allow`.
+
+**Why it matters:** Custom roles reduce overuse of Owner. `always_allow` on connector tools skips per-call approval and widens blast radius if a connector is compromised.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / enterprise | Enable custom roles; prefer `managed`; disallow connector `always_allow` | Least privilege with auditable role catalogs. |
+| Startups | Optional | Built-in roles may be enough below ~50 users. |
+
+**What breaks if removed:** Admins grant Owner for every delegated task, and connector tools may run without approval.
+
+---
+
+## 14. Fast Mode
+
+**What it does:** Research-preview faster output generation through the `speed` parameter and `fast-mode-2026-02-01` beta header. Premium pricing applies.
+
+**Why it matters:** Fast mode can increase spend quickly on long agentic loops. Strict and Moderate keep it off until FinOps approves the premium rate.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / enterprise | `enabled: false` | Avoid unplanned premium spend. |
+| Startups | Optional | Enable only with spend alerts. |
+
+---
+
+## 15. Rate Limit `model_group` Caps
+
+**What it does:** Admin API workspace rate-limit overrides can target a `model_group` (a family of models) instead of a single surface category.
+
+**Why it matters:** Caps on a whole model family contain cost and abuse better than relying only on global RPM limits.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / enterprise | Prefer `model_group` caps for expensive families | Contains Opus-class spend. |
+| Startups | Optional | Global spend alerts may be enough. |
+
 **Risk without allowlisting:** A leaked key can be used from anywhere in the world with no restrictions.
