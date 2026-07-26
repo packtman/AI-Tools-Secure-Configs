@@ -6,7 +6,12 @@
     "name": "acme-corp",
     "sso_enforced": true,
     "scim_enabled": true,
-    "max_org_admins": 3
+    "max_org_admins": 3,
+    "enterprise_user_management": {
+      "custom_roles_enabled": true,
+      "prefer_managed_role": true,
+      "beta_header": "ce-user-management-2026-07-13"
+    }
   },
 
   "workspaces": [
@@ -23,9 +28,12 @@
           "name": "ml-inference-service",
           "scope": "model_calls_only",
           "rotation_days": 90,
-          "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414"]
+          "allowed_models": ["claude-sonnet-5", "claude-haiku-4-5"]
         }
-      ]
+      ],
+      "mcp_tunnels": {
+        "enabled": false
+      }
     },
     {
       "name": "ml-team-staging",
@@ -41,9 +49,14 @@
           "name": "staging-test-harness",
           "scope": "model_calls_only",
           "rotation_days": 90,
-          "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"]
+          "allowed_models": ["claude-sonnet-5", "claude-haiku-4-5", "claude-opus-5"]
         }
-      ]
+      ],
+      "mcp_tunnels": {
+        "enabled": false,
+        "require_ca_certificates": true,
+        "admin_scope_required": "workspace:manage_tunnels"
+      }
     },
     {
       "name": "sandbox",
@@ -56,9 +69,13 @@
           "name": "sandbox-exploration",
           "scope": "model_calls_only",
           "rotation_days": 30,
-          "allowed_models": ["claude-haiku-4-20250414"]
+          "allowed_models": ["claude-haiku-4-5"]
         }
-      ]
+      ],
+      "mcp_tunnels": {
+        "enabled": true,
+        "require_ca_certificates": true
+      }
     }
   ]
 }

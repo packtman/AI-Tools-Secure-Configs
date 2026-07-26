@@ -28,7 +28,24 @@
     "notification_emails": ["billing@my-org.com"]
   },
 
-  "allowed_models": ["claude-sonnet-4-20250514", "claude-haiku-4-20250414", "claude-opus-4-20250514"],
+  "allowed_models": ["claude-sonnet-5", "claude-haiku-4-5", "claude-opus-5"],
+
+  "mcp_tunnels": {
+    "_comment": "Baseline allows tunnel experiments but still requires CA certificates before MCP traffic is accepted.",
+    "enabled": true,
+    "require_ca_certificates": true,
+    "admin_scope_required": "workspace:manage_tunnels",
+    "beta_header": "mcp-tunnels-2026-06-22",
+    "prefer_api_surface": "/v1/tunnels"
+  },
+
+  "enterprise_user_management": {
+    "custom_roles_enabled": false,
+    "prefer_managed_role": false,
+    "disallow_connector_always_allow": false,
+    "beta_header": "ce-user-management-2026-07-13",
+    "audit_scope": "read:org_audit"
+  },
 
   "data_controls": {
     "zero_data_retention": false,
