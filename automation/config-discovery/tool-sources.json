@@ -530,27 +530,29 @@
       },
       "sources": [
         {
-          "name": "Claude Desktop MCP documentation",
+          "name": "Claude Desktop documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+          "url": "https://code.claude.com/docs/en/desktop.md",
           "watch_for": [
-            "Claude Desktop",
-            "MCP",
-            "server",
-            "configuration",
-            "allowlist"
+            "enterprise configuration",
+            "sshHostAllowlist",
+            "browserExternalPageTools",
+            "disableBrowserExternalNavigation",
+            "disableMobileSimulatorTools",
+            "managed settings",
+            "MDM"
           ]
         },
         {
-          "name": "Claude Desktop support documentation",
+          "name": "Claude Desktop local MCP support",
           "kind": "docs",
-          "url": "https://support.anthropic.com/en/",
+          "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
           "watch_for": [
-            "Claude Desktop",
-            "settings",
-            "enterprise",
-            "admin",
-            "data"
+            "desktop extensions",
+            "isDesktopExtensionEnabled",
+            "isLocalDevMcpEnabled",
+            "enterprise policy",
+            "MCP"
           ]
         }
       ]
@@ -626,7 +628,10 @@
             "role",
             "API key",
             "rate limit",
-            "admin"
+            "admin",
+            "rbac_role",
+            "always_allow",
+            "tunnels"
           ]
         },
         {
@@ -638,7 +643,10 @@
             "workspace",
             "key",
             "audit",
-            "security"
+            "security",
+            "mcp-tunnels",
+            "user-management",
+            "custom roles"
           ]
         }
       ]
