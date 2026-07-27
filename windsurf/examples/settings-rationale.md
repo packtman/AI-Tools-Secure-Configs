@@ -1,4 +1,4 @@
-# Windsurf — Enterprise Security Settings Rationale
+# Windsurf, Enterprise Security Settings Rationale
 
 Every setting below explains **what it controls**, **why it matters**, the **recommended value**, and the **risk of misconfiguration**. An admin reading this should understand the reasoning behind each recommendation, not just the value to set.
 
@@ -41,19 +41,19 @@ If SSO is configured but not **enforced**, users can create local accounts that 
 | New hire | Admin manually creates Windsurf account, assigns role, adds to team | User auto-provisioned with correct role when added to IdP group |
 | Role change | Admin must remember to update Windsurf role separately | Role updates automatically when IdP group membership changes |
 | Termination | Admin must manually deactivate Windsurf account (often forgotten) | Account deactivated within minutes of IdP disable |
-| License tracking | Manual headcount reconciliation | Automatic — only active IdP users consume licenses |
+| License tracking | Manual headcount reconciliation | Automatic, only active IdP users consume licenses |
 
 ### Misconfiguration Risk
 
-Without SCIM, orphaned accounts accumulate. A typical enterprise discovers 15–30% of SaaS accounts belong to former employees during annual access reviews. Each orphaned account is a credential stuffing target and a compliance violation.
+Without SCIM, orphaned accounts accumulate. A typical enterprise discovers 15-30% of SaaS accounts belong to former employees during annual access reviews. Each orphaned account is a credential stuffing target and a compliance violation.
 
 ---
 
-## 3. RBAC Roles — Least Privilege
+## 3. RBAC Roles, Least Privilege
 
 | Role | What it grants | Who should have it | Why |
 |------|---------------|-------------------|-----|
-| **Admin** | Full platform control: SSO config, SCIM, service keys, role management, indexing, billing | 2–3 platform admins | Admin can disable SSO, create unrestricted service keys, or change indexing settings. Limit to break-glass scenarios and designated platform owners. |
+| **Admin** | Full platform control: SSO config, SCIM, service keys, role management, indexing, billing | 2-3 platform admins | Admin can disable SSO, create unrestricted service keys, or change indexing settings. Limit to break-glass scenarios and designated platform owners. |
 | **User** | Standard IDE access, Cascade AI, code completion, file editing | All developers | Sufficient for day-to-day development. Cannot modify platform settings or view other users' analytics. |
 | **Custom roles** | Scoped permissions (e.g., analytics read-only, team management) | Security auditors, team leads, compliance officers | Avoids granting full Admin to users who need only a subset of capabilities. |
 
@@ -75,17 +75,19 @@ Granting Admin to all team leads (a common shortcut) means any team lead can rec
 
 | Policy | What it controls | Recommended value | Why | Misconfiguration risk |
 |--------|-----------------|-------------------|-----|----------------------|
-| `AllowedExtensions` | Allowlist of permitted VS Code extensions | Explicit allowlist of vetted extensions | Extensions execute arbitrary code in the IDE process. An unvetted extension can read all open files, intercept keystrokes, or exfiltrate source code to an external server. | An empty allowlist blocks all extensions (breaks workflows). No allowlist (unrestricted) allows any extension including malicious ones. |
-| `UpdateMode` | How Windsurf receives updates (`auto`, `manual`, `none`) | `manual` for enterprise; `auto` for developer teams | `manual` lets IT test updates before deployment. `auto` ensures timely security patches but may introduce breaking changes. | `none` freezes the version permanently — missed security patches accumulate. `auto` in regulated environments may deploy untested features. |
+| `AllowedExtensions` (worksheet arrays in `enterprise-policy-*.json`) | Human-readable extension ID allowlist for IT review | Curated IDs for Baseline/Moderate; empty for Strict | Helps admins map approved extensions to publishers before MDM encoding. | Treating this array as the MDM payload is wrong: device policy expects a publisher JSON string. |
+| `MdmPolicies.AllowedExtensions` | MDM publisher allowlist JSON string | Broad publishers (Baseline), curated (Moderate), `{}` (Strict) | Devin Desktop MDM reads publisher maps such as `{"ms-python": true}`. Extensions execute arbitrary code in the IDE process. | Malformed JSON string is ignored (check Window Log). Empty map blocks all extensions and breaks workflows that need formatters/linters. |
+| `UpdateMode` | How Devin Desktop receives updates (`default`, `manual`, `none`) | `manual` for enterprise; `default` for Baseline | `manual` lets IT test updates before deployment. | `none` freezes the version permanently (missed security patches accumulate). |
+| `EnableTelemetry` / `EnableFeedback` | MDM booleans for product telemetry and feedback | `false` Moderate/Strict; Baseline may allow | Reduces organizational metadata leaving the network. | Leaving telemetry on in regulated orgs can create NDA or data-export findings. |
 | `WorkspaceTrustEnabled` | Whether untrusted workspaces trigger restricted mode | `true` | Prevents malicious repositories from automatically executing tasks, running extensions, or triggering Cascade on open. | If `false`, cloning a repository with a malicious `.windsurf/` configuration automatically executes attacker-controlled hooks and extensions. |
 | `TelemetryLevel` | What usage data is sent to Windsurf | `off` for enterprise | Telemetry may include file paths, project names, and usage patterns that reveal organizational structure and technology stack. | If set to `full`, file paths and project metadata are transmitted externally, potentially violating NDAs or data classification policies. |
 | `blockExternalExtensions` | Whether extensions from non-marketplace sources are blocked | `true` | Side-loaded extensions bypass marketplace review and malware scanning. | If `false`, users can install `.vsix` files from any source, including phishing emails. |
-| `enforceProxyStrictSSL` | Whether TLS certificate validation is enforced for proxy connections | `true` | Prevents MITM attacks on proxy connections. Some corporate proxies use self-signed certificates — add the CA to the trust store instead of disabling validation. | If `false`, any network intermediary can intercept and modify traffic between Windsurf and its APIs. |
-| `disableUntrustedWorkspaces` | Whether to block opening untrusted workspace folders entirely | `true` for regulated environments | More restrictive than workspace trust — completely prevents opening unvetted repositories. | If `true` in developer environments, it may block legitimate workflows (e.g., reviewing external PRs). Balance with workspace trust. |
+| `enforceProxyStrictSSL` | Whether TLS certificate validation is enforced for proxy connections | `true` | Prevents MITM attacks on proxy connections. Some corporate proxies use self-signed certificates, add the CA to the trust store instead of disabling validation. | If `false`, any network intermediary can intercept and modify traffic between Windsurf and its APIs. |
+| `disableUntrustedWorkspaces` | Whether to block opening untrusted workspace folders entirely | `true` for regulated environments | More restrictive than workspace trust, completely prevents opening unvetted repositories. | If `true` in developer environments, it may block legitimate workflows (e.g., reviewing external PRs). Balance with workspace trust. |
 
 ---
 
-## 5. Cascade Hooks — Governance Enforcement
+## 5. Cascade Hooks, Governance Enforcement
 
 | Hook type | Timing | Can block? | Primary use case |
 |-----------|--------|------------|-----------------|
@@ -96,7 +98,7 @@ Granting Admin to all team leads (a common shortcut) means any team lead can rec
 
 | Reason | Explanation |
 |--------|------------|
-| Preventive control | Pre-hooks can block actions before they occur — scanning for secrets in generated code, preventing modification of sensitive paths (`.env`, `*.pem`, `.ssh/`), or enforcing naming conventions. |
+| Preventive control | Pre-hooks can block actions before they occur, scanning for secrets in generated code, preventing modification of sensitive paths (`.env`, `*.pem`, `.ssh/`), or enforcing naming conventions. |
 | Detective control | Post-hooks log every Cascade action with timestamp, user, workspace, and action type. This creates an audit trail for compliance and incident investigation. |
 | Separation of duties | Hook scripts are managed by security/platform teams and deployed to a read-only directory. Developers cannot modify or bypass the enforcement logic. |
 | Custom policy | Hooks execute arbitrary shell commands, enabling integration with existing security tools (secret scanners, SAST, policy engines). |
@@ -304,3 +306,32 @@ If telemetry is set to `full` or `crash`, organizational metadata leaves the net
 ### Misconfiguration Risk
 
 If features auto-enable, a new capability that sends code to an external service may activate before the security team is aware. This is especially dangerous for features involving remote indexing, new MCP servers, or third-party integrations.
+
+---
+
+## 14. Devin CLI Team Settings
+
+These controls live in the Devin / Windsurf admin portal (`app.devin.ai/org/{org}/settings/windsurf` or `windsurf.com/team/cli-settings`). They are not written into `/etc/windsurf/policies/policy.json`.
+
+| Setting | What it does | Baseline | Moderate | Strict | Why | What breaks if wrong |
+|---------|--------------|----------|----------|--------|-----|----------------------|
+| `enableWebSearch` | Allows Devin CLI open-internet search | `true` | `false` | `false` | Enterprise default is off; search is uncontrolled egress. | Developers lose web lookup; provide internal docs MCP instead. |
+| `mcpServersEnabled` | Master switch for MCP tools | `true` | `true` | `false` | Strict removes MCP tool surface entirely. | Strict breaks MCP-dependent workflows; use Moderate with registry. |
+| `mcpRegistryEnforcement` | Only allow MCP servers from configured registries | `false` | `true` | `true` | Registry is the supported allowlist model. | Custom local MCP stops working until published to the org registry. |
+| `showInstallDevinCli` | Shows Command Palette install entry | `false` | `false` | `false` | Prevents unmanaged CLI installs (off by default). | Turning on without PATH/MDM readiness creates shadow installs. |
+| `enableDevinLocalAgent` | Allows Devin Local in Desktop | `false` | `false` | `false` | Enterprise-gated; enable only after pilot. | Leaving it on org-wide expands MCP approval and shell risk. |
+| `sandboxEnforcement` | Forces `--sandbox` for CLI sessions | `optional` | `optional` | `required` | Required hard-fails Windows and Linux without `bwrap`/`socat`. | Setting Required too early blocks Windows developers completely. |
+| `sandboxAllowedDomains` | Authoritative allowlist when sandbox network filtering is on | empty | curated | curated | Replaces user allowlists when set. | Over-narrow lists break package installs; over-broad lists weaken egress control. |
+| `sandboxExcluded` | Commands that may leave the sandbox | empty | deny `**`, allow `gh`, ask `git push` | deny `**` | Escape hatch for credentialed tools without opening all exec. | Empty deny with user allows lets local config widen escapes. |
+| `terminalPermissions` | Team deny/ask/allow with highest precedence | deny `.env` + `sudo` | ask `exec`, deny secrets/sudo | deny `exec` and dangerous tools | Blocks host compromise paths. | Over-deny blocks builds; under-deny allows `curl \| bash` style risk. |
+
+### Overlap with Cascade / Cursor / Claude Code
+
+Devin CLI sandbox and terminal permissions do **not** replace Cascade auto-execution controls, and they do not replace Cursor or Claude Code shell policies. If the org uses multiple agents, configure each tool or leave a gap.
+
+### Exception process
+
+1. Developer files request with command or MCP server, business need, and expiry.
+2. Security reviews compensating controls (network egress, hooks, time-boxed allow).
+3. Prefer registry publication over permanent `mcpRegistryEnforcement: false`.
+4. Prefer `ask` over permanent `allow` for high-risk `Exec(...)` rules.

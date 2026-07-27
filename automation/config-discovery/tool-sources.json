@@ -231,14 +231,15 @@
         },
         {
           "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md",
           "watch_for": [
             "config",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "managed",
+            "hooks",
+            "requirements"
           ]
         }
       ]
@@ -292,16 +293,19 @@
     },
     {
       "id": "windsurf",
-      "display_name": "Windsurf",
+      "display_name": "Windsurf / Devin Desktop",
       "repo_paths": [
-        "windsurf/"
+        "windsurf/",
+        "admin-controls/windsurf.md"
       ],
       "tier_files": {
         "strict": [
-          "windsurf/examples/enterprise-policy-strict.json"
+          "windsurf/examples/enterprise-policy-strict.json",
+          "windsurf/examples/mdm-policy-linux-strict.json"
         ],
         "moderate": [
-          "windsurf/examples/enterprise-policy-moderate.json"
+          "windsurf/examples/enterprise-policy-moderate.json",
+          "windsurf/examples/mdm-policy-linux-moderate.json"
         ],
         "baseline": [
           "windsurf/examples/enterprise-policy-baseline.json"
@@ -309,15 +313,30 @@
       },
       "sources": [
         {
-          "name": "Windsurf documentation",
+          "name": "Devin Desktop enterprise policies",
           "kind": "docs",
-          "url": "https://docs.windsurf.com/",
+          "url": "https://docs.devinenterprise.com/desktop/enterprise-policies",
           "watch_for": [
-            "enterprise",
-            "policy",
-            "Cascade",
+            "AllowedExtensions",
+            "UpdateMode",
+            "Group Policy",
+            "policy.json",
+            "MDM",
+            "EnableTelemetry"
+          ]
+        },
+        {
+          "name": "Devin CLI team settings",
+          "kind": "docs",
+          "url": "https://docs.devin.ai/cli/enterprise/team-settings",
+          "watch_for": [
             "MCP",
-            "admin"
+            "sandbox",
+            "permissions",
+            "registry",
+            "web search",
+            "Devin Local",
+            "attribution"
           ]
         },
         {
@@ -329,7 +348,9 @@
             "admin",
             "security",
             "MCP",
-            "permissions"
+            "permissions",
+            "sandbox",
+            "Devin"
           ]
         }
       ]

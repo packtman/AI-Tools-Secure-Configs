@@ -1,10 +1,12 @@
-# Windsurf (Codeium) — Admin Controls Reference
+# Windsurf / Devin Desktop, Admin Controls Reference
 
 ## Overview
 
-Windsurf (by Codeium, now part of Cognition/Devin) provides centralized admin controls through the **Admin Portal**, available to organizations on the **Enterprise** plan. Admins manage identity, RBAC, feature toggles, MCP governance, and usage analytics from the portal. Enterprise also supports hybrid and self-hosted deployment modes for organizations with strict data residency requirements.
+Windsurf (by Codeium, now part of Cognition) ships as **Devin Desktop**. Organizations still use Windsurf-named MDM paths and the Windsurf / Devin Enterprise admin portal. Admins manage identity, RBAC, feature toggles, MCP governance, Devin CLI team settings, and usage analytics. Enterprise also supports hybrid and self-hosted deployment modes for organizations with strict data residency requirements.
 
-Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code generation, multi-file edits, and agentic workflows, alongside Supercomplete for code completions.
+Devin Desktop is an AI-native IDE with Cascade / Devin Local agents for autonomous code generation, multi-file edits, and agentic workflows, alongside completions.
+
+**MDM** means Mobile Device Management. **MCP** means Model Context Protocol. **SIEM** means Security Information and Event Management.
 
 ---
 
@@ -12,7 +14,8 @@ Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code gen
 
 | Interface | URL | Plans |
 |-----------|-----|-------|
-| Admin Portal | Windsurf web portal → Admin | Enterprise |
+| Devin Enterprise Windsurf settings | `app.devin.ai/org/{orgName}/settings/windsurf` | Devin Enterprise |
+| Windsurf team / CLI settings | `https://windsurf.com/team/settings` and `https://windsurf.com/team/cli-settings` | Windsurf Enterprise |
 | API Access | Service keys with scoped permissions | Enterprise |
 | SCIM API | Custom teams management via API | Enterprise |
 
@@ -23,7 +26,7 @@ Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code gen
 | **Super Admin** | Full system access; modify any role or permission (admin role in "all users" group) |
 | **Group Admin** | Manage roles and permissions within assigned groups only |
 | **Admin** | Team management, feature settings, analytics |
-| **User** | Use Windsurf within admin-defined policies |
+| **User** | Use Devin Desktop / Windsurf within admin-defined policies |
 
 ---
 
@@ -74,9 +77,35 @@ Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code gen
 | Setting | Location | Effect |
 |---------|----------|--------|
 | MCP whitelist | Admin Portal → Security | Approve specific MCP servers at admin level |
+| MCP registry URLs | Team CLI settings | Official or private registries (union of URLs) |
+| MCP registry enforcement | Team CLI settings | When on, only registry servers are allowed |
 | Block unapproved MCP | Admin Portal → Security | Reject MCP servers not on whitelist |
 | Read/write permissions | Admin Portal → Security | Enable read-only for analysts; restrict write to senior devs |
 | Approval workflows | Admin Portal → Security | Require human confirmation for infrastructure-modifying commands |
+
+### Devin CLI Team Settings
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Models / default model | Team CLI settings | Allowlist models; pin default for new sessions |
+| Enable web search | Team CLI settings | Off by default for enterprise |
+| Terminal permissions | Team CLI settings | Team `deny`/`ask`/`allow` overrides user config |
+| Sandbox enforcement | Team CLI settings | `optional` or `required` (`required` fails closed on Windows today) |
+| Domain allow/deny lists | Team CLI settings | Authoritative allowlist; additive denylist |
+| Sandbox excluded commands | Team CLI settings | Org rules for commands that may leave the sandbox |
+| Attribution filtering | Support-enabled Enterprise | Reverts / flags public-code matches |
+| Show Install Devin CLI | Team CLI settings | Off by default; enables Command Palette install |
+| Devin Local Agent | Features | Enterprise-gated local agent in Desktop |
+
+### Device MDM Policies
+
+| OS | Path | Notes |
+|----|------|-------|
+| Windows | `Software\Policies\Windsurf\Windsurf` | ADMX from install `policies` folder; not VS Code policy path |
+| macOS | `.mobileconfig` from `Devin.app/.../policies` | Jamf / Apple Business Manager |
+| Linux | `/etc/windsurf/policies/policy.json` | Root-owned JSON; not `/etc/vscode/policy.json` |
+
+`AllowedExtensions` in MDM is a **JSON string of publishers**, for example `{"ms-python": true, "github": true}`.
 
 ### Code Security
 
@@ -84,7 +113,7 @@ Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code gen
 |---------|----------|--------|
 | `.codeiumignore` | Repository level | Exclude files/directories from AI context |
 | Secret scanning | Built-in | Detect and block secrets in AI suggestions |
-| Attribution filtering | Admin Portal → Security | Filter AI completions with attribution concerns |
+| Attribution filtering | Admin Portal → Security / support | Filter AI completions with attribution concerns |
 
 ### Model Access Controls
 
@@ -166,13 +195,13 @@ Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code gen
 - [ ] Configure SSO with MFA enforcement
 - [ ] Enable SCIM for automated provisioning/deprovisioning
 - [ ] Set auto-execution level to minimum (require confirmation for all commands)
-- [ ] Configure strict MCP whitelist — block all unapproved servers
+- [ ] Configure strict MCP whitelist, block all unapproved servers
 - [ ] Set `.codeiumignore` rules for sensitive directories across all repos
 - [ ] Enable attribution filtering
 - [ ] Disable web search and deploy features
 - [ ] Restrict conversation sharing
 - [ ] Route audit logs to SIEM
-- [ ] Assign minimal roles — read-only for analysts, restricted write for developers
+- [ ] Assign minimal roles, read-only for analysts, restricted write for developers
 - [ ] Review usage analytics and compliance reports monthly
 
 ### For standard enterprise teams
@@ -199,6 +228,6 @@ Windsurf is an AI-native IDE featuring the Cascade agent for autonomous code gen
 
 ## Cross-References
 
-- **Windsurf IDE config:** [`../windsurf/`](../windsurf/) — Local configuration templates and security settings
+- **Windsurf IDE config:** [`../windsurf/`](../windsurf/), Local configuration templates and security settings
 - **RBAC documentation:** [Windsurf RBAC Docs](https://docs.windsurf.com/plugins/accounts/rbac-role-management)
 - **SSO/SCIM setup:** [Windsurf SSO & SCIM Docs](https://docs.windsurf.com/plugins/accounts/sso-scim)

@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
-  "_comment": "STRICT Windsurf enterprise policy. No extensions, agents restricted, MCP locked down, auto-execution disabled. Use for regulated environments.",
+  "_comment": "STRICT Windsurf / Devin Desktop enterprise policy. No extensions, agents restricted, MCP locked down, Devin CLI sandbox required. Use for regulated environments. Devin Desktop still reads Windsurf policy paths.",
 
   "AllowedExtensions": [],
 
@@ -14,6 +14,14 @@
     "http_proxy": "http://proxy.corp.example.com:8080",
     "https_proxy": "https://proxy.corp.example.com:8443",
     "no_proxy": "localhost,127.0.0.1,.corp.example.com"
+  },
+
+  "MdmPolicies": {
+    "_comment": "Deploy these exact keys via Windows Group Policy (Software\\Policies\\Windsurf\\Windsurf), macOS .mobileconfig, or Linux /etc/windsurf/policies/policy.json. AllowedExtensions is a JSON string of publisher allowlist per vendor docs.",
+    "AllowedExtensions": "{}",
+    "UpdateMode": "manual",
+    "EnableTelemetry": false,
+    "EnableFeedback": false
   },
 
   "SecuritySettings": {
@@ -30,12 +38,55 @@
   "AgentSettings": {
     "autoExecutionLevel": "disabled",
     "requireHumanConfirmation": true,
-    "cascadeMaxSteps": 10
+    "cascadeMaxSteps": 10,
+    "enableDevinLocalAgent": false
   },
 
   "McpGovernance": {
     "mode": "whitelist",
     "approvedServers": [],
-    "blockUnapproved": true
+    "blockUnapproved": true,
+    "mcpRegistryUrls": [],
+    "mcpRegistryEnforcement": true
+  },
+
+  "DevinCliTeamSettings": {
+    "_comment": "Configure in Devin Enterprise Settings → Windsurf / Windsurf team CLI settings. These are portal-enforced, not MDM file keys.",
+    "enableWebSearch": false,
+    "mcpServersEnabled": false,
+    "mcpRegistryEnforcement": true,
+    "mcpRegistryUrls": [],
+    "showInstallDevinCli": false,
+    "sandboxEnforcement": "required",
+    "sandboxAllowedDomains": [
+      "github.com",
+      "**.npmjs.org",
+      "**.pypi.org"
+    ],
+    "sandboxDeniedDomains": [
+      "*.ngrok.io",
+      "*.localtunnel.me"
+    ],
+    "sandboxExcluded": {
+      "deny": [
+        "Exec(**)"
+      ],
+      "allow": [],
+      "ask": []
+    },
+    "terminalPermissions": {
+      "deny": [
+        "exec",
+        "Write(.env*)",
+        "Write(**/secrets/**)",
+        "Exec(sudo)",
+        "Exec(curl *)",
+        "Exec(wget *)"
+      ],
+      "ask": [],
+      "allow": [
+        "Read(~/approved-repos/**)"
+      ]
+    }
   }
 }

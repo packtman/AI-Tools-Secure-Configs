@@ -1,0 +1,7 @@
+{
+  "_comment": "Deployable Linux MDM policy for Windsurf / Devin Desktop. Copy to /etc/windsurf/policies/policy.json as root. AllowedExtensions must be a JSON string of publisher allowlist (not extension ID array).",
+  "AllowedExtensions": "{\"ms-python\": true, \"golang\": true, \"github\": true, \"esbenp\": true, \"dbaeumer\": true, \"eamodio\": true, \"ms-vscode\": true}",
+  "UpdateMode": "manual",
+  "EnableTelemetry": false,
+  "EnableFeedback": false
+}

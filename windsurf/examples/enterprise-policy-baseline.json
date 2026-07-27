@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
-  "_comment": "BASELINE Windsurf enterprise policy. Broad extension allowlist, automatic updates, essential restrictions only. Suitable for startups and individual developers.",
+  "_comment": "BASELINE Windsurf / Devin Desktop enterprise policy. Broad extension allowlist, essential restrictions only. Suitable for startups and individual developers.",
 
   "AllowedExtensions": [
     "esbenp.prettier-vscode",
@@ -21,11 +21,66 @@
 
   "TelemetryLevel": "crash",
 
+  "MdmPolicies": {
+    "_comment": "Deploy these exact keys via Windows Group Policy (Software\\Policies\\Windsurf\\Windsurf), macOS .mobileconfig, or Linux /etc/windsurf/policies/policy.json. AllowedExtensions is a JSON string of publisher allowlist per vendor docs.",
+    "AllowedExtensions": "{\"ms-python\": true, \"golang\": true, \"github\": true, \"esbenp\": true, \"dbaeumer\": true, \"eamodio\": true, \"ms-vscode\": true, \"ms-azuretools\": true, \"bradlc\": true, \"formulahendry\": true}",
+    "UpdateMode": "default",
+    "EnableTelemetry": true,
+    "EnableFeedback": true
+  },
+
   "SecuritySettings": {
     "disableUntrustedWorkspaces": false,
     "enforceProxyStrictSSL": true,
     "blockExternalExtensions": false,
     "blockLocalMcpServers": false,
-    "disableWebSearch": false
+    "disableWebSearch": false,
+    "disableDeploys": false,
+    "disableConversationSharing": false,
+    "enableAttributionFiltering": false
+  },
+
+  "AgentSettings": {
+    "autoExecutionLevel": "confirm_destructive",
+    "requireHumanConfirmation": false,
+    "cascadeMaxSteps": 100,
+    "enableDevinLocalAgent": false
+  },
+
+  "McpGovernance": {
+    "mode": "allowlist_preferred",
+    "approvedServers": [],
+    "blockUnapproved": false,
+    "mcpRegistryUrls": [
+      "https://registry.modelcontextprotocol.io"
+    ],
+    "mcpRegistryEnforcement": false
+  },
+
+  "DevinCliTeamSettings": {
+    "_comment": "Configure in Devin Enterprise Settings → Windsurf / Windsurf team CLI settings. These are portal-enforced, not MDM file keys.",
+    "enableWebSearch": true,
+    "mcpServersEnabled": true,
+    "mcpRegistryEnforcement": false,
+    "mcpRegistryUrls": [
+      "https://registry.modelcontextprotocol.io"
+    ],
+    "showInstallDevinCli": false,
+    "sandboxEnforcement": "optional",
+    "sandboxAllowedDomains": [],
+    "sandboxDeniedDomains": [],
+    "sandboxExcluded": {
+      "deny": [],
+      "allow": [],
+      "ask": []
+    },
+    "terminalPermissions": {
+      "deny": [
+        "Write(.env*)",
+        "Exec(sudo)"
+      ],
+      "ask": [],
+      "allow": []
+    }
   }
 }
