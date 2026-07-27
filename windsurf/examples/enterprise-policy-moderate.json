@@ -1,6 +1,6 @@
 {
   "$schema": "https://ai-secure-configs.example/schemas/windsurf/enterprise-policy.json",
-  "_comment": "MODERATE Windsurf enterprise policy. Approved extensions only, workspace trust enabled, telemetry off. Use for standard enterprise teams.",
+  "_comment": "MODERATE Windsurf / Devin Desktop enterprise policy. Approved extensions only, MCP registry enforced, Devin Local off, sandbox optional for Windows compatibility. Use for standard enterprise teams.",
 
   "AllowedExtensions": [
     "esbenp.prettier-vscode",
@@ -23,11 +23,89 @@
     "no_proxy": "localhost,127.0.0.1,.corp.example.com"
   },
 
+  "MdmPolicies": {
+    "_comment": "Deploy these exact keys via Windows Group Policy (Software\\Policies\\Windsurf\\Windsurf), macOS .mobileconfig, or Linux /etc/windsurf/policies/policy.json. AllowedExtensions is a JSON string of publisher allowlist per vendor docs.",
+    "AllowedExtensions": "{\"ms-python\": true, \"golang\": true, \"github\": true, \"esbenp\": true, \"dbaeumer\": true, \"eamodio\": true, \"ms-vscode\": true}",
+    "UpdateMode": "manual",
+    "EnableTelemetry": false,
+    "EnableFeedback": false
+  },
+
   "SecuritySettings": {
     "disableUntrustedWorkspaces": true,
     "enforceProxyStrictSSL": true,
     "blockExternalExtensions": true,
     "blockLocalMcpServers": false,
-    "disableWebSearch": false
+    "disableWebSearch": false,
+    "disableDeploys": true,
+    "disableConversationSharing": true,
+    "enableAttributionFiltering": true
+  },
+
+  "AgentSettings": {
+    "autoExecutionLevel": "confirm_destructive",
+    "requireHumanConfirmation": true,
+    "cascadeMaxSteps": 50,
+    "enableDevinLocalAgent": false
+  },
+
+  "McpGovernance": {
+    "mode": "whitelist",
+    "approvedServers": [
+      "github-mcp-server",
+      "postgres-mcp-server"
+    ],
+    "blockUnapproved": true,
+    "mcpRegistryUrls": [
+      "https://registry.modelcontextprotocol.io"
+    ],
+    "mcpRegistryEnforcement": true
+  },
+
+  "DevinCliTeamSettings": {
+    "_comment": "Configure in Devin Enterprise Settings → Windsurf / Windsurf team CLI settings. These are portal-enforced, not MDM file keys.",
+    "enableWebSearch": false,
+    "mcpServersEnabled": true,
+    "mcpRegistryEnforcement": true,
+    "mcpRegistryUrls": [
+      "https://registry.modelcontextprotocol.io"
+    ],
+    "showInstallDevinCli": false,
+    "sandboxEnforcement": "optional",
+    "sandboxAllowedDomains": [
+      "github.com",
+      "**.npmjs.org",
+      "**.pypi.org",
+      "**.crates.io"
+    ],
+    "sandboxDeniedDomains": [
+      "*.ngrok.io",
+      "*.localtunnel.me"
+    ],
+    "sandboxExcluded": {
+      "deny": [
+        "Exec(**)"
+      ],
+      "allow": [
+        "Exec(gh *)"
+      ],
+      "ask": [
+        "Exec(git push *)"
+      ]
+    },
+    "terminalPermissions": {
+      "deny": [
+        "Write(.env*)",
+        "Write(**/secrets/**)",
+        "Exec(sudo)",
+        "Exec(rm -rf *)"
+      ],
+      "ask": [
+        "exec"
+      ],
+      "allow": [
+        "Read(~/approved-repos/**)"
+      ]
+    }
   }
 }

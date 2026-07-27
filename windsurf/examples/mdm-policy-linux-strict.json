@@ -1,0 +1,7 @@
+{
+  "_comment": "Deployable Linux MDM policy for Windsurf / Devin Desktop (Strict). Copy to /etc/windsurf/policies/policy.json as root. Empty AllowedExtensions publisher map blocks all marketplace extensions.",
+  "AllowedExtensions": "{}",
+  "UpdateMode": "manual",
+  "EnableTelemetry": false,
+  "EnableFeedback": false
+}
