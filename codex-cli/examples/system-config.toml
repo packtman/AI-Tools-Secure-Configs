@@ -1,6 +1,9 @@
-# Codex CLI — System-wide configuration
+# Codex CLI  -  System-wide configuration
 # Deploy to: /etc/codex/config.toml (Unix/Linux/macOS)
+# Windows system config: %ProgramData%\OpenAI\Codex\config.toml
 # Sets organization-wide defaults. User and project configs can override.
+# Pair with /etc/codex/requirements.toml (or Windows ProgramData equivalent)
+# using examples/requirements-moderate.toml as the starting admin pin set.
 
 # Default to workspace-write with no network.
 sandbox_mode = "workspace-write"
@@ -14,6 +17,27 @@ cli_auth_credentials_store = "keyring"
 # Default model.
 model = "o4-mini"
 
+# Prefer non-login shells so profile secrets are not loaded into the agent.
+allow_login_shell = false
+
+# IT-managed updates only.
+check_for_update_on_startup = false
+
 # Disable network in workspace-write sandbox mode at the system level.
 [sandbox_workspace_write]
 network_access = false
+
+[windows]
+sandbox_private_desktop = true
+
+[features]
+browser_use = false
+computer_use = false
+apps = false
+remote_plugin = false
+plugin_sharing = false
+skill_mcp_dependency_install = false
+enable_mcp_apps = false
+mcp_2026_07_28 = false
+non_prefixed_mcp_tool_names = false
+network_proxy = false

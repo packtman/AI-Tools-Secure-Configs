@@ -463,7 +463,35 @@ export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca-bundle.crt
 
 ---
 
-## 12. Summary — Quick Reference
+## 12. Agent apps enterprise policy
+
+### What it does
+
+Controls whether partner-built agent apps (GitHub Apps that expose agents on GitHub.com and Mobile) can run for users covered by the enterprise Copilot policy. Agent apps can include partner MCP servers and OAuth authorization.
+
+### Why disable by default
+
+| Threat | Detail |
+|--------|--------|
+| Partner MCP egress | Agent apps may call partner systems over MCP using GitHub-issued assertions |
+| Cloud-agent blast radius | Agent apps are powered by Copilot cloud agent and can change code via issues and PRs |
+| Preview instability | Agent apps are in public preview and subject to change |
+
+### Recommended values
+
+| Tier | Value | Notes |
+|------|-------|-------|
+| Baseline | `disabled` | Enable only after naming an approved GitHub App |
+| Moderate | `disabled` | Same as Baseline until security review completes |
+| Strict | `disabled` | Keep disabled for regulated orgs |
+
+### What breaks if misconfigured
+
+Enabling without an allowlisted partner app review can expose repositories to unreviewed agent runtimes. Disabling blocks `@AGENT-NAME` PR mentions and Agents UI partner selections; developers should use approved org agents instead.
+
+---
+
+## 13. Summary: Quick Reference
 
 | Setting | Secure Default | Key Risk if Wrong |
 |---------|---------------|-------------------|
@@ -472,6 +500,7 @@ export NODE_EXTRA_CA_CERTS=/path/to/corporate-ca-bundle.crt
 | Content exclusion | Configured for secrets, crypto, IaC | Secrets appear in completions |
 | Individual plan blocking | Block at firewall | Shadow AI on personal accounts processes corp code |
 | Coding agent | Disabled until controls in place | Autonomous code changes without review gates |
+| Agent apps | Disabled | Partner agent/MCP runtime without org review |
 | Extensions | Allowlist only | Third-party data exfiltration |
 | Seat management | `selected_teams` | Uncontrolled access, wasted spend |
 | Custom instructions | Security rules first | Truncation hides important rules |

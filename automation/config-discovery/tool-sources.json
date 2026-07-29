@@ -81,21 +81,21 @@
       },
       "sources": [
         {
-          "name": "Team administration documentation",
+          "name": "Team and enterprise administration documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/account/teams/admin-dashboard",
+          "url": "https://cursor.com/docs/enterprise",
           "watch_for": [
             "admin",
             "team",
+            "enterprise",
             "policy",
-            "audit",
             "privacy"
           ]
         },
         {
           "name": "MCP documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/tools/mcp",
+          "url": "https://cursor.com/docs/mcp",
           "watch_for": [
             "MCP",
             "server",
@@ -129,19 +129,19 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://docs.github.com/api/article/body?pathname=/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies",
           "watch_for": [
             "policy",
             "organization",
-            "Copilot Chat",
-            "content exclusion",
+            "MCP",
+            "agent apps",
             "CLI"
           ]
         },
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://docs.github.com/api/article/body?pathname=/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot",
           "watch_for": [
             "content exclusion",
             "repositories",
@@ -160,13 +160,16 @@
       ],
       "tier_files": {
         "strict": [
-          "codex-cli/examples/config-strict.toml"
+          "codex-cli/examples/config-strict.toml",
+          "codex-cli/examples/requirements-strict.toml"
         ],
         "moderate": [
-          "codex-cli/examples/config-moderate.toml"
+          "codex-cli/examples/config-moderate.toml",
+          "codex-cli/examples/requirements-moderate.toml"
         ],
         "baseline": [
-          "codex-cli/examples/config-baseline.toml"
+          "codex-cli/examples/config-baseline.toml",
+          "codex-cli/examples/requirements-baseline.toml"
         ]
       },
       "sources": [
@@ -192,6 +195,18 @@
             "sandbox",
             "policy",
             "permissions"
+          ]
+        },
+        {
+          "name": "OpenAI Codex config reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
+          "watch_for": [
+            "requirements",
+            "allow_login_shell",
+            "mcp_2026_07_28",
+            "features",
+            "managed"
           ]
         }
       ]
@@ -231,14 +246,14 @@
         },
         {
           "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "profiles"
+            "requirements",
+            "allow_login_shell",
+            "features",
+            "MCP",
+            "sandbox"
           ]
         }
       ]

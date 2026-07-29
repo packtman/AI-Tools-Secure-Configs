@@ -1,7 +1,8 @@
-# Codex CLI — STRICT configuration
+# Codex CLI  -  STRICT configuration
 # For regulated environments where the agent should be read-only.
 # Deploy as /etc/codex/config.toml for system-wide defaults,
-# or use requirements.toml for admin-enforced constraints.
+# and pair with examples/requirements-strict.toml for admin-enforced pins.
+# Requires Codex rust-v0.146.0+ for exact managed requirement values.
 
 sandbox_mode = "read-only"
 approval_policy = "on-request"
@@ -9,12 +10,40 @@ cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 web_search = "disabled"
 
+# WHAT: Reject login-shell profile loading for agent shells.
+# WHY: Login profiles often export secrets into the agent environment.
+# BREAKS: Profile-based PATH setup must be replaced with explicit env configuration.
+allow_login_shell = false
+
+# WHAT: Disable client update checks when IT owns patching.
+# WHY: Prevents unmanaged version drift on regulated endpoints.
+# BREAKS: No in-app update prompts; ship approved builds via MDM or packages.
+check_for_update_on_startup = false
+
 [sandbox_workspace_write]
 network_access = false
 
-# Disable high-risk features (pinnable via requirements.toml in Enterprise)
+# WHAT: Prefer private Windows desktop isolation for sandboxed children.
+# WHY: Reduces interactive-desktop interaction risk on native Windows.
+# BREAKS: Legacy Winsta0\Default compatibility may require false during migration.
+[windows]
+sandbox_private_desktop = true
+
+# WHAT: Disable high-risk, plugin, app, and preview MCP features.
+# WHY: Strict tier minimizes tool bridges and unfinished protocol surfaces.
+# BREAKS: Plugin catalogs, apps, and MCP auto-install workflows are unavailable.
 [features]
 browser_use = false
 computer_use = false
 memories = false
 multi_agent = false
+apps = false
+plugins = false
+remote_plugin = false
+plugin_sharing = false
+skill_mcp_dependency_install = false
+enable_mcp_apps = false
+mcp_2026_07_28 = false
+non_prefixed_mcp_tool_names = false
+workspace_dependencies = false
+network_proxy = false

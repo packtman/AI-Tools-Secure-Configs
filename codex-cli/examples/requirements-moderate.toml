@@ -1,0 +1,84 @@
+# Codex CLI  -  MODERATE admin-enforced requirements
+# Users CANNOT override these constraints. Deploy via cloud-managed config,
+# macOS MDM (com.openai.codex:requirements_toml_base64), or system file:
+#   macOS/Linux: /etc/codex/requirements.toml
+#   Windows: %ProgramData%\OpenAI\Codex\requirements.toml
+# Requires Codex rust-v0.146.0+ for exact managed value enforcement.
+# Shared with Codex Desktop: one requirements.toml covers CLI and Desktop.
+# For standard enterprise development teams.
+
+# WHAT: Allows cautious and standard interactive approval behavior.
+# WHY: Enterprise developers retain normal workflows while unattended execution remains blocked.
+# BREAKS: Removing this permits approval bypass; omitting "untrusted" can disrupt high-review projects.
+allowed_approval_policies = ["untrusted", "on-request"]
+
+# WHAT: Keeps legacy sandbox allowlist for older clients that still use sandbox_mode.
+# WHY: Mixed fleets may not all support newer permission profiles yet; this blocks danger-full-access.
+# BREAKS: Removing workspace-write blocks normal coding; adding danger-full-access removes containment.
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+
+# WHAT: Permits only OpenAI-cached search results (disabled remains implicitly allowed).
+# WHY: Cached search supports common research without unrestricted live external retrieval.
+# BREAKS: Dependency research may miss very recent information; broader modes increase egress risk.
+allowed_web_search_modes = ["cached"]
+
+# WHAT: Rejects login-shell semantics for shell tools (Codex 0.146+ exact managed value).
+# WHY: Login profiles commonly inject cloud credentials and internal tokens into agent shells.
+# BREAKS: Commands that depend on login-profile PATH need explicit non-login env configuration.
+allow_login_shell = false
+
+# WHAT: Disables startup update checks when IT manages Codex updates centrally.
+# WHY: Unmanaged update prompts create version drift across the fleet.
+# BREAKS: Developers no longer self-update from the client; package the approved version via MDM.
+check_for_update_on_startup = false
+
+# WHAT: Prefers a private Windows desktop for sandboxed child processes.
+# WHY: Reduces cross-window interaction risk on native Windows endpoints.
+# BREAKS: Legacy Windows sandbox compatibility may require temporarily setting false.
+[windows]
+sandbox_private_desktop = true
+
+# WHAT: Disables high-risk and preview surfaces while keeping local plugins available for review.
+# WHY: Browser, computer use, remote catalogs, and MCP auto-install expand supply-chain risk.
+# BREAKS: Remote plugin discovery and skill MCP auto-install stop; ship approved MCP via allowlist.
+[features]
+browser_use = false
+computer_use = false
+apps = false
+remote_plugin = false
+plugin_sharing = false
+skill_mcp_dependency_install = false
+enable_mcp_apps = false
+mcp_2026_07_28 = false
+non_prefixed_mcp_tool_names = false
+network_proxy = false
+
+# WHAT: Denies reads of common credential files.
+# WHY: Credential theft via prompt injection is a concrete Moderate-tier threat.
+# BREAKS: Legitimate reads of key material fail; use secrets manager or approved break-glass paths.
+[permissions.filesystem]
+deny_read = [
+  "~/.ssh/id_*",
+  "~/.aws/credentials",
+  "**/*.pem",
+  "**/*.key",
+]
+
+# WHAT: Requires approval for risky commands and forbids privilege escalation.
+# WHY: Stops silent git force-push, recursive delete, and sudo paths in standard enterprise use.
+# BREAKS: Developers see extra prompts; forbidden sudo needs local-terminal fallbacks.
+[rules]
+prefix_rules = [
+  { pattern = [{ token = "git" }, { any_of = ["push", "force-push"] }], decision = "prompt", justification = "Require review before pushing to remote." },
+  { pattern = [{ token = "rm" }, { token = "-rf" }], decision = "prompt", justification = "Recursive delete requires explicit approval." },
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
+]
+
+# WHAT: Allowlists only audited MCP servers by identity.
+# WHY: MCP is a high-risk tool bridge; Moderate permits known-good servers only.
+# BREAKS: Unlisted MCP servers are disabled even if present in user config.
+[mcp_servers.filesystem]
+identity = { command = "npx" }
+
+[mcp_servers.git]
+identity = { command = "uvx" }

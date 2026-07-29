@@ -1,10 +1,41 @@
-# Codex CLI — MODERATE configuration
-# Balanced for development teams — write access allowed, network off, approval required.
+# Codex CLI  -  MODERATE configuration
+# Balanced for development teams  -  write access allowed, network off, approval required.
+# Pair with examples/requirements-moderate.toml for admin-enforced pins.
+# Requires Codex rust-v0.146.0+ for exact managed requirement values.
 
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
+web_search = "cached"
+
+# WHAT: Reject login-shell profile loading for agent shells.
+# WHY: Stops silent injection of cloud credentials from shell profiles.
+# BREAKS: Developers must configure required env vars outside login profiles.
+allow_login_shell = false
+
+# WHAT: Disable client update checks when updates are centrally managed.
+# WHY: Keeps fleet versions consistent for support and audit.
+# BREAKS: No self-serve client updates; IT must publish the approved build.
+check_for_update_on_startup = false
 
 [sandbox_workspace_write]
 network_access = false
+
+[windows]
+sandbox_private_desktop = true
+
+# WHAT: Disable browser/computer use, remote catalogs, and preview MCP surfaces.
+# WHY: Moderate allows coding while blocking high-risk supply-chain paths.
+# BREAKS: Remote plugin discovery and skill MCP auto-install stop.
+[features]
+browser_use = false
+computer_use = false
+apps = false
+remote_plugin = false
+plugin_sharing = false
+skill_mcp_dependency_install = false
+enable_mcp_apps = false
+mcp_2026_07_28 = false
+non_prefixed_mcp_tool_names = false
+network_proxy = false
