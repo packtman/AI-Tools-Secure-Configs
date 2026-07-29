@@ -491,7 +491,7 @@ Enabling without an allowlisted partner app review can expose repositories to un
 
 ---
 
-## 13. Summary — Quick Reference
+## 13. Summary: Quick Reference
 
 | Setting | Secure Default | Key Risk if Wrong |
 |---------|---------------|-------------------|

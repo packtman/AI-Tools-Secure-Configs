@@ -25,9 +25,9 @@ Enterprise owners manage AI policies at:
 **Enterprise Settings → AI Controls tab**
 
 AI Controls categories:
-- **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
-- **Agents** — Cloud agent, code review agent, custom agents, third-party agents, agent apps
-- **MCP** — MCP server availability, registry URL, strict enforcement
+- **Copilot**: Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
+- **Agents**: Cloud agent, code review agent, custom agents, third-party agents, agent apps
+- **MCP**: MCP server availability, registry URL, strict enforcement
 
 ### Organization Level (GitHub Settings)
 
