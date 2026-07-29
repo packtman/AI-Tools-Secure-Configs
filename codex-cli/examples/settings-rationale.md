@@ -622,6 +622,58 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 
 ---
 
+## 14. Codex 0.146+ Managed Exact Values and Feature Pins
+
+### `allow_login_shell`
+
+**What it does:** When false, shell tools cannot use login-shell semantics, so profile scripts are not loaded.
+
+**Why Moderate/Strict set false:** Login profiles commonly export cloud credentials, tokens, and proxy settings into the agent environment.
+
+**What breaks:** Toolchains that rely on `~/.zshrc` PATH setup fail until env vars are set explicitly.
+
+### `check_for_update_on_startup`
+
+**What it does:** Controls whether Codex checks for updates when it starts.
+
+**Why Moderate/Strict set false:** Enterprise fleets should patch through MDM or package management.
+
+**What breaks:** Developers stop seeing client update prompts; IT owns the version cadence.
+
+### `windows.sandbox_private_desktop`
+
+**What it does:** Runs sandboxed child processes on a private Windows desktop by default.
+
+**Why all tiers set true:** Improves isolation from the interactive desktop on native Windows.
+
+**What breaks:** Older Winsta0\\Default-compatible workflows may need a temporary false exception.
+
+### `features.mcp_2026_07_28` and `features.enable_mcp_apps`
+
+**What they do:** Gate under-development MCP protocol and MCP apps surfaces (default off).
+
+**Why pin false on every tier:** Preview protocol and apps expand tool-bridge risk before enterprise controls stabilize.
+
+**What breaks:** Early adopters cannot opt in without an explicit managed override.
+
+### `features.skill_mcp_dependency_install`, `features.remote_plugin`, `features.plugin_sharing`, `features.apps`, `features.plugins`
+
+**What they do:** Control automatic MCP dependency installs, remote plugin catalogs, plugin sharing, connector apps, and local plugins.
+
+**Why Moderate disables remote/auto-install and Strict also disables plugins/apps:** Supply-chain and egress risk scales with unreviewed catalogs.
+
+**What breaks:** Skill-driven MCP bootstrap and remote catalog browsing stop; use identity-matched MCP allowlists instead.
+
+### `features.network_proxy`
+
+**What it does:** Enables experimental sandboxed networking policy options.
+
+**Why pin false until piloted:** Experimental networking can surprise Windows and mixed fleets.
+
+**What breaks:** Sandboxed domain allowlists do not apply until deliberately enabled in a pilot.
+
+---
+
 ## Summary Matrix
 
 | Setting | Strict (Regulated) | Standard (Development) | Permissive (Research) |
@@ -633,6 +685,13 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 | `workspace_write_allow_network` | `false` | `false` | `true` (temporary) |
 | `additional_write_paths` | None | None | Minimal, scoped |
 | `exclude_tmp` / `exclude_tmpdir` | `true` / `true` | `true` / `true` | `true` / `true` |
+| `allow_login_shell` | `false` | `false` | default |
+| `check_for_update_on_startup` | `false` | `false` | default |
+| `windows.sandbox_private_desktop` | `true` | `true` | `true` |
+| `features.mcp_2026_07_28` | `false` | `false` | `false` |
+| `features.skill_mcp_dependency_install` | `false` | `false` | default |
+| `features.remote_plugin` | `false` | `false` | default |
+| `features.plugins` | `false` | default | default |
 | `model` | Pinned + approved list | Pinned | Pinned or latest |
 | `model_reasoning_effort` | `high` | `medium` | `medium` or `low` |
 | `developer_instructions` | Strict guardrails | Standard guardrails | Minimal |

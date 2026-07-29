@@ -23,6 +23,10 @@
     "copilot_web_search": "disabled"
   },
 
+  "agent_policies": {
+    "agent_apps": "disabled"
+  },
+
   "content_exclusions": {
     "global_patterns": [
       "**/.env",

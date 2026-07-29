@@ -1,0 +1,89 @@
+# Codex CLI  -  STRICT admin-enforced requirements
+# Users CANNOT override these constraints. Deploy via cloud-managed config,
+# macOS MDM (com.openai.codex:requirements_toml_base64), or system file:
+#   macOS/Linux: /etc/codex/requirements.toml
+#   Windows: %ProgramData%\OpenAI\Codex\requirements.toml
+# Requires Codex rust-v0.146.0+ for exact managed value enforcement.
+# Shared with Codex Desktop: one requirements.toml covers CLI and Desktop.
+# For regulated environments (finance, healthcare, government).
+
+# WHAT: Limits approval behavior to explicit user review.
+# WHY: Strict environments require a human decision before supported risky actions.
+# BREAKS: Removing this allows unattended execution; an unsupported value can block policy load.
+allowed_approval_policies = ["untrusted", "on-request"]
+
+# WHAT: Legacy sandbox allowlist for older clients; writable modes intentionally omitted.
+# WHY: Regulated review workflows must not allow workspace mutation by default.
+# BREAKS: Writable sandboxes are denied; developers must use approved offline review workflows.
+allowed_sandbox_modes = ["read-only"]
+
+# WHAT: Allows only disabled web search (disabled is always implicitly allowed).
+# WHY: Strict environments must prevent source code or prompt data reaching external search.
+# BREAKS: Developers cannot use Codex web search and must use separately approved research tools.
+allowed_web_search_modes = []
+
+# WHAT: Rejects login-shell semantics for shell tools (Codex 0.146+ exact managed value).
+# WHY: Login shells load profile scripts that often export secrets, proxies, and org tokens into the agent.
+# BREAKS: Workflows that rely on login-profile PATH or env setup fail; use non-login shells and explicit env.
+allow_login_shell = false
+
+# WHAT: Disables startup update checks (Codex 0.146+ exact managed value).
+# WHY: Regulated fleets must ship updates through MDM or package management, not ad-hoc client checks.
+# BREAKS: Developers stop seeing in-app update prompts; IT must own the patch cadence.
+check_for_update_on_startup = false
+
+# WHAT: Prefers a private Windows desktop for sandboxed child processes.
+# WHY: Isolates the agent UI session from the interactive desktop on native Windows.
+# BREAKS: Set false only for compatibility with older Winsta0\Default behavior during migration.
+[windows]
+sandbox_private_desktop = true
+
+# WHAT: Pins high-risk and preview features off for managed users.
+# WHY: Browser, computer use, plugins, apps, and under-development MCP expand data movement risk.
+# BREAKS: Feature-dependent workflows fail and need approved alternatives outside Codex.
+[features]
+browser_use = false
+computer_use = false
+memories = false
+multi_agent = false
+apps = false
+plugins = false
+remote_plugin = false
+plugin_sharing = false
+skill_mcp_dependency_install = false
+enable_mcp_apps = false
+mcp_2026_07_28 = false
+non_prefixed_mcp_tool_names = false
+workspace_dependencies = false
+network_proxy = false
+
+# WHAT: Denies reads to sensitive directories and credential patterns.
+# WHY: Strict review agents must not read secrets even in read-only mode.
+# BREAKS: Legitimate secret inspection fails; use vault workflows outside the agent.
+[permissions.filesystem]
+deny_read = [
+  "/etc/shadow",
+  "/etc/passwd",
+  "~/.ssh",
+  "~/.aws",
+  "~/.config/gcloud",
+  ".env",
+  "**/*.pem",
+  "**/*.key",
+]
+
+# WHAT: Blocks destructive, network, privilege, and git-mutation commands.
+# WHY: Defense in depth when sandbox or approval misconfiguration occurs.
+# BREAKS: Developers see forbidden results and must run those commands in a local approved shell.
+[rules]
+prefix_rules = [
+  { pattern = [{ any_of = ["rm", "rmdir"] }], decision = "forbidden", justification = "Destructive file operations are not permitted." },
+  { pattern = [{ token = "git" }, { any_of = ["push", "commit", "rebase", "reset"] }], decision = "forbidden", justification = "Git mutations are not permitted in read-only mode." },
+  { pattern = [{ any_of = ["curl", "wget", "nc", "ncat"] }], decision = "forbidden", justification = "Network operations are forbidden in strict mode." },
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
+]
+
+# WHAT: Empty MCP allowlist disables all MCP servers.
+# WHY: MCP is a high-risk tool bridge; Strict allows zero unreviewed external tools.
+# BREAKS: All MCP integrations stop until an admin adds an identity-matched allowlist entry.
+[mcp_servers]

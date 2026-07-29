@@ -29,7 +29,8 @@
     "copilot_cloud_agent": "disabled",
     "copilot_code_review_agent": "disabled",
     "custom_agents": "disabled",
-    "third_party_agents": "disabled"
+    "third_party_agents": "disabled",
+    "agent_apps": "disabled"
   },
 
   "mcp_policies": {

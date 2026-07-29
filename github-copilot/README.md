@@ -26,7 +26,7 @@ Enterprise owners manage AI policies at:
 
 AI Controls categories:
 - **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
-- **Agents** — Cloud agent, code review agent, custom agents, third-party agents
+- **Agents** — Cloud agent, code review agent, custom agents, third-party agents, agent apps
 - **MCP** — MCP server availability, registry URL, strict enforcement
 
 ### Organization Level (GitHub Settings)
@@ -89,10 +89,24 @@ Control which Copilot plans can access the network:
 3. Configure content exclusion for secrets, credentials, and sensitive files.
 4. Deploy `.github/copilot-instructions.md` to all repositories.
 5. Configure firewall rules to allow only business/enterprise Copilot traffic.
-6. Set agent policies (disable cloud agent, custom agents, and third-party agents for regulated environments).
+6. Set agent policies (disable cloud agent, custom agents, third-party agents, and agent apps for regulated environments).
 7. Configure MCP registry and decide on strict enforcement.
 8. Set code review runner configuration at org level (self-hosted for sensitive environments).
 9. Create "Manage enterprise AI controls" custom role for AI governance team.
 10. Enable audit log streaming to your SIEM.
 11. Review agent session activity and audit Copilot usage regularly.
 12. Train developers on responsible Copilot usage and code review practices.
+
+## Agent apps policy (public preview)
+
+Agent apps are partner-built GitHub Apps that expose agents powered by Copilot cloud agent, including partner MCP connections. They are controlled by a dedicated enterprise **agent apps** policy and are not covered by the generic MCP servers policy alone.
+
+| Tier | `agent_apps` | Reason |
+|------|--------------|--------|
+| Baseline | `disabled` | Preview surface with partner OAuth and MCP; keep off until reviewed |
+| Moderate | `disabled` | Enterprise default until a named partner app completes security review |
+| Strict | `disabled` | Regulated environments must not allow partner agent runtimes |
+
+Safe equivalent when blocked: keep using IDE Copilot Chat and approved org custom agents without partner agent apps. Exception requests should name the GitHub App, data scopes, MCP destinations, and expiry date.
+
+Overlap note: Copilot MCP allowlists do not govern the GitHub MCP server inside Cursor, Windsurf, or Claude. Configure those hosts separately.

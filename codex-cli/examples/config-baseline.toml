@@ -1,5 +1,6 @@
-# Codex CLI — BASELINE configuration
-# Essential security only — suitable for startups and individual developers.
+# Codex CLI  -  BASELINE configuration
+# Essential security only  -  suitable for startups and individual developers.
+# Pair with examples/requirements-baseline.toml for admin-enforced pins.
 
 sandbox_mode = "workspace-write"
 approval_policy = "never"
@@ -8,3 +9,15 @@ model = "o4-mini"
 
 [sandbox_workspace_write]
 network_access = true
+
+[windows]
+sandbox_private_desktop = true
+
+# WHAT: Pin unfinished MCP protocol and MCP apps features off.
+# WHY: Baseline still avoids under-development protocol surfaces by default.
+# BREAKS: Early adopters must explicitly enable these flags after security review.
+[features]
+computer_use = false
+enable_mcp_apps = false
+mcp_2026_07_28 = false
+non_prefixed_mcp_tool_names = false
