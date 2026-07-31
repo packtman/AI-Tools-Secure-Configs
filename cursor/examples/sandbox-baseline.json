@@ -1,0 +1,29 @@
+{
+  "_comment": "BASELINE Cursor sandbox.json. Keeps sandbox on with workspace read/write. Uses Cursor defaults plus a starter allowlist. Prefer Moderate for enterprise pilots.",
+
+  "type": "workspace_readwrite",
+  "disableTmpWrite": false,
+  "enableSharedBuildCache": true,
+  "additionalReadwritePaths": [],
+  "additionalReadonlyPaths": [],
+  "networkPolicy": {
+    "default": "deny",
+    "allow": [
+      "registry.npmjs.org",
+      "registry.yarnpkg.com",
+      "pypi.org",
+      "files.pythonhosted.org",
+      "proxy.golang.org",
+      "sum.golang.org",
+      "crates.io",
+      "static.crates.io",
+      "github.com",
+      "api.github.com",
+      "codeload.github.com",
+      "ghcr.io",
+      "*.docker.io",
+      "*.googleapis.com"
+    ],
+    "deny": []
+  }
+}

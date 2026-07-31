@@ -1,5 +1,5 @@
 {
-  "_comment": "STRICT Cursor permissions — only safe read-only commands auto-run. All MCP tools require approval.",
+  "_comment": "STRICT Cursor permissions for Auto-review and Allowlist modes. Read-only terminal auto-run only. Empty MCP allowlist. Auto-review block instructions force approval for high-risk families.",
 
   "terminalAllowlist": [
     "ls",
@@ -15,5 +15,22 @@
     "git log"
   ],
 
-  "mcpAllowlist": []
+  "mcpAllowlist": [],
+
+  "autoRun": {
+    "allow_instructions": [
+      "Read-only inspection commands such as ls, cat, head, tail, grep, find, wc, pwd, git status, git diff, and git log may run without asking."
+    ],
+    "block_instructions": [
+      "Every command that installs packages or downloads remote code should go through approval first.",
+      "Every curl, wget, or piped shell download should go through approval first.",
+      "Every sudo, su, or privilege-escalation command should go through approval first.",
+      "Every command that reads or prints .env, secret, credential, token, PEM, or key files should go through approval first.",
+      "Every AWS, Azure, GCP, or Kubernetes mutating command should go through approval first.",
+      "Every docker push, terraform apply, or database DROP or DELETE should go through approval first.",
+      "Every git push, git reset --hard, or force-push should go through approval first.",
+      "Every MCP tool call should go through approval first.",
+      "Every Browser tool call should go through approval first."
+    ]
+  }
 }

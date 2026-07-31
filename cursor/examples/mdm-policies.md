@@ -5,10 +5,24 @@
 | Policy | Type | Description | Recommended value |
 |--------|------|-------------|-------------------|
 | `AllowedTeamId` | String | Lock login to a specific Cursor team | Your team ID |
-| `AllowedExtensions` | String (JSON) | Allowlist of permitted extension IDs (JSON object string) | See below |
+| `AllowedExtensions` | String (JSON) | Allowlist of permitted publishers/extensions (JSON object string). Any entry creates an allowlist; use `"*": true` only when intentionally allowing all with explicit denials. | See below |
 | `WorkspaceTrustEnabled` | Boolean | Enforce workspace trust | `true` |
 | `UpdateMode` | String | Control updates | `"manual"` |
 | `NetworkDisableHttp2` | Boolean | Force HTTP/1.1 | `false` (unless proxy requires it) |
+
+## Not MDM-enforced (use dashboard + config management)
+
+These controls are real and required for a secure rollout, but they are not MDM keys:
+
+| Control | Where to set it | Deployable file |
+|---------|-----------------|-----------------|
+| Run Mode / Auto-review | Team dashboard → Agents / Security | `permissions-*.json` (`autoRun`) |
+| Sandbox network / paths | Team dashboard + local sandbox policy | `sandbox-*.json` |
+| MCP allowlist and per-server network | Team dashboard → MCP Configuration | `permissions-*.json` (`mcpAllowlist`) as fallback |
+| Browser / file / `.cursor` protections | Team dashboard | See `enterprise-policy-*.json` |
+| Privacy Mode / BYOK / repo blocklist | Team dashboard | See `enterprise-policy-*.json` |
+
+Pair MDM identity locks with the Moderate or Strict enterprise-policy checklist before org-wide rollout.
 
 ---
 
