@@ -620,14 +620,59 @@ def evaluate_compliance(configuration_item, rule_parameters):
 
 ---
 
-## 16. Summary — Quick Reference
+## 16. PassRequest, Agents, and Plugins
+
+These controls come from the Amazon Q Developer permissions reference. They are the highest-impact autonomy knobs missing from older "chat only" IAM examples.
+
+### 16.1 `q:PassRequest`
+
+| Aspect | Detail |
+|--------|--------|
+| **What it does** | Allows Amazon Q to call AWS APIs on behalf of the signed-in identity, using that identity's existing permissions. |
+| **Why Moderate/Strict deny it** | A successful prompt injection or mistaken instruction can mutate cloud resources (IAM, S3, EC2, billing-impacting APIs) without a separate approval step. |
+| **Baseline value** | Allow in approved regions so small teams can use console Q as an AWS helper. |
+| **What breaks if removed incorrectly** | If you deny it without telling developers, console workflows like "list my buckets" fail with AccessDenied. If you allow it broadly, Q inherits every dangerous permission on the role. |
+| **Safe equivalent** | Developer runs scoped `aws` CLI / Terraform themselves; Q only drafts the command text. |
+
+### 16.2 `qdeveloper:StartAgentSession` and `qdeveloper:TransformCode`
+
+| Aspect | Detail |
+|--------|--------|
+| **What they do** | Start autonomous agent sessions and code transformation jobs in the IDE. |
+| **Why Moderate/Strict deny them** | Agents and transforms can rewrite large portions of a repository with less interactive gating than chat. |
+| **Baseline value** | Allow for startup velocity; rely on PR review as the backstop. |
+| **What breaks if misconfigured** | Denying them blocks upgrade/transform assistants. Allowing them in regulated accounts can produce unreviewed bulk edits. |
+
+### 16.3 Plugins and OAuth app connections
+
+| Aspect | Detail |
+|--------|--------|
+| **What they do** | `q:UsePlugin` lets chat call configured plugins. `CreatePlugin` / `CreateOAuthAppConnection` (and related APIs) register third-party integrations. |
+| **Why all developer tiers deny plugin admin** | Plugin registration is an org trust decision (data leaving AWS chat into a vendor). |
+| **Why Moderate/Strict also deny `UsePlugin`** | Until a plugin is centrally approved, chat should not bridge external systems. |
+| **Exception path** | Admin creates the plugin once; optional later allow of `UsePlugin` for a named permission set. |
+
+### 16.4 Artifact import/export and CLI code generation
+
+| Action | Strict | Moderate | Baseline | Reason |
+|--------|--------|----------|----------|--------|
+| `qdeveloper:ExportArtifact` / `ImportArtifact` | Deny | Deny | Allow | Artifact movement can exfiltrate generated packages or import untrusted bundles. |
+| `q:GenerateCodeFromCommands` | Deny | Deny | Allow | Turns CLI context into generated code with higher autonomy than chat suggestions. |
+
+---
+
+## 17. Summary: Quick Reference
 
 | Setting | Secure Default | Key Risk if Wrong |
 |---------|---------------|-------------------|
 | Authentication | IAM Identity Center (Pro tier) | Builder IDs: no admin control, no encryption choice, code may train models |
-| IAM policy | `AmazonQDeveloperAccess` for users | `AmazonQFullAccess` everywhere: any compromised user can reconfigure Q |
+| IAM policy | Tiered `iam-policy-*.json` (not broad FullAccess) | `AmazonQFullAccess` everywhere: any compromised user can reconfigure Q |
+| `q:PassRequest` | Deny on Moderate/Strict | Q can invoke any AWS API the user can call |
+| Agent / transform APIs | Deny on Moderate/Strict | Unattended multi-step code or cloud changes |
+| Plugin use / admin | Deny use on Moderate/Strict; deny admin always for developers | Third-party data bridges and unsanctioned OAuth apps |
 | SCP — regions | Deny all except approved regions | Data processed in unapproved jurisdictions violating compliance |
 | SCP — customizations | Deny except in admin account | Unauthorized codebase indexing for fine-tuning |
+| SCP — high autonomy | Deny PassRequest/agents/plugin admin unless `q-autonomy-exception=approved` | Org-wide accidental enablement of privileged Q actions |
 | KMS encryption | Customer-managed keys | AWS-owned keys: no visibility, no revocation, compliance gaps |
 | Key rotation | Automatic, annual | Without rotation: total exposure if key material is compromised |
 | VPC endpoints | Required for private subnets | Traffic over public internet despite private subnet design |

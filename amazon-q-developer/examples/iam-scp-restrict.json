@@ -1,5 +1,6 @@
 {
   "Version": "2012-10-17",
+  "_comment": "Org SCP guardrails for Amazon Q Developer. Region-lock all Q APIs, deny high-autonomy features outside approved exception paths, and require MFA for admin mutation.",
   "Statement": [
     {
       "Sid": "RestrictQToApprovedRegions",
@@ -20,7 +21,28 @@
       }
     },
     {
-      "Sid": "DenyQCustomizationsInNonProdAccounts",
+      "Sid": "DenyHighAutonomyQFeaturesOrgWide",
+      "Effect": "Deny",
+      "Action": [
+        "q:PassRequest",
+        "q:GenerateCodeFromCommands",
+        "q:CreatePlugin",
+        "q:DeletePlugin",
+        "q:UpdatePlugin",
+        "q:CreateOAuthAppConnection",
+        "q:UpdateOAuthAppConnection",
+        "qdeveloper:StartAgentSession",
+        "qdeveloper:TransformCode"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:PrincipalTag/q-autonomy-exception": "approved"
+        }
+      }
+    },
+    {
+      "Sid": "DenyQCustomizationsOutsideApprovedOrg",
       "Effect": "Deny",
       "Action": [
         "codewhisperer:CreateCustomization",
@@ -42,7 +64,12 @@
         "q:DeleteAssignment",
         "q:CreateProfile",
         "q:DeleteProfile",
-        "q:UpdateProfile"
+        "q:UpdateProfile",
+        "q:CreatePlugin",
+        "q:DeletePlugin",
+        "q:UpdatePlugin",
+        "q:CreateOAuthAppConnection",
+        "q:UpdateOAuthAppConnection"
       ],
       "Resource": "*",
       "Condition": {

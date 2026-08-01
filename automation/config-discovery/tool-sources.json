@@ -393,32 +393,34 @@
           "amazon-q-developer/examples/iam-policy-moderate.json"
         ],
         "baseline": [
-          "amazon-q-developer/examples/iam-policy-full-access.json"
+          "amazon-q-developer/examples/iam-policy-baseline.json"
         ]
       },
       "sources": [
         {
-          "name": "Amazon Q Developer administration guide",
+          "name": "Amazon Q Developer permissions reference",
           "kind": "docs",
-          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security_iam_permissions.html",
           "watch_for": [
-            "administrator",
-            "policy",
-            "IAM",
-            "pro",
-            "settings"
+            "PassRequest",
+            "StartAgentSession",
+            "UsePlugin",
+            "TransformCode",
+            "CreatePlugin",
+            "permissions"
           ]
         },
         {
-          "name": "Amazon Q Developer IAM reference",
+          "name": "Amazon Q Developer policy management guide",
           "kind": "docs",
-          "url": "https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html",
+          "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/security_iam_manage-access-with-policies.html",
           "watch_for": [
-            "Actions",
-            "Condition keys",
-            "Resource types",
-            "permissions",
-            "policy"
+            "AmazonQDeveloperAccess",
+            "AmazonQFullAccess",
+            "SCP",
+            "customizations",
+            "policy",
+            "IAM"
           ]
         }
       ]
