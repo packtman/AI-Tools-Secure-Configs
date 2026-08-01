@@ -1,5 +1,6 @@
 {
   "Version": "2012-10-17",
+  "_comment": "Developer-only policy aligned to Moderate. Chat/completions allowed. PassRequest, agents, plugins, and admin denied.",
   "Statement": [
     {
       "Sid": "AmazonQDeveloperUseOnly",
@@ -9,7 +10,10 @@
         "q:SendMessage",
         "q:GetConversation",
         "q:ListConversations",
+        "q:UpdateConversation",
+        "q:DeleteConversation",
         "codewhisperer:GenerateRecommendations",
+        "codewhisperer:GenerateCompletions",
         "codewhisperer:ListCodeAnalysisFindings"
       ],
       "Resource": "*",
@@ -23,15 +27,30 @@
       }
     },
     {
-      "Sid": "DenyAdminActions",
+      "Sid": "DenyPassRequestAgentsPluginsAdmin",
       "Effect": "Deny",
       "Action": [
+        "q:PassRequest",
+        "q:GenerateCodeFromCommands",
+        "q:UsePlugin",
+        "q:CreatePlugin",
+        "q:DeletePlugin",
+        "q:UpdatePlugin",
+        "q:CreateOAuthAppConnection",
+        "q:UpdateOAuthAppConnection",
+        "q:CreateAuthGrant",
+        "q:UpdateAuthGrant",
         "q:CreateAssignment",
         "q:DeleteAssignment",
         "q:UpdateProfile",
         "q:CreateProfile",
         "q:DeleteProfile",
+        "qdeveloper:StartAgentSession",
+        "qdeveloper:TransformCode",
+        "qdeveloper:ExportArtifact",
+        "qdeveloper:ImportArtifact",
         "codewhisperer:CreateCustomization",
+        "codewhisperer:UpdateCustomization",
         "codewhisperer:DeleteCustomization",
         "codewhisperer:UpdateProfile"
       ],

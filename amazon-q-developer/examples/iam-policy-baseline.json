@@ -1,6 +1,6 @@
 {
   "Version": "2012-10-17",
-  "_comment": "BASELINE — Broad Q developer access with essential guardrails. Suitable for startups and individual developers.",
+  "_comment": "BASELINE - Broad Q developer access with essential guardrails. Allows PassRequest and agent sessions in approved regions. Denies plugin/admin mutation. Suitable for startups.",
   "Statement": [
     {
       "Sid": "AllowQFullDeveloperAccess",
@@ -10,11 +10,21 @@
         "q:SendMessage",
         "q:GetConversation",
         "q:ListConversations",
+        "q:UpdateConversation",
+        "q:DeleteConversation",
+        "q:PassRequest",
+        "q:GenerateCodeFromCommands",
+        "q:UsePlugin",
         "q:ListPlugins",
+        "q:GetPlugin",
+        "q:ListPluginProviders",
         "codewhisperer:GenerateRecommendations",
         "codewhisperer:GenerateCompletions",
         "codewhisperer:ListCodeAnalysisFindings",
-        "qdeveloper:*"
+        "qdeveloper:StartAgentSession",
+        "qdeveloper:TransformCode",
+        "qdeveloper:ExportArtifact",
+        "qdeveloper:ImportArtifact"
       ],
       "Resource": "*",
       "Condition": {
@@ -28,11 +38,25 @@
       }
     },
     {
-      "Sid": "DenyProfileDeletion",
+      "Sid": "DenyAdminPluginAndProfileMutation",
       "Effect": "Deny",
       "Action": [
         "q:DeleteProfile",
-        "q:DeleteAssignment"
+        "q:DeleteAssignment",
+        "q:CreateAssignment",
+        "q:CreateProfile",
+        "q:UpdateProfile",
+        "q:CreatePlugin",
+        "q:DeletePlugin",
+        "q:UpdatePlugin",
+        "q:CreateOAuthAppConnection",
+        "q:UpdateOAuthAppConnection",
+        "q:CreateAuthGrant",
+        "q:UpdateAuthGrant",
+        "codewhisperer:CreateCustomization",
+        "codewhisperer:UpdateCustomization",
+        "codewhisperer:DeleteCustomization",
+        "codewhisperer:UpdateProfile"
       ],
       "Resource": "*"
     }

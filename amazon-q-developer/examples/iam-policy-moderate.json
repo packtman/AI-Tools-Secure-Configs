@@ -1,6 +1,6 @@
 {
   "Version": "2012-10-17",
-  "_comment": "MODERATE — Standard developer access to Q features. Region-locked. Admin actions denied. Use for enterprise development teams.",
+  "_comment": "MODERATE - Standard developer chat/completions. Denies PassRequest, agent sessions, transform, and plugin admin. Region-locked. Use for enterprise development teams.",
   "Statement": [
     {
       "Sid": "AllowQDeveloperUse",
@@ -10,7 +10,10 @@
         "q:SendMessage",
         "q:GetConversation",
         "q:ListConversations",
+        "q:UpdateConversation",
+        "q:DeleteConversation",
         "codewhisperer:GenerateRecommendations",
+        "codewhisperer:GenerateCompletions",
         "codewhisperer:ListCodeAnalysisFindings"
       ],
       "Resource": "*",
@@ -24,15 +27,31 @@
       }
     },
     {
-      "Sid": "DenyAdminActions",
+      "Sid": "DenyPassRequestAgentsPluginsAdmin",
       "Effect": "Deny",
       "Action": [
+        "q:PassRequest",
+        "q:GenerateCodeFromCommands",
+        "q:UsePlugin",
+        "q:CreatePlugin",
+        "q:DeletePlugin",
+        "q:UpdatePlugin",
+        "q:CreateOAuthAppConnection",
+        "q:UpdateOAuthAppConnection",
+        "q:CreateAuthGrant",
+        "q:UpdateAuthGrant",
+        "q:SentEvent",
         "q:CreateAssignment",
         "q:DeleteAssignment",
         "q:UpdateProfile",
         "q:CreateProfile",
         "q:DeleteProfile",
+        "qdeveloper:StartAgentSession",
+        "qdeveloper:TransformCode",
+        "qdeveloper:ExportArtifact",
+        "qdeveloper:ImportArtifact",
         "codewhisperer:CreateCustomization",
+        "codewhisperer:UpdateCustomization",
         "codewhisperer:DeleteCustomization",
         "codewhisperer:UpdateProfile"
       ],

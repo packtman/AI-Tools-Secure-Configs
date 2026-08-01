@@ -1,13 +1,18 @@
 {
   "Version": "2012-10-17",
-  "_comment": "STRICT — Read-only Q access. Denies all admin, customization, and agent actions. Region-locked. MFA required. Use for regulated environments.",
+  "_comment": "STRICT - Chat and code suggestions only. Denies PassRequest, agents, plugins, customizations, and admin. Region-locked. MFA required. Use for regulated environments.",
   "Statement": [
     {
-      "Sid": "AllowQReadOnly",
+      "Sid": "AllowQReadOnlyChat",
       "Effect": "Allow",
       "Action": [
+        "q:StartConversation",
+        "q:SendMessage",
         "q:GetConversation",
         "q:ListConversations",
+        "q:UpdateConversation",
+        "q:DeleteConversation",
+        "codewhisperer:GenerateRecommendations",
         "codewhisperer:ListCodeAnalysisFindings"
       ],
       "Resource": "*",
@@ -21,37 +26,33 @@
       }
     },
     {
-      "Sid": "AllowQChat",
-      "Effect": "Allow",
+      "Sid": "DenyPassRequestAndHighAutonomy",
+      "Effect": "Deny",
       "Action": [
-        "q:StartConversation",
-        "q:SendMessage"
+        "q:PassRequest",
+        "q:GenerateCodeFromCommands",
+        "q:UsePlugin",
+        "q:CreatePlugin",
+        "q:DeletePlugin",
+        "q:UpdatePlugin",
+        "q:GetPlugin",
+        "q:ListPlugins",
+        "q:ListPluginProviders",
+        "q:CreateOAuthAppConnection",
+        "q:UpdateOAuthAppConnection",
+        "q:CreateAuthGrant",
+        "q:UpdateAuthGrant",
+        "q:SentEvent",
+        "qdeveloper:StartAgentSession",
+        "qdeveloper:TransformCode",
+        "qdeveloper:ExportArtifact",
+        "qdeveloper:ImportArtifact",
+        "qdeveloper:*"
       ],
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "aws:RequestedRegion": ["us-east-1"]
-        },
-        "Bool": {
-          "aws:MultiFactorAuthPresent": "true"
-        }
-      }
+      "Resource": "*"
     },
     {
-      "Sid": "AllowCodeSuggestions",
-      "Effect": "Allow",
-      "Action": [
-        "codewhisperer:GenerateRecommendations"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "aws:RequestedRegion": ["us-east-1"]
-        }
-      }
-    },
-    {
-      "Sid": "DenyAllAdmin",
+      "Sid": "DenyAllAdminAndCustomization",
       "Effect": "Deny",
       "Action": [
         "q:CreateAssignment",
@@ -62,8 +63,7 @@
         "codewhisperer:CreateCustomization",
         "codewhisperer:UpdateCustomization",
         "codewhisperer:DeleteCustomization",
-        "codewhisperer:UpdateProfile",
-        "qdeveloper:*"
+        "codewhisperer:UpdateProfile"
       ],
       "Resource": "*"
     }
