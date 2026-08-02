@@ -1,7 +1,13 @@
-# Continue.dev — BASELINE configuration
-# Essential security only. All context providers enabled, public API endpoints.
+# Continue.dev: BASELINE configuration
+# Essential security only. All common context providers enabled.
+# Empty MCP default still recommended; add local MCP only after review.
 # Suitable for startups and individual developers.
 
+# WHAT: Required config identity metadata for Continue schema v1.
+# WHY: Current Continue configs require name, version, and schema.
+# BREAKS: Omitting these can cause config load failures or silent fallback.
+name: "secure-baseline-config"
+version: "1.1.0"
 schema: v1
 
 models:
@@ -30,6 +36,11 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
   - name: "web"
+
+# WHAT: Explicit empty MCP list as the safe starting posture.
+# WHY: Baseline still documents MCP intent so accidental servers are visible in diffs.
+# BREAKS: Leaving mcpServers undefined makes later MCP adds harder to audit.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: false

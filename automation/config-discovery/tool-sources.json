@@ -270,22 +270,34 @@
           "url": "https://docs.continue.dev/reference",
           "watch_for": [
             "config",
-            "permissions",
+            "mcpServers",
             "models",
-            "context",
+            "schema",
             "MCP"
           ]
         },
         {
-          "name": "Continue repository",
-          "kind": "repository",
-          "url": "https://github.com/continuedev/continue",
+          "name": "CLI tool permissions documentation",
+          "kind": "docs",
+          "url": "https://docs.continue.dev/cli/tool-permissions",
           "watch_for": [
-            "config.yaml",
-            "policy",
-            "secrets",
-            "permissions",
-            "telemetry"
+            "permissions.yaml",
+            "UploadArtifact",
+            "Skills",
+            "exclude",
+            "auto"
+          ]
+        },
+        {
+          "name": "Default tool permission policies",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/continuedev/continue/refs/heads/main/extensions/cli/src/permissions/defaultPolicies.ts",
+          "watch_for": [
+            "UploadArtifact",
+            "Skills",
+            "CheckBackgroundJob",
+            "permission",
+            "AUTO_MODE"
           ]
         }
       ]
