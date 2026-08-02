@@ -1,6 +1,9 @@
-# Continue.dev — Enterprise configuration
+# Continue.dev: Enterprise configuration (Moderate-equivalent)
 # Includes proxy settings and private model endpoints.
+# Pair with permissions-moderate.yaml and Mission Control org secrets.
 
+name: "secure-enterprise-config"
+version: "1.1.0"
 schema: v1
 
 models:
@@ -35,6 +38,11 @@ contextProviders:
   - name: "diff"
   - name: "tree"
   - name: "codebase"
+
+# WHAT: Empty MCP default for enterprise endpoints.
+# WHY: MCP must be allowlisted through change control, not shipped open.
+# BREAKS: Removing the key hides whether MCP is intentionally denied.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: false

@@ -1,7 +1,13 @@
-# Continue.dev — Tool permission configuration
+# Continue.dev: Tool permission configuration (Moderate default)
 # Deploy to: ~/.continue/permissions.yaml
+# Prefer examples/permissions-{baseline,moderate,strict}.yaml for tiered rollouts.
+#
+# Absolute mode warning: cn --auto ignores this file entirely. cn --readonly
+# also overrides it. See README workflow-preservation notes for wrapper guidance.
 
-# Read-only tools — safe to auto-approve
+# WHAT: Auto-approve non-destructive inspection and session helpers.
+# WHY: Default enterprise posture keeps reads fast and gates mutations.
+# BREAKS: Excluding Read/Search makes agent context gathering impractical.
 allow:
   - "Read(*)"
   - "List(*)"
@@ -9,15 +15,24 @@ allow:
   - "Fetch(*)"
   - "Diff(*)"
   - "AskQuestion(*)"
+  - "Checklist(*)"
+  - "Status(*)"
+  - "CheckBackgroundJob(*)"
+  - "ReportFailure(*)"
 
-# Write tools — require confirmation
+# WHAT: Require confirmation for edits, shell, and Skills.
+# WHY: Human review for state changes and skill-driven tool expansion.
+# BREAKS: allow on Bash/Skills enables unattended execution and skill loading.
 ask:
   - "Edit"
   - "MultiEdit"
   - "Write"
   - "Bash"
+  - "Skills(*)"
 
-# Dangerous operations — completely excluded
-exclude: []
-# Uncomment to exclude specific tools:
-# - "Delete"
+# WHAT: Exclude destructive delete and artifact upload by default.
+# WHY: Reduce accidental data loss and workstation-to-remote exfil paths.
+# BREAKS: Removing UploadArtifact from exclude permits agent-driven uploads.
+exclude:
+  - "Delete"
+  - "UploadArtifact(*)"

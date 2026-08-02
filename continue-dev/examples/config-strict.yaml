@@ -1,7 +1,13 @@
-# Continue.dev — STRICT configuration
-# Maximum restrictions. Read-only tools only, bash disabled, telemetry off.
+# Continue.dev: STRICT configuration
+# Maximum restrictions. Read-only tools only (see permissions-strict.yaml),
+# empty MCP list, telemetry off, indexing disabled.
 # Use for regulated environments where AI autonomy must be minimized.
 
+# WHAT: Required config identity metadata for Continue schema v1.
+# WHY: Current Continue configs require name, version, and schema.
+# BREAKS: Omitting these can cause config load failures or silent fallback.
+name: "secure-strict-config"
+version: "1.1.0"
 schema: v1
 
 models:
@@ -9,6 +15,9 @@ models:
     provider: "openai"
     model: "gpt-4o"
     apiBase: "https://llm-gateway.corp.example.com/v1"
+    # WHAT: Secret reference, never an inline API key.
+    # WHY: Strict forbids secrets in repo-deployed configs.
+    # BREAKS: Inlining keys exposes credentials in MDM/Git.
     apiKey: "${{ secrets.CORPORATE_LLM_KEY }}"
     requestOptions:
       timeout: 30
@@ -31,6 +40,11 @@ contextProviders:
   - name: "code"
   - name: "diff"
   - name: "tree"
+
+# WHAT: Explicit empty MCP server list for Continue agents.
+# WHY: Strict forbids MCP tool bridges unless change-controlled later.
+# BREAKS: Removing this hides MCP posture; adding servers is a tier change.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: true

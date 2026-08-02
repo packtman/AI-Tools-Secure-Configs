@@ -1,8 +1,11 @@
-# Continue.dev — BASELINE tool permissions
-# Most tools auto-approved for maximum productivity.
-# Only destructive operations require confirmation.
+# Continue.dev: BASELINE tool permissions
+# Deploy to: ~/.continue/permissions.yaml
+# Most productivity tools auto-approved. Shell, Delete, UploadArtifact, and Skills ask.
 # Suitable for startups and individual developers.
 
+# WHAT: Broad allow-list for daily coding productivity.
+# WHY: Baseline prioritizes speed while keeping a few high-risk tools interactive.
+# BREAKS: Moving Bash/UploadArtifact/Skills to allow removes the last confirmation gates.
 allow:
   - "Read(*)"
   - "List(*)"
@@ -10,12 +13,21 @@ allow:
   - "Fetch(*)"
   - "Diff(*)"
   - "AskQuestion(*)"
+  - "Checklist(*)"
+  - "Status(*)"
+  - "CheckBackgroundJob(*)"
+  - "ReportFailure(*)"
   - "Edit"
   - "MultiEdit"
   - "Write"
 
+# WHAT: Prompt on shell, deletes, artifact upload, and Skills loading.
+# WHY: These can execute code, destroy files, exfiltrate data, or expand tool surface.
+# BREAKS: Setting ask to empty (with these in allow) enables unattended high-risk actions.
 ask:
   - "Bash"
   - "Delete"
+  - "UploadArtifact(*)"
+  - "Skills(*)"
 
 exclude: []
