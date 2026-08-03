@@ -3,62 +3,74 @@
 This report was generated because one or more watched upstream sources changed.
 Use `automation/config-discovery/agent-prompt.md` to turn these signals into a focused config update PR.
 
+## Maintenance applied (2026-08-03)
+
+Gemini CLI Management Console controls covered in this branch:
+
+- Added tiered `management-console-*.json` targets for Strict Mode (`admin.secureModeEnabled`), Extensions, MCP enable/allowlist/`requiredConfig`, and Unmanaged Capabilities / Agent Skills (`admin.skills.enabled`).
+- Documented that remote `admin.*` must not be copied into local `settings.json`.
+- Replaced the noisy Gemini GitHub homepage watcher with settings schema, enterprise-controls, and Agent Skills docs.
+- Schema rescan: potential admin terms for Gemini CLI are present in local management-console templates.
+
+Deferred duplicates (already open elsewhere): Continue (#75), Amazon Q (#74), Cursor (#73), Codex CLI/Copilot (#72), Windsurf (#71), Claude Desktop/API (#70), Codex Desktop/OpenAI Platform (#69), Claude Code (#66/#68), Tabnine (#65), Gemini CLI local settings refresh (#64).
+
+No config update needed for Claude Code missing terms such as `ANTHROPIC_MODEL` / `CLAUDE_MODEL` / IDE UX env vars: developer preference or model routing, not org admin security knobs. Codex release names `McpConnectionSet` / `McpRuntime` / `forceRefetch` are not admin settings.
+
 ## Summary
 
 | Tool | Source | Change | Status | URL |
 |------|--------|--------|--------|-----|
-| Claude Code | Managed settings documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
-| Claude Code | Hooks documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
-| Claude Code | Dynamic workflows documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
-| Cursor | Team administration documentation | fingerprint-method-changed | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
-| Cursor | MCP documentation | fingerprint-method-changed | 200 | https://docs.cursor.com/en/tools/mcp |
-| GitHub Copilot | Organization policy documentation | fingerprint-method-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
-| GitHub Copilot | Content exclusion documentation | fingerprint-method-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
-| Codex CLI | OpenAI Codex repository | fingerprint-method-changed | 200 | https://github.com/openai/codex |
-| Codex CLI | OpenAI Codex releases | fingerprint-method-changed | 200 | https://api.github.com/repos/openai/codex/releases?per_page=10 |
-| Codex Desktop | OpenAI Codex repository | fingerprint-method-changed | 200 | https://github.com/openai/codex |
-| Codex Desktop | OpenAI Codex config reference | fingerprint-method-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
-| Continue.dev | Configuration reference | fingerprint-method-changed | 200 | https://docs.continue.dev/reference |
-| Continue.dev | Continue repository | fingerprint-method-changed | 200 | https://github.com/continuedev/continue |
-| Windsurf | Windsurf documentation | fingerprint-method-changed | 200 | https://docs.windsurf.com/ |
-| Windsurf | Windsurf changelog | fingerprint-method-changed | 200 | https://windsurf.com/changelog |
-| Tabnine | Tabnine admin documentation | fingerprint-method-changed | 200 | https://docs.tabnine.com/ |
-| Tabnine | Tabnine enterprise documentation | fingerprint-method-changed | 200 | https://www.tabnine.com/enterprise |
-| Amazon Q Developer | Amazon Q Developer administration guide | fingerprint-method-changed | 200 | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html |
-| Amazon Q Developer | Amazon Q Developer IAM reference | fingerprint-method-changed | 200 | https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html |
-| Gemini CLI | Gemini CLI repository | fingerprint-method-changed | 200 | https://github.com/google-gemini/gemini-cli |
-| Gemini CLI | Gemini CLI documentation | fingerprint-method-changed | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
-| Google Gemini | Vertex AI Gemini safety settings | fingerprint-method-changed | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
-| Google Gemini | Google Cloud organization policies | fingerprint-method-changed | 200 | https://cloud.google.com/resource-manager/docs/organization-policy/overview |
-| Claude Desktop | Claude Desktop MCP documentation | fingerprint-method-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/mcp |
-| Claude Desktop | Claude Desktop support documentation | fingerprint-method-changed | 200 | https://support.anthropic.com/en/ |
-| OpenAI Platform | OpenAI OpenAPI repository | fingerprint-method-changed | 200 | https://github.com/openai/openai-openapi |
-| OpenAI Platform | OpenAI OpenAPI schema | fingerprint-method-changed | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
-| Claude API | Anthropic admin API documentation | fingerprint-method-changed | 200 | https://platform.claude.com/docs/en/api/admin.md |
-| Claude API | Anthropic API release notes | fingerprint-method-changed | 200 | https://platform.claude.com/docs/en/release-notes/api.md |
+| Claude Code | Managed settings documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
+| Claude Code | Hooks documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
+| Claude Code | Dynamic workflows documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
+| GitHub Copilot | Organization policy documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
+| GitHub Copilot | Content exclusion documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
+| Codex CLI | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
+| Codex CLI | OpenAI Codex releases | content-changed | 200 | https://api.github.com/repos/openai/codex/releases?per_page=10 |
+| Codex Desktop | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
+| Codex Desktop | OpenAI Codex config reference | content-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
+| Continue.dev | Configuration reference | content-changed | 200 | https://docs.continue.dev/reference |
+| Continue.dev | Continue repository | content-changed | 200 | https://github.com/continuedev/continue |
+| Windsurf | Windsurf documentation | content-changed | 200 | https://docs.windsurf.com/ |
+| Windsurf | Windsurf changelog | content-changed | 200 | https://windsurf.com/changelog |
+| Tabnine | Tabnine admin documentation | content-changed | 200 | https://docs.tabnine.com/ |
+| Tabnine | Tabnine enterprise documentation | content-changed | 200 | https://www.tabnine.com/enterprise |
+| Amazon Q Developer | Amazon Q Developer IAM reference | content-changed | 200 | https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html |
+| Gemini CLI | Gemini CLI settings schema | new-source-baseline | 200 | https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json |
+| Gemini CLI | Gemini CLI enterprise admin controls | new-source-baseline | 200 | https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/admin/enterprise-controls.md |
+| Gemini CLI | Gemini CLI Agent Skills documentation | new-source-baseline | 200 | https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/skills.md |
+| Gemini CLI | Gemini CLI documentation | content-changed | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
+| Google Gemini | Vertex AI Gemini safety settings | content-changed | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
+| Google Gemini | Google Cloud organization policies | content-changed | 200 | https://cloud.google.com/resource-manager/docs/organization-policy/overview |
+| Claude Desktop | Claude Desktop MCP documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/mcp |
+| Claude Desktop | Claude Desktop support documentation | content-changed | 200 | https://support.anthropic.com/en/ |
+| OpenAI Platform | OpenAI OpenAPI repository | content-changed | 200 | https://github.com/openai/openai-openapi |
+| OpenAI Platform | OpenAI OpenAPI schema | content-changed | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
+| Claude API | Anthropic admin API documentation | content-changed | 200 | https://platform.claude.com/docs/en/api/admin.md |
+| Claude API | Anthropic API release notes | content-changed | 200 | https://platform.claude.com/docs/en/release-notes/api.md |
 
 ## Review Details
 
 ### Claude Code: Managed settings documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/settings
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
 
 Keyword snippets:
 
-> ... ttings Worktree settings Permission settings Permission rule syntax Sandbox settings Sandbox
-path prefixes Attribution settings File suggestion settings Hook configuration Compute managed
-settings with a policy helper Settings precedence Verify active settings Key points about the
-configuration system System prompt Excluding sensitive files Subagent configuration Plugin con ...
+> ... d shortcuts On this page Configuration scopes Available scopes When to use each scope How scopes
+interact What uses scopes Settings files When edits take effect Invalid entries in managed settings
+Available settings Global config settings Worktree settings Permission settings Permission rule
+syntax Sandbox settings Sandbox path prefixes Attribution settings File suggestion ...
 
 > ... in content Claude Code Docs home page English Search...  K Ask Assistant Claude Developer
 Platform Claude Code on the Web Claude Code on the Web Search... Navigation Settings and permissions
 Claude Code settings Getting started Build with Claude Code Administration Configuration Reference
 Agent SDK What's New Resources Settings and permissions Settings Permissions San ...
 
-> ... so a repository cannot grant itself auto mode. Set it in ~/.claude/settings.json instead. The
+> ... it in ~/.claude/settings.json instead. Before v2.1.142, project settings could set auto . The
 --permission-mode CLI flag overrides this setting for a single session "acceptEdits"
 disableBypassPermissionsMode Set to "disable" to prevent bypassPermissions mode from being
 activated. This disables the --dangerously-skip-permissions command-line flag. Typically placed in
@@ -66,8 +78,8 @@ managed settings t ...
 
 > ... ons Claude Code settings Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Settings and permissions Settings Permissions Sandbox
-environments Bash sandbox Model and responses Model configuration Speed up responses with fast mode
-Output styles Interface Terminal configuration Fullscreen rendering Voice dicta ...
+environments Bash sandbox Environments Cloud environments Model and responses Model configuration
+Speed up responses with fast mode Escalate hard decisions with the advisor tool O ...
 
 > ... , editor settings) Tools and plugins you use across all projects API keys and authentication
 (stored securely) Project scope is best for: Team-shared settings (permissions, hooks, MCP servers)
@@ -76,13 +88,13 @@ for: Personal overrides for a specific project Testing configurations be ...
 
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+`ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Claude Code: Hooks documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/hooks
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -103,17 +115,17 @@ PostToolUseFailure decision control PostToolBatch PostToolBatch input PostToolBa
 > ... askCompleted input TaskCompleted decision control Stop Stop input Stop decision control
 StopFailure StopFailure input TeammateIdle TeammateIdle input TeammateIdle decision control
 ConfigChange ConfigChange input ConfigChange decision control CwdChanged CwdChanged input CwdChanged
-output FileChanged FileChanged input FileChanged output WorktreeCreate WorktreeCreate input ...
+output DirectoryAdded DirectoryAdded input FileChanged FileChanged input FileChanged output ...
 
-> ... n" : "session_start" }  InstructionsLoaded decision control InstructionsLoaded hooks have no
-decision control. They cannot block or modify instruction loading. Use this event for audit logging,
+> ... on" : "session_start" }  InstructionsLoaded decision control InstructionsLoaded hooks have no
+decision control. They can't block or modify instruction loading. Use this event for audit logging,
 compliance tracking, or observability.  UserPromptSubmit Runs when the user submits a prompt, before
 Claude processes it. This allows you to add additional context based ...
 
-> ... ed startup , resume , clear , compact Setup which CLI flag triggered setup init , maintenance
+> ... tup , resume , clear , compact , fork Setup which CLI flag triggered setup init , maintenance
 SessionEnd why the session ended clear , resume , logout , prompt_input_exit ,
 bypass_permissions_disabled , other Notification notification type permission_prompt , idle_prompt ,
-auth_success , elicitation_dialog , elicitation_complete , elicitation_response SubagentStart age
+auth_success , elicitation_dialog , elicitation_complete , elicitation_response , agent_needs_inp
 ...
 
 Potential config terms not found in local tool files:
@@ -124,16 +136,16 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ### Claude Code: Dynamic workflows documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/workflows
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
 
 Keyword snippets:
 
-> Orchestrate subagents at scale with dynamic workflows - Claude Code Docs Skip to main content Claude
-Code Docs home page English Search...  K Ask Assistant Claude Developer Platform Claude Code on the
-Web Claude Code on the Web Sear ...
+> Orchestrate subagents at scale with dynamic workflows - Claude Code Docs Documentation Index Fetch
+the complete documentation index at: /docs/llms.txt Use this file to discover all available pages
+before exploring further. Skip to ma ...
 
 > ... and the Agent SDK . The same disable settings apply on every surface. To turn workflows off for
 yourself: Toggle Dynamic workflows off in /config . Persists across sessions. Set
@@ -147,41 +159,25 @@ CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you se
 workflows off for your whole organization, set "disableWorkflows": true in managed settings , or use
 the toggle on ...
 
-> ... ce On this page When to use a workflow Run a bundled workflow Bundled workflows Watch the run
-Have Claude write a workflow Ask for a workflow in your prompt Let Claude decide with ultracode
-Approve the plan before it runs Save the workflow for reuse How a workflow runs Behavior and limits
-Manage runs Resume after a pause Cost Turn workflows off Related resources Agen ...
+> ... kflow Bundled workflows Watch the run Have Claude write a workflow Ask for a workflow in your
+prompt Dismiss or turn off the keyword Where the keyword works Let Claude decide with ultracode
+Approve the plan before it runs Save the workflow for reuse Distribute a workflow in a plugin Pass
+input to a saved workflow Example workflow prompts Audit many files for the same ...
 
 > ... sions. Set CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you set it.
 To turn workflows off for your whole organization, set "disableWorkflows": true in managed settings
 , or use the toggle on the Claude Code admin settings page. When workflows are disabled, the bundled
-workflow commands are unavailable, the workflow keyword no longer triggers a r ...
+workflow commands are unavailable, the ultracode keyword no longer triggers a ...
 
-Potential config terms found upstream are already present in local tool files.
+Potential config terms not found in local tool files:
 
-### Cursor: Team administration documentation
+`CLAUDE_CODE_SUBAGENT_MODEL`
 
-- Change type: `fingerprint-method-changed`
-- Source URL: https://docs.cursor.com/en/account/teams/admin-dashboard
-- Status: `200`
-- Related repo paths: cursor/, rollout-guide/configs/cursor/
-
-No configured watch keywords were found in the fetched content.
-
-### Cursor: MCP documentation
-
-- Change type: `fingerprint-method-changed`
-- Source URL: https://docs.cursor.com/en/tools/mcp
-- Status: `200`
-- Related repo paths: cursor/, rollout-guide/configs/cursor/
-
-Keyword snippets:
-
-> Cursor Docs - Agent, Rules, MCP, Skills & CLI
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### GitHub Copilot: Organization policy documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization
 - Status: `200`
 - Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
@@ -190,31 +186,31 @@ Keyword snippets:
 
 > ... LI command reference CLI plugin reference CLI programmatic reference ACP server CLI
 configuration directory Custom agents configuration Custom instructions support Hooks reference
-Policy conflicts Copilot allowlist reference MCP allowlist enforcement Metrics data Copilot billing
-Models and pricing Model multipliers for annual plans Billing cycle Seat assignment Li ...
+Policy conflicts Supported surfaces for policies Managed settings reference Copilot allowlist
+reference MCP allowlist enforcement Metrics data Copilot billing Models and pricing Billing ...
 
 > Managing GitHub Copilot in your organization - GitHub Docs Skip to main content GitHub Docs Version:
 Free, Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is
 English Search or ask Co ...
 
-> ... stom agents Spaces Create Copilot Spaces Collaborate with others Copilot for GitHub tasks Use
+> ... MCP servers Spaces Create Copilot Spaces Collaborate with others Copilot for GitHub tasks Use
 Copilot to create or update issues Create a PR summary Use the GitHub MCP Server from Copilot Chat
 Use Copilot agents Get started Kick off a task Research, plan, iterate Manage agent sessions Copilot
 code review Review Copilot output Set up Set up for self Install Copilot exten ...
 
-> ... lls Enterprise management Spark Copilot usage metrics All articles Copilot usage metrics
+> ... Cloud and local sandboxes Spark Copilot usage metrics All articles Copilot usage metrics
 Prompting Prompt engineering Response customization Context MCP Spaces Repository indexing Content
-exclusion Tools AI tools About Copilot integrations Models Utility models Auto model selection
-FedRAMP models Base and LTS models Usage limits Billing Usage-based billing for individuals Us ...
+exclusion Tools AI tools About Copilot integrations Models Default availability Bring your own key
+Utility models Auto model selection FedRAMP models Base and LTS models Usage limits Billin ...
 
-> ... ions Code suggestions Code referencing Chat Agents Cloud agent About cloud agent Agent
-management Custom agents Access management MCP and cloud agent Risks and mitigations Copilot CLI
-About Copilot CLI Comparing CLI features Cancel and roll back About remote control Custom agents
-About CLI plugins Enterprise plugin standards Autonomous task completion Parallel ...
+> ... d agent About cloud agent Agent management Custom agents About automations Rationale,
+confidence, and approvals Access management MCP and cloud agent Risks and mitigations Copilot CLI
+About Copilot CLI Comparing CLI features Copilot CLI in Actions Cancel and roll back Context
+management About remote control Custom agents Autonomous task completion Parallel task ...
 
 ### GitHub Copilot: Content exclusion documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion
 - Status: `200`
 - Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
@@ -235,10 +231,10 @@ Fix lint errors Refactor for optimization Refactor for sustainability Refactor d
 Refactor data access layers Decouple business logic Handle cross-cutting Simplify inheritance
 hierarchies Fix database deadlocks Translate code Document code File issues without b ...
 
-> ... lot billing Models and pricing Model multipliers for annual plans Billing cycle Seat assignment
-License changes Azure billing Agentic audit log events Agent session filters Review excluded files
-Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot usage
-metrics Copilot LoC metrics Team-level metrics Example schema Tutorials Al ...
+> ... lot requests (legacy) Billing overview (legacy) Monitor premium requests (legacy) Model
+multipliers for annual plans (legacy) Agentic audit log events Agent session filters Review excluded
+files Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot
+usage metrics Copilot LoC metrics Team-level metrics Example schema Tutorials Al ...
 
 > Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
 Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
@@ -246,53 +242,57 @@ Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current
 
 ### Codex CLI: OpenAI Codex repository
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/codex
 - Status: `200`
 - Related repo paths: codex-cli/
 
 Keyword snippets:
 
-> ... igation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
-Copilot Write better code with AI GitHub Spark Build and deploy intelligent apps GitHub Models
-Manage and compare prompts MCP Registry New Integrate external tools DEVELOPER WORKFLOWS Actions
-Automate any workflow Codespaces Instant dev environments Issues Plan and track w ...
-
-> ... n in Appearance settings Platform AI CODE CREATION GitHub Copilot Write better code with AI
-GitHub Spark Build and deploy intelligent apps GitHub Models Manage and compare prompts MCP Registry
-New Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant
-dev environments Issues Plan and track work Code Review Manage code chan ...
+> ... vigation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
+Copilot Write better code with AI GitHub Copilot app Direct agents from issue to merge MCP Registry
+Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant dev
+environments Issues Plan and track work Code Review Manage code changes ...
 
 ### Codex CLI: OpenAI Codex releases
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://api.github.com/repos/openai/codex/releases?per_page=10
 - Status: `200`
 - Related repo paths: codex-cli/
 
 Keyword snippets:
 
+> ... n, WebSockets, redirects, and LM Studio connections. (#34479, #34509, #34655, #34678, #35023,
+#35056, #35239)\n- Keep MCP connections and Apps tools current when authentication or configuration
+changes, reconnecting closed servers without restarting healthy connections. (#34952, #34957,
+#35028, #35144, #35146, #35151)\n- Preserve submitted messages, final responses, fail ...
+
+> ... ed mention results. (#35000, #35021, #34775, #34778, #35365, #35375)\n- Fix Windows navigation
+keys, reliably terminate sandboxed process trees, and preserve proxy settings during security
+reviews. (#34625, #34624, #35036)\n- Retain more available skills under tight context budgets and
+warn when skill catalogs must be truncated. (#34732, #34738, #34997)\n\n## Docume ...
+
 > ... type": "application/octet-stream",         "digest":
-"sha256:2a3e6b764ae1f7317dd548530ada3a118c7c0485aeb0689b7820238e5f2e53fc",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1389,         "state": "uploaded"       },
+"sha256:8e55bac532c56e75ed21fd1bcafb641b6dfec02127ea4ae9cf8e7e708e59b60f",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:66bc2f3f20079bad73fde1d ...
+"sha256:b7dd86881d468ac74160652 ...
 
-> ... ostics @fcoury-oai\r\n- #24474 Log rollout writer OS errors @etraut-openai\r\n- #24076 chore:
-stop consuming legacy config profiles @jif-oai\r\n- #24131 centralize Responses retry policy @rhan-
-oai\r\n- #23858 [wip] goal shift @jif-oai\r\n- #24555 chore: drop orphaned codex memories MCP crate
-@jif-oai\r\n- #24558 chore: move memory prompt builder into extension @ji ...
+> ... ix @copyberry\n- #34581 Add routing-card lexical skill selection @copyberry\n- #34588 Bind MCP
+calls to captured catalog revisions @copyberry\n- #34590 Add keyed shell environment policy filters
+@copyberry\n- #34597 Enforce exact values from managed config requirements @copyberry\n- #34598 Skip
+missing paths in filesystem sandbox entries @copyberry\n- #34601 Sanit ...
 
-> ... a remote transport. (#24420)\r\n- Vim mode gained text-object editing, improved word/line-end
-behavior, and a configurable interrupt-turn binding. (#24382, #24380, #24766)\r\n- `/permissions`
-now understands named permission profiles and displays configured custom profiles. (#21559)\r\n-
-Packaged Codex builds can discover and use the bundled patched zsh helper across ...
+Potential config terms not found in local tool files:
 
-Potential config terms found upstream are already present in local tool files.
+`McpConnectionSet`, `McpRuntime`, `forceRefetch`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Codex Desktop: OpenAI Codex repository
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/codex
 - Status: `200`
 - Related repo paths: codex-desktop/
@@ -306,7 +306,7 @@ from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 
 ### Codex Desktop: OpenAI Codex config reference
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
 - Status: `200`
 - Related repo paths: codex-desktop/
@@ -314,141 +314,137 @@ from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 Keyword snippets:
 
 > # Configuration docs moved This file has moved. Please see the latest configuration documentation
-here: - Full config docs: [docs/config.md](../docs/config.md) - MCP servers section: [docs ...
+here: - Full config docs: [docs/config.md](https://github.com/openai/codex/blob/main/docs/ ...
 
 ### Continue.dev: Configuration reference
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.continue.dev/reference
 - Status: `200`
 - Related repo paths: continue-dev/
 
 Keyword snippets:
 
-> config.yaml Reference | Continue Docs Search...  K Docs Blog Sign in Checks CLI IDE Extensions
-Getting Started Install Quick Start Customization Overview Features Agent Chat Autocomplet ...
+> config.yaml Reference | Continue Docs Search...  K Docs Blog IDE Extensions CLI Getting Started
+Install Quick Start Customization Overview Features Agent Chat Autocomplete Edit Customiz ...
 
-> ... .  K Docs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start
+> ... e Docs Search...  K Docs Blog IDE Extensions CLI Getting Started Install Quick Start
 Customization Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models
-MCP servers Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml
-Reference Migrating Config to YAML Continue Documentation MCP Server config.json R ...
+MCP servers Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference
+Migrating Config to YAML Continue Documentation MCP Server config.json Reference ( ...
 
-> ... mpts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference Migrating
+> ... Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
 Config to YAML Continue Documentation MCP Server config.json Reference (Deprecated) Context
-Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand Hub vs
-Local Configuration Configuring Models, Rules, and Tools Codebase and Documentatio ...
+Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand
+Configuration Configuring Models, Rules, and Tools Codebase and Documentation Awareness U ...
 
-> ... ocs Blog Sign in Checks CLI IDE Extensions Getting Started Install Quick Start Customization
+> ... Search...  K Docs Blog IDE Extensions CLI Getting Started Install Quick Start Customization
 Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models MCP servers
-Rules Prompts Model Providers Model Roles Deep Dives Telemetry Reference config.yaml Reference
-Migrating Config to YAML Continue Documentation MCP Server config.json Refer ...
+Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
+Config to YAML Continue Documentation MCP Server config.json Reference (Depr ...
 
-Potential config terms not found in local tool files:
-
-`mcpServers`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+Potential config terms found upstream are already present in local tool files.
 
 ### Continue.dev: Continue repository
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://github.com/continuedev/continue
 - Status: `200`
 - Related repo paths: continue-dev/
 
 Keyword snippets:
 
-> ... G.md CONTRIBUTING.md LICENSE LICENSE README.md README.md SECURITY.md SECURITY.md package-
+> ... ESTING.md TESTING.md docs-search-dark-mode-fix.png docs-search-dark-mode-fix.png package-
 lock.json package-lock.json package.json package.json tsconfig.json tsconfig.json worktree-
 config.yaml worktree-config.yaml View all files Repository files navigation README Code of conduct
-Contributing Apache-2.0 license Security Continue Source-controlled AI checks, enforceable i ...
+Contributing Apache-2.0 license Security More items Continue Pioneering open-source coding a ...
 
-> ... en-source ai developer-tools jetbrains-plugin vs-code-extenstion llm Resources Readme License
+> ... ce coding agent continue.dev Topics agent ai cli developer-tools open-source Resources Readme
 Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
-Security policy Uh oh! There was an error while loading. Please reload this page . Activity Custom
-properties Stars 33.5k stars Watchers 158 watching Forks 4.6k forks Report repos ...
+Security policy Activity Custom properties Stars 35.3k stars Watchers 165 watching Forks 5.2k forks
+Report repository Releases Used by Contributors Languages Footer  2026 GitHub, ...
 
-> ... Here is an example that performs a security review: --- name : Security Review description :
-Review PR for basic security vulnerabilities --- Review this PR and check that : - No secrets or API
-keys are hardcoded - All new API endpoints have input validation - Error responses use the standard
-error format Install CLI AI checks are powered by the open-source Contin ...
+> ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
+the VS Code extension, CLI, and JetBrains plugin. This included removing anonymous telemetry,
+pulling out authentication, squashing bugs, and more. VS Code CLI JetBrains Note: We recommend using
+the Continue CLI instead of the JetBrains plugin. Contributors Thank you to t ...
 
 ### Windsurf: Windsurf documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.windsurf.com/
 - Status: `200`
 - Related repo paths: windsurf/
 
 Keyword snippets:
 
-> ... Mode Modes App Deploys Web and Docs Search Memories & Rules Skills AGENTS.md Workflows Worktrees
-Model Context Protocol (MCP) Cascade Hooks Accounts Usage Quota Analytics Teams & Enterprise Context
-Awareness Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration
-SSL Inspection Linux inotify Limits WSL Issues Gathering Logs Security Fe ...
+> ... . Skip to main content Devin Docs home page English Search...  K Ask Assistant Support Devin
+Devin Search... Navigation Getting Started Welcome to Devin Desktop Cloud CLI Desktop Enterprise Use
+Cases API Federal Devin Desktop Editor Getting Started Set Up Install Devin Desktop FAQ Recommended
+Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Br ...
 
-> ... mmand Code Lenses Terminal Browser Previews AI Commit Messages DeepWiki Codemaps Vibe and
-Replace Advanced Agent Command Center Agent Command Center Spaces Devin Devin Local Agent Cascade
-Overview Arena Mode Modes App Deploys Web and Docs Search Memories & Rules Skills AGENTS.md
-Workflows Worktrees Model Context Protocol (MCP) Cascade Hooks Accounts Usage Quota Ana ...
+> ... ommended Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Browser
+Previews AI Commit Messages DeepWiki Codemaps Vibe and Replace Advanced Devin Local Agent Cascade
+Context Awareness Troubleshooting Agent Command Center Agent Command Center Spaces Devin Agent
+Client Protocol (preview) Building a custom ACP agent Releases Changelog Changelog ( ...
 
-> ... nter Spaces Devin Devin Local Agent Cascade Overview Arena Mode Modes App Deploys Web and Docs
-Search Memories & Rules Skills AGENTS.md Workflows Worktrees Model Context Protocol (MCP) Cascade
-Hooks Accounts Usage Quota Analytics Teams & Enterprise Context Awareness Overview Fast Context
-Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL Insp ...
+> ... Local Our next-generation agent harness, shared with Devin CLI. Runs on your machine as the
+primary local agent. Usage Credits and usage. Terminal An upgraded Terminal experience. MCP MCP
+servers extend the agent's capabilities. Memories Memories and rules help customize behavior.
+Context Awareness Instantly understands your codebase. Advanced Advanced configur ...
 
-> ... ess Overview Fast Context Windsurf Ignore Troubleshooting Common Issues Proxy Configuration SSL
-Inspection Linux inotify Limits WSL Issues Gathering Logs Security FedRAMP Security Admin Guide
-Reporting On this page Set Up Onboarding 1. Select setup flow 2. Choose editor theme 3. Sign up /
-Log in Having Trouble? 4. Let's Surf! Update Windsurf Things to Try Forgot ...
+> ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
+Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
+Guide Reporting On this page Set Up Onboarding 1. Select your preferred theme 2. Log In / Sign Up 3.
+Start Building with Devin! Things to Try Forgot to Import VS Code Configuratio ...
 
 ### Windsurf: Windsurf changelog
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://windsurf.com/changelog
 - Status: `200`
 - Related repo paths: windsurf/
 
 Keyword snippets:
 
-> ... cade 1.13.9 January 16, 2026 1.13.9 January 16, 2026 Bug Fixes and Improvements Improvements to
-GPT-5.2-Codex harness Admins can now manage Windsurf restrictions via Windows Group Policy 1.13.8
-January 14, 2026 1.13.8 January 14, 2026 GPT-5.2-Codex Adds support for GPT-5.2-Codex with four
-reasoning efforts (low, medium, high, and xhigh). GPT-5.2-Codex is OpenAI's ...
+> ... r, scroll, and type faster and stay responsive while streaming. A brief remote-connection drop
+no longer flashes a "disconnected" banner. You can now configure a session's network policy and
+grant or deny network access requests inline from the chat, without switching to the web app. Devin
+Local Devin Local customizations and the sidebar skills count now span all ...
 
-> ... rolling out gradually. If you don't see it yet, try logging out of the website and IDE then
-logging back in. Devin Cloud is disabled by default for enterprise accounts. Enterprise admins
-should enable Devin access in their organization settings if they have already purchased Cognition
-Platform. Agent Command Center New Kanban-style view showing all local and clou ...
+> ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
+Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
+Guide Reporting On this page v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28 v3.2.23
+v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v2.2.17 v2.1.32 ...
 
-> ... indsurf Editor Pricing Windsurf for Enterprise Capabilities Cascade Tab JetBrains Plugin Company
-About Us Blog Careers Support Contact Partnerships Terms of Service Privacy Policy Security Windsurf
-for Government Resources Docs Changelog Releases Brand Referrals University Windsurf vs Cursor
-Windsurf vs Copilot 2025 Gartner Magic Quadrant Arena Leaderboard Connect U ...
+> ... eases (Next) Windsurf Plugins Changelog Get Started Features Cascade (JetBrains) Context
+Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security
+FedRAMP Security Admin Guide Reporting On this page v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22
+v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 ...
 
-> ... agent to 2026.5.26. See the changelog for the full list of changes. Devin Local is now aware of
-the files you have open in the editor as part of its context. When prompted for an MCP tool
-permission in Devin Local, two additional server-level options are now offered: approve all tools on
-the server for the current session, or permanently. Repaired hooks for De ...
+> ... ent space and from a Devin Local session's sidebar context menu, and the Cascade panel's ...
+menu now only offers the customization surfaces that apply to the agent you have open. MCP servers
+reporting "Needs auth" now show an Authenticate button in the Devin Local MCP list, marketplace
+card, and detail page, which clears the stored OAuth credentials and reruns ...
 
-> ... le scroll-to-next-hunk settings (default off) Preserved colors and styling in Cascade terminal
-output Multiple fixes to the Model Context Protocol implementation Supports lowering permissions for
-Cascade's Web Fetch tool Fix race condition in the dedicated terminal implementation Support force
-killing commands in the dedicated terminal Improved markdown completion Fix ...
+> ... connection failures under TLS-intercepting proxies. Devin Local Edits produced in autonomous
+mode now produce reviewable diffs. ACU usage is now shown in the /usage command. Skill permissions:
+frontmatter now applies to auto-approvals. Enterprise login policies are now enforced in the CLI.
+Added a sandbox.excluded allow/ask/deny config (user and team settings) to run s ...
 
 ### Tabnine: Tabnine admin documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.tabnine.com/
 - Status: `200`
 - Related repo paths: tabnine/
 
 Keyword snippets:
 
-> ... & Feedback Getting started Install Quickstart Guide Context Engine Tabnine Agent Tabnine Chat
-Tabnine Testing Tabnine CLI Code Completions Inline Actions Tabnine's Prompting Guide Administering
-Tabnine Private Installation Release Notes Powered by GitBook On this page Copy On this page Welcome
-Overview What is Tabnine? Tabnine is the AI code assistant that accele ...
+> ... ine Subscription Plans Support & Feedback Getting started Install Quickstart Guide Context
+Engine Tabnine Agent Tabnine Chat Tabnine CLI Code Completions Tabnine's Prompting Guide
+Administering Tabnine Private Installation Release Notes Powered by GitBook On this page For the
+complete documentation index, see llms.txt . This page is also available as Markdown . C ...
 
 > Overview | Tabnine Docs  Ctrl k Tabnine website Contact Sales More Welcome Overview Architecture
 Security Privacy Protection Personalization AI Models Integrations System & Hardware Requirements
@@ -457,90 +453,132 @@ Supported Languages Supported IDEs Tabnine Subscription Plans Support & Feedback
 
 ### Tabnine: Tabnine enterprise documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://www.tabnine.com/enterprise
 - Status: `200`
 - Related repo paths: tabnine/
 
 No configured watch keywords were found in the fetched content.
 
-### Amazon Q Developer: Amazon Q Developer administration guide
+### Amazon Q Developer: Amazon Q Developer IAM reference
 
-- Change type: `fingerprint-method-changed`
-- Source URL: https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-admin.html
+- Change type: `content-changed`
+- Source URL: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html
 - Status: `200`
 - Related repo paths: amazon-q-developer/
 
 No configured watch keywords were found in the fetched content.
 
-### Amazon Q Developer: Amazon Q Developer IAM reference
+### Gemini CLI: Gemini CLI settings schema
 
-- Change type: `fingerprint-method-changed`
-- Source URL: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html
-- Status: `200`
-- Related repo paths: amazon-q-developer/
-
-Keyword snippets:
-
-> Actions, resources, and condition keys for Amazon Q Developer - Service Authorization Reference View
-a markdown version of this page Actions, resources, and condition keys for Amazon Q De ...
-
-> Actions, resources, and condition keys for Amazon Q Developer - Service Authorization Reference View
-a markdown version of this page Actions, resources, and condition keys for Amazon Q Developer -
-Service Authorization ...
-
-> ... ctions, resources, and condition keys for Amazon Q Developer - Service Authorization Reference
-Documentation Identity and Access Management Service Authorization Reference Actions Resource types
-Condition keys Actions, resources, and condition keys for Amazon Q Developer Amazon Q Developer
-(service prefix: qdeveloper ) provides the following service-specific resources, ac ...
-
-> ... ion keys for Amazon Q Developer Actions defined by Amazon Q Developer You can specify the
-following actions in the Action element of an IAM policy statement. Use policies to grant
-permissions to perform an operation in AWS. When you use an action in a policy, you usually allow or
-deny access to the API operation or CLI command with the same name. However, in some cases ...
-
-> ... pes defined by Amazon Q Developer Condition keys for Amazon Q Developer Actions defined by
-Amazon Q Developer You can specify the following actions in the Action element of an IAM policy
-statement. Use policies to grant permissions to perform an operation in AWS. When you use an action
-in a policy, you usually allow or deny access to the API operation or CLI comma ...
-
-### Gemini CLI: Gemini CLI repository
-
-- Change type: `fingerprint-method-changed`
-- Source URL: https://github.com/google-gemini/gemini-cli
+- Change type: `new-source-baseline`
+- Source URL: https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json
 - Status: `200`
 - Related repo paths: gemini-cli/
 
 Keyword snippets:
 
-> ... uide - Common issues and solutions. FAQ - Frequently asked questions. Use /bug command to report
-issues directly from the CLI. Using MCP Servers Configure MCP servers in ~/.gemini/settings.json to
-extend Gemini CLI with custom tools: > @github List my open pull requests > @slack Send a summary of
-today's commits to #dev channel > @database Run a query to find inactive us ...
+> ... ription": "Settings configured remotely by enterprise admins.\n\n- Category: `Admin`\n- Requires
+restart: `no`\n- Default: `{}`", "default": {}, "type": "object", "properties": {
+"secureModeEnabled": { "title": "Secure Mode Enabled", "description": "If true, disallows YOLO mode
+and \"Always allow\" options from being used.", "markdownDescription": "If true, disallows YOLO mo
+...
 
-> ... ols. Custom Extensions - Build and share your own commands. Advanced Topics Headless Mode
-(Scripting) - Use Gemini CLI in automated workflows. IDE Integration - VS Code companion. Sandboxing
-& Security - Safe execution environments. Trusted Folders - Control execution policies by folder.
-Enterprise Guide - Deploy and manage in a corporate environment. Telemetry & M ...
+> ... (allowlist).\n\n- Category: `Admin`\n- Requires restart: `no`\n- Default: `{}`", "default": {},
+"type": "object", "additionalProperties": { "$ref": "#/$defs/MCPServerConfig" } }, "requiredConfig":
+{ "title": "Required MCP Config", "description": "Admin-required MCP servers that are always
+injected.", "markdownDescription": "Admin-required MCP servers that are always injec ...
 
-> ... n in Appearance settings Platform AI CODE CREATION GitHub Copilot Write better code with AI
-GitHub Spark Build and deploy intelligent apps GitHub Models Manage and compare prompts MCP Registry
-New Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant
-dev environments Issues Plan and track work Code Review Manage code chan ...
+> ... ng. Isolates individual tools instead of the entire CLI process.\n\n- Category: `Security`\n-
+Requires restart: `yes`\n- Default: `false`", "default": false, "type": "boolean" },
+"disableYoloMode": { "title": "Disable YOLO Mode", "description": "Disable YOLO mode, even if
+enabled by a flag.", "markdownDescription": "Disable YOLO mode, even if enabled by a flag.\n\n-
+Catego ...
 
-> ... nion. Sandboxing & Security - Safe execution environments. Trusted Folders - Control execution
-policies by folder. Enterprise Guide - Deploy and manage in a corporate environment. Telemetry &
-Monitoring - Usage tracking. Tools reference - Built-in tools overview. Local development - Local
-development tooling. Troubleshooting & Support Troubleshooting Guide - Common i ...
+> ... ownDescription": "Hide the current working directory in the footer.\n\n- Category: `UI`\n-
+Requires restart: `no`\n- Default: `false`", "default": false, "type": "boolean" },
+"hideSandboxStatus": { "title": "Hide Sandbox Status", "description": "Hide the sandbox status
+indicator in the footer.", "markdownDescription": "Hide the sandbox status indicator in the foote
+...
 
-> ... tegrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant dev
-environments Issues Plan and track work Code Review Manage code changes APPLICATION SECURITY GitHub
-Advanced Security Find and fix vulnerabilities Code security Secure your code as you build Secret
-protection Stop leaks before they start EXPLORE Why GitHub Documentation B ...
+> ... sed by editors for validation and autocompletion.", "type": "string", "default":
+"https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json" },
+"mcpServers": { "title": "MCP Servers", "description": "Configuration for MCP servers.",
+"markdownDescription": "Configuration for MCP servers.\n\n- Category: `Advanced`\n- Requires re ...
+
+Potential config terms found upstream are already present in local tool files.
+
+### Gemini CLI: Gemini CLI enterprise admin controls
+
+- Change type: `new-source-baseline`
+- Source URL: https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/admin/enterprise-controls.md
+- Status: `200`
+- Related repo paths: gemini-cli/
+
+Keyword snippets:
+
+> ... by users with sufficient privileges. In contrast, admin controls are immutable at the local
+level, making them the preferred method for enforcing policy. ## Available Controls ### Strict Mode
+**Enabled/Disabled** | Default: enabled If enabled, users will not be able to enter yolo mode. ###
+Extensions **Enabled/Disabled** | Default: disabled If disabled, users will not ...
+
+> ... the preferred method for enforcing policy. ## Available Controls ### Strict Mode
+**Enabled/Disabled** | Default: enabled If enabled, users will not be able to enter yolo mode. ###
+Extensions **Enabled/Disabled** | Default: disabled If disabled, users will not be able to use or
+install extensions. See [Extensions](../extensions/index.md) for more details. ### MCP #### ...
+
+> ... xtensions **Enabled/Disabled** | Default: disabled If disabled, users will not be able to use or
+install extensions. See [Extensions](../extensions/index.md) for more details. ### MCP ####
+Enabled/Disabled **Enabled/Disabled** | Default: disabled If disabled, users will not be able to use
+MCP servers. See [MCP Server Integration](../tools/mcp-server.md) for mor ...
+
+> ... ing from the local configuration, it will not be initialized. This ensures users maintain final
+control over which permitted servers are actually active in their environment. #### Required MCP
+Servers (preview) **Default**: empty Allows administrators to define MCP servers that are **always
+injected** into the user's environment. Unlike the allowlist (which filters user-configu ...
+
+> ... http`). Local execution fields (`command`, `args`, `env`, `cwd`) are not supported. - Required
+servers can coexist with allowlisted servers - both features work independently. ### Unmanaged
+Capabilities **Enabled/Disabled** | Default: disabled If disabled, users will not be able to use
+certain features. Currently, this control disables Agent Skills. See [Agent Skills](../cli/skil ...
+
+### Gemini CLI: Gemini CLI Agent Skills documentation
+
+- Change type: `new-source-baseline`
+- Source URL: https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/skills.md
+- Status: `200`
+- Related repo paths: gemini-cli/
+
+Keyword snippets:
+
+> # Agent Skills Agent Skills let you extend Gemini CLI with specialized expertise, procedural
+workflows, and task-specific resources. Based on the [Agent Skills](https://agentskills.io) open
+stan ...
+
+> ... s and injects the name and description of all enabled skills into the system prompt. 2.
+**Activation**: When Gemini identifies a task matching a skill's description, it calls the
+`activate_skill` tool. 3. **Consent**: You will see a confirmation prompt in the UI detailing the
+skill's name, purpose, and the directory path it will gain access to. 4. **Injection**: Upon your
+...
+
+> ... l to include built-in skills. gemini skills list --all # Install a skill from a Git repository
+or local directory. # Use --consent to skip the security confirmation prompt. gemini skills install
+https://github.com/user/repo.git --consent # Uninstall a skill. gemini skills uninstall my-skill
+--scope workspace ``` #### Command options The skill management commands support s ...
+
+> ... description of all enabled skills into the system prompt. 2. **Activation**: When Gemini
+identifies a task matching a skill's description, it calls the `activate_skill` tool. 3.
+**Consent**: You will see a confirmation prompt in the UI detailing the skill's name, purpose, and
+the directory path it will gain access to. 4. **Injection**: Upon your approval: - The `SK ...
+
+> ... self-contained directory that packages instructions and assets into a discoverable capability.
+Unlike general context files ([GEMINI.md](./gemini-md.md)), which provide persistent workspace-wide
+background, Skills represent **on-demand expertise**. This lets Gemini CLI maintain a vast library
+of specialized capabilities-such as security auditing, cloud deployments, o ...
 
 ### Gemini CLI: Gemini CLI documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://cloud.google.com/gemini/docs/codeassist/gemini-cli
 - Status: `200`
 - Related repo paths: gemini-cli/
@@ -559,40 +597,40 @@ languages, frameworks, and tools / Console English Deutsch Espaol Espaol - Amric
 
 ### Google Gemini: Vertex AI Gemini safety settings
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters
 - Status: `200`
 - Related repo paths: google-gemini/
 
 Keyword snippets:
 
-> ... nt Remove objects from an image using inpaint Expand the content of an image using outpaint
-Replace the background of an image Configure Imagen parameters Configure Responsible AI safety
-settings Use prompt rewriter Set text prompt language Configure aspect ratio Set output resolution
-Omit content using a negative prompt Generate deterministic images Generate images for re ...
+> ... orm section of the Google Cloud console, go to the Agent Studio page. Go to Agent Studio Under
+Create a new prompt , click any of the buttons to open the prompt design page. Click Safety settings
+. The Safety settings dialog window opens. For each harm category, configure the selected threshold
+value. Click Save . Example output for a blocked response The following is an e ...
 
-> ... ribes each of the safety and content filter types and outlines key safety concepts. For
-configurable content filters, it shows you how to configure the blocking thresholds of each harm
-category to control how often prompts and responses are blocked. There are also examples provided to
-demonstrate how to program a configurable content filter. Safety and content filters ac ...
+> ... he response's Candidate.content field. It does not provide any feedback to the model.
+Configurable content filters Content filters assess content against a list of harms. For each harm
+category, the content filters assign one score based on the probability of the content being harmful
+and another score based on the severity of harmful content. The configurable content fi ...
 
-> ... ased on your preferences. To see an example of getting started with Responsible AI with Vertex
-AI Gemini API, run the "Responsible AI with Vertex AI Gemini API: Safety ratings and thresholds"
+> ... ent based on your preferences. To see an example of getting started with Responsible AI with
+Gemini API, run the "Responsible AI with Agent Platform Gemini API: Safety ratings and thresholds"
 notebook in one of the following environments: Open in Colab | Open in Colab Enterprise | Open in
-Vertex AI Workbench | View on GitHub Google's generative AI models, like Gemini ...
+Agent Platform Workbench | View on GitHub Google's generative AI models are des ...
 
 > ... ts Capabilities Safety Overview Responsible AI System instructions for safety Configure content
 filters Gemini for safety filtering and content moderation Abuse monitoring Process blocked
-responses Content Credentials Text and code generation Text generation System instructions Function
-calling Structured output Content generation parameters Code execution Medical ...
+responses Content Credentials AI Content Detection API Text and code generation Text generation
+System instructions Function calling Structured output Content generation parameter ...
 
-> Safety and content filters | Generative AI on Vertex AI | Google Cloud Documentation Skip to main
-content Technology areas close AI and ML Application development Application hosting Compute Data
-analytics ...
+> Safety and content filters | Gemini Enterprise Agent Platform | Google Cloud Documentation Skip to
+main content Technology areas close AI and ML Application development Application hosting Compute
+Data anal ...
 
 ### Google Gemini: Google Cloud organization policies
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://cloud.google.com/resource-manager/docs/organization-policy/overview
 - Status: `200`
 - Related repo paths: google-gemini/
@@ -620,7 +658,7 @@ development Application hosting Compute Data analytics and pipelines Database ..
 
 ### Claude Desktop: Claude Desktop MCP documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://docs.anthropic.com/en/docs/claude-code/mcp
 - Status: `200`
 - Related repo paths: claude-desktop/
@@ -629,60 +667,65 @@ Keyword snippets:
 
 > ... h credentials Override OAuth metadata discovery Restrict OAuth scopes Use dynamic headers for
 custom authentication Add MCP servers from JSON configuration Import MCP servers from Claude Desktop
-Use MCP servers from Claude.ai Use Claude Code as an MCP server MCP output limits and warnings Raise
-the limit for a specific tool Respond to MCP elicitation requests Use MCP reso ...
+Use MCP servers from claude.ai Organization controls on connector tools Disable claude.ai connectors
+Use Claude Code as an MCP server MCP output limits and warnings Raise the limi ...
 
-> Connect Claude Code to tools via MCP - Claude Code Docs Skip to main content Claude Code Docs home
-page English Search...  K Ask Assistant Claude Developer Platform Claude Code on the Web Claude Code
-on the Web Sear ...
+> Connect Claude Code to tools via MCP - Claude Code Docs Documentation Index Fetch the complete
+documentation index at: /docs/llms.txt Use this file to discover all available pages before
+exploring further. Skip to ma ...
 
 > ... bleshooting Troubleshoot installation and login Troubleshoot performance and stability Debug
 configuration Error reference On this page What you can do with MCP Find and build MCP servers
 Installing MCP servers Option 1: Add a remote HTTP server Option 2: Add a remote SSE server Option
-3: Add a local stdio server Managing your servers Dynamic tool updates Automati ...
+3: Add a local stdio server Option 4: Add a remote WebSocket server Managing yo ...
 
-> ... orm Claude Code on the Web Claude Code on the Web Search... Navigation Tools and plugins Connect
+> ... eveloper Platform Claude Code on the Web Claude Code on the Web Search... Navigation MCP Connect
 Claude Code to tools via MCP Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Agents and parallel work Overview Create custom subagents
-Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees Too ...
+Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees MCP ...
 
 Potential config terms not found in local tool files:
 
-`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+`CLAUDE_AUTO_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Claude Desktop: Claude Desktop support documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://support.anthropic.com/en/
 - Status: `200`
 - Related repo paths: claude-desktop/
 
 Keyword snippets:
 
-> ... les Pro and Max plans 15 articles Team and Enterprise plans 55 articles Claude API and Console
-40 articles Identity management (SSO, JIT, SCIM) 15 articles Claude Code 19 articles Claude Desktop
-9 articles Claude Mobile apps 20 articles Connectors 20 articles Claude in Chrome 5 articles Claude
-for Education 4 articles Claude for Nonprofits 6 articles Privacy and legal 20 ...
+> ... 78 articles Pro and Max plans 15 articles Team and Enterprise plans 62 articles Identity
+management (SSO, JIT, SCIM) 15 articles Claude Cowork 10 articles Claude Code 20 articles Claude
+Desktop 9 articles Claude Mobile apps 15 articles Claude API and Console 40 articles Connectors 22
+articles Claude in Chrome 5 articles Claude for Education 4 articles Claude for Nonprofi ...
 
 > ... Italiano   Portugus P  Espaol  English Search for answers or browse by topic Search for
-articles... Claude 84 articles Pro and Max plans 15 articles Team and Enterprise plans 55 articles
-Claude API and Console 40 articles Identity management (SSO, JIT, SCIM) 15 articles Claude Code 19
-articles Claude Desktop 9 articles Claude Mobile apps 20 artic ...
+articles... Claude 78 articles Pro and Max plans 15 articles Team and Enterprise plans 62 articles
+Identity management (SSO, JIT, SCIM) 15 articles Claude Cowork 10 articles Claude Code 20 articles
+Claude Desktop 9 articles Claude Mobile apps 15 articles Claud ...
 
 ### OpenAI Platform: OpenAI OpenAPI repository
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://github.com/openai/openai-openapi
 - Status: `200`
 - Related repo paths: openai-platform/
 
-No configured watch keywords were found in the fetched content.
+Keyword snippets:
+
+> ... ple when possible. The OpenAI team will make a best-effort attempt to triage and resolve spec
+issues. For immediate help with the OpenAI API, contact OpenAI Support . License This project is
+licensed under the MIT License . About OpenAPI specification for the OpenAI API
+platform.openai.com/docs/api-reference/introduction Topics openai openai-api Resources Readme MI ...
 
 ### OpenAI Platform: OpenAI OpenAPI schema
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml
 - Status: `200`
 - Related repo paths: openai-platform/
@@ -694,50 +737,50 @@ listFineTuningCheckpointPermissions tags: - Fine-tuning summary: > **NOTE:** Thi
 an [admin API key](../admin-api-keys). Organization owners can use this endpoint to view all
 permissions for a fine-tuned model checkpoint. parameters: - in: path name: fine_tuned_model_che ...
 
-> ... ion: >- Given text and/or image inputs, classifies if those inputs are potentially harmful. -
+> ... iption: Given text and/or image inputs, classifies if those inputs are potentially harmful. -
 name: Audit Logs description: List user actions and configuration changes within this organization.
 paths: /assistants: get: operationId: listAssistants tags: - Assistants summary: Returns a list of
 assistants. deprecated: true parameters: - name: limit in: query description: > ...
 
-> ... d describe the various models available in the API. - name: Moderations description: >- Given
+> ... and describe the various models available in the API. - name: Moderations description: Given
 text and/or image inputs, classifies if those inputs are potentially harmful. - name: Audit Logs
 description: List user actions and configuration changes within this organization. paths:
 /assistants: get: operationId: listAssistants tags: - Assistants summary: Returns a ...
 
 > ... used in multi-turn conversations when using the Responses API statelessly (like when the `store`
 parameter is set to `false`, or when an organization is enrolled in the zero data retention
-program). responses: '200': description: OK content: application/json: schema: $ref:
-'#/components/schemas/ConversationItemList' x-oaiMeta: name: List items group: conversations p ...
+program). responses: "200": description: OK content: application/json: schema: $ref:
+"#/components/schemas/ConversationItemList" x-oaiMeta: name: List items group: conversations p ...
 
 > ... type": "skill_reference", "skill_id": "skill_4db6f1a2c9e73508b41f9da06e2c7b5f" }, { "type":
 "skill_reference", "skill_id": "openai-spreadsheets", "version": "latest" } ], "network_policy": {
-"type": "allowlist", "allowed_domains": ["api.buildkite.com"] } }' node.js: >- import OpenAI from
-'openai'; const client = new OpenAI({ apiKey: process.env['OPENAI_API_KEY'], ...
+"type": "allowlist", "allowed_domains": ["api.buildkite.com"] } }' response: | { "id":
+"cntr_682e30645a488191b6363a0cbefc0f0a025ec61b66250591", "object": "container", "created ...
 
 Potential config terms not found in local tool files:
 
-`allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `reinforcement`, `response.mcp_call.completed`, `response.mcp_call.failed`, `response.mcp_call.in_progress`, `response.mcp_call_arguments.delta`, `response.mcp_call_arguments.done`, `score_model`
+`allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `moderation_result`, `moderation_results`, `organization.data_retention`, `project.data_retention`, `project.model_permissions`, `project.model_permissions.deleted`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Claude API: Anthropic admin API documentation
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://platform.claude.com/docs/en/api/admin.md
 - Status: `200`
 - Related repo paths: claude-api/
 
 Keyword snippets:
 
-> ... erDeleteResponse object { id, type }` - `id: string` ID of the User. - `type: "user_deleted"`
-Deleted object type. For Users, this is always `"user_deleted"`. - `"user_deleted"` # Workspaces ##
+> ... ion applies to. - `"all_connectors"` - `type: "rbac_role_permission"` Object type. For RBAC Role
+Permissions, this is always `"rbac_role_permission"`. - `"rbac_role_permission"` # Workspaces ##
 Create Workspace **post** `/v1/organizations/workspaces` Create Workspace ### Header Parameters -
 `"anthropic-beta": optional array of string` Optional header to specify the b ...
 
-> ... ways `"organization"`. - `"organization"` # Invites ## Create Invite **post**
-`/v1/organizations/invites` Create Invite ### Body Parameters - `email: string` Email of the User. -
-`role: "user" or "developer" or "billing" or "claude_code_user"` Role for the invited User. Cannot
-be "admin". - `"user"` - `"developer"` - `"billing"` - `"claude_code_user"` ### Return ...
+> ... there is no seat-tier parameter. When no seat is free the request fails with a 400 error rather
+than purchasing a seat. ### Body Parameters - `email: string` Email of the User. - `role: "billing"
+or "claude_code_user" or "developer" or 2 more` Role for the invited User. The accepted values
+depend on the organization type. Console and API organizations accept `us ...
 
 > # Admin # Organizations ## Get Current Organization **get** `/v1/organizations/me` Retrieve
 information about the organization associated with the authenticated API key. ### Returns -
@@ -754,43 +797,48 @@ information about the organization associated with the authenticated API key. ##
 
 Potential config terms not found in local tool files:
 
-`fast-mode-2026-02-01`, `model_group`
+`always_allow`, `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `model_group`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Claude API: Anthropic API release notes
 
-- Change type: `fingerprint-method-changed`
+- Change type: `content-changed`
 - Source URL: https://platform.claude.com/docs/en/release-notes/api.md
 - Status: `200`
 - Related repo paths: claude-api/
 
 Keyword snippets:
 
-> ... s 4.7. Set `speed: "fast"` with `model: "claude-opus-4-7"` and the `fast-mode-2026-02-01` beta
-header for significantly faster output token generation at premium pricing. Pricing, rate limits,
-and access are the same as for Opus 4.6 fast mode; interested customers should join the
-[waitlist](https://claude.com/fast-mode). ### May 11, 2026 - We've launched **Claude Plat ...
+> ... [Claude Opus 4.8](/docs/en/about-claude/models/migration-guide). Read more in [Fast
+mode](/docs/en/build-with-claude/fast-mode#supported-models). ### June 26, 2026 * We've raised [rate
+limits](/docs/en/api/rate-limits) across the Claude API. Claude Sonnet and Claude Haiku rate limits
+now match Claude Opus at every usage tier, and usage tiers have been consolidated int ...
 
-> ... 've released the [Rate Limits API](/docs/en/manage-claude/rate-limits-api), allowing
-administrators to programmatically query the rate limits configured for their organization and
-workspaces. ### April 23, 2026 - Memory for Claude Managed Agents is now in public beta under the
-standard `managed-agents-2026-04-01` header. See [Using agent memory](/docs/en/managed-agen ...
+> ... t API moved from `/v1/organizations/tunnels` on the Admin API to `/v1/tunnels` on the Claude
+API. The new surface uses the `anthropic-beta: mcp-tunnels-2026-06-22` header and the
+`workspace:manage_tunnels` WIF scope. The previous surface remains available during a migration
+window. See the [Tunnels API reference](/docs/en/api/beta/tunnels). ### June 18, 2026 * The Py ...
 
-> ... de any `tools` when including `tool_use` and `tool_result` blocks. - We've launched an OpenAI-
-compatible API endpoint, allowing you to test Claude models by changing just your API key, base URL,
-and model name in existing OpenAI integrations. This compatibility layer supports core chat
-completions functionality. Learn more in [OpenAI SDK compatibility](/docs/en ...
+> ... custom roles. Group and custom-role requests require the `anthropic-beta: ce-user-
+management-2026-07-13` beta header; member and invite requests take no beta header. An Admin API key
+with the `read:org_audit` scope can also call every user-management `GET` endpoint. See [User
+management](/docs/en/manage-claude/user-management). ### July 10, 2026 * [Dreams](/do ...
 
-> ... ence](/docs/en/api/sdks/cli). ### April 7, 2026 - We announced [Claude Mythos
+> ... d custom-role requests require the `anthropic-beta: ce-user-management-2026-07-13` beta header;
+member and invite requests take no beta header. An Admin API key with the `read:org_audit` scope can
+also call every user-management `GET` endpoint. See [User management](/docs/en/manage-claude/user-
+management). ### July 10, 2026 * [Dreams](/docs/en/managed-agents/drea ...
+
+> ... ks-libraries/cli/quickstart). ### April 7, 2026 * We announced [Claude Mythos
 Preview](https://anthropic.com/glasswing) is available as a gated research preview for defensive
 cybersecurity work as part of [Project Glasswing](https://anthropic.com/glasswing). Access is
-invitation-only. - The [Messages API](/docs/en/api/messages) is now available on Amazon Bedrock as
+invitation-only. * The [Messages API](/docs/en/api/messages) is now available on Amazon Bedrock as
 ...
 
 Potential config terms not found in local tool files:
 
-`fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`
+`LanguageModel`, `LanguageModelSession`, `fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`, `policy_violation_investigation`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 

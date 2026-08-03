@@ -1,0 +1,27 @@
+{
+  "_comment": "BASELINE Management Console targets for Gemini CLI enterprise. Apply in the Google Management Console (https://goo.gle/manage-gemini-cli). Do NOT copy the admin object into local settings files. Baseline keeps Strict Mode on, allows reviewed Agent Skills, and leaves MCP optional without a forced allowlist.",
+  "console": {
+    "strictMode": "enabled",
+    "extensions": "disabled",
+    "mcpEnabled": "enabled",
+    "mcpServersAllowlist": {},
+    "requiredMcpServers": {},
+    "unmanagedCapabilities": "enabled"
+  },
+  "runtimeAdminEquivalent": {
+    "admin": {
+      "secureModeEnabled": true,
+      "extensions": {
+        "enabled": false
+      },
+      "mcp": {
+        "enabled": true,
+        "config": {},
+        "requiredConfig": {}
+      },
+      "skills": {
+        "enabled": true
+      }
+    }
+  }
+}

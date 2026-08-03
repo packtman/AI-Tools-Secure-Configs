@@ -431,26 +431,55 @@
       ],
       "tier_files": {
         "strict": [
-          "gemini-cli/examples/settings-strict.json"
+          "gemini-cli/examples/settings-strict.json",
+          "gemini-cli/examples/management-console-strict.json"
         ],
         "moderate": [
-          "gemini-cli/examples/settings-moderate.json"
+          "gemini-cli/examples/settings-moderate.json",
+          "gemini-cli/examples/management-console-moderate.json"
         ],
         "baseline": [
-          "gemini-cli/examples/settings-baseline.json"
+          "gemini-cli/examples/settings-baseline.json",
+          "gemini-cli/examples/management-console-baseline.json"
         ]
       },
       "sources": [
         {
-          "name": "Gemini CLI repository",
+          "name": "Gemini CLI settings schema",
           "kind": "repository",
-          "url": "https://github.com/google-gemini/gemini-cli",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json",
           "watch_for": [
-            "settings.json",
+            "secureModeEnabled",
+            "requiredConfig",
+            "disableYoloMode",
             "sandbox",
             "MCP",
-            "telemetry",
-            "security"
+            "adminPolicyPaths"
+          ]
+        },
+        {
+          "name": "Gemini CLI enterprise admin controls",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/admin/enterprise-controls.md",
+          "watch_for": [
+            "Strict Mode",
+            "Extensions",
+            "MCP",
+            "Required MCP Servers",
+            "Unmanaged Capabilities",
+            "allowlist"
+          ]
+        },
+        {
+          "name": "Gemini CLI Agent Skills documentation",
+          "kind": "docs",
+          "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/skills.md",
+          "watch_for": [
+            "Agent Skills",
+            "activate_skill",
+            "skills install",
+            "consent",
+            "workspace"
           ]
         },
         {
