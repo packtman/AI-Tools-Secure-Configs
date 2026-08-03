@@ -1,10 +1,44 @@
-# Gemini CLI — Enterprise Policy Deployment Guide
+# Gemini CLI: Enterprise Policy Deployment Guide
 
 ## Overview
 
-Gemini CLI supports enterprise-managed policies through **system-level settings files** that override user and project configurations. The system overrides file has the highest precedence and cannot be overridden by users.
+Gemini CLI supports two admin control planes:
 
-> **Note on Security:** These configurations are designed to prevent accidental misuse and enforce corporate policy in a managed environment. A determined user with local administrative rights may still circumvent these configurations. These are policy controls, not security boundaries.
+1. **Management Console** (preferred for Gemini Code Assist enterprise): remote `admin.*` controls that users cannot override locally. Console: https://goo.gle/manage-gemini-cli
+2. **System-level settings files**: endpoint JSON that overrides user and project configs. Highest local precedence, but users with local admin rights can still change the files.
+
+> **Note on Security:** These configurations prevent accidental misuse and enforce policy in a managed environment. They are policy controls, not perfect security boundaries.
+
+Do **not** copy Management Console `admin.*` fields into local `settings.json`. The CLI populates those fields from the management service.
+
+Tiered console targets:
+
+| Tier | File |
+|------|------|
+| Strict | `examples/management-console-strict.json` |
+| Moderate | `examples/management-console-moderate.json` |
+| Baseline | `examples/management-console-baseline.json` |
+
+Rationale: `examples/management-console.comments.md`
+
+### Management Console controls (map to runtime)
+
+| Console control | Runtime field | Strict | Moderate | Baseline |
+|-----------------|---------------|--------|----------|----------|
+| Strict Mode | `admin.secureModeEnabled` | on | on | on |
+| Extensions | `admin.extensions.enabled` | off | off | off |
+| MCP Enabled/Disabled | `admin.mcp.enabled` | off | on | on |
+| MCP Servers allowlist | `admin.mcp.config` | n/a | remote allowlist | empty |
+| Required MCP Servers | `admin.mcp.requiredConfig` | empty | remote compliance example | empty |
+| Unmanaged Capabilities | `admin.skills.enabled` | off | off | on |
+
+Required MCP servers are preview remote-only (`http` / `sse`). They inject after allowlist filtering and override same-named local configs. Prefer `trust: false` in this repo. Never commit OAuth client secrets.
+
+Agent Skills (Unmanaged Capabilities) package on-demand expertise from skill directories. Disabling them blocks unreviewed skill installs that can expand file access after consent.
+
+### MDM note
+
+Gemini CLI does **not** ship a first-class Jamf / Intune / Workspace ONE managed-settings schema for these `admin.*` keys. Use the Management Console when entitled. Otherwise deploy system settings files with MDM file distribution or configuration management, and restrict local admin where possible.
 
 ---
 
@@ -207,9 +241,9 @@ Force all users to authenticate with a specific method:
 If a user has a different authentication method configured, they will be prompted to switch. In non-interactive mode, the CLI exits with an error.
 
 Available auth types:
-- `oauth-personal` — Google login (recommended for enterprise)
-- `api-key` — API key authentication
-- `service-account` — Service account credentials (CI/CD)
+- `oauth-personal` : Google login (recommended for enterprise)
+- `api-key` : API key authentication
+- `service-account` : Service account credentials (CI/CD)
 
 ---
 
