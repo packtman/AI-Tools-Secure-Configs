@@ -10,30 +10,23 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools processed this run
 
-### Claude Code
+### Codex Desktop
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Source: OpenAI Codex config schema / config advanced docs
+- Action: Pinned `features.in_app_updates` (requirements-only, stable, default on upstream) in Baseline/Moderate/Strict requirements; updated rollout, MDM, rationale, and CLI overlap notes; replaced moved `codex-rs/config.md` watcher with schema + advanced docs (14 tools / 30 sources).
 
-### Claude Code
+## Intentionally skipped (duplicate open PRs or non-admin noise)
 
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+- Claude Code IDE/model env vars (`ANTHROPIC_MODEL`, `CLAUDE_CODE_*` UX flags): not admin managed-settings pins (see #66/#68).
+- Codex CLI release terms `McpConnectionSet`, `McpRuntime`, `forceRefetch`: runtime reconnect helpers, not requirements keys (see #72).
+- OpenAI Platform `project.model_permissions` / `data_retention` / hosted tools: covered by open PR #69.
+- Claude Desktop / Claude API tunnels and custom roles: covered by open PR #70.
+- Gemini Management Console: covered by open PR #76.
 
-### Continue.dev
+## Deferred follow-ups
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Codex Desktop `auto_review` / `approvals_reviewer` and remaining permission-profile schema terms after #69 merges.
+- Reconcile local Gemini settings (#64) with Management Console templates (#76) if both land.
+- Claude Managed Agents Dreams research-preview governance when org-level disable controls ship.
