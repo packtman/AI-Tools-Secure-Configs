@@ -11,6 +11,10 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+# WHAT: Requirements-only gate for desktop in-app binary updates (stable, default on upstream).
+# WHY: Enterprise fleets should ship approved builds via MDM, not ad-hoc client self-updates.
+# BREAKS: If left true or unset, mixed versions appear as users accept in-app prompts.
+in_app_updates = false
 codex_hooks = true
 
 # Deny reads to credential files

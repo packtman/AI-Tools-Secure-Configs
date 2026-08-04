@@ -140,6 +140,30 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.in_app_updates` (requirements-only)
+
+**What it does:** Allows or blocks desktop in-app binary updates. Upstream marks this feature stable and default-enabled. It is a requirements-only gate: set it in `requirements.toml` (or MDM/cloud requirements), not in user `config.toml`.
+
+**Why by tier:**
+
+| Tier | Value | Threat or workflow reason |
+|------|-------|---------------------------|
+| Baseline | `true` | Startups without MDM need a supported path to stay patched |
+| Moderate | `false` | Enterprise image drift and unreviewed binaries are the threat; patch via MDM |
+| Strict | `false` | Regulated environments require a controlled software supply chain |
+
+**What breaks if misconfigured or removed:**
+
+- Left `true` or unset under Moderate/Strict: users can accept Update prompts and diverge from the approved build.
+- Set `false` without an MDM or software-distribution channel: endpoints stay on old builds with known defects.
+- Placed only in user `config.toml`: the pin is ignored; managed requirements never take effect.
+
+**Safe equivalent when blocked:** Download the approved Codex Desktop package from your software catalog (or MDM self-service), verify the version, then install. Do not bypass with hosts-file tricks or unsigned sideloads.
+
+**False-positive friction:** Developers may report a missing Update button after a Moderate/Strict rollout. Treat that as expected. Exception path: temporary Baseline pin for a named pilot group, or push a newer approved build through MDM.
+
+---
+
 ## Summary: Recommended Profiles
 
 ### Maximum Lockdown (Regulated)
@@ -152,6 +176,7 @@ web_search = "disabled"
 [features]
 browser_use = false
 in_app_browser = false
+in_app_updates = false
 computer_use = false
 memories = false
 multi_agent = false
@@ -167,6 +192,7 @@ web_search = "cached"
 [features]
 browser_use = false
 computer_use = false
+in_app_updates = false
 memories = false
 codex_hooks = true
 ```
@@ -181,6 +207,7 @@ web_search = "cached"
 [features]
 browser_use = true
 in_app_browser = true
+in_app_updates = true
 computer_use = false
 memories = true
 codex_hooks = true

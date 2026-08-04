@@ -230,15 +230,28 @@
           ]
         },
         {
-          "name": "OpenAI Codex config reference",
+          "name": "OpenAI Codex config schema",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json",
           "watch_for": [
-            "config",
+            "in_app_updates",
+            "requirements",
+            "features",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "mcp_servers"
+          ]
+        },
+        {
+          "name": "OpenAI Codex config advanced docs",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-advanced.md",
+          "watch_for": [
+            "requirements",
+            "managed",
+            "features",
+            "cloud_requirements",
+            "hooks"
           ]
         }
       ]

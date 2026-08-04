@@ -8,9 +8,13 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
-# Only pin the most dangerous feature
+# Only pin the most dangerous feature; explicitly allow in-app updates for startups
 [features]
 computer_use = false
+# WHAT: Requirements-only gate for desktop in-app binary updates (stable, default on upstream).
+# WHY: Baseline keeps the vendor default so small teams can stay current without MDM.
+# BREAKS: Setting false without an alternate patch channel leaves users on stale builds.
+in_app_updates = true
 
 # Block privilege escalation
 [rules]
