@@ -29,6 +29,7 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+in_app_updates = false
 ```
 
 ### Step 2: Deploy via GPO File Distribution
@@ -95,6 +96,7 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+in_app_updates = false
 "@
 
 Set-Content -Path $requirementsPath -Value $content -Encoding UTF8

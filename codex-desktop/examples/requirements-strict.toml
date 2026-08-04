@@ -12,6 +12,10 @@ enforce_residency = "us"
 [features]
 browser_use = false
 in_app_browser = false
+# WHAT: Requirements-only gate for desktop in-app binary updates (stable, default on upstream).
+# WHY: Strict fleets must patch Codex only through MDM or approved software distribution.
+# BREAKS: If left true or unset, endpoints can self-update outside the enterprise image pipeline.
+in_app_updates = false
 computer_use = false
 memories = false
 multi_agent = false

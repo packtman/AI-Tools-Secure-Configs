@@ -36,6 +36,41 @@ This directory contains comprehensive, security-hardened configurations for the 
 
 Project-level overrides: `.codex/config.toml` in the repository root (loaded only for trusted projects).
 
+Requirements file paths (admin-enforced):
+
+| OS | Requirements path |
+|----|-------------------|
+| macOS / Linux | `/etc/codex/requirements.toml` (or MDM / cloud-managed requirements) |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` |
+
+---
+
+## Rollout Plan (`features.in_app_updates`)
+
+### Phased rollout
+
+1. **Pilot group** (security + platform eng): Deploy Moderate `requirements.toml` with `in_app_updates = false` to 10 to 25 endpoints that already receive Codex via MDM. Exit criteria: no in-app Update prompts for 5 business days; MDM package install path verified; no support tickets for missing critical fixes that MDM could not deliver.
+2. **Expanded pilot** (one business unit): Same pin plus SIEM or inventory check that installed versions match the approved build. Exit criteria: version drift under 5%; exception process documented.
+3. **Org-wide**: Push Moderate or Strict pin to all Desktop seats. Exit criteria: 95%+ of endpoints report pinned requirements; rollback package staged.
+
+### Pre-rollout checklist
+
+- [ ] MDM path verified (Jamf / Intune / Workspace ONE can install a pinned Codex build)
+- [ ] Secrets manager in place for any ChatGPT/Codex admin credentials (not stored in this repo)
+- [ ] SIEM or endpoint inventory ingest tested for Codex app version
+- [ ] Rollback plan documented (previous `requirements.toml` and prior MDM package)
+
+### What will break
+
+- Moderate/Strict: the desktop Update button / in-app updater stops offering upgrades.
+- Developer message before rollout: "Codex Desktop updates now come only from IT software distribution. If you need a newer build, request it through the service desk. Do not sideload installer links from chat."
+
+### Rollback
+
+1. Replace deployed `requirements.toml` (or MDM `requirements_toml_base64`) with the prior revision that omitted or set `in_app_updates = true`.
+2. Redeploy the previous MDM package if you also rolled back the binary.
+3. Communicate: "In-app updates are temporarily re-enabled while we fix distribution. Resume normal Update prompts after restart."
+
 ---
 
 ## Enterprise Configuration Architecture
@@ -108,10 +143,19 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 |---------|-------------|
 | `browser_use` | Browser Use and Browser Agent |
 | `in_app_browser` | In-app browser pane |
+| `in_app_updates` | Desktop in-app binary updates (requirements-only; default on) |
 | `computer_use` | Computer Use (macOS only) |
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+
+### Tier delta: `features.in_app_updates`
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.in_app_updates` | `true` | `false` | `false` | Baseline allows vendor self-update; Moderate/Strict require MDM or approved software distribution |
+
+Validation after deploy: restart Codex, then confirm the active requirements include `in_app_updates` (cloud managed-config UI, decoded MDM `requirements_toml_base64`, or `/etc/codex/requirements.toml`). The Update affordance in the desktop title bar should be unavailable when pinned `false`.
 
 ### Protected Paths
 
@@ -125,10 +169,13 @@ The Codex Desktop App, CLI, and IDE extension share the same configuration syste
 
 - **Browser Use** — AI can browse websites (allowlist/blocklist controlled)
 - **Computer Use** — AI can interact with desktop apps (macOS only; not available in EEA/UK/Switzerland)
+- **In-app updates**: Desktop self-update channel gated by `features.in_app_updates` in requirements
 - **Codex Pets** — Visual overlays (low security risk)
 - **Context-aware suggestions** — Follow-up recommendations
 
 These features introduce additional attack surface that administrators should evaluate.
+
+**Overlap with Codex CLI:** Desktop uses `features.in_app_updates` (requirements-only). CLI uses `check_for_update_on_startup` for TUI update checks. Pinning only one leaves the other client free to prompt for updates. When both are rolled out, set Desktop `in_app_updates = false` and CLI `check_for_update_on_startup = false` under Moderate/Strict.
 
 ---
 
@@ -140,6 +187,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `in_app_updates = false` for Moderate/Strict (keep MDM patch channel ready first)
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

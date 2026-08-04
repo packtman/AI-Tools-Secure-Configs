@@ -35,6 +35,7 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+in_app_updates = false
 ```
 
 **Senior/Trusted Developers:**
@@ -46,6 +47,7 @@ allowed_web_search_modes = ["cached", "live"]
 [features]
 browser_use = true
 computer_use = false
+in_app_updates = false
 ```
 
 **Regulated Environments:**
@@ -58,8 +60,21 @@ allowed_web_search_modes = ["disabled"]
 browser_use = false
 in_app_browser = false
 computer_use = false
+in_app_updates = false
 memories = false
 ```
+
+### In-app updates (`features.in_app_updates`)
+
+`in_app_updates` is a requirements-only feature flag (stable, default enabled upstream). Put it in `requirements.toml` or MDM `requirements_toml_base64`, not in user `config.toml`.
+
+| Tier | Value | Reason |
+|------|-------|--------|
+| Baseline | `true` | Small teams without MDM can take vendor updates |
+| Moderate | `false` | Patch through Jamf, Intune, or Workspace ONE |
+| Strict | `false` | Regulated fleets must not self-update binaries |
+
+This is separate from Codex CLI `check_for_update_on_startup`, which only affects CLI update checks. Pin both when Desktop and CLI are deployed together.
 
 ---
 
@@ -97,6 +112,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+in_app_updates = false
 EOF
 
 # Encode for MDM
