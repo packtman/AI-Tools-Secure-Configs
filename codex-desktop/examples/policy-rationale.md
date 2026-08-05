@@ -100,6 +100,30 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `approvals_reviewer` / `allowed_approvals_reviewers`
+
+**What it does:** Chooses who reviews escalated approval prompts (sandbox escapes, blocked network access, MCP approval prompts, ARC escalations). Defaults to `user`. `auto_review` routes eligible prompts through an automatic reviewer subagent. Requirements key `allowed_approvals_reviewers` constrains which values users may select. `guardian_policy_config` supplies managed Markdown policy for automatic review and overrides local `[auto_review].policy`.
+
+**Why it matters:** Automatic review can approve high-risk escalations without a human. That weakens human-in-the-loop controls even when `approval_policy` still pauses. This setting changes the reviewer, not the sandbox boundary.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `allowed_approvals_reviewers = ["user"]`, config `approvals_reviewer = "user"` | Humans must decide escalations in regulated workflows. |
+| Standard enterprise | Same as regulated | Enterprise Moderate keeps HITL for sandbox, network, MCP, and ARC prompts. |
+| Individual developers | Allow `user` and `auto_review`; set `guardian_policy_config`; default `approvals_reviewer = "user"` | Optional productivity gain with managed deny-secrets/network policy. |
+
+**What breaks if misconfigured or removed:**
+
+- Omitting the allowlist under Moderate/Strict lets users enable `auto_review` and auto-approve escalations.
+- Setting `approvals_reviewer = "auto_review"` while requirements only allow `user` causes a client fallback and user notification.
+- Allowing `auto_review` without `guardian_policy_config` lets weak local `[auto_review].policy` control high-risk decisions.
+
+**Safe equivalent when blocked:** Keep `approvals_reviewer = "user"` and answer prompts yourself, or pair with a teammate. For exception requests, temporarily assign a Baseline requirements group with `guardian_policy_config` rather than removing the Moderate/Strict allowlist org-wide.
+
+**False-positive friction:** Developers may report that automatic review is unavailable after a Moderate/Strict rollout. Treat that as expected. Exception path: named pilot group on Baseline with managed guardian policy, time-boxed, and audited.
+
+---
+
 ## `cli_auth_credentials_store`
 
 **What it does:** Controls where Codex stores authentication credentials locally.
@@ -147,6 +171,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 ```toml
 sandbox_mode = "read-only"
 approval_policy = "on-request"
+approvals_reviewer = "user"
 web_search = "disabled"
 
 [features]
@@ -157,11 +182,14 @@ memories = false
 multi_agent = false
 ```
 
+Companion requirements pin: `allowed_approvals_reviewers = ["user"]`.
+
 ### Standard Enterprise
 
 ```toml
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+approvals_reviewer = "user"
 web_search = "cached"
 
 [features]
@@ -171,11 +199,14 @@ memories = false
 codex_hooks = true
 ```
 
+Companion requirements pin: `allowed_approvals_reviewers = ["user"]`.
+
 ### Developer Teams
 
 ```toml
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+approvals_reviewer = "user"
 web_search = "cached"
 
 [features]
@@ -186,3 +217,5 @@ memories = true
 codex_hooks = true
 multi_agent = true
 ```
+
+Companion requirements pin: `allowed_approvals_reviewers = ["user", "auto_review"]` plus a conservative `guardian_policy_config`.

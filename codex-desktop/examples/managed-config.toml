@@ -7,6 +7,10 @@
 # Users can change settings during a session; Codex reapplies on restart.
 
 approval_policy = "on-request"
+# WHAT: Default reviewer for escalated approval prompts under on-request/granular policies.
+# WHY: Managed fleets should start with human review; Moderate/Strict requirements deny auto_review.
+# BREAKS: If set to auto_review while requirements only allow user, the client falls back and notifies.
+approvals_reviewer = "user"
 sandbox_mode    = "workspace-write"
 web_search      = "cached"
 model           = "o4-mini"

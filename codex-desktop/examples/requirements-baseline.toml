@@ -8,6 +8,23 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
+# WHAT: Allowlist for approvals_reviewer (who handles escalated approval prompts).
+# WHY: Baseline allows auto_review for productivity while keeping user review available.
+# BREAKS: If restricted to ["user"] only, startups lose the automatic reviewer option.
+allowed_approvals_reviewers = ["user", "auto_review"]
+
+# WHAT: Managed Markdown policy for the automatic reviewer (guardian).
+# WHY: When users opt into auto_review, org policy must still deny secret exfil and
+#      destructive actions; this overrides local [auto_review].policy.
+# BREAKS: If blank or omitted, local policy (or weak defaults) applies under auto_review.
+guardian_policy_config = """
+Deny approvals that read secrets (.env, SSH keys, cloud credentials, tokens).
+Deny approvals that enable outbound network, curl/wget, or data exfiltration.
+Deny approvals for privilege escalation (sudo/su) or destructive rm -rf.
+Approve only low-risk workspace edits that stay inside the project sandbox.
+When unsure, deny and leave the prompt for a human.
+"""
+
 # Only pin the most dangerous feature
 [features]
 computer_use = false

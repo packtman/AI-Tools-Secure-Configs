@@ -5,6 +5,10 @@
 
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+# WHAT: Routes escalated approval prompts to a human user (not auto_review).
+# WHY: Moderate keeps human-in-the-loop for sandbox, network, MCP, and ARC escalations.
+# BREAKS: Setting auto_review here fails under Moderate requirements allowlists.
+approvals_reviewer = "user"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 model_reasoning_effort = "high"

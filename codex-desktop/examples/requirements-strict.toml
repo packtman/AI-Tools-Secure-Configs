@@ -8,6 +8,12 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
+# WHAT: Allowlist for approvals_reviewer (who handles escalated approval prompts).
+# WHY: Strict fleets require a human reviewer; auto_review can approve sandbox escapes,
+#      blocked network access, MCP prompts, and ARC escalations without a person.
+# BREAKS: If omitted, users may set approvals_reviewer = "auto_review" and weaken HITL.
+allowed_approvals_reviewers = ["user"]
+
 # Disable all extended features
 [features]
 browser_use = false

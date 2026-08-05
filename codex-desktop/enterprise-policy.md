@@ -26,33 +26,41 @@ Admins can configure different policies for different user groups. If a user mat
 
 ### Recommended Policy Tiers
 
-**Standard Developers:**
+**Standard Developers (Moderate):**
 ```toml
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
 computer_use = false
 ```
 
-**Senior/Trusted Developers:**
+**Senior/Trusted Developers (Baseline with optional auto review):**
 ```toml
 allowed_approval_policies = ["on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
+allowed_approvals_reviewers = ["user", "auto_review"]
+guardian_policy_config = """
+Deny approvals that read secrets or enable outbound network.
+Deny privilege escalation and destructive rm -rf.
+When unsure, deny and leave the prompt for a human.
+"""
 
 [features]
 browser_use = true
 computer_use = false
 ```
 
-**Regulated Environments:**
+**Regulated Environments (Strict):**
 ```toml
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = ["disabled"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
@@ -60,6 +68,18 @@ in_app_browser = false
 computer_use = false
 memories = false
 ```
+
+### Approvals reviewer allowlist (`allowed_approvals_reviewers`)
+
+`approvals_reviewer` chooses who answers escalated prompts (`user` or `auto_review`). Put the allowlist in `requirements.toml` or MDM `requirements_toml_base64`. Use `guardian_policy_config` only when `auto_review` is allowed; it overrides local `[auto_review].policy`.
+
+| Tier | `allowed_approvals_reviewers` | Reason |
+|------|-------------------------------|--------|
+| Baseline | `["user", "auto_review"]` | Startups may opt into automatic review with managed policy |
+| Moderate | `["user"]` | Enterprise keeps human review for escalations |
+| Strict | `["user"]` | Regulated fleets must not auto-approve high-risk prompts |
+
+This is separate from `approval_policy`, which decides when Codex pauses. Pin both. Desktop and CLI share these keys when the client supports them.
 
 ---
 
@@ -93,6 +113,7 @@ com.openai.codex
 cat > /tmp/codex-requirements.toml << 'EOF'
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
@@ -146,6 +167,7 @@ if (-not (Test-Path $requirementsDir)) {
 @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
@@ -185,6 +207,7 @@ sudo mkdir -p /etc/codex
 sudo tee /etc/codex/requirements.toml > /dev/null << 'EOF'
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
@@ -203,19 +226,21 @@ sudo chown root:root /etc/codex/requirements.toml
 
 1. Use cloud-managed requirements to enforce `read-only` sandbox and disable all extended features
 2. Set `allowed_web_search_modes = []` to disable web search entirely
-3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`
-4. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
-5. Restrict MCP servers to an empty allowlist or specific approved servers only
-6. Add command rules to forbid dangerous operations
+3. Pin `allowed_approvals_reviewers = ["user"]` so automatic review cannot approve escalations
+4. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`
+5. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
+6. Restrict MCP servers to an empty allowlist or specific approved servers only
+7. Add command rules to forbid dangerous operations
 
 ### For Development Environments
 
 1. Allow `workspace-write` sandbox mode but block `danger-full-access`
-2. Set `approval_policy = "on-request"` as the managed default
-3. Allow `cached` web search but block `live` unless needed
-4. Define an MCP server allowlist with only approved integrations
-5. Use managed hooks to audit command execution
-6. Enable telemetry for compliance and audit logging
+2. Set `approval_policy = "on-request"` and `approvals_reviewer = "user"` as managed defaults
+3. Keep `allowed_approvals_reviewers = ["user"]` unless Baseline explicitly allows `auto_review`
+4. Allow `cached` web search but block `live` unless needed
+5. Define an MCP server allowlist with only approved integrations
+6. Use managed hooks to audit command execution
+7. Enable telemetry for compliance and audit logging
 
 ### Authentication Controls
 
