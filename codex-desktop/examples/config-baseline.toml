@@ -5,6 +5,10 @@
 
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+# WHAT: Default reviewer for escalated approval prompts.
+# WHY: Baseline still starts with human review; users may switch to auto_review if allowed.
+# BREAKS: Removing this leaves the upstream default (user); prefer an explicit pin.
+approvals_reviewer = "user"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 model_reasoning_effort = "high"

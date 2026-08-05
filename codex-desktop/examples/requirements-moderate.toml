@@ -7,6 +7,12 @@ allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
+# WHAT: Allowlist for approvals_reviewer (who handles escalated approval prompts).
+# WHY: Enterprise Moderate keeps human-in-the-loop for escalations; auto_review can
+#      approve high-risk prompts (sandbox escape, network, MCP, ARC) without a person.
+# BREAKS: If omitted or includes auto_review, teams can bypass human review on escalations.
+allowed_approvals_reviewers = ["user"]
+
 # Disable high-risk features but allow core development
 [features]
 browser_use = false

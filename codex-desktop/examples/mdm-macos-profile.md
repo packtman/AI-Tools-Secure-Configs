@@ -30,6 +30,7 @@ com.openai.codex
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
@@ -41,6 +42,7 @@ computer_use = false
 ```toml
 # /tmp/codex-managed-config.toml
 approval_policy = "on-request"
+approvals_reviewer = "user"
 sandbox_mode = "workspace-write"
 web_search = "cached"
 cli_auth_credentials_store = "keyring"

@@ -5,6 +5,10 @@
 
 sandbox_mode = "read-only"
 approval_policy = "on-request"
+# WHAT: Routes escalated approval prompts to a human user (not auto_review).
+# WHY: Strict default matches allowed_approvals_reviewers = ["user"].
+# BREAKS: Setting auto_review here fails under Strict requirements and may block startup.
+approvals_reviewer = "user"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 model_reasoning_effort = "high"

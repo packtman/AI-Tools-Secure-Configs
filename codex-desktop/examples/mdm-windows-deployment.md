@@ -25,6 +25,7 @@ Create `requirements.toml`:
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
@@ -91,6 +92,7 @@ $content = @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
