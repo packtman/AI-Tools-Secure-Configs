@@ -29,6 +29,20 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+apps = true
+```
+
+Also deploy managed defaults to `%USERPROFILE%\.codex\managed_config.toml` (or your Intune equivalent) including:
+
+```toml
+approvals_reviewer = "user"
+
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 ```
 
 ### Step 2: Deploy via GPO File Distribution

@@ -7,6 +7,10 @@
 # Users can change settings during a session; Codex reapplies on restart.
 
 approval_policy = "on-request"
+# WHAT: Default reviewer for escalated approvals (non-app MCP and sandbox escapes).
+# WHY: Managed fleets should start with human review; pair with apps._default for connectors.
+# BREAKS: auto_review without a guardian policy can approve escalations automatically.
+approvals_reviewer = "user"
 sandbox_mode    = "workspace-write"
 web_search      = "cached"
 model           = "o4-mini"
@@ -21,6 +25,18 @@ network_access = false
 browser_use = false
 computer_use = false
 codex_hooks = true
+apps = true
+enable_mcp_apps = true
+
+# WHAT: Org default for connected apps (connectors) when Apps is enabled.
+# WHY: Human reviewer, prompt every tool, deny destructive and open-world hinted tools by default.
+# BREAKS: Removing this table lets per-user app settings (or permissive upstream defaults) widen tool risk.
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 
 # OpenTelemetry — point at your corporate OTLP collector
 [otel]

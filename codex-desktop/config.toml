@@ -37,6 +37,17 @@ computer_use = false
 memories = false
 codex_hooks = true
 multi_agent = true
+# Apps (connectors): leave on for managed defaults; pin false in Strict requirements.
+apps = true
+enable_mcp_apps = true
+
+# Org default for connected apps (connectors). Per-app tables override these.
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 
 # Shell environment — only forward essential variables to spawned commands.
 [shell_environment_policy]

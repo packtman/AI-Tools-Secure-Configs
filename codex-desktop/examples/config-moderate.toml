@@ -5,6 +5,10 @@
 
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+# WHAT: Routes non-app escalated approval prompts to a human (not auto_review).
+# WHY: Moderate keeps HITL for sandbox escapes and MCP prompts while Apps may stay available.
+# BREAKS: auto_review can approve connector/MCP escalations without a person.
+approvals_reviewer = "user"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 model_reasoning_effort = "high"
@@ -21,6 +25,21 @@ memories = false
 codex_hooks = true
 multi_agent = true
 undo = false
+# WHAT: Apps stay available; MCP-apps path stays on for approved connectors.
+# WHY: Enterprise teams may need connectors, but defaults below constrain tool risk.
+# BREAKS: Setting apps=false blocks all connector workflows (use Strict for that).
+apps = true
+enable_mcp_apps = true
+
+# WHAT: Org-wide defaults for connected apps (connectors).
+# WHY: Force human review, prompt every tool, and deny destructive/open-world hinted tools by default.
+# BREAKS: auto_review or auto tool mode can execute connector actions without review; open_world_enabled=true widens egress.
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]
