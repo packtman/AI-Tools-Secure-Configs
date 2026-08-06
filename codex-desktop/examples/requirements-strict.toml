@@ -15,6 +15,10 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Pins Apps (connectors) off for managed users (non-overridable).
+# WHY: Strict fleets should not expose connector tool surfaces until an allowlisted pilot exists.
+# BREAKS: Users cannot enable Apps locally; remove this pin only after apps._default and MCP allowlists are ready.
+apps = false
 
 # Deny reads to sensitive directories
 [permissions.filesystem]

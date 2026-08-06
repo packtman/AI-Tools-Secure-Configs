@@ -11,6 +11,10 @@ allowed_web_search_modes = ["cached", "live"]
 # Only pin the most dangerous feature
 [features]
 computer_use = false
+# WHAT: Baseline leaves Apps on (default upstream behavior).
+# WHY: Startups need connectors; rely on apps._default destructive_enabled=false instead of a hard disable.
+# BREAKS: Pinning apps=false here is a Strict-style control and will surprise Baseline users.
+apps = true
 
 # Block privilege escalation
 [rules]

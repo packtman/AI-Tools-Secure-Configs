@@ -112,11 +112,28 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+| `apps` | ChatGPT Apps / connectors (pin in requirements) |
+| `enable_mcp_apps` | MCP-apps path used by some connectors |
+
+### Apps defaults (`[apps._default]`)
+
+Connected apps (connectors) inherit org defaults unless you set a per-app `apps.<connector_id>` table:
+
+| Key | Purpose |
+|-----|---------|
+| `enabled` | Default on/off for all apps |
+| `approvals_reviewer` | `user` or `auto_review` for app tool prompts |
+| `default_tools_approval_mode` | `auto`, `prompt`, `writes`, or `approve` |
+| `destructive_enabled` | Allow tools with `destructive_hint = true` |
+| `open_world_enabled` | Allow tools with `open_world_hint = true` |
+
+Strict pins `features.apps = false` and keeps `apps._default.enabled = false`. Moderate keeps Apps on with human review and destructive/open-world denied. See `examples/policy-rationale.md` for the tier delta table.
+
+**Overlap:** Top-level `approvals_reviewer` covers non-app MCP and sandbox escalations. `apps._default.approvals_reviewer` covers connector prompts. Configure both. Local MCP allowlists in `requirements.toml` do not replace Apps governance.
 
 ### Protected Paths
 
 The `.codex/` directory and `.git/` are always protected, even in writable sandbox modes.
-
 ---
 
 ## Security Differences: Codex Desktop vs. Codex CLI
@@ -140,11 +157,14 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `features.apps` for your tier (`false` Strict, `true` Moderate/Baseline)
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
 - [ ] Deploy `managed_config.toml` with conservative starting values
 - [ ] Set `approval_policy = "on-request"` as the default
+- [ ] Set top-level `approvals_reviewer = "user"`
+- [ ] Set `[apps._default]` (reviewer, tool mode, destructive/open-world)
 - [ ] Set `sandbox_mode = "workspace-write"` as the default
 - [ ] Disable `network_access` unless required
 - [ ] Configure telemetry to point at your OTLP collector
@@ -154,4 +174,5 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Configure Analytics API for adoption tracking
 - [ ] Set up RBAC via ChatGPT Enterprise workspace settings
 - [ ] Periodically audit drift between local configs and managed policies
-- [ ] Review MCP server access and tool permission grants
+- [ ] Review MCP server access, Apps connectors, and tool permission grants
+- [ ] Alert on connector enablement or `auto_review` usage outside an approved pilot

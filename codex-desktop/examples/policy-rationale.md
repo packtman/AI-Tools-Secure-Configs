@@ -1,4 +1,4 @@
-# Codex Desktop App — Policy Rationale
+# Codex Desktop App: Policy Rationale
 
 Every setting below explains **what it does**, **why you should care**, and **the recommended value** for different environments.
 
@@ -12,7 +12,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
-| Regulated (finance, healthcare) | `read-only` | Agent can only read files — no writes, no network. Eliminates data modification risk. |
+| Regulated (finance, healthcare) | `read-only` | Agent can only read files (no writes, no network). Eliminates data modification risk. |
 | Standard enterprise | `workspace-write` | Allows writing within the project directory only. No network. Balances productivity with safety. |
 | Individual developers | `workspace-write` | Same as above. Never use `danger-full-access` unless in a disposable container. |
 
@@ -29,6 +29,50 @@ Every setting below explains **what it does**, **why you should care**, and **th
 | Regulated | `on-request` | Every write/execute requires explicit approval. |
 | Standard enterprise | `on-request` | Default for most teams. Reads are automatic; writes need approval. |
 | Power users (trusted) | `never` | Only with `workspace-write` sandbox. Accept the risk of autonomous execution within the sandbox. |
+
+---
+
+## `approvals_reviewer`
+
+**What it does:** Chooses who reviews escalated approval prompts (sandbox escapes, blocked network, MCP prompts, ARC escalations). Values: `user` (human) or `auto_review` (guardian subagent). Legacy alias: `guardian_subagent`.
+
+**Why it matters:** This is separate from `approval_policy` (when to pause). A fleet can pause on request but still route the decision to an automatic reviewer.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `user` | Human must approve escalations. |
+| Standard enterprise | `user` | Same; allow auto_review only after guardian policy review. |
+| Individual developers | `user` (start) | Opt into `auto_review` only with a written guardian policy. |
+
+---
+
+## `apps._default` (connected apps / connectors)
+
+**What it does:** Sets org-wide defaults for ChatGPT Apps (connectors) unless a per-app `apps.<id>` table overrides them. Key fields: `enabled`, `approvals_reviewer`, `default_tools_approval_mode`, `destructive_enabled`, `open_world_enabled`.
+
+**Why it matters:** Apps expand the tool surface beyond local MCP allowlists. Tools can advertise `destructive_hint` (destructive actions) or `open_world_hint` (broad external reach). Without defaults, users can enable permissive connector behavior.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `enabled=false`, reviewer `user`, mode `prompt`, destructive/open-world `false` | No connectors until an allowlisted pilot exists. |
+| Standard enterprise | `enabled=true`, reviewer `user`, mode `prompt`, destructive/open-world `false` | Connectors allowed with human review and no destructive/open-world tools by default. |
+| Individual developers | `enabled=true`, mode `writes`, destructive `false`, open-world `true` | More productive defaults; still block destructive_hint tools. |
+
+**Overlap note:** Top-level `approvals_reviewer` covers non-app MCP and sandbox escalations. `apps._default.approvals_reviewer` covers connector tool prompts. Configure both so you do not leave a gap when Apps is enabled.
+
+---
+
+## `features.apps` / `features.enable_mcp_apps`
+
+**What it does:** `features.apps` enables Apps (connector) integrations (stable, on by default). `enable_mcp_apps` controls the MCP-apps path used by some connectors. Pin `features.apps` in `requirements.toml` so users cannot override it.
+
+**Why it matters:** Turning Apps off is the strongest control when your org is not ready for connectors. Managed defaults alone can be changed during a session until restart.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `apps=false` in requirements | Non-overridable disable. |
+| Standard enterprise | `apps=true` + strict `apps._default` | Allow connectors under defaults. |
+| Individual developers | `apps=true` | Keep upstream productivity. |
 
 ---
 
@@ -64,7 +108,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
 
-**Why it matters:** Computer Use is the most powerful capability — effectively giving the AI full desktop control. Prompt injection could cause unintended actions across any application.
+**Why it matters:** Computer Use is the most powerful capability: it effectively gives the AI full desktop control. Prompt injection could cause unintended actions across any application.
 
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
@@ -140,6 +184,21 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## Tier Delta: Apps defaults
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.apps` (requirements) | `true` | `true` | `false` | Strict blocks connectors entirely; others allow under defaults. |
+| `features.enable_mcp_apps` (config) | `true` | `true` | `false` | Align MCP-apps path with Apps availability. |
+| `apps._default.enabled` | `true` | `true` | `false` | Defense in depth when Strict re-enables Apps later for a pilot. |
+| `apps._default.approvals_reviewer` | `user` | `user` | `user` | All tiers start with human review for app tool prompts. |
+| `apps._default.default_tools_approval_mode` | `writes` | `prompt` | `prompt` | Baseline auto-allows non-write tools; enterprise prompts every tool. |
+| `apps._default.destructive_enabled` | `false` | `false` | `false` | Destructive-hinted connector tools stay off unless explicitly overridden. |
+| `apps._default.open_world_enabled` | `true` | `false` | `false` | Baseline allows open-world tools; enterprise denies by default. |
+| Top-level `approvals_reviewer` | `user` | `user` | `user` | Covers non-app escalations; pair with `apps._default`. |
+
+---
+
 ## Summary: Recommended Profiles
 
 ### Maximum Lockdown (Regulated)
@@ -147,6 +206,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 ```toml
 sandbox_mode = "read-only"
 approval_policy = "on-request"
+approvals_reviewer = "user"
 web_search = "disabled"
 
 [features]
@@ -155,6 +215,15 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+apps = false
+enable_mcp_apps = false
+
+[apps._default]
+enabled = false
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 ```
 
 ### Standard Enterprise
@@ -162,6 +231,7 @@ multi_agent = false
 ```toml
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+approvals_reviewer = "user"
 web_search = "cached"
 
 [features]
@@ -169,6 +239,15 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+apps = true
+enable_mcp_apps = true
+
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 ```
 
 ### Developer Teams
@@ -176,6 +255,7 @@ codex_hooks = true
 ```toml
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+approvals_reviewer = "user"
 web_search = "cached"
 
 [features]
@@ -185,4 +265,13 @@ computer_use = false
 memories = true
 codex_hooks = true
 multi_agent = true
+apps = true
+enable_mcp_apps = true
+
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "writes"
+destructive_enabled = false
+open_world_enabled = true
 ```

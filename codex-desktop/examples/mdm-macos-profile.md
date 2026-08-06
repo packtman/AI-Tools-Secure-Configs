@@ -34,6 +34,7 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+apps = true
 ```
 
 ### Step 2: Create Managed Defaults TOML
@@ -41,14 +42,25 @@ computer_use = false
 ```toml
 # /tmp/codex-managed-config.toml
 approval_policy = "on-request"
+approvals_reviewer = "user"
 sandbox_mode = "workspace-write"
 web_search = "cached"
 cli_auth_credentials_store = "keyring"
 
 [sandbox_workspace_write]
 network_access = false
-```
 
+[features]
+apps = true
+enable_mcp_apps = true
+
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
+```
 ### Step 3: Encode Payloads
 
 ```bash

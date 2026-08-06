@@ -12,6 +12,10 @@ allowed_web_search_modes = ["cached"]
 browser_use = false
 computer_use = false
 codex_hooks = true
+# WHAT: Keeps Apps available under managed defaults (see config apps._default).
+# WHY: Moderate allows connectors for approved workflows while other high-risk features stay off.
+# BREAKS: Setting apps=false here blocks all connector use org-wide (use Strict when that is intended).
+apps = true
 
 # Deny reads to credential files
 [permissions.filesystem]

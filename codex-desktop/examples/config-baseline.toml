@@ -5,6 +5,10 @@
 
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+# WHAT: Default reviewer for non-app escalations (users may still choose auto_review if requirements allow it).
+# WHY: Baseline starts safe; startups can opt into auto_review after they understand the risk.
+# BREAKS: Forcing auto_review without guardian_policy_config can rubber-stamp risky prompts.
+approvals_reviewer = "user"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 model_reasoning_effort = "high"
@@ -22,6 +26,18 @@ codex_hooks = true
 multi_agent = true
 undo = true
 shell_snapshot = true
+apps = true
+enable_mcp_apps = true
+
+# WHAT: Essential app defaults only (keep connectors usable, block destructive tools by default).
+# WHY: Baseline favors productivity but still denies destructive_hint tools unless an admin overrides per app.
+# BREAKS: destructive_enabled=true lets connector tools that advertise destructive_hint run under default policy.
+[apps._default]
+enabled = true
+approvals_reviewer = "user"
+default_tools_approval_mode = "writes"
+destructive_enabled = false
+open_world_enabled = true
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM", "EDITOR", "NODE_ENV"]

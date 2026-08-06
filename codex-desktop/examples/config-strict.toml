@@ -5,6 +5,10 @@
 
 sandbox_mode = "read-only"
 approval_policy = "on-request"
+# WHAT: Routes non-app escalated approval prompts to a human (not auto_review).
+# WHY: Strict fleets keep human-in-the-loop for sandbox escapes, MCP prompts, and ARC escalations.
+# BREAKS: auto_review here lets a subagent approve risky actions without a person.
+approvals_reviewer = "user"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 model_reasoning_effort = "high"
@@ -22,6 +26,21 @@ codex_hooks = true
 multi_agent = false
 undo = false
 shell_snapshot = false
+# WHAT: Apps (connectors) and MCP-apps path are off in Strict.
+# WHY: Connected apps expand tool surface (destructive and open-world hints) beyond local MCP allowlists.
+# BREAKS: Developers cannot use ChatGPT Apps / connectors until you re-enable and pilot an allowlist.
+apps = false
+enable_mcp_apps = false
+
+# WHAT: Default policy for every connected app unless a per-app override exists.
+# WHY: Even if Apps is later re-enabled for a pilot, defaults stay human-reviewed and non-destructive.
+# BREAKS: enabled=true without reviewer/tool pins can auto-run connector tools or allow destructive/open-world hints.
+[apps._default]
+enabled = false
+approvals_reviewer = "user"
+default_tools_approval_mode = "prompt"
+destructive_enabled = false
+open_world_enabled = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME"]
