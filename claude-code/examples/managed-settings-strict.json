@@ -119,6 +119,9 @@
 
   "autoMemoryEnabled": false,
 
+  "autoCompactEnabled": true,
+  "autoCompactWindow": 200000,
+
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": false,
@@ -148,6 +151,7 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
-    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1"
+    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "200000"
   }
 }

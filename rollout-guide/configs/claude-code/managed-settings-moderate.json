@@ -83,6 +83,8 @@
   "disableRemoteControl": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "autoCompactEnabled": true,
+  "autoCompactWindow": 500000,
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
   "autoUpdatesChannel": "stable",
@@ -113,6 +115,7 @@
   },
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "500000"
   }
 }

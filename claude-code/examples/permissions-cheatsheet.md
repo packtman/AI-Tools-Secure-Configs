@@ -199,6 +199,9 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `autoCompactEnabled` | Keeps automatic conversation compaction on when context fills |
+| `autoCompactWindow` | Token threshold before auto-compaction (100000 to 1000000) |
+| `env.CLAUDE_CODE_AUTO_COMPACT_WINDOW` | Highest-precedence compact window; beats `/autocompact` and `--autocompact` |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---
