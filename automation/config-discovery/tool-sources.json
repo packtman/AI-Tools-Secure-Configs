@@ -30,7 +30,9 @@
             "permissions",
             "disableBypassPermissionsMode",
             "sandbox",
-            "MCP"
+            "MCP",
+            "autoCompactWindow",
+            "CLAUDE_CODE_AUTO_COMPACT_WINDOW"
           ]
         },
         {
@@ -230,15 +232,39 @@
           ]
         },
         {
-          "name": "OpenAI Codex config reference",
+          "name": "OpenAI Codex config schema",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json",
+          "watch_for": [
+            "approval_policy",
+            "sandbox_mode",
+            "mcp_servers",
+            "features",
+            "apps"
+          ]
+        },
+        {
+          "name": "OpenAI Codex advanced configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-advanced.md",
           "watch_for": [
             "config",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "features",
+            "MCP"
+          ]
+        },
+        {
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration.md",
+          "watch_for": [
+            "managed",
+            "requirements",
+            "MDM",
+            "config",
+            "policy"
           ]
         }
       ]
