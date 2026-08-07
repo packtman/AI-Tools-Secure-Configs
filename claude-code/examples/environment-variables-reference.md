@@ -29,6 +29,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable auto memory writes | `1` for sensitive environments |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | Token threshold before auto-compaction (plain count only, 100000 to 1000000). Beats `/autocompact`, `--autocompact`, and `autoCompactWindow` | `200000` Strict, `500000` Moderate; omit on Baseline so developers can tune |
 
 ## Behavior Controls
 
@@ -71,6 +72,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "500000",
     "HTTPS_PROXY": "https://proxy.corp.example.com:8443",
     "NO_PROXY": "localhost,127.0.0.1,.corp.example.com",
     "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/corp-ca-bundle.crt",
@@ -88,6 +90,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "200000",
     "DISABLE_AUTOUPDATER": "1"
   }
 }

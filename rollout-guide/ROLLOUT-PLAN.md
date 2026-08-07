@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Long sessions compact at a managed token window (Moderate: 500k). Use `/clear` between unrelated tasks if you need a fresh context.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +121,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code `--autocompact` and `/autocompact` cannot raise the managed compact window on Moderate/Strict endpoints.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -242,6 +243,9 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
+| `autoCompactEnabled` | `true` | `true` | `true` | All tiers keep compaction on so long sessions do not fail open into unsafe workarounds |
+| `autoCompactWindow` | Not set (model-tuned) | `500000` | `200000` | Strict compacts earlier to limit active sensitive context; Moderate pins a predictable enterprise window; Baseline lets developers tune |
+| `env.CLAUDE_CODE_AUTO_COMPACT_WINDOW` | Not set | `"500000"` | `"200000"` | Env beats `/autocompact` and `--autocompact`; required for org enforcement because managed `autoCompactWindow` alone does not preempt the CLI flag |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
 
@@ -333,6 +337,11 @@ claude --version
 # Verify org login
 claude auth status
 # Expected: shows your org name, not a personal account
+
+# Verify managed auto-compact window (Moderate expects 500000)
+claude config list --managed | grep -E 'autoCompactWindow|CLAUDE_CODE_AUTO_COMPACT_WINDOW'
+# Expected: autoCompactWindow 500000 and matching env value
+# In a session, run /autocompact and confirm it reports the managed/env override
 ```
 
 #### Audit Logging
@@ -584,6 +593,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Raising Claude Code auto-compact window via `--autocompact` (Moderate/Strict) | Larger windows keep more session context, including secrets discussed earlier, in the active conversation longer than policy allows | Keep the managed window. For long tasks, use `/clear` between unrelated work, `/compact` with a focus, or a subagent for large reads. Request an exception if a pilot needs a higher pinned window. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +607,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `CLAUDE_CODE_AUTO_COMPACT_WINDOW` / `autoCompactWindow` | Developer sees more frequent compaction and wants a 1M window for a large refactor | This is intentional on Moderate/Strict. Suggest `/compact` with a focus, `/clear` between tasks, or subagents for large reads. If still blocked, approve a temporary higher managed window (for example 800000) with an expiration date, not a local `--autocompact` exception. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

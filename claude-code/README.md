@@ -204,6 +204,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Pin `autoCompactEnabled: true` and set `autoCompactWindow` plus matching `env.CLAUDE_CODE_AUTO_COMPACT_WINDOW` (Moderate `500000`, Strict `200000`) so `--autocompact` cannot override the managed window.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

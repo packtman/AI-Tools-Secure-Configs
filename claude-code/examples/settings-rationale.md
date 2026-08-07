@@ -245,3 +245,17 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | Regulated | `1` | No session history on disk. |
 | Standard enterprise | Not set | Session history aids debugging and productivity. |
+
+### `autoCompactEnabled` / `autoCompactWindow` / `CLAUDE_CODE_AUTO_COMPACT_WINDOW`
+
+**What it does:** Controls whether Claude Code automatically compacts (summarizes) a conversation when context fills up, and at what token threshold. Valid window values are `100000` to `1000000`. `CLAUDE_CODE_AUTO_COMPACT_WINDOW` in managed `env` takes precedence over `/autocompact`, `--autocompact`, and the `autoCompactWindow` setting.
+
+**Why it matters:** Unpinned windows leave retention behavior to model defaults and vendor experiments. Larger windows keep more session context (including secrets discussed earlier) in the active conversation longer. The managed `autoCompactWindow` key alone does not preempt the `--autocompact` CLI flag, so org enforcement requires the env var. Disabling auto-compact causes long sessions to fail with "prompt too long," which pushes unsafe workarounds.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `autoCompactEnabled: true`, `autoCompactWindow: 200000`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000` | Compact earlier to limit how long sensitive context stays in the active window; pin env so CLI flags cannot raise it. |
+| Standard enterprise | `autoCompactEnabled: true`, `autoCompactWindow: 500000`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW=500000` | Predictable Moderate window with room for normal multi-file work; still blocks `--autocompact` overrides. |
+| Developer | `autoCompactEnabled: true`, window unset | Keep compaction on; let developers tune with `/autocompact` or `--autocompact` for productivity. |
+
+**What breaks if misconfigured:** If the env var is omitted, `claude --autocompact 1000000` overrides managed policy for that launch. If auto-compact is disabled, long sessions fail and developers may paste history into new chats.

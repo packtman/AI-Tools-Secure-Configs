@@ -195,6 +195,22 @@ In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., mi
 
 ---
 
+## `autoCompactEnabled: true`
+
+**What:** Keeps automatic conversation compaction enabled when context fills up.
+
+**Why (Moderate tier):** Long sessions without compaction hit "prompt too long" failures. Developers then restart sessions or paste history, which can re-expose secrets. Moderate keeps compaction on for predictable, safer long sessions.
+
+**Breaks if set to false:** Long sessions fail when the context window fills, increasing friction and unsafe workarounds.
+
+## `autoCompactWindow: 500000`
+
+**What:** Compacts the conversation after about 500000 tokens of context (range: 100000 to 1000000).
+
+**Why (Moderate tier):** Pins a predictable enterprise window so vendor experiments or local `/autocompact` changes do not silently change how long session context is retained. Must be paired with `CLAUDE_CODE_AUTO_COMPACT_WINDOW` in `env` because the managed key alone does not preempt `--autocompact`.
+
+**Breaks if removed or mismatched with env:** Users can raise the window with `--autocompact`, keeping more session context (including secrets discussed earlier) in the active window longer than Moderate intends.
+
 ## `env` settings
 
 ### `CLAUDE_CODE_ENABLE_TELEMETRY: "0"`
@@ -202,3 +218,6 @@ Disables telemetry. Data minimization principle.
 
 ### `CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1"`
 Prevents Claude Code from saving learnings to disk. Reduces risk of sensitive context persisting across sessions.
+
+### `CLAUDE_CODE_AUTO_COMPACT_WINDOW: "500000"`
+Highest-precedence control for the auto-compact token window. Beats `/autocompact`, `--autocompact`, and `autoCompactWindow`. Required for org enforcement of the Moderate window. If removed, developers can launch with `--autocompact 1000000` and keep a larger active context than policy allows.

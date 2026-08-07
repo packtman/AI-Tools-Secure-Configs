@@ -173,6 +173,24 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Keeps automatic conversation compaction enabled when context fills up.
+  // WHY: If auto-compact is off, long sessions hit "prompt too long" errors and
+  //      developers may restart with weaker local settings or paste sensitive history
+  //      into new sessions. Moderate keeps compaction on for predictable behavior.
+  // BREAKS IF SET TO FALSE: Long sessions fail when the context window fills, and
+  //      developers may work around the failure in unsafe ways.
+  "autoCompactEnabled": true,
+
+  // WHAT: Compacts the conversation after about 500000 tokens of context.
+  // WHY: Pins a predictable Moderate window so vendor experiments or local
+  //      /autocompact changes do not silently change retention. Pair with
+  //      CLAUDE_CODE_AUTO_COMPACT_WINDOW in env: the managed key alone does not
+  //      preempt the --autocompact CLI flag.
+  // BREAKS IF REMOVED OR MISMATCHED WITH ENV: Users can raise the window with
+  //      --autocompact, keeping more session context (including secrets discussed
+  //      earlier) in the active window longer than policy intends.
+  "autoCompactWindow": 500000,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -248,10 +266,17 @@
   },
 
   // WHAT: Environment variables set for all Claude Code sessions.
-  // WHY: Disables telemetry (data minimization) and disables auto-memory
-  //      (prevents persistent AI context that could contain sensitive data).
+  // WHY: Disables telemetry (data minimization), disables auto-memory
+  //      (prevents persistent AI context that could contain sensitive data), and
+  //      pins the auto-compact window so --autocompact cannot override managed policy.
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    // WHAT: Highest-precedence control for the auto-compact token window.
+    // WHY: Beats /autocompact, --autocompact, and autoCompactWindow. Required for
+    //      org enforcement of the Moderate 500000-token window.
+    // BREAKS IF REMOVED: Developers can launch with --autocompact 1000000 and keep
+    //      a larger active context than Moderate policy allows.
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "500000"
   }
 }
