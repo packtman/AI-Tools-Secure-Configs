@@ -245,3 +245,51 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | Regulated | `1` | No session history on disk. |
 | Standard enterprise | Not set | Session history aids debugging and productivity. |
+
+### `askUserQuestionTimeout`
+
+**What it does:** Sets idle time before an unanswered AskUserQuestion dialog auto-continues with already-selected options. Values: `"60s"`, `"5m"`, `"10m"`, or `"never"`. Requires Claude Code v2.1.200 or later.
+
+**Why it matters:** AFK auto-continue can accept a clarifying choice without a human present. Managed `"never"` keeps the human-in-the-loop for clarifying questions. Do not set `CLAUDE_AFK_TIMEOUT_MS` in managed `env`, because that override turns auto-continue on.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"never"` | No unattended auto-continue of clarifying questions. |
+| Standard enterprise | `"never"` | Same human-gate posture for managed fleets. |
+| Developer | Unset | Vendor default is `"never"`; developers may opt into AFK timeouts for demos. |
+
+### `isolatePeerMachines`
+
+**What it does:** Requires explicit approval before Claude's `SendMessage` reaches a session on another machine owned by the same user. Applies even in bypassPermissions mode. Requires Claude Code v2.1.224 or later.
+
+**Why it matters:** Cross-machine messaging can move prompts and context between endpoints without the operator noticing.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Gate every peer-machine delivery. |
+| Standard enterprise | `true` | Same gate for managed endpoints. |
+| Developer | Unset | Multi-device messaging stays low-friction for individuals. |
+
+### `strictPluginOnlyCustomization`
+
+**What it does:** (Managed settings only) Blocks skills, agents, hooks, and MCP servers from user and project sources so they can only come from plugins or managed settings. `true` locks all four surfaces; an array locks named surfaces only.
+
+**Why it matters:** Project-checked customization is a supply-chain path. Strict locks the full surface so only managed or marketplace-reviewed plugins provide those capabilities.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Lock skills, agents, hooks, and MCP to plugins or managed settings. |
+| Standard enterprise | Unset / `false` | Teams may keep local skills and project hooks. |
+| Developer | Unset | Maximum local customization. |
+
+### `agentPushNotifEnabled` / `inputNeededNotifEnabled`
+
+**What they do:** Control Remote Control mobile push notifications (proactive completion pushes vs waiting permission prompts).
+
+**Why they matter:** Push channels expand the Remote Control attack and data surface. Enterprise tiers disable Remote Control and also pin these to `false` so an exception re-enable does not silently restore pushes.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Both `false` | No mobile push channel. |
+| Standard enterprise | Both `false` | Defense in depth with `disableRemoteControl`. |
+| Developer | `agentPushNotifEnabled: false` | Block unsolicited pushes; leave input-needed at vendor default. |

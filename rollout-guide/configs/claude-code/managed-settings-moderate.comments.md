@@ -167,6 +167,52 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `askUserQuestionTimeout`
+
+**Value:** `"never"`
+
+**What:** Idle time before an unanswered AskUserQuestion dialog auto-continues with whatever options were already selected. Accepts `"60s"`, `"5m"`, `"10m"`, or `"never"`. Requires Claude Code v2.1.200 or later.
+
+**Why (Moderate tier):** Managed fleets should wait for a human answer. AFK auto-continue can accept a clarifying choice without review. Do not set `CLAUDE_AFK_TIMEOUT_MS` in managed `env`; that override turns auto-continue on even when this setting is `"never"`.
+
+**What breaks if misconfigured:** A timeout value other than `"never"` lets unattended sessions continue after the idle window.
+
+**Strict difference:** Also `"never"`.
+
+**Baseline difference:** Unset (vendor default is `"never"`, but developers may opt into AFK timeouts via `/config`).
+
+---
+
+## `isolatePeerMachines`
+
+**Value:** `true`
+
+**What:** Requires explicit approval before Claude's `SendMessage` reaches one of your sessions on another machine. The prompt still appears in bypassPermissions mode. Requires Claude Code v2.1.224 or later.
+
+**Why (Moderate tier):** Cross-machine messaging can move prompts and context between endpoints. Enterprise tiers keep a human gate on peer-machine delivery.
+
+**What breaks if removed:** A session on one device can push messages to another device without approval.
+
+**Strict difference:** Also `true`.
+
+**Baseline difference:** Unset (developers may use multi-device messaging without the extra gate).
+
+---
+
+## `agentPushNotifEnabled` / `inputNeededNotifEnabled`
+
+**Values:** `false` / `false`
+
+**What:** Control Remote Control mobile push notifications (proactive task completion vs waiting permission prompts).
+
+**Why (Moderate tier):** Moderate already sets `disableRemoteControl: true`. These keys keep push channels closed if Remote Control is later re-enabled for an exception.
+
+**What breaks if set to true:** Phone push traffic can resume whenever Remote Control is connected.
+
+**Baseline difference:** Only `agentPushNotifEnabled: false` is pinned; input-needed pushes stay at vendor default unless Remote Control is used.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

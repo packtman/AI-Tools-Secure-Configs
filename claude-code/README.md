@@ -186,6 +186,7 @@ See `examples/mcp-security.md` for the complete security guide.
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
+| `strictPluginOnlyCustomization` | Block user/project skills, agents, hooks, MCP unless from plugins or managed settings |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
@@ -196,8 +197,11 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `minimumVersion` to enforce a floor version (use `2.1.224` or later for `isolatePeerMachines`).
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
+- [ ] Pin `askUserQuestionTimeout: "never"` on managed fleets, and do not set `CLAUDE_AFK_TIMEOUT_MS`.
+- [ ] Set `isolatePeerMachines: true` when developers use multi-device Claude Code sessions.
+- [ ] For Strict, set `strictPluginOnlyCustomization: true` after reviewing required local skills and hooks.
 
 ### Phase 2: Permissions
 - [ ] Deploy `managed-settings.json` with deny rules for dangerous patterns.
