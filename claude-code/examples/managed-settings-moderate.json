@@ -97,11 +97,16 @@
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
 
+  "askUserQuestionTimeout": "never",
+  "isolatePeerMachines": true,
+  "agentPushNotifEnabled": false,
+  "inputNeededNotifEnabled": false,
+
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.224",
 
   "sandbox": {
     "enabled": true,

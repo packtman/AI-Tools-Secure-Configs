@@ -39,6 +39,8 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
+| `CLAUDE_AFK_TIMEOUT_MS` | Overrides `askUserQuestionTimeout` and turns AskUserQuestion auto-continue on | Do not set on managed fleets; prefer managed `askUserQuestionTimeout: "never"` |
+| `CLAUDE_AFK_COUNTDOWN_MS` | On-screen countdown before AFK auto-continue | Only relevant if AFK auto-continue is intentionally enabled |
 
 ## MCP & Tools
 

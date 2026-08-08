@@ -187,6 +187,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed `allowRead` applies |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domain allowlist applies |
 | `strictKnownMarketplaces` | Restrict plugin marketplace sources |
+| `strictPluginOnlyCustomization` | Block user/project skills, agents, hooks, MCP unless from plugins or managed settings |
 | `wslInheritsWindowsSettings` | WSL reads Windows managed settings |
 
 ## Works from Any Scope (but most useful in managed)
@@ -200,6 +201,10 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
+| `askUserQuestionTimeout` | Idle timeout before AskUserQuestion auto-continues (`never` keeps waiting) |
+| `isolatePeerMachines` | Require approval before SendMessage reaches another machine |
+| `agentPushNotifEnabled` | Remote Control proactive mobile push |
+| `inputNeededNotifEnabled` | Remote Control push when a permission prompt is waiting |
 
 ---
 

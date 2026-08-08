@@ -118,6 +118,14 @@
 
   "autoMemoryEnabled": false,
 
+  "askUserQuestionTimeout": "never",
+
+  "isolatePeerMachines": true,
+
+  "agentPushNotifEnabled": false,
+
+  "inputNeededNotifEnabled": false,
+
   "claudeMd": "",
 
   "sandbox": {
@@ -128,7 +136,7 @@
 
   "autoUpdatesChannel": "stable",
 
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.224",
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",

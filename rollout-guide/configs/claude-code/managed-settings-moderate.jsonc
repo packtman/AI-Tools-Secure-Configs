@@ -173,6 +173,36 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Idle time before an unanswered AskUserQuestion dialog auto-continues.
+  // WHY: Moderate pins "never" so unanswered clarifying questions wait for a human.
+  //      AFK auto-continue can silently accept a selected option without review.
+  //      Requires Claude Code v2.1.200 or later. Do not set CLAUDE_AFK_TIMEOUT_MS
+  //      in managed env; that env override turns auto-continue back on.
+  // BREAKS IF SET TO "5m"/"10m"/"60s": Unattended sessions may continue without
+  //      an explicit answer to a security-relevant question.
+  "askUserQuestionTimeout": "never",
+
+  // WHAT: Requires explicit approval before Claude SendMessage reaches a session
+  //      on another machine owned by the same user.
+  // WHY: Cross-machine messaging can move prompts and context between endpoints.
+  //      Moderate and Strict require a human gate even if bypassPermissions is active.
+  //      Requires Claude Code v2.1.224 or later.
+  // BREAKS IF REMOVED: A compromised or shared session can push messages to other
+  //      devices without an approval prompt.
+  "isolatePeerMachines": true,
+
+  // WHAT: Blocks proactive Remote Control push notifications ("Push when Claude decides").
+  // WHY: Defense in depth with disableRemoteControl. Keeps mobile push channels closed
+  //      if Remote Control is later re-enabled for an exception.
+  // BREAKS IF SET TO TRUE: Claude may send unsolicited phone notifications when Remote
+  //      Control is connected.
+  "agentPushNotifEnabled": false,
+
+  // WHAT: Blocks Remote Control push notifications when a permission prompt is waiting.
+  // WHY: Same defense-in-depth posture as agentPushNotifEnabled for managed fleets.
+  // BREAKS IF SET TO TRUE: Permission prompts can trigger phone push traffic.
+  "inputNeededNotifEnabled": false,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -193,8 +223,9 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.224 is required for isolatePeerMachines cross-machine approval.
+  //      askUserQuestionTimeout requires at least 2.1.200.
+  "minimumVersion": "2.1.224",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
