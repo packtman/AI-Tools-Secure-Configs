@@ -66,7 +66,7 @@ Supports a `managed-settings.d/` drop-in directory alongside the base file for m
 ### Server-managed (Admin Console)
 
 - Configure in **Claude.ai → Admin Settings → Claude Code → Managed settings**.
-- Requires Claude for Teams or Enterprise, Claude Code ≥ 2.1.38.
+- Requires Claude for Teams or Enterprise, Claude Code ≥ 2.1.224 for Moderate/Strict peer-message and dialog-expiry pins (Baseline still documents 2.1.38 as the older managed-settings floor).
 - No MDM infrastructure needed.
 - See `examples/server-managed-settings-guide.md` for details.
 
@@ -196,7 +196,7 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `minimumVersion` to enforce a floor version (`2.1.224` for Moderate/Strict when pinning `crossSessionInbound` / `dialogExpiry`).
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
 
 ### Phase 2: Permissions
@@ -204,6 +204,8 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Pin `crossSessionInbound` (`hold` Moderate, `refuse` Strict) and `dialogExpiry` (`5m` Moderate, `60s` Strict). Do not set `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS` unless you intend an override.
+- [ ] On Strict, also deny `SendMessage` and `ListAgents` to turn outbound peer messaging off.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

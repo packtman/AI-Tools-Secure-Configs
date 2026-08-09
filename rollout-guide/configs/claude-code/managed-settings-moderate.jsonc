@@ -191,10 +191,27 @@
   // WHY: Prevents preview/beta versions that may have different security behavior.
   "autoUpdatesChannel": "stable",
 
+  // WHAT: How this session treats inbound cross-session messages from other
+  //      Claude Code sessions on the same account (accept, hold, or refuse).
+  // WHY (Moderate): "hold" shows an approval notice before delivering peer
+  //      messages, so another session cannot inject context without a human click.
+  // BREAKS IF REMOVED: Vendor per-mode defaults may auto-deliver some inbound
+  //      messages, including into sessions that already skipped permission checks.
+  "crossSessionInbound": "hold",
+
+  // WHAT: Deadline for dialogs forwarded to a remote client (Remote Control or
+  //      SDK host) and for held cross-session message approvals.
+  // WHY (Moderate): "5m" matches the vendor default and fails closed by dropping
+  //      unanswered held messages instead of waiting forever.
+  // BREAKS IF SET TO "never": Unattended Remote Control or peer-message dialogs
+  //      can hang indefinitely. Do not set CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS in
+  //      managed env unless you intentionally override this string with ms.
+  "dialogExpiry": "5m",
+
   // WHAT: Enforces a minimum CLI version.
-  // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  // WHY: crossSessionInbound and dialogExpiry require Claude Code >= 2.1.224.
+  //      Older builds ignore these keys and leave peer-message controls unset.
+  "minimumVersion": "2.1.224",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed

@@ -1,5 +1,9 @@
 # Agent scope for this run
 
+
+Primary completed focus for 2026-08-09: Claude Code `crossSessionInbound` / `dialogExpiry` / Strict `SendMessage`+`ListAgents`, plus Codex Desktop discovery watcher repair.
+
+Remaining missing-term noise below is deferred when already covered by open maintenance PRs.
 Process only the tools listed below. For each tool:
 
 1. Read the cited missing terms and the upstream URL from the full discovery report.
@@ -10,30 +14,34 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (4 of 9 with missing terms)
 
 ### Claude Code
 
 - Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
 
 ### Claude Code
 
 - Source: Hooks documentation
 - Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
 
-### Continue.dev
+### Claude Code
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
+- Source: Dynamic workflows documentation
+- Missing terms: `CLAUDE_CODE_SUBAGENT_MODEL`
 
-### Claude Desktop
+### Codex CLI
 
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+- Source: OpenAI Codex releases
+- Missing terms: `ModelMessages`
 
-## Deferred (1 tools)
+## Deferred (5 tools)
 
 These tools also have missing terms but are deferred to a follow-up run:
 
+- Codex Desktop (OpenAI Codex config schema)
+- Codex Desktop (OpenAI Codex advanced configuration)
+- Codex Desktop (OpenAI Codex managed configuration)
+- Claude Desktop (Claude Desktop MCP documentation)
 - OpenAI Platform (OpenAI OpenAPI schema)

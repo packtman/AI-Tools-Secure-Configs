@@ -23,6 +23,8 @@
       "mcp__*",
       "Agent(Explore)",
       "Agent(Plan)",
+      "SendMessage",
+      "ListAgents",
 
       "Bash(curl *)",
       "Bash(wget *)",
@@ -111,11 +113,14 @@
   "disableWorkflows": true,
   "channelsEnabled": false,
 
+  "crossSessionInbound": "refuse",
+  "dialogExpiry": "60s",
+
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.224",
 
   "autoMemoryEnabled": false,
 

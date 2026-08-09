@@ -39,6 +39,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
+| `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS` | Millisecond override for `dialogExpiry` (Remote Control / SDK host dialogs and held cross-session message approvals). `0` or negative disables the deadline | Prefer managed `dialogExpiry` (`"5m"` Moderate, `"60s"` Strict). Do not set this env var on managed fleets unless you intentionally override the setting |
 
 ## MCP & Tools
 

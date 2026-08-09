@@ -92,7 +92,7 @@
 | 11 | GitHub Copilot Enterprise/Business seats provisioned for pilot teams | IT Ops | [ ] |
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
-| 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 14 | Minimum tool versions enforced: Claude Code >= 2.1.224 (Moderate/Strict peer-message pins), Copilot Chat >= 0.17 | IT Ops | [ ] |
 
 ---
 
@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Inbound messages from your other Claude Code sessions are held for approval (`crossSessionInbound: hold`), and unanswered remote/peer dialogs expire after five minutes.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +121,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Messages from your other Claude Code sessions will not auto-deliver; approve or deny the hold notice. Unanswered holds drop after five minutes.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -237,6 +238,10 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
 | `disableRemoteControl` | `false` | `true` | `true` | Both Moderate and Strict block external prompt injection via remote control |
+| `crossSessionInbound` | Unset (vendor defaults) | `"hold"` | `"refuse"` | Moderate requires approval for inbound peer messages; Strict drops them. Separate from Remote Control |
+| `dialogExpiry` | Unset (vendor `"5m"`) | `"5m"` | `"60s"` | Shorter Strict window fails closed faster on unattended Remote Control / held peer dialogs. Do not set `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS` unless overriding |
+| `permissions.deny` (`SendMessage`, `ListAgents`) | Not set | Not set | Denied | Strict turns outbound peer messaging off together with inbound refuse |
+| `minimumVersion` | `"2.1.38"` | `"2.1.224"` | `"2.1.224"` | Peer-message and dialog-expiry keys require v2.1.224+ |
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
@@ -584,6 +589,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Auto-delivered cross-session messages | Another Claude Code session could inject context into a sensitive session without a human click | Keep one primary session, or approve the hold notice after reading the sender and preview. On Strict, use a single local session (peer messaging is refused/denied). | Claude Code |
+| Waiting forever on Remote Control / peer dialogs | Unattended dialogs can hang or leave approvals pending across devices | Answer within `dialogExpiry` (`5m` Moderate, `60s` Strict), or rerun the action locally. Do not set `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS` to `0` on managed fleets. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +604,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `crossSessionInbound: "hold"` / `"refuse"` | Developer wants seamless multi-session orchestration across terminals or machines | Prefer one session per task. If peer messaging is required, grant a time-boxed Moderate exception to `"accept"` only for named pilot users, keep `dialogExpiry` set, and monitor ConfigChange / permission events. Never combine `"accept"` with bypassPermissions on managed fleets. |
+| `dialogExpiry: "60s"` (Strict) | Remote Control exception user cannot answer dialogs in time | Raise to `"5m"` for that exception group only. Prefer managed `dialogExpiry` over `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
