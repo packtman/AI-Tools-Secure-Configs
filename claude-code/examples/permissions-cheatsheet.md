@@ -26,6 +26,8 @@ The first matching rule wins. Deny rules are always checked before ask and allow
 | `WebFetch` | Fetch content from URLs | Approval required |
 | `mcp__*` | MCP server tools | Approval required |
 | `Agent(*)` | Subagent invocations | Depends on agent |
+| `SendMessage` | Outbound cross-session / peer messaging | Deny on Strict with `crossSessionInbound: "refuse"` |
+| `ListAgents` | Lists other Claude Code sessions available for peer messaging | Deny on Strict with outbound peer messaging off |
 
 ---
 
@@ -150,6 +152,15 @@ Tool(~/home/path)       — home-relative path
 "Write(./**/*.pem)",
 "Write(./**/*.key)"
 ```
+
+### Cross-session messaging (Strict)
+
+```json
+"SendMessage",
+"ListAgents"
+```
+
+Pair with managed `"crossSessionInbound": "refuse"` so inbound peer messages are dropped and outbound peer messaging cannot start. Requires Claude Code >= 2.1.224.
 
 ### MCP tool restrictions
 

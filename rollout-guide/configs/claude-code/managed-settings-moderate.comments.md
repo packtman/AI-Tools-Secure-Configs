@@ -167,6 +167,50 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `crossSessionInbound`
+
+**Value:** `"hold"`
+
+**What:** Controls inbound cross-session messages (messages sent from one Claude Code session to another on the same account). `"accept"` delivers them, `"hold"` shows an approval notice first, `"refuse"` drops them.
+
+**Why (Moderate tier):** Holding inbound peer messages prevents another session from injecting prompts or context without a human click. Cross-session messaging is separate from Remote Control (which Moderate already disables).
+
+**What breaks if removed:** Vendor defaults may auto-deliver some inbound messages based on permission-mode classes, including into sessions that skipped permission checks.
+
+**Strict difference:** `"refuse"`, and Strict also denies `SendMessage` / `ListAgents` so outbound peer messaging is blocked too.
+
+**Baseline difference:** Unset, so individuals can opt into peer messaging with vendor defaults.
+
+---
+
+## `dialogExpiry`
+
+**Value:** `"5m"`
+
+**What:** Deadline for dialogs Claude Code forwards to a remote client (Remote Control or SDK host), and for held cross-session message approvals. Accepted values: `"60s"`, `"5m"`, `"10m"`, `"never"`. When the deadline passes, Claude Code cancels the dialog and uses the no-action default (held messages are dropped). Permission prompts and AskUserQuestion use their own flows.
+
+**Why (Moderate tier):** Keeps the vendor default while ensuring unattended dialogs fail closed instead of waiting forever.
+
+**What breaks if set to `"never"`:** Unattended Remote Control or peer-message approvals can hang indefinitely.
+
+**Critical:** Do not set `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS` in managed `env` unless you intentionally override `dialogExpiry` with a millisecond value. That env var wins over the setting.
+
+**Strict difference:** `"60s"` for a shorter unattended window.
+
+**Baseline difference:** Unset (vendor default `"5m"`).
+
+---
+
+## `minimumVersion`
+
+**Value:** `"2.1.224"`
+
+**What:** Enforces a minimum Claude Code CLI version.
+
+**Why (Moderate tier):** `crossSessionInbound` and `dialogExpiry` require v2.1.224 or later. Older builds ignore these keys.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

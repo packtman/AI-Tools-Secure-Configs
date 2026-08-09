@@ -213,6 +213,30 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | No external control of the agent. |
 | Standard enterprise | `true` | Unless specific remote control integrations are approved. |
 
+### `crossSessionInbound`
+
+**What it does:** Controls how this session treats inbound cross-session messages from other Claude Code sessions on the same account. Values: `"accept"` (deliver), `"hold"` (require approval), `"refuse"` (drop). Requires Claude Code v2.1.224 or later.
+
+**Why it matters:** Cross-session messaging (peer sessions exchanging messages) is separate from Remote Control. Without a managed pin, some permission-mode combinations auto-deliver inbound messages, which can inject context into a sensitive session.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"refuse"` plus deny `SendMessage` and `ListAgents` | Turn both inbound and outbound peer messaging off. |
+| Standard enterprise | `"hold"` | Keep peer messaging available with a human approval step. |
+| Developer | Unset | Let individuals opt in with vendor defaults. |
+
+### `dialogExpiry`
+
+**What it does:** Sets the deadline for dialogs forwarded to a remote client (Remote Control or SDK host) and for held cross-session message approvals. When unanswered, Claude Code cancels the dialog and uses the no-action default (held messages are dropped). Accepts `"60s"`, `"5m"`, `"10m"`, or `"never"`. Requires Claude Code v2.1.224 or later.
+
+**Why it matters:** Without a deadline, unattended Remote Control or peer-message dialogs can hang. With a deadline, unanswered held messages fail closed by dropping. `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS` overrides this setting (milliseconds); do not set that env var on managed fleets unless you intend the override.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"60s"` | Short unattended window; prefer fail-closed. |
+| Standard enterprise | `"5m"` | Vendor default balance of usability and fail-closed behavior. |
+| Developer | Unset | Vendor default (`"5m"`). |
+
 ### `disableSkillShellExecution`
 
 **What it does:** Blocks shell execution in skill files and custom commands from user/project sources.

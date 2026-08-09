@@ -118,6 +118,10 @@
 
   "autoMemoryEnabled": false,
 
+  "crossSessionInbound": "hold",
+
+  "dialogExpiry": "5m",
+
   "claudeMd": "",
 
   "sandbox": {
@@ -128,7 +132,7 @@
 
   "autoUpdatesChannel": "stable",
 
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.224",
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
