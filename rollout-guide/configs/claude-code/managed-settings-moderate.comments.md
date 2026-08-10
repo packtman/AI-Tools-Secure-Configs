@@ -167,6 +167,24 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `parentSettingsBehavior`
+
+**Value:** `"first-wins"`
+
+**What:** When an admin-deployed managed tier is already present, drop managed settings supplied by an embedding host (Agent SDK or IDE extension) instead of merging them under the admin policy.
+
+**Why (Moderate tier):** IDE and SDK hosts can inject parent managed settings. Merge mode can still apply allow-direction entries (permission allows, sandbox allowlists) unless every `allowManaged*Only` lock is set. Pinning `first-wins` keeps the admin MDM or file-based policy as the only managed source.
+
+**What breaks if set to `"merge"`:** Parent allowlists can silently widen egress or permissions under the admin tier.
+
+**What breaks if removed on older clients:** Builds before v2.1.133 ignore the key. Keep `minimumVersion` at `2.1.133` or later so the pin is enforceable.
+
+**Strict difference:** Also `"first-wins"`, and Strict pairs it with `allowManaged*Only` locks plus `sandbox.network.strictAllowlist`.
+
+**Baseline difference:** Unset so individual developers can rely on vendor defaults when no admin tier is deployed.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`
@@ -192,6 +210,9 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
+
+### `sandbox.network.strictAllowlist` (Strict only)
+Strict sets `true` (requires Claude Code v2.1.219+). Sandboxed commands are denied hosts outside the managed allowlist without an approval prompt. Moderate leaves this unset so developers can approve new domains during normal work. Populate `network.allowedDomains` before enabling Strict.
 
 ---
 

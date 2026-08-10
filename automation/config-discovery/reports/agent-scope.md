@@ -10,30 +10,20 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (3 of 3 with missing terms)
 
-### Claude Code
+### Codex Desktop
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Source: OpenAI Codex config schema
+- Missing terms: `McpServerConfig`, `ModelProviderInfo`, `auto_review`, `enabled_tools`, `mcp__`, `mcp_oauth_callback_port`, `memory_mode`, `model-with-reasoning`, `model_auto_compact_token_limit`, `model_providers`, `request_permissions`, `with_additional_permissions`
 
-### Claude Code
+### Codex Desktop
 
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+- Source: OpenAI Codex advanced configuration
+- Missing terms: `apps_mcp_product_sku`, `auth_mode`, `feature_enabled`, `guardian_policy_config`, `mcp.call`, `mcp.call.duration_ms`, `mcp.tools.cache_write.duration_ms`, `mcp.tools.fetch_uncached.duration_ms`, `mcp.tools.list.duration_ms`, `model_catalog_json`, `model_instructions_file`, `model_provider`, `model_providers`, `model_verbosity`, `model_warning`
+- (6 more terms in the full report)
 
-### Continue.dev
+### Codex Desktop
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Source: OpenAI Codex managed configuration
+- Missing terms: `allowAppshots`, `allow_appshots`, `allow_remote_control`, `allowed_approvals_reviewers`, `allowed_domains`, `allowed_permission_profiles`, `default_permissions`, `guardian_policy_config`

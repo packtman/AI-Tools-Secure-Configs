@@ -127,6 +127,7 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
+| `sandbox.network.strictAllowlist` | Deny sandboxed egress outside the allowlist without prompts (v2.1.219+) |
 
 See `examples/sandbox-config.json` for a complete example.
 
@@ -183,11 +184,13 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
+| `parentSettingsBehavior` | Drop or merge parent/IDE managed settings under admin policy |
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
+| `sandbox.network.strictAllowlist` | Fail-closed sandboxed egress outside allowlist |
 
 ---
 
@@ -212,6 +215,8 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] For Strict, set `sandbox.network.strictAllowlist: true` (Claude Code v2.1.219+) after the allowlist is populated.
+- [ ] Set `parentSettingsBehavior: "first-wins"` so IDE or Agent SDK parent settings cannot merge under admin MDM.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.

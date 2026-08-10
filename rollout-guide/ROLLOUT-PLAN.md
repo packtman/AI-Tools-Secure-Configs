@@ -121,6 +121,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code ignores managed settings injected by IDE extensions or the Agent SDK when IT already deployed managed settings (`parentSettingsBehavior: first-wins`).
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +234,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `parentSettingsBehavior` | Not set | `"first-wins"` | `"first-wins"` | Moderate and Strict drop IDE/SDK parent managed settings when admin MDM or file-based managed settings are present |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -241,6 +243,8 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
+| `sandbox.network.strictAllowlist` | Not set | Not set | `true` | Strict denies sandboxed hosts outside the allowlist without prompts (v2.1.219+); populate `allowedDomains` first |
+| `minimumVersion` | `2.1.38` | `2.1.133` | `2.1.219` | Moderate covers `parentSettingsBehavior`; Strict also requires `strictAllowlist` |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
@@ -584,6 +588,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| IDE or Agent SDK parent managed settings under admin MDM | Parent hosts can inject allow-direction rules that widen permissions or sandbox egress | Keep `parentSettingsBehavior: "first-wins"`. Request exceptions only for vetted embedders that must supply restrictive-only policy, and pair with `allowManaged*Only` locks | Claude Code |
+| Sandboxed network outside Strict allowlist | Fail-closed egress stops prompt rubber-stamping for off-allowlist hosts | Add the required host to managed `network.allowedDomains`, redeploy, then retry. Do not set `strictAllowlist` to false without a compensating egress filter | Claude Code (Strict) |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +603,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `parentSettingsBehavior: "first-wins"` | An IDE extension or Agent SDK host expects its managed settings to merge under admin policy | Keep first-wins for admin-controlled fleets. If merge is required, set `"merge"` only with every `allowManaged*Only` lock enabled, and document the embedder. |
+| `sandbox.network.strictAllowlist: true` (Strict) | `npm install` or `git fetch` fails because a registry host is missing from the allowlist | Add the host to managed `allowedDomains` and redeploy. Do not disable Strict fail-closed egress for convenience. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

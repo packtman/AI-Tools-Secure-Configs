@@ -118,6 +118,8 @@
 
   "autoMemoryEnabled": false,
 
+  "parentSettingsBehavior": "first-wins",
+
   "claudeMd": "",
 
   "sandbox": {
@@ -128,7 +130,7 @@
 
   "autoUpdatesChannel": "stable",
 
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.133",
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
