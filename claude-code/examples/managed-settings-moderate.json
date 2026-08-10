@@ -97,11 +97,13 @@
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
 
+  "parentSettingsBehavior": "first-wins",
+
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.133",
 
   "sandbox": {
     "enabled": true,

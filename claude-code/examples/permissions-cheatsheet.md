@@ -183,9 +183,11 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `blockedMarketplaces` | Blocklist of plugin marketplace sources |
 | `channelsEnabled` | Enable/disable channels |
 | `forceRemoteSettingsRefresh` | Block startup until settings fetched |
+| `parentSettingsBehavior` | Drop (`first-wins`) or merge parent/IDE managed settings under admin policy |
 | `pluginTrustMessage` | Custom plugin trust warning text |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed `allowRead` applies |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domain allowlist applies |
+| `sandbox.network.strictAllowlist` | Deny sandboxed hosts outside allowlist without prompts |
 | `strictKnownMarketplaces` | Restrict plugin marketplace sources |
 | `wslInheritsWindowsSettings` | WSL reads Windows managed settings |
 

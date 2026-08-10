@@ -100,6 +100,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `parentSettingsBehavior`
+
+**What it does:** Controls whether managed settings from an embedding host (Agent SDK, IDE extension) apply when an admin-deployed managed tier is also present. `"first-wins"` drops parent-supplied managed settings. `"merge"` applies parent settings under the admin tier through a restrictive-only filter. Managed-settings only. Requires Claude Code v2.1.133 or later.
+
+**Why it matters:** Parent hosts can inject allow-direction entries (permission allows, sandbox allowlists) unless every `allowManaged*Only` lock is set. That can quietly widen policy under MDM.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"first-wins"` | Admin MDM or file-based managed settings must be the only managed source. |
+| Standard enterprise | `"first-wins"` | Prevent IDE or SDK parent policy from loosening egress or permissions. |
+| Developer | Not set | Vendor default already prefers first-wins when an admin tier exists; leave unset for local experimentation. |
+
+**What breaks if misconfigured or removed:** Setting `"merge"` without full `allowManaged*Only` locks can reopen parent allowlists. Removing the pin on builds older than v2.1.133 has no effect; enforce with `minimumVersion`.
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
@@ -197,6 +211,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | Regulated | `true` | Strict network control. Only approved registries and APIs. |
 | Standard enterprise | `false` | Let users approve new domains via prompts during development. |
+
+### `sandbox.network.strictAllowlist`
+
+**What it does:** Deny sandboxed commands access to hosts outside the allowlist instead of prompting for approval. The allowlist is `allowedDomains` plus `WebFetch(domain:...)` allow rules, or only managed entries when `allowManagedDomainsOnly` is set. Honored from user, managed, or `--settings` only. Requires Claude Code v2.1.219 or later.
+
+**Why it matters:** Even with an allowlist, prompt-based approval can become rubber-stamping under fatigue. Fail-closed egress stops sandboxed exfiltration without waiting for a human click.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Pair with `allowManagedDomainsOnly: true` and a populated `allowedDomains` list. |
+| Standard enterprise | Not set (`false`) | Keep prompt-based domain approval during Moderate so developers can discover needed hosts. |
+| Developer | Not set | Avoid blocking local package installs before an allowlist exists. |
+
+**What breaks if misconfigured or removed:** Enabling `true` with an empty allowlist blocks sandboxed `npm`, `pip`, and `git` network use. Removing it on Strict re-enables approval prompts for off-allowlist hosts.
 
 ---
 

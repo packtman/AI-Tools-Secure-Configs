@@ -173,6 +173,15 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: When an admin-deployed managed tier is present, drop managed settings
+  //      supplied by an embedding host (Agent SDK, IDE extension) instead of merging them.
+  // WHY: Moderate pins first-wins so IDE or SDK parent policy cannot widen egress,
+  //      permissions, or MCP under the admin MDM or file-based managed settings.
+  // BREAKS IF SET TO "merge": Parent allow rules and sandbox allowlists can still apply
+  //      unless every allowManaged*Only lock is also set, which can silently loosen policy.
+  // Requires Claude Code v2.1.133 or later.
+  "parentSettingsBehavior": "first-wins",
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -192,9 +201,9 @@
   "autoUpdatesChannel": "stable",
 
   // WHAT: Enforces a minimum CLI version.
-  // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  // WHY: Floor covers parentSettingsBehavior (v2.1.133+). Older builds ignore the pin
+  //      and can still accept parent/IDE managed settings merges.
+  "minimumVersion": "2.1.133",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed

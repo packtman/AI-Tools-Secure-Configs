@@ -111,11 +111,13 @@
   "disableWorkflows": true,
   "channelsEnabled": false,
 
+  "parentSettingsBehavior": "first-wins",
+
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.219",
 
   "autoMemoryEnabled": false,
 
@@ -141,7 +143,8 @@
       ]
     },
     "network": {
-      "allowManagedDomainsOnly": true
+      "allowManagedDomainsOnly": true,
+      "strictAllowlist": true
     }
   },
 
