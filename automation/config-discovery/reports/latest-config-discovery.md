@@ -175,4 +175,3 @@ No config update needed in this run:
 - Continue `mcpServers` empty-pin work is already in open #75.
 - Claude Desktop `CLAUDE_CODE_MCP_SERVER_*` names are runtime env noise for MCP process identity, not admin managed settings.
 - OpenAI Platform OpenAPI schema terms remain deferred noise pending a focused Platform PR.
-
