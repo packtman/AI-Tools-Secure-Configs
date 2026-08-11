@@ -119,6 +119,7 @@ Location: `claude.ai → Admin Settings → Capabilities`
 | SSO | ✗ | ✗ | ✓ | ✓ |
 | SCIM | ✗ | ✗ | ✗ | ✓ |
 | Compliance API | ✗ | ✗ | ✗ | ✓ |
+| Inference hooks | ✗ | ✗ | ✗ | ✓ (beta) |
 | Zero Data Retention | ✗ | ✗ | ✗ | ✓ |
 
 ---
@@ -156,6 +157,29 @@ Location: `claude.ai → Admin Settings → Capabilities`
 | Conversation export | Bulk export conversation data for compliance review |
 | Admin action logs | Export admin and security event logs |
 | Integration | Feed data to DLP/archival/SIEM systems |
+
+### Inference Hooks (Enterprise, beta)
+
+Location: `claude.ai` → Organization settings → Data and privacy → Inference hooks
+
+Requires the `organization:manage` permission (Admin, Owner, Primary owner, or a custom role with that permission).
+
+| Setting | Recommended enterprise posture | Notes |
+|---------|--------------------------------|-------|
+| Allow for your organization | On only after an AI security server exists | Unlocking the page forces Enforce verdicts off until you re-enable |
+| Endpoint URL | `https://` on port 443, publicly routable, no redirects | Store signing secret in secrets manager; shown once at save |
+| Enforce verdicts | Pilot: on with Shadow mode; prod Strict: on with Block | Shadow never blocks users |
+| Failure handling | Moderate: Allow the request; Strict: Block the request | Circuit breaker applies your failure choice while tripped |
+| Prompt verdict timeout (ms) | 3000-5000 | 1-10000 allowed; slower verdicts count as unreachable |
+| Rollout % | Pilot 10-25; Strict 100 | Unsampled requests skip inspection even if failure is Block |
+| Role exclusions | Empty on Strict | Only custom roles can be excluded; machine credentials always inspected |
+| Custom blocked prompt message | Exception path + security alias (≤500 chars) | Appended after per-request `deny_reason` |
+
+**Overlap:** One Inference hooks config governs claude.ai, Cowork, and Claude Code sessions for the Enterprise org. It does not replace Desktop MDM keys or Claude Code managed-settings permission/sandbox rules. Configure both layers.
+
+**Not covered:** Platform (API-only) orgs, Amazon Bedrock, Google Cloud, voice mode, ancillary title-generation requests. Attachments are metadata + extracted text only (no raw bytes).
+
+**Audit:** Configuration changes, denials, and fail-open uninspected proceeds appear in the Compliance Activity Feed. Alert on endpoint status Tripped and sustained failures per minute.
 
 ---
 

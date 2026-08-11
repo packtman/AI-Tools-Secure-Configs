@@ -52,6 +52,14 @@ Anthropic issues three key types — each with different blast-radius:
 - Stream activity feeds to your SIEM via the `/v1/compliance/activity` endpoint.
 - Treat Compliance Access Keys like production database credentials — store in a secrets manager, never in source control.
 
+### Inference Hooks (Enterprise)
+
+- Inference hooks: route governed prompts through your AI security server for allow/deny before inference.
+- Configure under `claude.ai` → Organization settings → Data and privacy → Inference hooks (`organization:manage`).
+- One hook covers claude.ai, Cowork, and Claude Code. It does **not** replace Claude Code managed permissions or sandbox rules.
+- Tier templates: Baseline leaves hooks off; Moderate uses shadow mode with fail-open; Strict enforces fail-closed at 100% rollout.
+- Never store the webhook signing secret in these files. Use a secrets manager path only.
+
 ## Deployment Checklist
 
 1. Enforce SSO via your identity provider (SAML/OIDC) for all console access.
@@ -61,4 +69,18 @@ Anthropic issues three key types — each with different blast-radius:
 5. Set rate limits and spend notifications on every workspace.
 6. Rotate API keys on a defined schedule (90 days recommended).
 7. Enable Compliance API and forward activity logs to your SIEM.
-8. Disable unused workspaces promptly.
+8. (Enterprise) Pilot Inference hooks in shadow mode, then enforce; alert on circuit-breaker trips.
+9. Keep Managed Agents Dreams access off until memory stores are classified and an org disable exists.
+10. Disable unused workspaces promptly.
+
+## Tier Delta: Inference Hooks
+
+| Setting | Baseline | Moderate | Strict | Reason |
+|---------|----------|----------|--------|--------|
+| `organization_allowed` | `false` | `true` | `true` | Feature needs Claude Enterprise + AI security server |
+| `enforce_verdicts` | `false` | `true` | `true` | Moderate/Strict send prompts to the hook endpoint |
+| `mode` | `off` | `shadow` | `enforce` | Shadow learns false positives; Strict blocks on deny |
+| `failure_handling` | `allow` | `allow` | `block` | Strict fails closed when the endpoint is unhealthy |
+| `rollout_percent` | `0` | `25` | `100` | Gradual inspection vs full coverage |
+| `role_exclusions` | `[]` | `[]` | `[]` | Prefer no silent bypass roles on enterprise tiers |
+| `dreams_access_requested` | `false` | `false` | `false` | No org kill switch yet for Dreams research preview |

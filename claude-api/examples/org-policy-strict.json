@@ -36,5 +36,23 @@
   "data_controls": {
     "zero_data_retention": true,
     "disable_training_on_data": true
+  },
+
+  "inference_hooks": {
+    "_comment": "Claude Enterprise console: Data and privacy → Inference hooks. Strict enforces verdicts fail-closed at 100% rollout. Store the webhook signing secret in your secrets manager only (never in this file).",
+    "organization_allowed": true,
+    "enforce_verdicts": true,
+    "endpoint_url": "https://ai-security.example.com/claude/inference-hooks",
+    "mode": "enforce",
+    "failure_handling": "block",
+    "prompt_verdict_timeout_ms": 3000,
+    "rollout_percent": 100,
+    "role_exclusions": [],
+    "custom_blocked_prompt_message": "Blocked by organizational AI security policy. Open a security exception ticket before retrying."
+  },
+
+  "managed_agents": {
+    "_comment": "Dreams (Managed Agents) remains research preview with no org-wide disable. Keep access denied on Strict until Anthropic ships an admin kill switch and memory stores are classified.",
+    "dreams_access_requested": false
   }
 }
