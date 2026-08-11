@@ -33,5 +33,23 @@
   "data_controls": {
     "zero_data_retention": false,
     "disable_training_on_data": true
+  },
+
+  "inference_hooks": {
+    "_comment": "Claude Enterprise only. Inference hooks (AI security server allow/deny before inference) are not configured on Baseline. Leave organization_allowed false unless you run Claude Enterprise and operate a signed HTTPS verdict endpoint.",
+    "organization_allowed": false,
+    "enforce_verdicts": false,
+    "endpoint_url": null,
+    "mode": "off",
+    "failure_handling": "allow",
+    "prompt_verdict_timeout_ms": 5000,
+    "rollout_percent": 0,
+    "role_exclusions": [],
+    "custom_blocked_prompt_message": null
+  },
+
+  "managed_agents": {
+    "_comment": "Dreams (Managed Agents memory reorganization, research preview) has no org-wide disable switch yet. Do not request Dreams access on Baseline without a security review of memory-store contents.",
+    "dreams_access_requested": false
   }
 }

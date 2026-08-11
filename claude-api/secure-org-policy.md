@@ -38,6 +38,8 @@ Use this document as a checklist and reference when hardening your Anthropic org
 - [ ] **Activity feed export** — Stream to SIEM (Splunk, Datadog, etc.) for audit.
 - [ ] **Data retention** — Review Anthropic's data handling policy; opt out of training where available.
 - [ ] **Prompt logging** — Decide whether prompts/responses should be retained; configure accordingly.
+- [ ] **Inference hooks (Enterprise):** Under Data and privacy, allow Inference hooks only after an AI security server exists. Pilot in shadow mode, then enforce. Store the webhook signing secret in a secrets manager (never in git).
+- [ ] **Managed Agents Dreams:** Keep Dreams access off until memory-store classification and an org-level disable control exist.
 
 ## 6. Network & Transport
 
@@ -49,4 +51,35 @@ Use this document as a checklist and reference when hardening your Anthropic org
 
 - [ ] **Anomaly alerts** — Set up alerts for unusual usage spikes (token volume, error rates).
 - [ ] **Audit log review** — Review admin actions weekly.
-- [ ] **Incident runbook** — Document steps to revoke keys, disable workspaces, and notify stakeholders.
+- [ ] **Inference hooks health:** Alert on endpoint status Tripped, sustained failures per minute, and Activity Feed denials that proceeded without inspection under fail-open.
+- [ ] **Incident runbook:** Document steps to revoke keys, disable workspaces, turn Enforce verdicts off (or Allow for your organization off), and notify stakeholders.
+
+---
+
+## 8. Inference Hooks Rollout (Claude Enterprise)
+
+Inference hooks: Anthropic holds each governed prompt for your AI security server's allow or deny verdict before the model runs. One org configuration covers claude.ai, Cowork, and Claude Code.
+
+### Phased rollout
+
+| Phase | Exit criteria |
+|-------|---------------|
+| Pilot (shadow, 10-25% rollout) | Endpoint Healthy for 7 days; false-positive deny rate reviewed; SIEM sees Activity Feed denials and config changes |
+| Expanded (enforce, fail-open, 50-100%) | Exception path documented; circuit-breaker playbook tested; developer message sent |
+| Org-wide Strict (enforce, fail-closed, 100%) | No unexplained breaker trips for 14 days; on-call owns AI security server SLOs |
+
+### What will break
+
+- Strict fail-closed blocks prompts when the AI security server times out, returns non-200, or the circuit breaker trips.
+- Voice mode and ancillary requests (for example title generation) are not hooked.
+- Image-only attachments are not fully inspected (metadata and extracted text only).
+
+### Developer-facing message (send before enforce)
+
+> Starting on DATE, Claude Enterprise prompts may be inspected by our AI security server before Claude answers. Shadow mode does not block you. When we turn on enforcement, a blocked prompt shows a policy message. Request exceptions through TICKET_URL. Do not paste secrets or production credentials into prompts.
+
+### Rollback
+
+1. In `claude.ai` → Organization settings → Data and privacy → Inference hooks, turn **Enforce verdicts** off (pauses inspection within about a minute; config kept).
+2. For a harder off switch, turn **Allow for your organization** off under Data and privacy (settings page becomes unavailable until re-enabled; re-enable forces Enforce verdicts off).
+3. Communicate: "Inline prompt inspection is paused. Continue normal Claude use. Report residual blocks to SECURITY_ALIAS."
