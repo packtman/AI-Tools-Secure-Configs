@@ -169,5 +169,8 @@ Ask a user to run:
 
 - Settings apply uniformly to all users (no per-group support yet).
 - MCP server configurations cannot be distributed via server-managed settings.
-- `policyHelper` and `wslInheritsWindowsSettings` are not honored (use MDM).
+- `policyHelper` and `wslInheritsWindowsSettings` are not honored (use MDM or system `managed-settings.json`).
+- `processWrapper` can be delivered via server-managed settings and appears on the security approval dialog (it runs an administrator-supplied executable). Prefer MDM when you also need `policyHelper` or Windows/WSL inheritance.
 - Not available with Bedrock, Vertex, Foundry, or custom `ANTHROPIC_BASE_URL`.
+
+For launcher, policy helper, and Linux sandbox binary pins, see `corporate-launcher-and-policy-helper.md`.

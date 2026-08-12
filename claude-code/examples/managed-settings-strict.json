@@ -115,15 +115,19 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.210",
 
   "autoMemoryEnabled": false,
+
+  "wslInheritsWindowsSettings": true,
 
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": false,
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": true,
+    "bwrapPath": "/usr/bin/bwrap",
+    "socatPath": "/usr/bin/socat",
     "filesystem": {
       "denyRead": [
         "~/",
