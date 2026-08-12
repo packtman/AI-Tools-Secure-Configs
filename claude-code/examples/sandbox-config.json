@@ -11,6 +11,9 @@
 
     "failIfUnavailable": true,
 
+    "bwrapPath": "/usr/bin/bwrap",
+    "socatPath": "/usr/bin/socat",
+
     "excludedCommands": [
       "docker *"
     ],

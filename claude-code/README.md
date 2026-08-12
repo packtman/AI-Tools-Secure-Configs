@@ -20,6 +20,7 @@ This directory contains comprehensive, security-hardened configurations for **Cl
 | `examples/managed-settings-moderate.json` | **Moderate** — Balanced enterprise policy (standard dev teams) |
 | `examples/managed-settings-baseline.json` | **Baseline** — Essential security only (startups, individual devs) |
 | `examples/managed-settings-drop-in.md` | Multi-file drop-in directory guide |
+| `examples/corporate-launcher-and-policy-helper.md` | Corporate launcher, policy helper, and Linux sandbox binary pins |
 | `examples/hooks-security.json` | Security-focused hooks (audit, secret scanning, destructive command blocking) |
 | `examples/hook-scripts/*.sh` | Ready-to-use hook shell scripts |
 | `examples/sandbox-config.json` | OS-level sandbox (filesystem + network isolation) |
@@ -127,8 +128,10 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
+| `sandbox.bwrapPath` | Managed-only absolute path to `bwrap` (Linux/WSL2) |
+| `sandbox.socatPath` | Managed-only absolute path to `socat` (Linux/WSL2) |
 
-See `examples/sandbox-config.json` for a complete example.
+See `examples/sandbox-config.json` for a complete example. For corporate launchers and policy helpers, see `examples/corporate-launcher-and-policy-helper.md`.
 
 ---
 
@@ -139,6 +142,8 @@ Hooks execute at specific points in Claude Code's lifecycle. Security-relevant h
 | Event | Use case |
 |-------|----------|
 | `PreToolUse` | Block dangerous commands, validate MCP inputs |
+| `UserPromptExpansion` | Gate slash-command / MCP prompt expansions that bypass PreToolUse |
+| `MessageDisplay` | Display-only redaction (does not change transcript or model input) |
 | `PostToolUse` | Scan for leaked secrets, audit log commands |
 | `Stop` | Session-end audit summary |
 | `ConfigChange` | Log configuration modifications |
@@ -188,6 +193,10 @@ See `examples/mcp-security.md` for the complete security guide.
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
+| `sandbox.bwrapPath` / `sandbox.socatPath` | Pin Linux/WSL2 sandbox binaries |
+| `processWrapper` | Corporate launcher for Claude Code self-spawns (also via env) |
+| `policyHelper` | MDM-only dynamic managed settings executable |
+| `wslInheritsWindowsSettings` | WSL reads Windows managed policy chain |
 
 ---
 
@@ -196,7 +205,7 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `minimumVersion` to at least `2.1.210` when using `processWrapper`.
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
 
 ### Phase 2: Permissions
@@ -212,6 +221,13 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] On Linux/WSL2, pin `sandbox.bwrapPath` and `sandbox.socatPath` to real binaries.
+
+### Phase 3b: Corporate launcher / policy helper (optional)
+- [ ] If mandatory process wrapping exists, set `processWrapper` (or `CLAUDE_CODE_PROCESS_WRAPPER`) via MDM.
+- [ ] If using `policyHelper`, deploy via MDM only and verify the helper caches on outage.
+- [ ] On Windows+WSL fleets, set `wslInheritsWindowsSettings: true` in Windows admin policy.
+- [ ] Follow `examples/corporate-launcher-and-policy-helper.md`.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
@@ -222,6 +238,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Deploy audit logging hooks (PostToolUse).
 - [ ] Deploy secret-scanning hooks (PostToolUse for Write|Edit).
 - [ ] Deploy destructive command blocking hooks (PreToolUse for Bash).
+- [ ] Consider `UserPromptExpansion` hooks for slash-command gates (Strict: managed hooks only).
 - [ ] Set `allowedHttpHookUrls` to restrict hook destinations.
 - [ ] Consider `allowManagedHooksOnly: true` for strict environments.
 

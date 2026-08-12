@@ -241,6 +241,11 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
+| `sandbox.bwrapPath` / `sandbox.socatPath` | Not set | `/usr/bin/bwrap`, `/usr/bin/socat` | `/usr/bin/bwrap`, `/usr/bin/socat` | Enterprise tiers pin Linux/WSL2 sandbox binaries for locked PATH; adjust per image |
+| `wslInheritsWindowsSettings` | Not set | `true` | `true` | Windows+WSL fleets inherit one MDM payload (MDM only; not server-managed) |
+| `processWrapper` / `CLAUDE_CODE_PROCESS_WRAPPER` | Not set | Optional when org has a launcher | Required when org mandates process wrapping | Wrong path fails closed; omit from templates until a real launcher exists |
+| `policyHelper` | Not set | MDM-only if posture routing needed | MDM-only with cache/outage plan | Helper output becomes the sole managed source; not server-managed |
+| `minimumVersion` | `2.1.210` | `2.1.210` | `2.1.210` | Floor for `processWrapper` and current sandbox path pins |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |

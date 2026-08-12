@@ -120,7 +120,11 @@
 
   "claudeMd": "",
 
+  "wslInheritsWindowsSettings": true,
+
   "sandbox": {
+    "bwrapPath": "/usr/bin/bwrap",
+    "socatPath": "/usr/bin/socat",
     "network": {
       "allowManagedDomainsOnly": false
     }
@@ -128,7 +132,7 @@
 
   "autoUpdatesChannel": "stable",
 
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.210",
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",

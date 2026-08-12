@@ -101,13 +101,17 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.210",
+
+  "wslInheritsWindowsSettings": true,
 
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": false,
+    "bwrapPath": "/usr/bin/bwrap",
+    "socatPath": "/usr/bin/socat",
     "filesystem": {
       "denyRead": [
         "~/.ssh",

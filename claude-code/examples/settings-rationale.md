@@ -198,6 +198,67 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | Strict network control. Only approved registries and APIs. |
 | Standard enterprise | `false` | Let users approve new domains via prompts during development. |
 
+### `sandbox.bwrapPath` / `sandbox.socatPath`
+
+**What they do:** Managed-only absolute paths to `bwrap` and `socat` on Linux/WSL2. Override `PATH` auto-detection.
+
+**Why they matter:** Locked-down images often restrict `PATH` or install sandbox helpers outside default locations. Without pins, sandboxed Bash fails even when packages are present. Ignored on macOS (Seatbelt).
+
+**What breaks if wrong:** Sandbox cannot start. Strict with `failIfUnavailable: true` blocks work. Moderate with `failIfUnavailable: false` continues without sandbox (weaker isolation).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `/usr/bin/bwrap` and `/usr/bin/socat` (or your image paths) | Fail-closed sandbox must find binaries reliably. |
+| Standard enterprise | Same pins | Reduce sandbox setup tickets on managed Linux/WSL2. |
+| Developer | Unset (auto-detect) | Local installs vary; PATH detection is enough. |
+
+---
+
+## Corporate launcher and dynamic policy
+
+### `processWrapper` / `CLAUDE_CODE_PROCESS_WRAPPER`
+
+**What it does:** Prefixes Claude Code self-spawns (background service, agent view sessions, remote control workers, update relaunches) with a corporate launcher command. The env var takes precedence when both are set. Requires Claude Code >= 2.1.210 for the settings key (>= 2.1.208 for the env var). Ignored on Windows. Ignored from project/local settings.
+
+**Why it matters:** PATH wrappers cannot see processes started from the binary path. Without this, mandatory launcher / credential-injection policies miss Claude Code's background processes.
+
+**What breaks if misconfigured:** Claude Code refuses to start the affected process (fail closed). A slow or non-`exec` launcher breaks agent view tracking.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Set absolute launcher path when org mandates process wrapping | Required for endpoint policy parity. |
+| Standard enterprise | Optional; set when a launcher already exists | Do not invent a placeholder path in deployable JSON. |
+| Developer | Unset | No mandatory launcher. |
+
+### `policyHelper`
+
+**What it does:** Points at an admin-deployed executable that prints a JSON envelope with `managedSettings` (and optional `claudeMd` / `appendSystemPrompt`). Only honored from MDM or system `managed-settings.json`. When configured, helper output is the **only** managed source for that run. Not honored from server-managed settings, user/project settings, or HKCU.
+
+**Why it matters:** Lets policy follow device posture, identity, or a remote service instead of a static file.
+
+**What breaks if misconfigured:** Non-zero exit at startup refuses to start Claude Code. Wrong helper can wipe expected MDM/file policy because it replaces other managed sources. Parent embedder merge is disabled while the helper is active.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Use only with a tested, cached helper and outage plan | Highest blast radius managed control. |
+| Standard enterprise | Prefer static managed JSON unless posture routing is required | Simpler operations. |
+| Developer | Unset | Not applicable. |
+
+### `wslInheritsWindowsSettings`
+
+**What it does:** Windows managed-settings flag so WSL Claude Code also reads the Windows policy chain (Windows sources win). Only from HKLM or `C:\Program Files\ClaudeCode\managed-settings.json`.
+
+**Why it matters:** One Windows MDM payload covers native Windows and WSL.
+
+**What breaks if false on mixed fleets:** WSL sessions miss Windows-deployed policy.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / Standard enterprise (Windows+WSL) | `true` | Single payload. |
+| Developer / Linux-only / macOS-only | Unset | Not applicable. |
+
+See `examples/corporate-launcher-and-policy-helper.md` for phased rollout, MDM steps, and validation.
+
 ---
 
 ## Features

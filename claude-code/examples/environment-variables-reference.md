@@ -39,6 +39,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
+| `CLAUDE_CODE_PROCESS_WRAPPER` | Corporate launcher for Claude Code self-spawns (absolute path; ignored on Windows; ignored from project/local settings). Prefer managed `processWrapper` when delivering named keys. Env wins if both are set. Requires >= 2.1.208 | `/opt/corp/launcher` when mandatory |
 
 ## MCP & Tools
 
@@ -50,7 +51,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 
 ## Sandbox
 
-Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `settings.json`, not via environment variables.
+Sandbox is configured via `sandbox.*` in `managed-settings.json` or `settings.json`, not via environment variables. On Linux/WSL2, pin `sandbox.bwrapPath` and `sandbox.socatPath` in managed settings when `PATH` is restricted. See `corporate-launcher-and-policy-helper.md`.
 
 ## Network & Proxy
 

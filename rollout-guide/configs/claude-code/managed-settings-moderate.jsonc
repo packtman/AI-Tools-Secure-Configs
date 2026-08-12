@@ -192,9 +192,32 @@
   "autoUpdatesChannel": "stable",
 
   // WHAT: Enforces a minimum CLI version.
-  // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  // WHY: Older versions may not support managed settings, sandbox binary pins,
+  //      or the processWrapper corporate launcher key (requires >= 2.1.210).
+  // BREAKS IF TOO LOW: processWrapper and related managed keys are ignored with
+  //      no error, so background processes start unwrapped.
+  "minimumVersion": "2.1.210",
+
+  // WHAT: On Windows managed settings, let Claude Code on WSL also read the
+  //      Windows policy chain (HKLM / Program Files), with Windows sources first.
+  // WHY: Keeps one MDM payload for native Windows and WSL users.
+  // BREAKS IF FALSE ON MIXED FLEETS: WSL sessions miss Windows-deployed policy.
+  // NOTE: Only honored from Windows admin-managed sources (not server-managed).
+  "wslInheritsWindowsSettings": true,
+
+  // OPTIONAL: Corporate launcher for Claude Code self-spawns (background service,
+  // agent view, remote control workers). Uncomment and set an absolute path when
+  // your org requires every process to start through a launcher.
+  // "processWrapper": "/opt/corp/launcher",
+  // Equiv env (takes precedence if both set): CLAUDE_CODE_PROCESS_WRAPPER
+  // Ignored on Windows. Not honored from project/local settings. See
+  // examples/corporate-launcher-and-policy-helper.md.
+
+  // OPTIONAL: Dynamic MDM policy helper. Only from MDM or system managed-settings.
+  // When set, helper stdout managedSettings becomes the ONLY managed source.
+  // Helper non-zero exit at startup refuses to start Claude Code.
+  // Not honored from server-managed settings. See corporate-launcher guide.
+  // "policyHelper": { "path": "/usr/local/bin/claude-policy", "timeoutMs": 5000 },
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
@@ -223,6 +246,18 @@
     // BREAKS IF SET TO TRUE: Claude Code will refuse to run if the sandbox is
     //      unavailable (could block work during OS updates or on unsupported systems).
     "failIfUnavailable": false,
+
+    // WHAT: Absolute path to bubblewrap (bwrap) on Linux/WSL2.
+    // WHY: Managed-only pin so sandboxed Bash still works when PATH is locked down
+    //      or bwrap lives outside default search paths.
+    // BREAKS IF WRONG: Sandbox fails to start. On Moderate, work continues without
+    //      sandbox when failIfUnavailable is false. Ignored on macOS (Seatbelt).
+    "bwrapPath": "/usr/bin/bwrap",
+
+    // WHAT: Absolute path to socat for the sandbox network proxy on Linux/WSL2.
+    // WHY: Managed-only pin for the same locked-PATH / non-standard install case.
+    // BREAKS IF WRONG: Networked sandboxed commands fail or sandbox cannot start.
+    "socatPath": "/usr/bin/socat",
 
     "filesystem": {
       // WHAT: Paths that sandboxed commands cannot read.
