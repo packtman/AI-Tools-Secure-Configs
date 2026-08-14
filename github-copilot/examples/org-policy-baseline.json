@@ -45,5 +45,12 @@
     "firewall_blocklist": [
       "*.individual.githubcopilot.com"
     ]
+  },
+
+  "mcp_policies": {
+    "mcp_server_availability": "enabled",
+    "mcp_registry_url": "",
+    "strict_registry_enforcement": false,
+    "_managed_settings": "Deploy examples/managed-settings-baseline.json as copilot/managed-settings.json. It blocks YOLO and denies a root filesystem MCP. It does not pin an allowlist."
   }
 }

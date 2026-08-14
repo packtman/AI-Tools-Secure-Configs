@@ -35,7 +35,8 @@
   "mcp_policies": {
     "mcp_server_availability": "disabled",
     "mcp_registry_url": "",
-    "strict_registry_enforcement": true
+    "strict_registry_enforcement": false,
+    "_managed_settings": "Deploy examples/managed-settings-strict.json as copilot/managed-settings.json. Registry-only restriction is preview and weaker. GitHub recommends Allow all on the registry policy when using allowedMcpServers. Cloud agent does not enforce MCP allowlists."
   },
 
   "code_review": {

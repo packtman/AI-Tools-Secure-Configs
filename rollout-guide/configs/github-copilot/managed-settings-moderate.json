@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+  "enabledPlugins": {},
+  "extraKnownMarketplaces": {
+    "org-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"
+      }
+    }
+  },
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"
+    }
+  ],
+  "allowedMcpServers": [
+    {
+      "serverUrl": "https://api.githubcopilot.com/*"
+    }
+  ],
+  "deniedMcpServers": [
+    {
+      "serverCommand": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    }
+  ],
+  "sandbox": {
+    "enabled": true,
+    "allowBypass": false,
+    "sandboxMcpServers": true,
+    "sandboxLspServers": true
+  },
+  "remoteControl": {
+    "mode": "requireSSO",
+    "githubDotComOrganizations": [
+      "YOUR-ORG"
+    ]
+  }
+}

@@ -43,10 +43,11 @@
   },
 
   "mcp_policies": {
-    "_location": "Enterprise Settings → AI Controls → MCP",
+    "_location": "Enterprise Settings → AI Controls → MCP, plus copilot/managed-settings.json",
     "mcp_server_availability": "enabled",
     "mcp_registry_url": "",
-    "strict_registry_enforcement": false
+    "strict_registry_enforcement": false,
+    "_note": "Prefer allowedMcpServers/deniedMcpServers in managed-settings.json (GA 2026-08-06) over the preview registry-only policy. See examples/managed-settings-rollout.md."
   },
 
   "code_review": {

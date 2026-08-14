@@ -1,0 +1,25 @@
+// BASELINE GitHub Copilot enterprise managed settings.
+// Strip comments before deploying as copilot/managed-settings.json, or keep this
+// file for review and deploy the parallel .json. See managed-settings.comments.md.
+{
+  // WHAT: Blocks bypass / YOLO / allow-all permission mode in Copilot CLI, VS Code, and the Copilot app.
+  // WHY: Even startups should not let an agent skip every approval prompt. This is the one permission gate Baseline keeps.
+  // BREAKS IF REMOVED: Users can start --yolo / --allow-all and run tools without confirmation.
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  // WHAT: Unconditional MCP denylist. allowedMcpServers is omitted, so all other servers remain allowed.
+  // WHY: Baseline still blocks a local filesystem MCP pointed at the machine root. That is a concrete disk-exfil path.
+  // BREAKS IF REMOVED: A developer-added filesystem MCP with "/" can expose the entire disk to the model.
+  "deniedMcpServers": [
+    {
+      "serverCommand": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    }
+  ]
+}

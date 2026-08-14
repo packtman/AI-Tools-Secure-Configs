@@ -1,0 +1,83 @@
+// MODERATE GitHub Copilot enterprise managed settings.
+// Strip comments before deploying as copilot/managed-settings.json, or keep this
+// file for review and deploy the parallel .json. See managed-settings.comments.md.
+// Replace YOUR-ORG placeholders before deploy. No secrets, tokens, or API keys.
+{
+  // WHAT: Blocks bypass / YOLO / allow-all permission mode in Copilot CLI, VS Code, and the Copilot app.
+  // WHY: Moderate still requires human approval for agent tool use. Bypass would skip that gate.
+  // BREAKS IF REMOVED: Users can start --yolo / --allow-all or re-enable global auto-approve in VS Code.
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  // WHAT: Auto-installs or blocks named plugins. Empty object means IT does not push or ban plugins by name.
+  // WHY: Moderate governs plugins through the marketplace allowlist below, not a per-plugin inventory.
+  // BREAKS IF A PLUGIN IS SET true: Every seated user gets that plugin installed. They need repo access to the plugin host.
+  "enabledPlugins": {},
+
+  // WHAT: Adds an organization-owned plugin marketplace that clients can discover.
+  // WHY: Agent Plugins 1.0 is portable across VS Code, Copilot CLI, the Copilot app, and cloud agent. Teams need one approved catalog.
+  // BREAKS IF LEFT AS YOUR-ORG/YOUR-PLUGIN-MARKETPLACE: Plugin discovery fails until you publish a real marketplace repo.
+  "extraKnownMarketplaces": {
+    "org-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"
+      }
+    }
+  },
+
+  // WHAT: Restricts plugin installs to the listed marketplaces.
+  // WHY: Without this pin, extraKnownMarketplaces is additive on top of public marketplaces. Moderate needs a closed catalog.
+  // BREAKS IF EMPTY: Complete plugin lockdown. Developers cannot install org-approved plugins either.
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"
+    }
+  ],
+
+  // WHAT: Allowlist of MCP servers. A server must match at least one entry. Match by serverUrl or serverCommand, not serverName.
+  // WHY: serverName is user-assigned and is not a security control. First-party GitHub MCP stays available via this URL pattern and as a built-in default.
+  // BREAKS IF OMITTED: Any MCP server can run once the AI Controls MCP toggle is enabled.
+  // NOTE: Copilot cloud agent does not enforce this key. Keep cloud agent limited in org-policy-moderate.json.
+  "allowedMcpServers": [
+    {
+      "serverUrl": "https://api.githubcopilot.com/*"
+    }
+  ],
+
+  // WHAT: Unconditional MCP denylist. Deny wins even when the same server also matches the allowlist.
+  // WHY: Blocks a local filesystem MCP pointed at "/" if a team later adds a broader allow exception.
+  // BREAKS IF REMOVED: Root-filesystem MCP can expose the disk to the model.
+  "deniedMcpServers": [
+    {
+      "serverCommand": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    }
+  ],
+
+  // WHAT: Minimum Copilot CLI sandbox restrictions that users can tighten but cannot loosen.
+  // WHY: org-policy-moderate.json disables Copilot CLI by default. This sandbox is defense in depth for CLI exceptions and later enablement.
+  // BREAKS IF enabled IS OMITTED: CLI users can run without a sandbox if the feature policy is later turned on.
+  "sandbox": {
+    "enabled": true,
+    "allowBypass": false,
+    "sandboxMcpServers": true,
+    "sandboxLspServers": true
+  },
+
+  // WHAT: Allows remote control of sessions on this device only from an SSO-authorized client for the listed orgs.
+  // WHY: Moderate permits remote pairing for support workflows, but only after SSO for the enterprise org.
+  // BREAKS IF githubDotComOrganizations IS WRONG: Remote control fails for every user, or the wrong org is trusted.
+  "remoteControl": {
+    "mode": "requireSSO",
+    "githubDotComOrganizations": [
+      "YOUR-ORG"
+    ]
+  }
+}

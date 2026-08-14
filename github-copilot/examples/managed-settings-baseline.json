@@ -1,0 +1,18 @@
+{
+  "_comment": "BASELINE GitHub Copilot enterprise managed settings. Essential controls only. Omitting allowedMcpServers allows all MCP servers except the denylist. Replace YOUR-ORG placeholders before deploy. No secrets belong in this file.",
+
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  "deniedMcpServers": [
+    {
+      "serverCommand": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    }
+  ]
+}
