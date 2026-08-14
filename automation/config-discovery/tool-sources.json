@@ -115,14 +115,18 @@
       ],
       "tier_files": {
         "strict": [
-          "github-copilot/examples/org-policy-strict.json"
+          "github-copilot/examples/org-policy-strict.json",
+          "github-copilot/examples/managed-settings-strict.json"
         ],
         "moderate": [
           "github-copilot/examples/org-policy-moderate.json",
-          "rollout-guide/configs/github-copilot/org-policy-moderate.json"
+          "github-copilot/examples/managed-settings-moderate.json",
+          "rollout-guide/configs/github-copilot/org-policy-moderate.json",
+          "rollout-guide/configs/github-copilot/managed-settings-moderate.json"
         ],
         "baseline": [
-          "github-copilot/examples/org-policy-baseline.json"
+          "github-copilot/examples/org-policy-baseline.json",
+          "github-copilot/examples/managed-settings-baseline.json"
         ]
       },
       "sources": [
@@ -148,6 +152,30 @@
             "patterns",
             "excluded",
             "audit"
+          ]
+        },
+        {
+          "name": "Enterprise managed settings reference",
+          "kind": "docs",
+          "url": "https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference",
+          "watch_for": [
+            "allowedMcpServers",
+            "deniedMcpServers",
+            "enabledPlugins",
+            "strictKnownMarketplaces",
+            "disableBypassPermissionsMode"
+          ]
+        },
+        {
+          "name": "MCP enterprise allowlist documentation",
+          "kind": "docs",
+          "url": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist",
+          "watch_for": [
+            "allowedMcpServers",
+            "deniedMcpServers",
+            "managed-settings.json",
+            "MCP",
+            "fail closed"
           ]
         }
       ]

@@ -41,8 +41,9 @@
 
   "mcp_policies": {
     "mcp_server_availability": "enabled",
-    "mcp_registry_url": "https://mcp-registry.internal.acme.com",
-    "strict_registry_enforcement": false
+    "mcp_registry_url": "",
+    "strict_registry_enforcement": false,
+    "_managed_settings": "Deploy examples/managed-settings-moderate.json as copilot/managed-settings.json. Keep this AI Controls MCP toggle enabled. Set Restrict MCP access to registry servers to Allow all so allowedMcpServers is the single allowlist. Cloud agent does not enforce that allowlist."
   },
 
   "code_review": {

@@ -260,13 +260,34 @@ Extensions expand Copilot's capabilities by connecting it to external services (
 
 ### MCP (Model Context Protocol) Servers
 
-MCP servers provide Copilot with additional context by serving structured data from external sources.
+MCP servers provide Copilot with additional context by serving structured data from external sources. MCP is a way for Copilot to call external tools through MCP servers.
 
 | Risk | Mitigation |
 |------|------------|
 | **Arbitrary data injection** | MCP servers can feed any content to the model. Validate that servers only serve intended data. |
 | **Network exposure** | MCP servers typically run locally or on internal networks. Ensure they are not exposed to the public internet. |
 | **Authentication** | MCP servers should require authentication. An unauthenticated server on the local network can be exploited by any process. |
+| **Unbounded server install** | As of 2026-08-06, put `allowedMcpServers` and `deniedMcpServers` in `copilot/managed-settings.json`. Match remote servers with `serverUrl` and local servers with exact `serverCommand`. Do not match on `serverName` (users can rename servers). Malformed JSON fails closed. |
+| **Cloud agent gap** | Copilot cloud agent does not enforce MCP allowlists. Keep cloud agent disabled (Strict) or limited (Moderate) in org policy. |
+| **Preview registry policy** | The AI Controls "registry only" MCP restriction is preview and weaker. GitHub recommends Allow all on that toggle when you use managed-settings allowlists, so you have one source of truth. |
+
+Tier files: `managed-settings-strict.json`, `managed-settings-moderate.json`, `managed-settings-baseline.json`. Rollout: `managed-settings-rollout.md`.
+
+### Agent Plugins 1.0
+
+Agent Plugins 1.0 (generally available in VS Code, Copilot CLI, and the Copilot app as of 2026-08-12) can bundle a skill and an MCP server in one package.
+
+| Control | What it does | Recommended |
+|---------|--------------|-------------|
+| `enabledPlugins` | Auto-install (`true`) or block (`false`) `PLUGIN@MARKETPLACE` | Start with `{}`. Add names only after review. |
+| `extraKnownMarketplaces` | Adds catalogs developers can see | Moderate: one org GitHub repo. Strict: omit. |
+| `strictKnownMarketplaces` | Limits installs to listed catalogs. Empty array is a complete lockdown. | Strict: `[]`. Moderate: the same org repo. Baseline: omit. |
+
+Pair plugin governance with MCP allowlists. A plugin can ship an MCP server that still has to pass `allowedMcpServers`.
+
+### Bypass / YOLO (`permissions.disableBypassPermissionsMode`)
+
+Set to `"disable"` in every tier. This blocks Copilot CLI `--yolo` / `--allow-all`, VS Code `chat.tools.global.autoApprove`, and the Copilot app Allow all setting. It is the Copilot equivalent of Claude Code `disableBypassPermissionsMode`.
 
 ---
 

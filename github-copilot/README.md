@@ -12,6 +12,12 @@ This directory contains security-hardened configurations for **GitHub Copilot** 
 | `examples/org-policy-moderate.json` | **Moderate** — Core features enabled, sensible exclusions (enterprise) |
 | `examples/org-policy-baseline.json` | **Baseline** — Most features enabled, minimal exclusions (startups) |
 | `examples/org-policy.json` | Organization-level feature policies (reference) |
+| `examples/managed-settings-strict.json` | **Strict** enterprise `copilot/managed-settings.json` (MCP allowlist empty, plugins locked) |
+| `examples/managed-settings-moderate.json` | **Moderate** enterprise `copilot/managed-settings.json` (GitHub MCP allowlist, org plugin catalog) |
+| `examples/managed-settings-baseline.json` | **Baseline** enterprise `copilot/managed-settings.json` (deny root filesystem MCP, block YOLO) |
+| `examples/managed-settings-*.jsonc` | Same files with inline comments (strip before deploy) |
+| `examples/managed-settings.comments.md` | Key-by-key rationale and tier delta for managed settings |
+| `examples/managed-settings-rollout.md` | Rollout plan, deployment paths, MDM, validation, workflow notes |
 | `examples/network-security.md` | Firewall and proxy configuration |
 | `examples/content-exclusion-patterns.yml` | Content exclusion pattern examples |
 | `examples/settings-vscode.json` | VS Code settings for Copilot security |
@@ -27,7 +33,7 @@ Enterprise owners manage AI policies at:
 AI Controls categories:
 - **Copilot** — Feature policies (IDE, Chat, CLI, Mobile, Vision, code review, model selection)
 - **Agents** — Cloud agent, code review agent, custom agents, third-party agents
-- **MCP** — MCP server availability, registry URL, strict enforcement
+- **MCP**: MCP server availability. Use `copilot/managed-settings.json` `allowedMcpServers` / `deniedMcpServers` as the generally available allowlist (2026-08-06). The AI Controls registry restriction is preview and weaker. GitHub recommends setting registry policy to Allow all when you use managed-settings allowlists.
 
 ### Organization Level (GitHub Settings)
 
@@ -48,6 +54,18 @@ Repository admins can set content exclusion rules at:
 ### Project Level
 
 The `.github/copilot-instructions.md` file provides repository-specific instructions to Copilot, including security guidelines. No character limit for code review instructions.
+
+### Enterprise managed settings (client guardrails)
+
+This is a separate control plane from AI Controls. Users cannot loosen most keys.
+
+| Channel | Path | When to use |
+|---------|------|-------------|
+| Server-managed | `.github-private` repo `copilot/managed-settings.json` | Default. Reviewable in git. Applies after sign-in. |
+| MDM | macOS `com.github.copilot`, Windows `HKLM\SOFTWARE\Policies\GitHubCopilot` | Device groups, and policy that must apply before sign-in. Linux has no native MDM. |
+| File-based | macOS `/Library/Application Support/GitHubCopilot/managed-settings.json`, Windows `%ProgramFiles%\GitHubCopilot\managed-settings.json`, Linux `/etc/github-copilot/managed-settings.json` | Linux, containers, Codespaces, or when you cannot use `.github-private`. |
+
+MCP allowlists (`allowedMcpServers`, `deniedMcpServers`) are generally available on the GitHub Copilot app, Copilot CLI v1.0.11+, and VS Code v1.109.3+. They are **not** enforced on Copilot cloud agent. Agent Plugins 1.0 are governed with `enabledPlugins`, `extraKnownMarketplaces`, and `strictKnownMarketplaces` in the same file. Full rollout steps: `examples/managed-settings-rollout.md`.
 
 ## Content Exclusion
 
@@ -90,7 +108,7 @@ Control which Copilot plans can access the network:
 4. Deploy `.github/copilot-instructions.md` to all repositories.
 5. Configure firewall rules to allow only business/enterprise Copilot traffic.
 6. Set agent policies (disable cloud agent, custom agents, and third-party agents for regulated environments).
-7. Configure MCP registry and decide on strict enforcement.
+7. Deploy `examples/managed-settings-*.json` as `copilot/managed-settings.json` (server-managed, MDM, or file-based). Keep the MCP feature toggle enabled, set registry restriction to Allow all, and use `allowedMcpServers` as the allowlist. See `examples/managed-settings-rollout.md`.
 8. Set code review runner configuration at org level (self-hosted for sensitive environments).
 9. Create "Manage enterprise AI controls" custom role for AI governance team.
 10. Enable audit log streaming to your SIEM.

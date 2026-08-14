@@ -206,7 +206,7 @@ Every tool in this repository provides three configuration tiers — **Strict**,
 | Claude API | `org-policy-strict.json` | `org-policy-moderate.json` | `org-policy-baseline.json` |
 | Amazon Q Developer | `iam-policy-strict.json` | `iam-policy-moderate.json` | `iam-policy-baseline.json` |
 | Continue.dev | `config-strict.yaml` / `permissions-strict.yaml` | `config-moderate.yaml` / `permissions-moderate.yaml` | `config-baseline.yaml` / `permissions-baseline.yaml` |
-| GitHub Copilot | `org-policy-strict.json` | `org-policy-moderate.json` | `org-policy-baseline.json` |
+| GitHub Copilot | `org-policy-strict.json` / `managed-settings-strict.json` | `org-policy-moderate.json` / `managed-settings-moderate.json` | `org-policy-baseline.json` / `managed-settings-baseline.json` |
 | Gemini CLI | `settings-strict.json` | `settings-moderate.json` | `settings-baseline.json` |
 | Google Gemini | `safety-settings-strict.json` | `safety-settings-moderate.json` | `safety-settings-baseline.json` |
 | OpenAI Platform | `org-policy-strict.json` | `org-policy-moderate.json` | `org-policy-baseline.json` |

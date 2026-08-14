@@ -35,6 +35,7 @@
 - Claude Code managed-settings-moderate.json to pilot endpoints
 - Cursor permissions-moderate.json + settings.json to pilot endpoints
 - GitHub Copilot org policy (Moderate) scoped to a pilot team
+- GitHub Copilot `managed-settings-moderate.json` as `copilot/managed-settings.json` in `.github-private` (MCP allowlist + plugin catalog + YOLO disabled)
 
 **Exit criteria to proceed:**
 - [ ] Zero security incidents (no credential exposure, no unauthorized network access)
@@ -169,6 +170,9 @@ For permissions.json: remove `~/.cursor/permissions.json` to revert to defaults.
 | Content exclusion | Organization Settings -> Copilot -> Content exclusion: remove added patterns |
 | Firewall rules | Remove the block on `*.individual.githubcopilot.com` from firewall/proxy |
 | Seat management | Switch from `selected_teams` back to `all_members` if needed |
+| Server-managed settings | Revert `copilot/managed-settings.json` on the default branch of `.github-private` |
+| File-based settings | Remove the OS path listed in section 4.3 |
+| MDM | Remove `com.github.copilot` (macOS) or `HKLM\SOFTWARE\Policies\GitHubCopilot` (Windows) string values |
 
 #### Communication Template for Rollback
 
@@ -216,6 +220,16 @@ See file: [`rollout-guide/configs/github-copilot/org-policy-moderate.jsonc`](con
 ### 2.6 GitHub Copilot: `.github/copilot-instructions.md`
 
 See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](configs/github-copilot/copilot-instructions.md)
+
+### 2.7 GitHub Copilot: `managed-settings-moderate.json`
+
+See files:
+
+- [`rollout-guide/configs/github-copilot/managed-settings-moderate.jsonc`](configs/github-copilot/managed-settings-moderate.jsonc)
+- [`rollout-guide/configs/github-copilot/managed-settings-moderate.json`](configs/github-copilot/managed-settings-moderate.json)
+- [`rollout-guide/configs/github-copilot/managed-settings.comments.md`](configs/github-copilot/managed-settings.comments.md)
+
+Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow notes): [`github-copilot/examples/managed-settings-rollout.md`](../github-copilot/examples/managed-settings-rollout.md)
 
 ---
 
@@ -274,6 +288,11 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `excluded_repositories` | None | 3 sensitive repos | 5+ sensitive repos | Strict excludes more repos from AI processing |
 | `block_individual_traffic` | `true` | `true` | `true` | All tiers block shadow AI via personal accounts |
 | `allow_business_traffic` | `true` | `true` | `false` | Strict limits to enterprise-only hostname |
+| `permissions.disableBypassPermissionsMode` | `"disable"` | `"disable"` | `"disable"` | Blocks Copilot CLI YOLO / VS Code global auto-approve in every tier |
+| `allowedMcpServers` | omitted (all except deny) | GitHub Copilot MCP URL | `[]` (built-in only) | GA 2026-08-06. Empty array blocks non-built-in MCP. Cloud agent does not enforce this key. |
+| `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Deny wins. Blocks a root-disk filesystem MCP in every tier. |
+| `strictKnownMarketplaces` | omitted | org GitHub marketplace repo | `[]` (lockdown) | Agent Plugins 1.0 GA 2026-08-12. Empty array blocks all plugin catalogs. |
+| `sandbox.enabled` (Copilot CLI) | omitted | `true` | `true` | Defense in depth if CLI is later enabled. Native MDM is not available on Linux. |
 
 ---
 
@@ -469,21 +488,33 @@ Cursor does not have built-in audit logging comparable to Claude Code hooks. Com
 
 #### Configuration Paths
 
-GitHub Copilot is configured at three levels, all through the GitHub web interface or API:
+GitHub Copilot org **feature** policies are still set in the GitHub web UI or API. Client guardrails now also use `copilot/managed-settings.json`.
 
 | Level | Where to Configure |
 |-------|--------------------|
-| Enterprise | Enterprise Settings -> Copilot -> Policies |
+| Enterprise AI Controls | Enterprise Settings -> Copilot -> Policies (feature, agent, MCP toggle) |
 | Organization | Organization Settings -> Copilot -> Policies & features |
 | Repository | Repository Settings -> Code & automation -> Copilot |
+| Server-managed settings | Source org `.github-private` repo `copilot/managed-settings.json` |
+| File-based settings | macOS `/Library/Application Support/GitHubCopilot/managed-settings.json`, Windows `%ProgramFiles%\GitHubCopilot\managed-settings.json`, Linux `/etc/github-copilot/managed-settings.json` |
 
-There are no local files to deploy for org policy. IDE-level settings go in VS Code/Cursor settings.json (see Section 4.2).
+IDE-level settings go in VS Code/Cursor settings.json (see Section 4.2).
 
 #### MDM Guidance
 
-GitHub Copilot org policies are configured server-side (GitHub.com). MDM is not needed for the org policy itself. However, MDM is useful for:
+Native MDM for Copilot managed settings is available on macOS and Windows. Linux has no native MDM path; use the file-based location.
+
+| OS | Native policy location |
+|----|------------------------|
+| Windows | `REG_SZ` values under `HKLM\SOFTWARE\Policies\GitHubCopilot` |
+| macOS | String values in forced preferences for `com.github.copilot` |
+| Linux | Not supported. Deploy `/etc/github-copilot/managed-settings.json` as root-owned, not a symlink, not group- or world-writable. |
+
+Jamf: Custom Settings payload, domain `com.github.copilot`. Intune: registry payload with JSON-as-string for arrays such as `allowedMcpServers`. Workspace ONE: same domain or registry path.
+
+MDM is also still useful for:
 1. Deploying IDE settings that configure the Copilot extension (proxy, SSL, language enablement)
-2. Enforcing minimum Copilot extension versions
+2. Enforcing minimum Copilot extension versions (VS Code >= 1.109.3 for MCP allowlists)
 3. Blocking the Copilot Individual extension if your org uses Copilot Business/Enterprise
 
 #### Deployment Steps
@@ -512,6 +543,7 @@ GitHub Copilot org policies are configured server-side (GitHub.com). MDM is not 
    *.individual.githubcopilot.com
    ```
 7. **Deploy VS Code/Cursor Copilot settings** via `.vscode/settings.json` in repos
+8. **Deploy managed settings** (`managed-settings-moderate.json`) as `copilot/managed-settings.json` in `.github-private`. Replace `YOUR-ORG` placeholders. Set AI Controls MCP registry restriction to Allow all so this file is the MCP allowlist. Confirm cloud agent stays limited (allowlists are not enforced there).
 
 #### Validation
 
@@ -534,7 +566,13 @@ gh api /orgs/YOUR_ORG/copilot
 
 # Verify minimum extension version
 # In VS Code: Extensions panel -> GitHub Copilot -> check version
-# Expected: Copilot Chat >= 0.17
+# Expected: Copilot Chat >= 0.17, VS Code >= 1.109.3 for MCP allowlists
+
+# Verify managed settings
+gh api repos/YOUR-ORG/.github-private/contents/copilot/managed-settings.json --jq .sha
+# In VS Code: Command Palette -> Developer: Sync Account Policy
+# Try adding an MCP server that is not on allowedMcpServers. Expected: blocked.
+# Try enabling YOLO / global auto-approve. Expected: blocked.
 ```
 
 #### Audit Logging
@@ -613,7 +651,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 3. If approved:
    - For Claude Code: add to project-level `.claude/settings.json` (if `allowManagedPermissionRulesOnly` is false) OR add to managed-settings.d/ drop-in
    - For Cursor: add to permissions.json or .vscode/settings.json
-   - For Copilot: modify content exclusion or feature policy at org level
+   - For Copilot: modify content exclusion or feature policy at org level, or add a `serverUrl` / `serverCommand` entry to `copilot/managed-settings.json` (never `serverName`)
 
 4. Document the exception in your security register with an expiration date (recommend 90 days, then re-review)
 
@@ -626,4 +664,4 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Double prompting** | If a developer uses Claude Code inside Cursor's terminal, both tools may prompt for the same command. This is redundant but not harmful. The developer sees one prompt from each tool. |
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
-| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+| **MCP servers** | Claude Code, Cursor, and Copilot can each run MCP servers. Copilot now has a generally available `allowedMcpServers` allowlist in `managed-settings.json`. That list does not apply to Claude Code or Cursor. Copy the same server identity into Claude Code managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). Copilot cloud agent does not enforce the Copilot allowlist. |
