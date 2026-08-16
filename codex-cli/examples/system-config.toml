@@ -17,3 +17,10 @@ model = "o4-mini"
 # Disable network in workspace-write sandbox mode at the system level.
 [sandbox_workspace_write]
 network_access = false
+
+approvals_reviewer = "user"
+
+[features]
+plugins = false
+remote_plugin = false
+plugin_sharing = false

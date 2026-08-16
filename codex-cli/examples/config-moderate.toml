@@ -8,3 +8,25 @@ model = "o4-mini"
 
 [sandbox_workspace_write]
 network_access = false
+
+# Human reviewer only. `--approve-for-me` (Codex 0.147) sets auto_review for one session.
+# WHAT: Who reviews sandbox/tool escalations (user vs auto_review).
+# WHY: Moderate keeps interactive approvals; auto_review still cannot widen the sandbox, but it skips the human pause.
+# WHAT BREAKS: `codex --approve-for-me` is rejected when requirements pin allowed_approvals_reviewers=["user"].
+approvals_reviewer = "user"
+
+# Agent Plugins stay on for an org catalog, but remote catalogs and plugin sharing stay off.
+# Enforce the marketplace allowlist in requirements.toml, not in this defaults file.
+[features]
+# WHAT: Agent Plugins (portable catalogs of skills, connectors, and plugin-bundled MCP).
+# WHY: Moderate allows org-approved plugins; pair with [marketplaces] in requirements.toml.
+# WHAT BREAKS: If set to false, `/plugins` and plugin-bundled MCP/hooks stop working.
+plugins = true
+# WHAT: Remote plugin catalog federation (Codex 0.147).
+# WHY: Unvetted remote catalogs are a supply-chain path; org git/local sources are enough.
+# WHAT BREAKS: `/plugins search` no longer queries remote catalogs.
+remote_plugin = false
+# WHAT: Workspace sharing of locally built plugins.
+# WHY: Sharing bypasses marketplace review and spreads unreviewed code to teammates.
+# WHAT BREAKS: Developers cannot publish a local plugin into the workspace catalog.
+plugin_sharing = false

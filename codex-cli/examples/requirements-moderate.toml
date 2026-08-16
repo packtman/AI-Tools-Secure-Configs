@@ -1,0 +1,52 @@
+# Codex CLI MODERATE admin-enforced requirements (Codex 0.147+)
+# Users cannot override these constraints. Deploy via cloud-managed config,
+# macOS MDM, or system file. Shared with Codex Desktop: deploy one copy.
+
+allowed_approval_policies = ["untrusted", "on-request"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_web_search_modes = ["cached"]
+
+# WHAT: Allowlist for who may review approval escalations.
+# WHY: `--approve-for-me` (0.147) enables auto_review for one session. Moderate keeps the human pause for laptop use.
+# WHAT BREAKS: CI that relies on `--approve-for-me` must request an exception or use a separate Baseline profile.
+allowed_approvals_reviewers = ["user"]
+
+[features]
+# Plugins stay available (product default). Pin only the high-risk plugin surfaces.
+# WHAT: Remote plugin catalog federation.
+# WHY: Moderate uses an org git marketplace instead of arbitrary remote catalogs.
+# WHAT BREAKS: `/plugins search` no longer queries remote catalogs.
+remote_plugin = false
+# WHAT: Workspace sharing of locally built plugins.
+# WHY: Sharing bypasses the org marketplace review path.
+# WHAT BREAKS: Developers cannot publish a local plugin into the workspace catalog.
+plugin_sharing = false
+browser_use = false
+computer_use = false
+
+# WHAT: Require user-configured marketplace sources to match allowed_sources.
+# WHY: 0.147 portable plugins can be installed from git URLs, host patterns, or local dirs. OpenAI-managed marketplaces still remain.
+# WHAT BREAKS: Marketplace add/install/refresh from unmatched sources fails. Already-configured user marketplaces are not unloaded at runtime; remove them during rollout.
+[marketplaces]
+restrict_to_allowed_sources = true
+
+# Replace the URL and ref with your org plugin catalog. Do not leave the example host in production.
+[marketplaces.allowed_sources.company_plugins]
+source = "git"
+url = "https://github.com/YOUR-ORG/codex-plugins.git"
+ref = "main"
+
+[permissions.filesystem]
+deny_read = [
+  "~/.ssh/id_*",
+  "~/.aws/credentials",
+  "**/*.pem",
+  "**/*.key",
+]
+
+[rules]
+prefix_rules = [
+  { pattern = [{ token = "git" }, { any_of = ["push", "force-push"] }], decision = "prompt", justification = "Require review before pushing to remote." },
+  { pattern = [{ token = "rm" }, { token = "-rf" }], decision = "prompt", justification = "Recursive delete requires explicit approval." },
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
+]

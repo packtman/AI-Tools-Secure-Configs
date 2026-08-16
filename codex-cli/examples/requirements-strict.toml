@@ -1,0 +1,61 @@
+# Codex CLI STRICT admin-enforced requirements (Codex 0.147+)
+# Users cannot override these constraints. Deploy via cloud-managed config,
+# macOS MDM (com.openai.codex:requirements_toml_base64), or
+# /etc/codex/requirements.toml (Unix) / %ProgramData%\OpenAI\Codex\requirements.toml (Windows).
+# Shared with Codex Desktop: deploy one requirements file, not two copies.
+
+allowed_approval_policies = ["untrusted", "on-request"]
+allowed_sandbox_modes = ["read-only"]
+allowed_web_search_modes = []
+
+# WHAT: Allowlist for who may review approval escalations (`user` or `auto_review`).
+# WHY: Codex 0.147 `--approve-for-me` sets approvals_reviewer=auto_review for the session without editing config.toml. Strict keeps a person in the loop.
+# WHAT BREAKS: `codex --approve-for-me` and `-c approvals_reviewer=auto_review` fall back to `user`. Auto-review CI jobs fail until they use a human or a different policy.
+allowed_approvals_reviewers = ["user"]
+
+[features]
+# WHAT: Master switch for Agent Plugins.
+# WHY: Strict must not load plugin-bundled tools, hooks, or MCP from any catalog.
+# WHAT BREAKS: `/plugins`, plugin install, and plugin-bundled MCP/hooks are unavailable, including Codex-managed OpenAI marketplace plugins.
+plugins = false
+# WHAT: Remote plugin catalog federation.
+# WHY: Defense in depth if plugins are later re-enabled without a marketplace review.
+# WHAT BREAKS: Remote catalog search stays off even if plugins is later set true.
+remote_plugin = false
+# WHAT: Workspace sharing of locally built plugins.
+# WHY: Shared plugins skip marketplace review.
+# WHAT BREAKS: Local-to-workspace plugin publish is denied.
+plugin_sharing = false
+browser_use = false
+computer_use = false
+memories = false
+multi_agent = false
+
+# WHAT: Require user-configured marketplace add/install/refresh to match allowed_sources.
+# WHY: Codex 0.147 federates local, personal, workspace, and remote catalogs. OpenAI-managed marketplaces still remain when their reserved source and name match. This does not unload marketplaces already configured on a machine.
+# WHAT BREAKS: `codex plugin marketplace add` and plugin install from unmatched git/local sources fail. Existing user marketplaces keep running until removed.
+[marketplaces]
+restrict_to_allowed_sources = true
+
+[permissions.filesystem]
+deny_read = [
+  "/etc/shadow",
+  "/etc/passwd",
+  "~/.ssh",
+  "~/.aws",
+  "~/.config/gcloud",
+  ".env",
+  "**/*.pem",
+  "**/*.key",
+]
+
+[rules]
+prefix_rules = [
+  { pattern = [{ any_of = ["rm", "rmdir"] }], decision = "forbidden", justification = "Destructive file operations are not permitted." },
+  { pattern = [{ token = "git" }, { any_of = ["push", "commit", "rebase", "reset"] }], decision = "forbidden", justification = "Git mutations are not permitted in read-only mode." },
+  { pattern = [{ any_of = ["curl", "wget", "nc", "ncat"] }], decision = "forbidden", justification = "Network operations are forbidden in strict mode." },
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "forbidden", justification = "Privilege escalation is not permitted." },
+]
+
+# Empty table disables all MCP servers, including plugin-bundled MCP if plugins are later enabled.
+[mcp_servers]

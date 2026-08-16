@@ -17,10 +17,15 @@ cli_auth_credentials_store = "keyring"
 [sandbox_workspace_write]
 network_access = false
 
+approvals_reviewer = "user"
+
 [features]
 browser_use = false
 computer_use = false
 codex_hooks = true
+plugins = true
+remote_plugin = false
+plugin_sharing = false
 
 # OpenTelemetry — point at your corporate OTLP collector
 [otel]

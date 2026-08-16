@@ -13,6 +13,8 @@ web_search = "cached"
 [sandbox_workspace_write]
 network_access = false
 
+approvals_reviewer = "user"
+
 [features]
 browser_use = false
 in_app_browser = false
@@ -21,6 +23,10 @@ memories = false
 codex_hooks = true
 multi_agent = true
 undo = false
+# Org plugins allowed; remote catalogs and workspace sharing stay off. Pair with [marketplaces] in requirements.toml.
+plugins = true
+remote_plugin = false
+plugin_sharing = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]

@@ -8,3 +8,12 @@ model = "o4-mini"
 
 [sandbox_workspace_write]
 network_access = true
+
+# Baseline allows `--approve-for-me` (auto_review) for CI-style runs. Do not pin
+# allowed_approvals_reviewers in requirements.toml unless you want to force a human reviewer.
+
+[features]
+# WHAT: Workspace sharing of locally built plugins.
+# WHY: This is the one plugin control Baseline pins: it stops a laptop-built plugin from becoming an org-wide execution path.
+# WHAT BREAKS: Developers cannot publish a local plugin into the workspace catalog. They can still install from catalogs they add.
+plugin_sharing = false

@@ -622,6 +622,53 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 
 ---
 
+## 16. Agent Plugins, marketplaces, and `--approve-for-me` (Codex 0.147)
+
+Codex 0.147 added portable Agent Plugins (search across local, personal, workspace, and remote catalogs) and `--approve-for-me`, which sets `approvals_reviewer = "auto_review"` for one session without editing `config.toml`. `--full-auto` was removed.
+
+### What the controls do
+
+| Setting | What it does |
+|---------|--------------|
+| `features.plugins` | Master switch for Agent Plugins (skills, connectors, plugin-bundled MCP and hooks) |
+| `features.remote_plugin` | Allows federated search of remote plugin catalogs |
+| `features.plugin_sharing` | Allows publishing a locally built plugin into the workspace catalog |
+| `marketplaces.restrict_to_allowed_sources` | When true, marketplace add/install/refresh must match `allowed_sources` |
+| `allowed_approvals_reviewers` | Requirements allowlist for `user` vs `auto_review` |
+| `approvals_reviewer` | Starting reviewer. `auto_review` is a reviewer swap, not a sandbox expansion |
+
+### Why pin these
+
+| Threat | Control |
+|--------|---------|
+| Unreviewed git catalog install | `[marketplaces]` allowlist |
+| Remote catalog federation | `features.remote_plugin = false` |
+| Laptop plugin becomes org-wide | `features.plugin_sharing = false` |
+| `--approve-for-me` skips the human pause | `allowed_approvals_reviewers = ["user"]` |
+| Plugin-bundled MCP/hooks in regulated fleets | `features.plugins = false` |
+
+OpenAI-managed marketplaces still remain when `restrict_to_allowed_sources = true`. The requirement does not unload marketplaces already configured on a machine. Remove leftover sources during rollout.
+
+### Recommended values
+
+| Environment | plugins | remote_plugin | plugin_sharing | marketplaces | allowed_approvals_reviewers |
+|-------------|---------|---------------|----------------|--------------|------------------------------|
+| Strict | `false` | `false` | `false` | restrict, no extra sources | `["user"]` |
+| Moderate | available | `false` | `false` | restrict + org git | `["user"]` |
+| Baseline | available | unset | `false` | unset | unset (allows `--approve-for-me`) |
+
+### What goes wrong
+
+| Misconfiguration | Consequence |
+|-----------------|-------------|
+| Restrict marketplaces but leave old user catalogs | Developers keep using pre-existing sources; policy looks enforced and is not |
+| `features.plugins = true` with no marketplace allowlist | Anyone can `codex plugin marketplace add` an unreviewed repo |
+| Omitting `allowed_approvals_reviewers` on laptops | `--approve-for-me` enables auto_review for that session |
+| Treating auto_review as a sandbox bypass | Wrong model: the sandbox stays. The missed control is the human pause |
+| Assuming IDE extension honors `[marketplaces]` | It does not. Use workspace RBAC and egress filters |
+
+---
+
 ## Summary Matrix
 
 | Setting | Strict (Regulated) | Standard (Development) | Permissive (Research) |

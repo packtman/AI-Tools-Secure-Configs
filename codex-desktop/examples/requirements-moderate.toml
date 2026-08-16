@@ -7,11 +7,27 @@ allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
+# WHAT: Who may review approval escalations.
+# WHY: Moderate keeps interactive approvals on laptops. `--approve-for-me` is a CLI-only session flag for the same auto_review path.
+# WHAT BREAKS: CI that uses `--approve-for-me` needs an exception or a Baseline profile.
+allowed_approvals_reviewers = ["user"]
+
 # Disable high-risk features but allow core development
 [features]
 browser_use = false
 computer_use = false
 codex_hooks = true
+remote_plugin = false
+plugin_sharing = false
+
+# Replace YOUR-ORG with the org plugin catalog. Do not leave the example host in production.
+[marketplaces]
+restrict_to_allowed_sources = true
+
+[marketplaces.allowed_sources.company_plugins]
+source = "git"
+url = "https://github.com/YOUR-ORG/codex-plugins.git"
+ref = "main"
 
 # Deny reads to credential files
 [permissions.filesystem]

@@ -3,6 +3,16 @@
 This report was generated because one or more watched upstream sources changed.
 Use `automation/config-discovery/agent-prompt.md` to turn these signals into a focused config update PR.
 
+## Config updates applied (2026-08-16)
+
+Codex 0.147.0 (2026-08-07) added portable Agent Plugins, federated catalog search, and `--approve-for-me` (session flag for `approvals_reviewer = auto_review`). Official managed configuration documents `[marketplaces] restrict_to_allowed_sources` plus `features.plugins` / `remote_plugin` / `plugin_sharing`.
+
+This run updates Codex CLI and Codex Desktop tier files. CLI and Desktop share one `requirements.toml`; do not deploy two copies. Marketplace restrictions do not apply to the IDE extension, ChatGPT on the web, or mobile.
+
+No config update needed for the other changed sources in this run: missing terms were environment variables, HTML chrome, or controls already covered by open draft PRs.
+
+Replaced the moved Codex Desktop watcher `codex-rs/config.md` with `https://developers.openai.com/codex/enterprise/managed-configuration`.
+
 ## Summary
 
 | Tool | Source | Change | Status | URL |
@@ -304,10 +314,11 @@ your code editor (VS Code, Cursor, Windsurf), install in your IDE. If you want t
 experience, run codex app or visit the Codex App page . If you are looking for the cloud-based agent
 from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 
-### Codex Desktop: OpenAI Codex config reference
+### Codex Desktop: OpenAI Codex managed configuration
 
-- Change type: `fingerprint-method-changed`
-- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
+- Change type: `source-replaced`
+- Source URL: https://developers.openai.com/codex/enterprise/managed-configuration
+- Note: previous watcher `codex-rs/config.md` moved. New watcher is the official managed-configuration page that documents `[marketplaces]` and `features.plugins`.
 - Status: `200`
 - Related repo paths: codex-desktop/
 

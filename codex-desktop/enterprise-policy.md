@@ -31,10 +31,13 @@ Admins can configure different policies for different user groups. If a user mat
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
 computer_use = false
+remote_plugin = false
+plugin_sharing = false
 ```
 
 **Senior/Trusted Developers:**
@@ -46,6 +49,7 @@ allowed_web_search_modes = ["cached", "live"]
 [features]
 browser_use = true
 computer_use = false
+plugin_sharing = false
 ```
 
 **Regulated Environments:**
@@ -53,12 +57,16 @@ computer_use = false
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = ["disabled"]
+allowed_approvals_reviewers = ["user"]
 
 [features]
 browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
+plugins = false
+remote_plugin = false
+plugin_sharing = false
 ```
 
 ---

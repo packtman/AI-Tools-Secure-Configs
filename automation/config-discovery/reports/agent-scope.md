@@ -1,39 +1,26 @@
 # Agent scope for this run
 
-Process only the tools listed below. For each tool:
+Processed Codex CLI and Codex Desktop for Codex 0.147 Agent Plugins, marketplace allowlists, and `--approve-for-me`.
 
-1. Read the cited missing terms and the upstream URL from the full discovery report.
-2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.
-3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.
-4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.
-5. Validate edited JSON, YAML, and TOML before finishing.
+Other tools with missing-term noise (`ANTHROPIC_MODEL`, Continue `mcpServers`, Claude Desktop MCP env vars, OpenAI Platform schema terms) were deferred: they are not new admin controls, or they are already covered by open draft PRs.
 
-Do not attempt to review unchanged tools or sources with no missing local terms in this run.
+## Tools processed
 
-## Tools to process (4 of 5 with missing terms)
+### Codex CLI
 
-### Claude Code
+- Source: OpenAI Codex releases rust-v0.147.0 (2026-08-07) and managed configuration docs
+- Added: `requirements-{strict,moderate,baseline}.toml`, plugin feature pins, `[marketplaces]`, `allowed_approvals_reviewers`
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+### Codex Desktop
 
-### Claude Code
+- Source: same managed configuration docs (CLI and Desktop share `requirements.toml`)
+- Added: the same 0.147 pins on existing requirements and config templates
 
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+## Deferred
 
-### Continue.dev
-
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Claude Code env vars and hook terms: developer/runtime, not new managed-settings keys for this run; covered by open PRs #66/#68/#80-#85
+- Continue.dev `mcpServers`: already handled in open PR #75
+- Claude Desktop `CLAUDE_CODE_MCP_SERVER_*`: Claude Code MCP env, not Desktop MDM keys; covered by #70
+- OpenAI Platform OpenAPI schema terms: API event names, not org-policy keys; covered by #69
+- GitHub Copilot managed-settings MCP/plugins: open PR #86
+- Gemini CLI console templates: reconcile #64 and #76 after merge

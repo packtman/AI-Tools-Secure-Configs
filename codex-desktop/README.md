@@ -51,6 +51,8 @@ Requirements are constraints that **users cannot override**. They control securi
 - Web search mode restrictions
 - MCP server allowlists
 - Feature flag pins
+- Plugin marketplace source restrictions (Codex 0.147)
+- Allowed approval reviewers (`user` vs `auto_review` / `--approve-for-me`)
 - Command rules (prompt/forbidden)
 - Filesystem deny-read rules
 
@@ -112,6 +114,9 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+| `plugins` | Agent Plugins (portable catalogs; Codex 0.147) |
+| `remote_plugin` | Remote plugin catalog federation |
+| `plugin_sharing` | Workspace sharing of locally built plugins |
 
 ### Protected Paths
 
@@ -140,6 +145,8 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin Codex 0.147 plugin controls: Strict `features.plugins = false`; Moderate `[marketplaces] restrict_to_allowed_sources = true`
+- [ ] Pin `allowed_approvals_reviewers = ["user"]` on Moderate/Strict so `--approve-for-me` cannot enable auto_review
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
@@ -155,3 +162,16 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set up RBAC via ChatGPT Enterprise workspace settings
 - [ ] Periodically audit drift between local configs and managed policies
 - [ ] Review MCP server access and tool permission grants
+- [ ] Review plugin marketplace sources and remove leftover user marketplaces (requirements do not unload them at runtime)
+
+---
+
+## Codex 0.147 plugins and auto-review (Desktop)
+
+Desktop has no `--approve-for-me` flag. The same control is `approvals_reviewer = "auto_review"`. CLI `--approve-for-me` is the session-flag form. Deploy one shared `requirements.toml` for CLI and Desktop.
+
+See `codex-cli/README.md` for the full Rollout Plan, Tier Delta Table, OS paths, validation commands, SIEM guidance, and workflow-preservation notes. Desktop-specific checks:
+
+- Plugins Directory shows only the org catalog (Moderate) or is empty (Strict).
+- Startup config summary lists managed `allowed_approvals_reviewers` and `[marketplaces]`.
+- Marketplace restrictions do not apply to the IDE extension, ChatGPT on the web, or mobile.
