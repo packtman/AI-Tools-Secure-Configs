@@ -13,6 +13,9 @@ web_search = "disabled"
 [sandbox_workspace_write]
 network_access = false
 
+# Human reviewer. Desktop has no `--approve-for-me` flag, but approvals_reviewer=auto_review is the same control.
+approvals_reviewer = "user"
+
 [features]
 browser_use = false
 in_app_browser = false
@@ -22,6 +25,12 @@ codex_hooks = true
 multi_agent = false
 undo = false
 shell_snapshot = false
+# WHAT: Agent Plugins (portable catalogs of skills, connectors, and plugin-bundled MCP).
+# WHY: Strict must not load plugin tools or hooks from any catalog, including OpenAI-managed ones.
+# WHAT BREAKS: Plugins Directory and plugin-bundled MCP/hooks are unavailable.
+plugins = false
+remote_plugin = false
+plugin_sharing = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME"]

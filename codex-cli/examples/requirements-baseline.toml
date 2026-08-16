@@ -1,0 +1,26 @@
+# Codex CLI BASELINE admin-enforced requirements (Codex 0.147+)
+# Users cannot override these constraints. Essential guardrails only.
+# Shared with Codex Desktop: deploy one copy.
+
+allowed_approval_policies = ["untrusted", "on-request", "never"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_web_search_modes = ["cached", "live"]
+
+# Do not set allowed_approvals_reviewers here. Baseline allows `--approve-for-me`
+# (auto_review) for CI-style runs. Pair it with workspace-write, not danger-full-access.
+
+[features]
+# WHAT: Workspace sharing of locally built plugins.
+# WHY: Baseline still blocks an unreviewed laptop plugin from becoming an org-wide execution path.
+# WHAT BREAKS: Developers cannot publish a local plugin into the workspace catalog.
+plugin_sharing = false
+computer_use = false
+
+# Marketplace sources are unconstrained on Baseline. Admins who later move to Moderate
+# should set restrict_to_allowed_sources = true and add allowed_sources before enabling
+# remote catalogs.
+
+[rules]
+prefix_rules = [
+  { pattern = [{ any_of = ["sudo", "su", "doas"] }], decision = "prompt", justification = "Privilege escalation requires explicit approval." },
+]

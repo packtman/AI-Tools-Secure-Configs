@@ -18,3 +18,13 @@ model = "o4-mini"
 # Sandbox network settings — disabled by default for security.
 [sandbox_workspace_write]
 network_access = false
+
+# Human reviewer. `--approve-for-me` (Codex 0.147) sets auto_review for one session
+# unless requirements.toml pins allowed_approvals_reviewers = ["user"].
+approvals_reviewer = "user"
+
+[features]
+# Keep plugins off until an org marketplace is approved in requirements.toml.
+plugins = false
+remote_plugin = false
+plugin_sharing = false

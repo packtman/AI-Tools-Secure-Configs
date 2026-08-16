@@ -22,6 +22,8 @@ codex_hooks = true
 multi_agent = true
 undo = true
 shell_snapshot = true
+# Baseline keeps plugins available. Pin only plugin sharing so a laptop-built plugin cannot become org-wide.
+plugin_sharing = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM", "EDITOR", "NODE_ENV"]

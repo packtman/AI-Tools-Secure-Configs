@@ -12,9 +12,28 @@ web_search = "disabled"
 [sandbox_workspace_write]
 network_access = false
 
+# Human reviewer only. Blocks the 0.147 `--approve-for-me` session flag, which
+# sets approvals_reviewer=auto_review without editing this file.
+# WHAT: Who reviews sandbox/tool escalations (user vs auto_review).
+# WHY: Strict keeps a person in the loop; auto_review is a reviewer swap, not a sandbox expansion, but it still removes the interactive pause.
+# WHAT BREAKS: `codex --approve-for-me` and `-c approvals_reviewer=auto_review` fall back to a compatible value when requirements pin allowed_approvals_reviewers=["user"].
+approvals_reviewer = "user"
+
 # Disable high-risk features (pinnable via requirements.toml in Enterprise)
 [features]
 browser_use = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Master switch for Agent Plugins (portable catalogs of skills, connectors, and plugin-bundled MCP).
+# WHY: Strict must not load third-party plugin tools or hooks from local, personal, workspace, or remote catalogs.
+# WHAT BREAKS: `/plugins`, `codex plugin add`, and plugin-bundled MCP/hooks are unavailable.
+plugins = false
+# WHAT: Remote plugin catalog federation introduced in Codex 0.147.
+# WHY: Federated search across remote catalogs expands supply-chain reach even when plugins stay enabled.
+# WHAT BREAKS: `/plugins search` no longer queries remote catalogs.
+remote_plugin = false
+# WHAT: Workspace sharing of locally built plugins.
+# WHY: Shared plugins become an org-wide execution path; Strict keeps plugin authoring off the managed fleet.
+# WHAT BREAKS: Developers cannot publish a local plugin into the workspace catalog.
+plugin_sharing = false

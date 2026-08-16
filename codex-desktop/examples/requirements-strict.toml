@@ -8,6 +8,11 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
+# WHAT: Who may review approval escalations (`user` or `auto_review`).
+# WHY: Codex 0.147 `--approve-for-me` (CLI) and approvals_reviewer=auto_review (Desktop) skip the human pause. Strict keeps a person in the loop.
+# WHAT BREAKS: `--approve-for-me` and auto_review fall back to `user`.
+allowed_approvals_reviewers = ["user"]
+
 # Disable all extended features
 [features]
 browser_use = false
@@ -15,6 +20,18 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Agent Plugins master switch (Codex 0.147 portable catalogs).
+# WHY: Strict must not load plugin-bundled tools, hooks, or MCP.
+# WHAT BREAKS: Plugins Directory and `codex plugin` installs are unavailable.
+plugins = false
+remote_plugin = false
+plugin_sharing = false
+
+# WHAT: Require user-configured marketplace add/install/refresh to match allowed_sources.
+# WHY: 0.147 federates local, personal, workspace, and remote catalogs. OpenAI-managed marketplaces still remain. Already-configured user marketplaces are not unloaded at runtime.
+# WHAT BREAKS: Unmatched marketplace add/install/refresh fails.
+[marketplaces]
+restrict_to_allowed_sources = true
 
 # Deny reads to sensitive directories
 [permissions.filesystem]

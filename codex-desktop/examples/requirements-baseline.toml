@@ -8,9 +8,11 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
-# Only pin the most dangerous feature
+# Only pin the most dangerous feature plus plugin sharing (0.147).
+# Baseline allows `--approve-for-me` / auto_review and unconstrained marketplace sources.
 [features]
 computer_use = false
+plugin_sharing = false
 
 # Block privilege escalation
 [rules]

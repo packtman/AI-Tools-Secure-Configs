@@ -160,13 +160,16 @@
       ],
       "tier_files": {
         "strict": [
-          "codex-cli/examples/config-strict.toml"
+          "codex-cli/examples/config-strict.toml",
+          "codex-cli/examples/requirements-strict.toml"
         ],
         "moderate": [
-          "codex-cli/examples/config-moderate.toml"
+          "codex-cli/examples/config-moderate.toml",
+          "codex-cli/examples/requirements-moderate.toml"
         ],
         "baseline": [
-          "codex-cli/examples/config-baseline.toml"
+          "codex-cli/examples/config-baseline.toml",
+          "codex-cli/examples/requirements-baseline.toml"
         ]
       },
       "sources": [
@@ -178,8 +181,8 @@
             "config",
             "sandbox",
             "approval",
-            "model",
-            "MCP"
+            "plugins",
+            "marketplace"
           ]
         },
         {
@@ -188,9 +191,9 @@
           "url": "https://api.github.com/repos/openai/codex/releases?per_page=10",
           "watch_for": [
             "configuration",
-            "security",
-            "sandbox",
-            "policy",
+            "plugins",
+            "approve-for-me",
+            "marketplace",
             "permissions"
           ]
         }
@@ -230,15 +233,15 @@
           ]
         },
         {
-          "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "profiles"
+            "requirements",
+            "marketplaces",
+            "plugins",
+            "approvals_reviewer",
+            "MDM"
           ]
         }
       ]

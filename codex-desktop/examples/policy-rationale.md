@@ -126,6 +126,35 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.plugins` / `remote_plugin` / `plugin_sharing` (Codex 0.147)
+
+**What it does:** `plugins` is the master switch for Agent Plugins (portable catalogs of skills, connectors, and plugin-bundled MCP). `remote_plugin` enables federated remote catalog search. `plugin_sharing` allows publishing a laptop-built plugin into the workspace catalog.
+
+**Why it matters:** A plugin can bundle hooks and MCP servers. That is code execution and data access outside the files you reviewed in the git repo. `--approve-for-me` is CLI-only; Desktop uses `approvals_reviewer = "auto_review"` for the same path.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `plugins = false` | No plugin-bundled tools, hooks, or MCP. |
+| Standard enterprise | plugins available, `remote_plugin = false`, `plugin_sharing = false`, `[marketplaces] restrict_to_allowed_sources = true` | Org git catalog only. |
+| Individual developers | `plugin_sharing = false` | Keep personal catalogs, block org-wide publish. |
+
+**What breaks if removed:** Marketplace add/install from unreviewed hosts succeeds. `--approve-for-me` / auto_review can skip the human pause. Already-configured user marketplaces are not unloaded when you later set `restrict_to_allowed_sources`; remove them during rollout.
+
+---
+
+## `allowed_approvals_reviewers` (in requirements.toml)
+
+**What it does:** Allowlist for who reviews approval escalations: `user` or `auto_review`.
+
+**Why it matters:** Codex 0.147 `--approve-for-me` sets `auto_review` for one session without editing `config.toml`. Auto-review does not widen the sandbox. It removes the interactive pause.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated / standard enterprise | `["user"]` | Keep a person in the loop on laptops. |
+| CI / Baseline | omit | Allows `--approve-for-me` with `workspace-write`. Never pair with `danger-full-access`. |
+
+---
+
 ## `deny_read` (in requirements.toml)
 
 **What it does:** Prevents the agent from reading specified file paths or patterns, even in writable sandbox modes.

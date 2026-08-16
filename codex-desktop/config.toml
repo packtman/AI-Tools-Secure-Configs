@@ -29,7 +29,8 @@ model_reasoning_effort = "high"
 [sandbox_workspace_write]
 network_access = false
 
-# Feature flags — disable high-risk features by default.
+# Feature flags: disable high-risk features by default. Codex 0.147 plugin pins
+# belong in requirements.toml for enforcement; these are starting defaults.
 [features]
 browser_use = false
 in_app_browser = false
@@ -37,6 +38,9 @@ computer_use = false
 memories = false
 codex_hooks = true
 multi_agent = true
+plugins = true
+remote_plugin = false
+plugin_sharing = false
 
 # Shell environment — only forward essential variables to spawned commands.
 [shell_environment_policy]
