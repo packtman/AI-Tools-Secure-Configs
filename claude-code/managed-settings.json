@@ -102,6 +102,26 @@
 
   "allowManagedPluginsOnly": false,
 
+  "disableCommandPluginSources": true,
+
+  "blockedMarketplaces": [
+    {
+      "source": "github",
+      "repo": "untrusted-org/*"
+    }
+  ],
+
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/*"
+    },
+    {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    }
+  ],
+
   "forceRemoteSettingsRefresh": false,
 
   "forceLoginMethod": "claudeai",
@@ -128,7 +148,7 @@
 
   "autoUpdatesChannel": "stable",
 
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.229",
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",

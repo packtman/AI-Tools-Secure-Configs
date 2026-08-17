@@ -104,6 +104,14 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
+  "disableCommandPluginSources": true,
+  "blockedMarketplaces": [
+    {
+      "source": "github",
+      "repo": "untrusted-org/*"
+    }
+  ],
+  "strictKnownMarketplaces": [],
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,
@@ -115,7 +123,7 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.229",
 
   "autoMemoryEnabled": false,
 

@@ -14,6 +14,7 @@
 | **MDM** | Mobile Device Management: software that pushes configuration profiles and policies to managed endpoints (Jamf for macOS, Intune for Windows). |
 | **SIEM** | Security Information and Event Management: centralized log analysis platform (Splunk, Sentinel, Elastic) that aggregates security events and triggers alerts. |
 | **MCP** | Model Context Protocol: a standard that lets AI tools connect to external data sources (databases, APIs, file servers) through "MCP servers." |
+| **Plugin marketplace** | A catalog of Claude Code plugins (GitHub repo, npm package, URL, or local path). A command plugin source installs a plugin by running a marketplace-declared shell command on the user's machine. |
 | **Managed settings** | Configuration files deployed by IT that override user preferences. Users cannot weaken these settings. |
 | **Sandbox** | OS-level isolation that restricts what an AI tool's shell commands can access on the filesystem and network, even if the tool itself is tricked. |
 | **Content exclusion** | Rules telling an AI tool to ignore specific files (secrets, keys, credentials) so they are never sent to the AI model. |
@@ -112,7 +113,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Plugin marketplaces are limited to your GitHub org and the official Anthropic catalog. Plugins that install by running a marketplace-declared command are blocked.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +122,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code plugin installs from outside your GitHub org (except the official Anthropic catalog) are blocked. Command-sourced plugin installs are blocked on every tier.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +235,10 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `disableCommandPluginSources` | `true` | `true` | `true` | Command-sourced plugin installs run marketplace-declared shell (same class of risk as `curl \| bash`). All tiers block them. Requires Claude Code 2.1.229+ |
+| `blockedMarketplaces` | `untrusted-org/*` placeholder | Same placeholder | Same placeholder | Defense in depth. Replace the placeholder with GitHub owners you already reject. Owner wildcards need v2.1.223+ |
+| `strictKnownMarketplaces` | Unset | `YOUR-ORG/*` plus official Anthropic catalog | `[]` (lockdown) | Baseline lets developers add marketplaces except blocked owners; Moderate pins org plus official; Strict blocks all marketplace additions |
+| `minimumVersion` | `2.1.229` | `2.1.229` | `2.1.229` | Floor for `disableCommandPluginSources`. Owner-wildcard marketplace entries also need v2.1.223+ |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -584,6 +590,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Command-sourced Claude Code plugins | Marketplace-declared install commands run on the endpoint (remote code execution) | Use a git, GitHub, npm, or directory plugin source from the allowlist. Ask IT to vendor the plugin into `YOUR-ORG/claude-plugins`. | Claude Code |
+| Adding a third-party Claude Code marketplace (Moderate/Strict) | Unreviewed plugins can ship hooks, MCP servers, and skills | Moderate: use `YOUR-ORG/*` or the official Anthropic catalog. Strict: no marketplace additions; request IT to pre-register one catalog. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +605,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `disableCommandPluginSources: true` | A marketplace plugin only ships a `command` install source | Do not allow the command. Ask the plugin author for a git or GitHub source, or vendor the files into the org marketplace. |
+| `strictKnownMarketplaces` (Moderate/Strict) | Developer wants a community marketplace that is not under `YOUR-ORG` | File an exception. If approved, add one exact source object (repo, optional ref/path) to Moderate. Do not use Strict empty-array lockdown as an allowlist. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -627,3 +637,4 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+| **Plugin catalogs** | Claude Code `strictKnownMarketplaces` / `blockedMarketplaces` are not GitHub Copilot Agent Plugins (`enabledPlugins`) and not Codex `[marketplaces]`. Pin each product's file separately. Covering one catalog does not cover the others. |

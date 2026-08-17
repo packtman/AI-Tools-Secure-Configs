@@ -167,6 +167,54 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableCommandPluginSources`
+
+**Value:** `true`
+
+**What:** Blocks plugin marketplace entries that install by running a marketplace-declared command on the user's machine. Claude Code never runs the command, does not install or update those plugins, and stops loading ones already installed. Requires Claude Code v2.1.229 or later. Managed settings only.
+
+**Why (Moderate tier):** An allowed marketplace can still ship a command-sourced plugin. That install step is remote code execution. Moderate keeps reviewed GitHub marketplaces, but never executes those commands. When this key is unset, Claude Code follows `allowManagedHooksOnly`, which is `false` in Moderate, so command sources would stay enabled.
+
+**What breaks if set to true:** Plugins that install via a marketplace `command` source cannot be installed, updated, or loaded. Developers should use git, GitHub, npm, or directory plugin sources from the allowlist instead.
+
+**Strict difference:** Also `true`. Strict also sets `strictKnownMarketplaces` to `[]`, so no marketplace can be added at all.
+
+**Baseline difference:** Also `true`. Command-sourced install is treated like `curl | bash`: blocked even when other marketplaces remain unrestricted.
+
+---
+
+## `blockedMarketplaces`
+
+**Value:** `[{ "source": "github", "repo": "untrusted-org/*" }]`
+
+**What:** Blocklist of plugin marketplace sources. Enforced on marketplace add and on plugin install, update, refresh, and auto-update. Blocked sources are checked before downloading, so they never touch the filesystem. A GitHub entry may use the owner-wildcard form `"owner/*"` (requires v2.1.223 or later). Managed settings only.
+
+**Why (Moderate tier):** Defense in depth next to `strictKnownMarketplaces`. Replace `untrusted-org` with GitHub owners you already know are unapproved. An entry without `ref` or `path` blocks every ref and path of the matching repositories.
+
+**What breaks if left as the placeholder:** Only the example owner is blocked. If you later widen the allowlist, forgotten blocklist owners can still be added.
+
+**Strict difference:** Same placeholder blocklist, plus an empty `strictKnownMarketplaces` allowlist (lockdown).
+
+**Baseline difference:** Same placeholder blocklist, but `strictKnownMarketplaces` is unset so other marketplaces remain allowed.
+
+---
+
+## `strictKnownMarketplaces`
+
+**Value:** `[{ "source": "github", "repo": "YOUR-ORG/*" }, { "source": "github", "repo": "anthropics/claude-plugins-official" }]`
+
+**What:** Allowlist of plugin marketplace sources. Undefined means no restrictions. An empty array is lockdown. Enforced on add, install, update, refresh, and auto-update, including marketplaces added before the policy. Managed settings only.
+
+**Why (Moderate tier):** Developers can use your GitHub organization's marketplaces plus the official Anthropic catalog. Replace `YOUR-ORG` with your GitHub organization. Users cannot add other GitHub owners, npm packages, or arbitrary URLs. This setting restricts what users may add; it does not register a marketplace. Add `extraKnownMarketplaces` if fresh machines should auto-register the org catalog.
+
+**What breaks if empty:** No marketplaces can be added, including the official Anthropic catalog. **What breaks if the owner is wrong:** Developers cannot install org-reviewed plugins.
+
+**Strict difference:** `[]` (lockdown). No marketplace additions, including official Anthropic.
+
+**Baseline difference:** Unset. Developers can add any marketplace except entries in `blockedMarketplaces`.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

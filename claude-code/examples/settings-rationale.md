@@ -100,6 +100,42 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `disableCommandPluginSources`
+
+**What it does:** Blocks plugin marketplace entries that install by running a marketplace-declared command on the user's machine. Claude Code never runs the command, does not install or update those plugins, and stops loading ones already installed. Requires Claude Code v2.1.229 or later. Managed settings only.
+
+**Why it matters:** A command plugin source is remote code execution: the marketplace, not IT, chooses the install command. `strictKnownMarketplaces` still allows command-sourced plugins from an allowed marketplace unless this key is `true`. When unset, Claude Code follows `allowManagedHooksOnly`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | No marketplace-declared shell on developer machines. |
+| Standard enterprise | `true` | Keep reviewed GitHub marketplaces, but never execute their install commands. |
+| Developer | `true` | Same class of risk as `curl \| bash`. Keep other marketplace sources available. |
+
+### `blockedMarketplaces`
+
+**What it does:** Blocklist of plugin marketplace sources. Enforced before download on add, install, update, refresh, and auto-update. GitHub owner wildcards (`"owner/*"`) require v2.1.223 or later. Managed settings only.
+
+**Why it matters:** A blocklist still applies if you later widen the allowlist. Replace the `untrusted-org/*` placeholder with GitHub owners you already know are unapproved.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Placeholder plus empty `strictKnownMarketplaces` | Lockdown first; keep named blocks for when the allowlist is expanded. |
+| Standard enterprise | Placeholder plus org allowlist | Blocks known-bad owners even if someone later adds a broader allowlist entry. |
+| Developer | Placeholder only | Other marketplaces remain allowed. |
+
+### `strictKnownMarketplaces`
+
+**What it does:** Allowlist of plugin marketplace sources. Undefined means no restrictions. An empty array is lockdown. Enforced on add, install, update, refresh, and auto-update. Managed settings only.
+
+**Why it matters:** Without an allowlist, users can add any GitHub repo, npm package, or URL as a plugin marketplace. This setting does not register marketplaces; pair with `extraKnownMarketplaces` if fresh machines should auto-register an approved catalog.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `[]` | No marketplace additions, including the official Anthropic catalog. |
+| Standard enterprise | `YOUR-ORG/*` plus `anthropics/claude-plugins-official` | Org-reviewed plugins and the official catalog only. |
+| Developer | Unset | Maximum flexibility, still subject to `blockedMarketplaces`. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
