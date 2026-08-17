@@ -150,6 +150,49 @@
   //      allowlist.
   "allowManagedMcpServersOnly": false,
 
+  // WHAT: Blocks plugin marketplace entries that install by running a marketplace-declared
+  //      command on the user's machine (a command plugin source).
+  // WHY: That install path is remote code execution: the marketplace, not IT, chooses
+  //      the command. Moderate keeps reviewed GitHub marketplaces, but never runs those
+  //      install commands. Requires Claude Code v2.1.229 or later.
+  // BREAKS IF SET TO FALSE OR REMOVED: An allowed marketplace can still ship a plugin
+  //      whose install step executes arbitrary shell. When unset, Claude Code follows
+  //      allowManagedHooksOnly, which is false in Moderate, so command sources stay on.
+  "disableCommandPluginSources": true,
+
+  // WHAT: Blocklist of plugin marketplace sources. Checked before download, so blocked
+  //      sources never touch the filesystem. Owner wildcards ("owner/*") require v2.1.223+.
+  // WHY: Defense in depth next to the Moderate allowlist. Replace untrusted-org with
+  //      GitHub owners you already know are unapproved. An entry without ref or path
+  //      blocks every ref and path of the matching repositories.
+  // BREAKS IF LEFT AS THE PLACEHOLDER: Only the example owner is blocked. If you later
+  //      widen strictKnownMarketplaces, forgotten blocklist owners can still be added.
+  "blockedMarketplaces": [
+    {
+      "source": "github",
+      "repo": "untrusted-org/*"
+    }
+  ],
+
+  // WHAT: Allowlist of plugin marketplace sources. Undefined = no restrictions.
+  //      Empty array = lockdown. Enforced on add, install, update, refresh, and auto-update.
+  // WHY: Moderate lets developers use your GitHub org's marketplaces plus the official
+  //      Anthropic catalog. Replace YOUR-ORG with your GitHub organization. Users cannot
+  //      add other GitHub owners, npm packages, or arbitrary URLs.
+  // BREAKS IF EMPTY: No marketplaces can be added, including the official catalog.
+  //      BREAKS IF WRONG OWNER: Developers cannot install org-reviewed plugins.
+  //      Pair with extraKnownMarketplaces if you need auto-registration on fresh machines.
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/*"
+    },
+    {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    }
+  ],
+
   // WHAT: Blocks the remote control feature, which allows external tools to send
   //      commands to Claude Code sessions.
   // WHY: Remote control could be abused for prompt injection from untrusted sources.
@@ -193,8 +236,9 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.229 is required for disableCommandPluginSources. Owner-wildcard
+  //      marketplace entries require v2.1.223 or later.
+  "minimumVersion": "2.1.229",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed

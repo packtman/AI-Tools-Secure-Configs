@@ -182,10 +182,11 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedPermissionRulesOnly` | Block user/project permission rules |
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
+| `disableCommandPluginSources` | Block command-sourced plugin installs (v2.1.229+) |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
-| `blockedMarketplaces` | Block plugin marketplace sources |
-| `strictKnownMarketplaces` | Restrict marketplace sources |
+| `blockedMarketplaces` | Block plugin marketplace sources (owner wildcards need v2.1.223+) |
+| `strictKnownMarketplaces` | Restrict marketplace sources (empty array = lockdown) |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
@@ -218,14 +219,22 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Deploy `managed-mcp.json` for org-wide MCP servers.
 - [ ] Consider `allowManagedMcpServersOnly: true` for strict environments.
 
-### Phase 5: Hooks & Monitoring
+### Phase 5: Plugin Marketplace Governance
+- [ ] Set `disableCommandPluginSources: true` (requires Claude Code 2.1.229+). Command plugin sources run a marketplace-declared install command on the endpoint.
+- [ ] Replace `untrusted-org` in `blockedMarketplaces` with GitHub owners you already reject. Owner wildcards (`owner/*`) need v2.1.223+.
+- [ ] Moderate: replace `YOUR-ORG` in `strictKnownMarketplaces`. Strict: keep `[]` unless IT pre-registers one catalog. Baseline: leave the allowlist unset.
+- [ ] If fresh machines should auto-register the org catalog, add the same source to `extraKnownMarketplaces` (convenience, not a security control).
+- [ ] Do not treat this as coverage for GitHub Copilot Agent Plugins or Codex `[marketplaces]`. Those are separate products with separate files.
+- [ ] Pair later with `disableSideloadFlags: true` (v2.1.193+) so `--plugin-dir`, `--plugin-url`, `--agents`, and `--mcp-config` cannot bypass the marketplace allowlist for one run. That flag pin is a separate managed setting.
+
+### Phase 6: Hooks & Monitoring
 - [ ] Deploy audit logging hooks (PostToolUse).
 - [ ] Deploy secret-scanning hooks (PostToolUse for Write|Edit).
 - [ ] Deploy destructive command blocking hooks (PreToolUse for Bash).
 - [ ] Set `allowedHttpHookUrls` to restrict hook destinations.
 - [ ] Consider `allowManagedHooksOnly: true` for strict environments.
 
-### Phase 6: Project-Level
+### Phase 7: Project-Level
 - [ ] Commit `.claude/settings.json` to all repositories.
 - [ ] Commit `CLAUDE.md` or `.claude/CLAUDE.md` to all repositories.
 - [ ] Review and update deny rules quarterly.

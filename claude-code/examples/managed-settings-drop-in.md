@@ -31,6 +31,7 @@ managed-settings.d/
 ├── 30-sandbox.json                ← sandbox configuration
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
+├── 55-plugins.json                ← plugin marketplace restrictions
 └── 60-telemetry.json              ← telemetry & environment
 ```
 
@@ -42,7 +43,7 @@ managed-settings.d/
 {
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "YOUR_ORG_UUID",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.229",
   "autoUpdatesChannel": "stable"
 }
 ```
@@ -125,6 +126,23 @@ managed-settings.d/
   "allowManagedMcpServersOnly": false
 }
 ```
+
+### `55-plugins.json`
+
+```json
+{
+  "disableCommandPluginSources": true,
+  "blockedMarketplaces": [
+    { "source": "github", "repo": "untrusted-org/*" }
+  ],
+  "strictKnownMarketplaces": [
+    { "source": "github", "repo": "YOUR-ORG/*" },
+    { "source": "github", "repo": "anthropics/claude-plugins-official" }
+  ]
+}
+```
+
+For Strict, set `strictKnownMarketplaces` to `[]`. For Baseline, omit `strictKnownMarketplaces`. Replace `YOUR-ORG` and `untrusted-org` before deploy. Requires Claude Code v2.1.229 or later.
 
 ### `60-telemetry.json`
 

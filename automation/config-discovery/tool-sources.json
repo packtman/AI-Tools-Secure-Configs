@@ -29,8 +29,23 @@
             "managed settings",
             "permissions",
             "disableBypassPermissionsMode",
+            "disableCommandPluginSources",
+            "blockedMarketplaces",
+            "strictKnownMarketplaces",
             "sandbox",
             "MCP"
+          ]
+        },
+        {
+          "name": "Plugin marketplace documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/plugin-marketplaces.md",
+          "watch_for": [
+            "disableCommandPluginSources",
+            "blockedMarketplaces",
+            "strictKnownMarketplaces",
+            "command sources",
+            "managed marketplace"
           ]
         },
         {

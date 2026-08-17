@@ -89,6 +89,23 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "allowManagedPluginsOnly": false,
+  "disableCommandPluginSources": true,
+  "blockedMarketplaces": [
+    {
+      "source": "github",
+      "repo": "untrusted-org/*"
+    }
+  ],
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "YOUR-ORG/*"
+    },
+    {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    }
+  ],
   "disableRemoteControl": true,
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
@@ -101,7 +118,7 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.229",
 
   "sandbox": {
     "enabled": true,

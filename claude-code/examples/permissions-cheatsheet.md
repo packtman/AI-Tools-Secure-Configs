@@ -180,13 +180,14 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `allowManagedHooksOnly` | Block user/project/plugin hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist applies |
 | `allowManagedPermissionRulesOnly` | Block user/project permission rules |
-| `blockedMarketplaces` | Blocklist of plugin marketplace sources |
+| `blockedMarketplaces` | Blocklist of plugin marketplace sources (owner wildcards need v2.1.223+) |
 | `channelsEnabled` | Enable/disable channels |
+| `disableCommandPluginSources` | Block command-sourced plugin installs (v2.1.229+) |
 | `forceRemoteSettingsRefresh` | Block startup until settings fetched |
 | `pluginTrustMessage` | Custom plugin trust warning text |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed `allowRead` applies |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domain allowlist applies |
-| `strictKnownMarketplaces` | Restrict plugin marketplace sources |
+| `strictKnownMarketplaces` | Restrict plugin marketplace sources (empty array = lockdown) |
 | `wslInheritsWindowsSettings` | WSL reads Windows managed settings |
 
 ## Works from Any Scope (but most useful in managed)
