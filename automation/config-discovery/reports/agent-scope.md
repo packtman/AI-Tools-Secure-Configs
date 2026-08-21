@@ -37,3 +37,11 @@ Do not attempt to review unchanged tools or sources with no missing local terms 
 These tools also have missing terms but are deferred to a follow-up run:
 
 - OpenAI Platform (OpenAI OpenAPI schema)
+
+## Outcome (2026-08-21)
+
+- Claude Code `ANTHROPIC_MODEL` / `CLAUDE_MODEL`: mapped to managed `availableModels` + `enforceAvailableModels` (this PR). Baseline stays unset.
+- Claude Code IDE/agent/away env vars: no change; covered by open PR #68.
+- Continue.dev `mcpServers`: no change; covered by open PR #69 / #75.
+- Claude Desktop `CLAUDE_CODE_MCP_SERVER_*`: no change; not Desktop policy keys (PR #69).
+- OpenAI Platform deferred terms: no change; covered by open PR #69.

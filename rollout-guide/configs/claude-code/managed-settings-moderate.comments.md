@@ -195,6 +195,36 @@ In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., mi
 
 ---
 
+## `minimumVersion`
+
+**What:** Floor that prevents auto-update and `claude update` from installing a version below this one.
+
+**Why (Moderate tier):** `enforceAvailableModels` requires Claude Code v2.1.175 or later. Older builds apply `availableModels` but still let Default resolve to an unapproved model.
+
+**What breaks if set too high:** Users on an older approved build cannot start until they update through the org-approved channel.
+
+---
+
+## `availableModels`
+
+**What:** Allowlist of model families (or version prefixes / full IDs) users may select for the main session, subagents, skills, the advisor, and background agents.
+
+**Why (Moderate tier):** `ANTHROPIC_MODEL`, `CLAUDE_MODEL`, `--model`, and `/model` are session overrides, not org policy. A managed list replaces user and project entries as of v2.1.175. Moderate keeps `sonnet`, `haiku`, and `opus` so standard coding work still has a high-capability option. Do not ship `[]`: that blocks named models but leaves the account Default usable even with `enforceAvailableModels`.
+
+**What breaks if misconfigured:** An excluded family is substituted or rejected at startup (`--model`, `ANTHROPIC_MODEL`, resumed transcripts, `advisorModel`). Keep at least one guaranteed-available entry. Cloud sessions on Anthropic-managed VMs ignore device files: deliver this list through server-managed settings.
+
+---
+
+## `enforceAvailableModels`
+
+**What:** Extends `availableModels` to the Default picker option so Default cannot resolve to a model outside the list.
+
+**Why (Moderate tier):** Without this, a developer picks Default and lands on the account or org default, which may be a model you intended to restrict. Requires v2.1.175+ and a non-empty `availableModels` list.
+
+**What breaks if removed:** The Default loophole returns. **What breaks if true with `availableModels: []`:** Enforcement is skipped.
+
+---
+
 ## `env` settings
 
 ### `CLAUDE_CODE_ENABLE_TELEMETRY: "0"`

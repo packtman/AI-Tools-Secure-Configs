@@ -193,8 +193,37 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.175 is required for enforceAvailableModels to close the
+  //      Default-model loophole around availableModels.
+  // BREAKS IF SET TOO HIGH: Users on an older approved build cannot start
+  //      Claude Code until they update through the org-approved channel.
+  "minimumVersion": "2.1.175",
+
+  // WHAT: Allowlist of model families users may select for the main session,
+  //      subagents, skills, the advisor, and background agents.
+  // WHY: ANTHROPIC_MODEL, CLAUDE_MODEL, --model, and /model are session
+  //      overrides, not org policy. A managed availableModels list replaces
+  //      user and project entries as of v2.1.175, so developers cannot widen
+  //      it. Keep at least one guaranteed-available family; an empty array
+  //      blocks named models but still leaves the account Default usable.
+  // BREAKS IF EMPTY: Named model picks are blocked, but Default still works
+  //      even with enforceAvailableModels. BREAKS IF MISSING FAMILIES:
+  //      --model, ANTHROPIC_MODEL, advisorModel, and resumed sessions that
+  //      used an excluded family are substituted or rejected.
+  "availableModels": [
+    "sonnet",
+    "haiku",
+    "opus"
+  ],
+
+  // WHAT: Extends availableModels to the Default picker option.
+  // WHY: Without this, Default still resolves to the account or org default,
+  //      which can be a model you intended to restrict (for example opus or
+  //      fable). Requires Claude Code v2.1.175 or later and a non-empty
+  //      availableModels list.
+  // BREAKS IF REMOVED: Users can pick Default and land on an unapproved
+  //      model. BREAKS IF TRUE WITH EMPTY LIST: Enforcement is skipped.
+  "enforceAvailableModels": true,
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed

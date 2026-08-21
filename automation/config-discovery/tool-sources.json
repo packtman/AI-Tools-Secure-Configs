@@ -56,6 +56,18 @@
             "ultracode",
             "managed settings"
           ]
+        },
+        {
+          "name": "Model configuration documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/model-config.md",
+          "watch_for": [
+            "availableModels",
+            "enforceAvailableModels",
+            "ANTHROPIC_MODEL",
+            "advisorModel",
+            "organization model"
+          ]
         }
       ]
     },

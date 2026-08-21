@@ -30,6 +30,21 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable auto memory writes | `1` for sensitive environments |
 | `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments |
 
+## Model selection (not an env-var policy)
+
+`ANTHROPIC_MODEL` and `CLAUDE_MODEL` override the `model` setting for one session. They are not org allowlists. `--model` does the same. Do **not** pin those variables in managed `env` as a substitute for policy: a developer can still pick Default, resume an old transcript, or set a different value in their shell.
+
+Use managed settings instead:
+
+| Setting | Description | Secure value |
+|---------|-------------|--------------|
+| `availableModels` | Allowlist of families or IDs for the main session, subagents, skills, advisor, and background agents | Moderate: `["sonnet", "haiku", "opus"]`. Strict: `["sonnet", "haiku"]`. Baseline: unset. Never ship `[]` expecting total lockdown. |
+| `enforceAvailableModels` | Extend the allowlist to the Default picker option | `true` on Moderate and Strict. Requires Claude Code v2.1.175+. |
+
+If `ANTHROPIC_MODEL` names a family outside the list, Claude Code substitutes an allowed model at startup and warns. Cloud sessions on Anthropic-managed VMs ignore device files; deliver the list through server-managed settings.
+
+---
+
 ## Behavior Controls
 
 | Variable | Description | Secure value |

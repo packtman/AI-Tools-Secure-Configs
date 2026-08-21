@@ -175,6 +175,19 @@ See `examples/mcp-security.md` for the complete security guide.
 
 ---
 
+## Model selection
+
+`ANTHROPIC_MODEL`, `CLAUDE_MODEL`, `--model`, and `/model` override the session model. They are not an organization allowlist. Do not pin those variables in managed `env`.
+
+| Setting | Effect |
+|---------|--------|
+| `availableModels` | Allowlist of families or IDs for the main session, subagents, skills, advisor, and background agents. A managed list replaces user and project entries as of v2.1.175. Do not ship `[]` expecting total lockdown: Default still works. |
+| `enforceAvailableModels` | Extend the allowlist to the Default picker option. Requires Claude Code v2.1.175+ and a non-empty `availableModels` list. |
+
+Cloud sessions on Anthropic-managed VMs ignore device files. Deliver the list through server-managed settings. Claude Enterprise console model restrictions (v2.1.187+) apply in addition to this list; Console API-key orgs have no console control and must use these keys.
+
+---
+
 ## Managed-Only Settings (Cannot Be Overridden)
 
 | Setting | Effect |
@@ -196,7 +209,8 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `minimumVersion` to enforce a floor version (`2.1.175` if you pin `enforceAvailableModels`).
+- [ ] Pin `availableModels` plus `enforceAvailableModels: true` so `--model`, `ANTHROPIC_MODEL`, and Default cannot pick an unapproved family. Do not set `ANTHROPIC_MODEL` in managed `env` as a substitute.
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
 
 ### Phase 2: Permissions

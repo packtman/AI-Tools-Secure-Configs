@@ -235,6 +235,34 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | Disabled | No persistent AI memory. Prevents data leakage between sessions. |
 | Standard enterprise | Enabled | Productivity benefit outweighs risk. |
 
+### `availableModels`
+
+**What it does:** Restricts which models users can select for the main session, subagents, skills, the advisor, and background agents. Entries match a family (`sonnet`), a version prefix, or a full model ID. A managed list replaces user and project entries as of Claude Code v2.1.175.
+
+**Why it matters:** `ANTHROPIC_MODEL`, `CLAUDE_MODEL`, `--model`, and `/model` are session overrides. They are not org policy. Without a managed allowlist, any entitled model can run, including high-capability families you did not approve for cost, data handling, or capability reasons. An empty array (`[]`) blocks named picks but still leaves the account Default usable.
+
+**What goes wrong:** If the list has no guaranteed-available entry, Default-model enforcement is skipped. Device-local files do not reach Claude Code on the web; use server-managed settings for cloud sessions. On Bedrock, Vertex, Foundry, or a custom `ANTHROPIC_BASE_URL`, list the provider IDs your gateway actually serves.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `["sonnet", "haiku"]` | Keep common coding models. Exclude `opus` and `fable` until those families have an explicit exception. |
+| Standard enterprise | `["sonnet", "haiku", "opus"]` | Allow Opus for harder coding tasks. Still exclude `fable` until advisor and usage-credit review is done. |
+| Developer | Unset | Startups can use any entitled model. Pin the list when you need an org allowlist. |
+
+### `enforceAvailableModels`
+
+**What it does:** When `true` in managed settings and `availableModels` is a non-empty array, the Default picker option cannot resolve to a model outside the list. Requires Claude Code v2.1.175 or later.
+
+**Why it matters:** `availableModels` alone leaves Default on the account or org default. That is the loophole: a developer never types `--model` and still lands on an unapproved family.
+
+**What goes wrong:** `availableModels: []` never engages this setting. Pair it with `minimumVersion: "2.1.175"` (or `requiredMinimumVersion` if you need a hard startup floor).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Close the Default loophole. |
+| Standard enterprise | `true` | Same control; keep Opus in the allowlist so Default can remap to an approved family. |
+| Developer | Unset | No allowlist to enforce. |
+
 ### `CLAUDE_CODE_SKIP_PROMPT_HISTORY`
 
 **What it does:** Skips writing session transcripts to disk.
