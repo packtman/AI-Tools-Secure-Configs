@@ -92,7 +92,8 @@
 | 11 | GitHub Copilot Enterprise/Business seats provisioned for pilot teams | IT Ops | [ ] |
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
-| 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 14 | Minimum tool versions enforced: Claude Code >= 2.1.175, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 15 | Claude Code model allowlist reviewed: `availableModels` families match what the org is licensed and willing to run | Security | [ ] |
 
 ---
 
@@ -112,7 +113,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Model selection is limited to Sonnet, Haiku, and Opus. Default in `/model` follows that list. Fable and other unlisted families are not available.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +122,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code `/model`, `--model`, and `ANTHROPIC_MODEL` cannot select a family outside the org allowlist. Default remaps to the first allowed family.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +235,9 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `availableModels` | Unset | `["sonnet", "haiku", "opus"]` | `["sonnet", "haiku"]` | Moderate keeps Opus for harder coding tasks; Strict drops Opus and Fable. Do not ship `[]`: named picks are blocked but Default still works |
+| `enforceAvailableModels` | Unset | `true` | `true` | Closes the Default-picker loophole around `availableModels`. Requires Claude Code v2.1.175+. `ANTHROPIC_MODEL` is a session override, not a substitute |
+| `minimumVersion` | `"2.1.38"` | `"2.1.175"` | `"2.1.175"` | Enterprise tiers need 2.1.175 so `enforceAvailableModels` is honored |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -584,6 +589,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| `--model opus` / `ANTHROPIC_MODEL=opus` on Strict, or any unlisted family | Unapproved model families can increase cost, capability, and data-handling risk | Use `sonnet` or `haiku`. Request an exception to add the family to managed `availableModels`. Do not set `ANTHROPIC_MODEL` in shell profiles as a workaround. | Claude Code |
+| `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +604,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -627,3 +635,4 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+| **Model allowlists** | Claude Code `availableModels` does not constrain Cursor or GitHub Copilot. If you need the same families everywhere, pin each tool separately (Cursor dashboard models, Copilot policy models, Claude Enterprise console restrictions). |

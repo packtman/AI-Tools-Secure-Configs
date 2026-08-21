@@ -115,7 +115,13 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.175",
+
+  "availableModels": [
+    "sonnet",
+    "haiku"
+  ],
+  "enforceAvailableModels": true,
 
   "autoMemoryEnabled": false,
 

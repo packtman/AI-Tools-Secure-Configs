@@ -27,6 +27,7 @@ Use numeric prefixes to control merge order:
 managed-settings.json              ← base policy
 managed-settings.d/
 ├── 10-identity.json               ← identity & login restrictions
+├── 15-models.json                 ← model allowlist
 ├── 20-permissions.json            ← permission deny rules
 ├── 30-sandbox.json                ← sandbox configuration
 ├── 40-hooks.json                  ← audit hooks
@@ -42,10 +43,25 @@ managed-settings.d/
 {
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "YOUR_ORG_UUID",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.175",
   "autoUpdatesChannel": "stable"
 }
 ```
+
+### `15-models.json`
+
+```json
+{
+  "availableModels": [
+    "sonnet",
+    "haiku",
+    "opus"
+  ],
+  "enforceAvailableModels": true
+}
+```
+
+Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables override `model` for one session and are not an allowlist. An empty `availableModels` array does not lock users out of Default.
 
 ### `20-permissions.json`
 
