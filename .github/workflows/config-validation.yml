@@ -1,0 +1,62 @@
+name: Config Validation
+
+on:
+  pull_request:
+    paths:
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.toml"
+      - "**/*.sh"
+      - "automation/config-discovery/**"
+      - "scripts/validate_config_files.py"
+      - ".github/workflows/config-*.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate config templates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install validation tools
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user pyyaml toml
+
+      - name: Compile discovery scripts
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            automation/config-discovery/discover_configs.py \
+            automation/config-discovery/build_agent_scope.py \
+            scripts/validate_config_files.py
+
+      - name: Validate source registry
+        run: |
+          set -euo pipefail
+          python3 automation/config-discovery/discover_configs.py \
+            --sources automation/config-discovery/tool-sources.json \
+            --state automation/config-discovery/state/source-snapshots.json \
+            --report automation/config-discovery/reports/latest-config-discovery.md \
+            --check
+
+      - name: Smoke test discovery without network
+        run: |
+          set -euo pipefail
+          python3 automation/config-discovery/discover_configs.py \
+            --sources automation/config-discovery/tool-sources.json \
+            --state /tmp/source-snapshots.json \
+            --report /tmp/latest-config-discovery.md \
+            --offline
+
+      - name: Validate deployable config files
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py

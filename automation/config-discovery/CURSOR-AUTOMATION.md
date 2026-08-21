@@ -1,14 +1,14 @@
 # Cursor Automation Setup
 
-Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
+Use this prompt for a Cursor Cloud scheduled automation when the GitHub workflow opens a discovery-only handoff PR or when you want Cursor to perform the config-maintenance review.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor and PR orchestrator. Cursor Cloud acts as the config-maintenance agent when the Claude action is not configured or when a reviewer wants a second pass.
 
 ## Recommended Trigger
 
 - Schedule: daily, after `.github/workflows/config-discovery.yml` has run.
 - Repository: this repo.
-- Branch: default branch, unless your automation service creates a working branch automatically.
+- Branch: `automation/config-maintenance` when it exists, otherwise the default branch.
 
 ## Prompt
 

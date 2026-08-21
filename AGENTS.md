@@ -42,8 +42,14 @@ bash -n path/to/script.sh
 - `bash -n` for shell script syntax checking
 - `git` for version control
 
+### Automation and validation
+
+- `.github/workflows/config-discovery.yml` runs the scheduled upstream config discovery loop.
+- `.github/workflows/config-validation.yml` validates deployable config templates and discovery metadata on pull requests.
+- If `ANTHROPIC_API_KEY` is not configured for the discovery workflow, the workflow opens a discovery-only handoff PR instead of failing.
+
 ### Notes
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- There is no runnable application build or package dependency pipeline.
