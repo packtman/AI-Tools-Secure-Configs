@@ -100,6 +100,44 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `channelsEnabled`
+
+**What it does:** Master switch for channels, MCP servers that push events into a running Claude Code session. When off, the MCP server can still connect and its tools can still run, but pushed messages do not arrive. Also blocks `--dangerously-load-development-channels`.
+
+**Why it matters:** Channels are a research preview. A Telegram, Discord, or iMessage plugin can inject prompts into a live session. If the channel declares permission relay, an allowlisted sender can approve or deny tool use while the developer is away.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No inbound prompt injection from chat or webhook plugins. |
+| Standard enterprise | `false` | Disable until IT has a pilot, a sender allowlist process, and SIEM coverage. |
+| Developer | `true` | Allow official channel plugins after the user opts in per session with `--channels`. |
+
+### `allowedChannelPlugins`
+
+**What it does:** Replaces Anthropic's default channel-plugin allowlist with an organization list. Each entry names a `marketplace` and a `plugin`. Managed-settings only. An empty array blocks every channel plugin. This key takes effect only when `channelsEnabled` is `true`.
+
+**Why it matters:** If you enable channels without this key, Claude Code uses Anthropic's current default list and any later additions Anthropic publishes. Pinning the list is how you freeze today's official plugins or approve an internal marketplace.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `[]` | Defense in depth if someone later enables channels. |
+| Standard enterprise | `[]` | Same fail-closed default. Add named plugins only after a pilot. |
+| Developer | Official `claude-plugins-official` set (`telegram`, `discord`, `imessage`, `fakechat`) | Keeps today's research-preview plugins working, and blocks silent expansion of Anthropic's default list. |
+
+**What breaks if misconfigured:** A typo in marketplace or plugin names starts the session but the channel never registers. Empty array with `channelsEnabled: true` blocks all channel plugins. `--dangerously-load-development-channels` can still bypass this list; keep `channelsEnabled: false` to block that flag.
+
+### `syncClaudeAiSkills`
+
+**What it does:** Stops Claude Code from downloading skills enabled on the user's claude.ai account into `~/.claude/skills/synced/`, and hides skills already synced. In user or managed settings, already-synced copies move to `~/.claude/skills/.trash/`. Claude Code honors only `false`. `true` is the same as unset.
+
+**Why it matters:** Account-level skills are a supply-chain path onto the endpoint. Headless `-p` runs with `CLAUDE_CODE_SYNC_SKILLS` set would otherwise download them. A managed `false` wins over that environment variable. A repository file cannot turn this off.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No unreviewed claude.ai skills on the machine. |
+| Standard enterprise | `false` | Same default. Approve specific skills through managed plugins instead. |
+| Developer | Unset | Developers who export `CLAUDE_CODE_SYNC_SKILLS` can sync account skills. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

@@ -62,6 +62,12 @@
   "disableDeepLinkRegistration": "allow",
   "disableWorkflows": false,
   "channelsEnabled": true,
+  "allowedChannelPlugins": [
+    { "marketplace": "claude-plugins-official", "plugin": "telegram" },
+    { "marketplace": "claude-plugins-official", "plugin": "discord" },
+    { "marketplace": "claude-plugins-official", "plugin": "imessage" },
+    { "marketplace": "claude-plugins-official", "plugin": "fakechat" }
+  ],
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",

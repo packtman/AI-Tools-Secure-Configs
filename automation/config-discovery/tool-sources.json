@@ -56,6 +56,18 @@
             "ultracode",
             "managed settings"
           ]
+        },
+        {
+          "name": "Channels documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/channels.md",
+          "watch_for": [
+            "channelsEnabled",
+            "allowedChannelPlugins",
+            "enterprise",
+            "managed settings",
+            "plugin"
+          ]
         }
       ]
     },

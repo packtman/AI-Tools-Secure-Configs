@@ -39,6 +39,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
+| `CLAUDE_CODE_SYNC_SKILLS` | Download skills enabled on the user's claude.ai account during headless `-p` runs | Do not set on Moderate or Strict. Pin `syncClaudeAiSkills: false` in managed settings instead. A managed `false` still wins if this variable is exported. |
 
 ## MCP & Tools
 

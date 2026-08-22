@@ -31,6 +31,7 @@ managed-settings.d/
 ├── 30-sandbox.json                ← sandbox configuration
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
+├── 55-channels.json               ← channel plugins and synced skills
 └── 60-telemetry.json              ← telemetry & environment
 ```
 
@@ -125,6 +126,32 @@ managed-settings.d/
   "allowManagedMcpServersOnly": false
 }
 ```
+
+### `55-channels.json`
+
+```json
+{
+  "channelsEnabled": false,
+  "allowedChannelPlugins": [],
+  "syncClaudeAiSkills": false
+}
+```
+
+If Baseline keeps `channelsEnabled: true`, replace the empty array with named official plugins:
+
+```json
+{
+  "channelsEnabled": true,
+  "allowedChannelPlugins": [
+    { "marketplace": "claude-plugins-official", "plugin": "telegram" },
+    { "marketplace": "claude-plugins-official", "plugin": "discord" },
+    { "marketplace": "claude-plugins-official", "plugin": "imessage" },
+    { "marketplace": "claude-plugins-official", "plugin": "fakechat" }
+  ]
+}
+```
+
+Do not put bot tokens or chat IDs in this file. Channel plugins store credentials under `~/.claude/channels/<plugin>/.env` or read them from the environment (`TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`).
 
 ### `60-telemetry.json`
 

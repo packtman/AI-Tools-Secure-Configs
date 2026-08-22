@@ -167,6 +167,54 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `channelsEnabled`
+
+**Value:** `false`
+
+**What:** Master switch for channels (MCP servers that push events into a running Claude Code session from Telegram, Discord, iMessage, or a custom plugin).
+
+**Why (Moderate tier):** Channels are a research preview. An approved sender can inject prompts into a live session, and a channel that declares permission relay can approve or deny tool use remotely. Moderate keeps the feature off until IT has a pilot, a sender allowlist process, and SIEM coverage.
+
+**What breaks if set to true without `allowedChannelPlugins`:** Anthropic's default channel-plugin list applies, including later additions Anthropic publishes. `channelsEnabled: false` also blocks `--dangerously-load-development-channels`.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** `true`, so startups can use official channel plugins after they opt in per session with `--channels`.
+
+---
+
+## `allowedChannelPlugins`
+
+**Value:** `[]`
+
+**What:** Replaces Anthropic's default channel-plugin allowlist. Each entry is `{ "marketplace": "<name>", "plugin": "<name>" }`. Managed-settings only.
+
+**Why (Moderate tier):** Empty array is defense in depth. If someone later sets `channelsEnabled: true` without reviewing plugins, no channel plugin can register. Users still start Claude Code; the startup notice says the plugin is not on the organization's approved list.
+
+**What breaks if misconfigured:** Wrong marketplace or plugin names silently fail to register. Empty array with `channelsEnabled: true` blocks all channel plugins. This key does not block `--dangerously-load-development-channels`.
+
+**Strict difference:** Also `[]`.
+
+**Baseline difference:** Pins the official research-preview set (`telegram`, `discord`, `imessage`, `fakechat` from `claude-plugins-official`) so Anthropic expanding the default list later does not auto-approve new plugins.
+
+---
+
+## `syncClaudeAiSkills`
+
+**Value:** `false`
+
+**What:** Stops Claude Code from downloading skills enabled on the user's claude.ai account into `~/.claude/skills/synced/`, and hides skills already synced. In user or managed settings, already-synced skills move to `~/.claude/skills/.trash/`.
+
+**Why (Moderate tier):** Account-level skills are a supply-chain path onto the endpoint. Headless `-p` runs with `CLAUDE_CODE_SYNC_SKILLS` set would otherwise download them. A managed `false` is honored even when another source sets `true`. A repository file cannot turn this off.
+
+**What breaks if removed:** Non-interactive sessions can pull claude.ai skills onto the machine. Setting `true` is the same as unset and does not turn syncing on.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset, so developers who export `CLAUDE_CODE_SYNC_SKILLS` can sync account skills.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`
