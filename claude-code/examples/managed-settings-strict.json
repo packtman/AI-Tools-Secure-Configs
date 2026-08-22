@@ -110,6 +110,8 @@
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
   "channelsEnabled": false,
+  "allowedChannelPlugins": [],
+  "syncClaudeAiSkills": false,
 
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",

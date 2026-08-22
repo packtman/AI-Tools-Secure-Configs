@@ -184,6 +184,8 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
+| `allowedChannelPlugins` | Replace Anthropic's default channel-plugin allowlist (empty array blocks all) |
+| `syncClaudeAiSkills` | Stop downloading skills enabled on the user's claude.ai account |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
@@ -204,6 +206,8 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Keep `channelsEnabled: false` on Moderate and Strict. If Baseline keeps channels on, pin `allowedChannelPlugins` to named official plugins.
+- [ ] Set `syncClaudeAiSkills: false` on Moderate and Strict so claude.ai account skills are not downloaded in headless runs.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

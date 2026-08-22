@@ -115,6 +115,8 @@
   "disableWorkflows": true,
 
   "channelsEnabled": false,
+  "allowedChannelPlugins": [],
+  "syncClaudeAiSkills": false,
 
   "autoMemoryEnabled": false,
 

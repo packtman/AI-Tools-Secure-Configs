@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Channels (Telegram, Discord, iMessage, or custom plugins that push events into a live session) stay off. Skills enabled on your claude.ai account are not downloaded onto the machine.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +121,8 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code channels (`--channels`, Telegram/Discord/iMessage bridges) do not deliver messages. Use the terminal session or Remote Control if IT has approved it.
+- Claude Code does not download skills you enabled on claude.ai. Use managed or project skills that IT has reviewed.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +235,9 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `channelsEnabled` | `true` | `false` | `false` | Baseline allows official channel plugins after `--channels`; Moderate and Strict keep the research-preview push-into-session feature off, including the development-channel flag |
+| `allowedChannelPlugins` | Official `claude-plugins-official` set (`telegram`, `discord`, `imessage`, `fakechat`) | `[]` | `[]` | Baseline freezes today's official list so Anthropic adding plugins later does not auto-approve them; Moderate and Strict fail closed if someone later enables channels |
+| `syncClaudeAiSkills` | Unset | `false` | `false` | Moderate and Strict block claude.ai account-skill downloads onto the endpoint; Baseline leaves sync available for developers who export `CLAUDE_CODE_SYNC_SKILLS` |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -584,6 +589,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code channels (`--channels`, Telegram/Discord/iMessage) | A channel plugin can inject prompts into a live session. If it declares permission relay, an allowlisted sender can approve tool use while you are away. | Stay in the terminal session. If you need remote steering, ask IT whether Remote Control is approved. Do not use `--dangerously-load-development-channels` to bypass the allowlist. | Claude Code |
+| Claude Code claude.ai skill sync | Account-level skills download into `~/.claude/skills/synced/` on headless `-p` runs and are an unreviewed supply-chain path | Ask IT to deploy the skill as a managed plugin, or copy a reviewed skill into the project `.claude/skills/` directory. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +604,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `channelsEnabled: false` / empty `allowedChannelPlugins` | Developer wants Telegram, Discord, iMessage, or fakechat to push into a local session | Treat as a pilot exception. If approved, set `channelsEnabled: true` and name only the reviewed plugins in `allowedChannelPlugins`. Require each user to set a sender allowlist on the plugin. Keep bot tokens in a secrets manager or `~/.claude/channels/<plugin>/.env`, never in managed settings. |
+| `syncClaudeAiSkills: false` | Developer wants skills they enabled on claude.ai to appear in Claude Code | Do not turn syncing back on for the org. Deploy the reviewed skill as a managed plugin or a project skill. If a single user needs it, that is still an exception: a user-level `false` is honored, but a user-level `true` cannot override managed `false`. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -627,3 +636,4 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+| **Channels vs other MCP allowlists** | Claude Code `allowedChannelPlugins` is not Cursor's MCP allowlist and not Copilot `allowedMcpServers`. Closing Claude Code channels does not stop Cursor or Copilot from connecting the same Telegram or Discord MCP server as a normal tool. Configure each tool separately. |

@@ -173,6 +173,34 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Master switch for channels, MCP servers that push events into a running session.
+  // WHY: Channels are a research preview. A Telegram, Discord, or iMessage plugin can
+  //      inject prompts (and, if it declares permission relay, approve tool use) while
+  //      the developer is away. Moderate keeps channels off until IT reviews a pilot.
+  // BREAKS IF SET TO TRUE WITHOUT AN ALLOWLIST: Any plugin on Anthropic's default
+  //      channel list can register. Pair with allowedChannelPlugins if you enable this.
+  "channelsEnabled": false,
+
+  // WHAT: Replaces Anthropic's default channel-plugin allowlist with this org list.
+  // WHY: An empty array blocks every channel plugin if someone later sets
+  //      channelsEnabled to true. Without this key, enabling channels would silently
+  //      adopt Anthropic's current default list (telegram, discord, imessage, fakechat)
+  //      and any later additions Anthropic publishes.
+  // BREAKS IF MISCONFIGURED: A typo in marketplace or plugin names means a requested
+  //      channel starts the session but never registers. An empty array with
+  //      channelsEnabled true blocks all channel plugins. This key does not block
+  //      --dangerously-load-development-channels; keep channelsEnabled false for that.
+  "allowedChannelPlugins": [],
+
+  // WHAT: Stops Claude Code from downloading skills enabled on the user's claude.ai
+  //      account into ~/.claude/skills/synced/, and hides skills already synced.
+  // WHY: Account-level skills can contain instructions or scripts the local machine
+  //      did not review. Headless `-p` runs with CLAUDE_CODE_SYNC_SKILLS set would
+  //      otherwise download them. Managed false still wins over that env var.
+  // BREAKS IF REMOVED: Non-interactive sessions can pull claude.ai skills onto the
+  //      endpoint. Setting true is the same as unset and does not turn syncing on.
+  "syncClaudeAiSkills": false,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

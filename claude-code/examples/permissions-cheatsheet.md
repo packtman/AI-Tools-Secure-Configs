@@ -176,7 +176,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 
 | Key | Effect |
 |-----|--------|
-| `allowedChannelPlugins` | Allowlist of channel plugins |
+| `allowedChannelPlugins` | Replace Anthropic's default channel-plugin list. Empty array blocks all. Requires `channelsEnabled: true` to take effect. Does not block `--dangerously-load-development-channels`. |
 | `allowManagedHooksOnly` | Block user/project/plugin hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist applies |
 | `allowManagedPermissionRulesOnly` | Block user/project permission rules |
@@ -199,6 +199,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `syncClaudeAiSkills` | `false` stops downloading claude.ai account skills into `~/.claude/skills/synced/` |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---
