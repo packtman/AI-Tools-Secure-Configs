@@ -88,6 +88,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `"disable"` | Until auto mode exits research preview and the classifier is proven reliable. |
 | Developer | Not set | Let developers opt in for personal productivity. |
 
+### `useAutoModeDuringPlan`
+
+**What it does:** When `true` (the default, same as unset), Claude Code uses the auto mode classifier to review shell commands during plan mode instead of prompting. Plan mode is the read-only exploration mode (`Shift+Tab` to Plan, or `--permission-mode plan`). Set `false` to prompt for every command outside the built-in read-only set. Appears in `/config` as "Use auto mode during plan".
+
+**Why it matters:** `disableAutoMode` blocks the auto permission mode, but it does not cover this plan-mode path. With the default `true`, plan-mode shell still goes through the classifier whenever auto mode is available. A managed `false` is the organization lock. Vendor exception: `false` from managed settings, `--settings`, `~/.claude/settings.json`, or `.claude/settings.local.json` is honored even if another source sets `true`. A `false` in project `.claude/settings.json` is ignored, so a repository cannot turn it off for the user.
+
+**What breaks if misconfigured or removed:** Removing the key, or setting `true`, restores classifier review of plan-mode shell. Developers stop seeing prompts for non-read-only commands during planning.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Plan-mode shell must prompt. Classifier review is not an acceptable substitute for human approval. |
+| Standard enterprise | `false` | Same as Strict. Pair with `disableAutoMode: "disable"` so neither auto mode nor plan-mode classification is the approval path. |
+| Developer | Unset | Default `true` keeps plan-mode shell fast when the developer has opted into auto mode. |
+
 ### `disableWorkflows`
 
 **What it does:** Disables dynamic workflows and bundled workflow commands. When enabled, workflow commands are unavailable, the `workflow` keyword does not trigger a workflow run, and `ultracode` is removed from the effort menu. Equivalent environment control: `CLAUDE_CODE_DISABLE_WORKFLOWS=1`.

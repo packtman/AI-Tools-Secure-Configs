@@ -65,6 +65,7 @@ managed-settings.d/
     "disableBypassPermissionsMode": "disable"
   },
   "disableAutoMode": "disable",
+  "useAutoModeDuringPlan": false,
   "allowManagedPermissionRulesOnly": false
 }
 ```

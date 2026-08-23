@@ -19,6 +19,8 @@
 | **Content exclusion** | Rules telling an AI tool to ignore specific files (secrets, keys, credentials) so they are never sent to the AI model. |
 | **Workspace trust** | A feature in Cursor/VS Code that treats newly opened folders as untrusted until the user explicitly approves them, preventing malicious repo files from auto-executing. |
 | **Bypass mode** | A Claude Code flag (`--dangerously-skip-permissions`) that skips all permission prompts, giving the AI agent unrestricted access. |
+| **Plan mode** | A Claude Code permission mode for read-only exploration before edits (`Shift+Tab` to Plan, or `--permission-mode plan`). |
+| **Auto mode classifier** | A background safety checker that auto-approves or blocks tool calls when auto mode is available. It is not a substitute for `permissions.deny`. |
 | **Deep link** | A URL scheme (like `cursor://` or `vscode://`) that can trigger IDE actions when clicked, potentially from untrusted sources. |
 
 ---
@@ -112,7 +114,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Plan mode (read-only exploration before you accept a plan) also prompts for non-read-only shell commands instead of using the auto mode classifier.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +123,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- In Claude Code plan mode, shell commands outside the built-in read-only set prompt for approval. They no longer go through the auto mode classifier.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -232,6 +235,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `disableBypassPermissionsMode` | Not set | `"disable"` | `"disable"` | Moderate and Strict both block the dangerous skip-permissions flag |
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
+| `useAutoModeDuringPlan` | Unset (default `true`) | `false` | `false` | Moderate and Strict prompt for plan-mode shell outside the read-only set. Baseline keeps classifier review when auto mode is available. |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
@@ -333,6 +337,12 @@ claude --version
 # Verify org login
 claude auth status
 # Expected: shows your org name, not a personal account
+
+# Verify plan-mode shell prompts instead of classifier review
+# In a Claude Code session: Shift+Tab to Plan (or start with --permission-mode plan)
+# Ask Claude to run a non-read-only shell command such as mkdir tmp-plan-check
+# Expected: a permission prompt. The command should not auto-run via the auto mode classifier.
+# Also check /config: "Use auto mode during plan" should be off and not persist as on.
 ```
 
 #### Audit Logging
@@ -584,6 +594,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Plan-mode auto-classified shell (`useAutoModeDuringPlan: false`) | Default `true` lets the auto mode classifier review non-read-only shell during plan mode without a prompt | Stay in plan mode for reads and searches. When a command needs to run, approve the prompt, or leave plan mode after you accept the plan. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +608,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `useAutoModeDuringPlan: false` | Developer in plan mode is prompted for every non-read-only shell command | This is intentional. Do not set the key to `true` in managed settings to silence prompts. If a pilot group needs classifier review during plan, grant a time-boxed exception and keep `disableAutoMode: "disable"` unless auto mode itself is approved. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

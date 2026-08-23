@@ -78,6 +78,7 @@
   },
   "allowManagedPermissionRulesOnly": false,
   "disableAutoMode": "disable",
+  "useAutoModeDuringPlan": false,
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableRemoteControl": true,

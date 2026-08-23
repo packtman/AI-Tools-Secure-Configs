@@ -94,6 +94,8 @@
 
   "disableAutoMode": "disable",
 
+  "useAutoModeDuringPlan": false,
+
   "allowManagedPermissionRulesOnly": false,
 
   "allowManagedHooksOnly": false,

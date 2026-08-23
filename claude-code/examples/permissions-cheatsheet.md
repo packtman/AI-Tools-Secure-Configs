@@ -195,6 +195,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 |-----|--------|
 | `disableBypassPermissionsMode` | Prevents `--dangerously-skip-permissions` |
 | `disableAutoMode` | Prevents auto mode activation |
+| `useAutoModeDuringPlan` | When false, plan-mode shell outside the read-only set prompts instead of using the auto mode classifier |
 | `disableRemoteControl` | Blocks remote control feature |
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
