@@ -102,6 +102,7 @@
 
   "allowManagedPermissionRulesOnly": true,
   "disableAutoMode": "disable",
+  "useAutoModeDuringPlan": false,
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
   "forceRemoteSettingsRefresh": true,

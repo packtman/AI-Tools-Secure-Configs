@@ -40,6 +40,8 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
+There is no environment variable for `useAutoModeDuringPlan`. Pin that key in managed settings (`false` on Moderate and Strict). A project `.claude/settings.json` value is ignored.
+
 ## MCP & Tools
 
 | Variable | Description | Secure value |

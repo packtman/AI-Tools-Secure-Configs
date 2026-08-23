@@ -136,6 +136,17 @@
   //      on an experimental classifier.
   "disableAutoMode": "disable",
 
+  // WHAT: In plan mode (read-only exploration before edits), stop the auto mode
+  //      classifier from reviewing non-read-only shell commands without a prompt.
+  // WHY: disableAutoMode blocks the auto permission mode, but the default
+  //      useAutoModeDuringPlan: true still classifies plan-mode shell when auto
+  //      mode is available. Moderate requires a human prompt for those commands.
+  //      A managed false is the org lock. A false in user or local settings is
+  //      also honored. A false in project .claude/settings.json is ignored.
+  // BREAKS IF SET TO TRUE OR REMOVED: Plan-mode shell outside the built-in
+  //      read-only set can run without a prompt whenever auto mode is available.
+  "useAutoModeDuringPlan": false,
+
   // WHAT: Allows user/project hooks to run alongside managed hooks.
   // WHY: Set to false so teams can define their own hooks (linting, testing) while
   //      managed hooks (audit, secret scanning) always run.

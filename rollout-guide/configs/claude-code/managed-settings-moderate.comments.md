@@ -131,6 +131,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `useAutoModeDuringPlan`
+
+**Value:** `false`
+
+**What:** In plan mode (read-only exploration before edits), stop the auto mode classifier from reviewing non-read-only shell commands without a prompt. Appears in `/config` as "Use auto mode during plan". Default is `true` (same as unset).
+
+**Why (Moderate):** `disableAutoMode: "disable"` blocks the auto permission mode, but the default `useAutoModeDuringPlan: true` still classifies plan-mode shell whenever auto mode is available. Moderate requires a human prompt for those commands. A managed `false` is the org lock. Vendor exception: `false` from managed settings, `--settings`, `~/.claude/settings.json`, or `.claude/settings.local.json` is honored even if another source sets `true`. A `false` in project `.claude/settings.json` is ignored.
+
+**What breaks if set to true or removed:** Plan-mode shell outside the built-in read-only set can run without a prompt whenever auto mode is available.
+
+**Strict difference:** Also `false`. Strict does not accept classifier review as a substitute for prompts during planning.
+
+**Baseline difference:** Unset (default `true`) so developers who opt into auto mode keep classifier review during plan mode.
+
+---
+
 ## `disableRemoteControl`
 
 **Value:** `true`
