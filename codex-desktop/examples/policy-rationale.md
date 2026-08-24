@@ -140,6 +140,102 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.fast_mode` (Codex 0.149.0+)
+
+**What it does:** Enables Fast-tier model selection (`/fast`, `service_tier = "fast"`). Vendor default is `true`. Pin it in both `config.toml` and `requirements.toml`.
+
+**Why it matters:** Fast mode is a premium processing path. It changes spend and which backend serves the request. Pinning `false` in requirements.toml is the lock; config.toml alone can be overridden.
+
+**Overlap:** Claude Code Fast mode is a separate Owner toggle. Pin both if the org runs both tools.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No Fast-tier spend or processing path. |
+| Standard enterprise | `false` | Same pin. Track exceptions through FinOps. |
+| Individual developers | unset (`true`) | Optional productivity feature. |
+
+**What breaks:** `/fast` and Fast-tier picks fail. Use the pinned model instead.
+
+---
+
+## `features.goals` (Codex 0.149.0+)
+
+**What it does:** Enables persisted goals and automatic continuation across turns. Vendor default is `true`.
+
+**Why it matters:** Goals retain task context on disk and can continue work without a new human prompt. That is extra retention plus extra unattended shell.
+
+**Overlap:** Claude Code plan-mode auto classification and Continue `--auto` are separate. Pinning Codex Goals does not pin those tools.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No persisted auto-continue. |
+| Standard enterprise | `false` | Same pin for managed laptops. |
+| Individual developers | unset (`true`) | Optional productivity feature. |
+
+**What breaks:** Goal save/resume and auto-continue stop. Write the goal in a ticket, then start a new approved thread.
+
+---
+
+## `features.skill_mcp_dependency_install`
+
+**What it does:** Allows prompting and installing missing MCP (Model Context Protocol) packages that a skill declares. Vendor default is `true`.
+
+**Why it matters:** The install runs with the user's identity. This is separate from the MCP server allowlist.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All environments | `false` | Essential supply-chain control. |
+
+**What breaks:** Skills that need extra packages fail until IT installs a reviewed package.
+
+---
+
+## `allow_appshots` (requirements.toml only)
+
+**What it does:** Set to `false` to disable Appshots for managed users. If omitted, Appshots follow normal product availability.
+
+**Why it matters:** Appshots captures screenshots of other desktop apps. Those frames can include secrets, customer data, or another user's window.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No screenshot capture of other apps. |
+| Standard enterprise | `false` | Same pin. |
+| Individual developers | omit | Unconstrained. |
+
+**What breaks:** Screenshot-driven workflows fail. Describe the UI in text, or share a redacted image in the ticket.
+
+---
+
+## `allow_remote_control` (requirements.toml only)
+
+**What it does:** Set to `false` to disable device remote control for managed users. If omitted, remote control follows normal product availability.
+
+**Why it matters:** Remote control is an unattended endpoint access path. It is not the same as ChatGPT web Codex, and it is not Claude Code `disableRemoteControl`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All environments | `false` | Essential endpoint-control pin. |
+
+**What breaks:** Remote-control pairing and remote Desktop sessions fail. Stay on local sessions.
+
+**False-positive friction:** Helpdesk remote-assist workflows. Handle exceptions with a named jump host or existing MDM remote tools, not by enabling Codex remote control on every laptop.
+
+---
+
+## `allow_login_shell`
+
+**What it does:** When `true`, shell tools can run as login shells and source `~/.zprofile` / `~/.bash_profile`. Pin `false` in `requirements.toml` so users cannot re-enable it.
+
+**Why it matters:** `shell_environment_policy` strips secrets from the agent environment. A login shell sources the user's profile and puts those secrets back.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All environments | `false` | Essential bypass of environment policy. |
+
+**What breaks:** Commands that depend on profile-exported PATH or nvm/pyenv hooks. Put those vars in `[shell_environment_policy] set`.
+
+---
+
 ## Summary: Recommended Profiles
 
 ### Maximum Lockdown (Regulated)
@@ -155,6 +251,9 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +268,9 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false
 ```
 
 ### Developer Teams
@@ -185,4 +287,5 @@ computer_use = false
 memories = true
 codex_hooks = true
 multi_agent = true
+skill_mcp_dependency_install = false
 ```

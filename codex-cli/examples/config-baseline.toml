@@ -6,5 +6,17 @@ approval_policy = "never"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 
+# WHAT: Allow shell tools to run as login shells (source ~/.zprofile, ~/.bash_profile).
+# WHY: Baseline: login shells still re-import credentials that environment policy stripped.
+# WHAT BREAKS: Commands that rely on profile-exported PATH extras fail. Put those vars in [shell_environment_policy] set instead.
+allow_login_shell = false
+
 [sandbox_workspace_write]
 network_access = true
+
+# Essential 0.149.0+ pin only. Fast mode and Goals stay at vendor defaults.
+[features]
+# WHAT: Skills may prompt to install missing MCP (Model Context Protocol) dependencies.
+# WHY: Baseline: auto-install is still a supply-chain path even for startups.
+# WHAT BREAKS: Skills that need extra MCP packages fail until the user installs a reviewed package.
+skill_mcp_dependency_install = false

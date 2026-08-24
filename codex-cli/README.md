@@ -13,12 +13,15 @@ This directory contains security-hardened configurations for **OpenAI Codex CLI*
 | `examples/config-baseline.toml` | **Baseline** — Essential security only (startups, individual devs) |
 | `examples/system-config.toml` | System-wide defaults (`/etc/codex/config.toml`) |
 
-## Configuration Hierarchy (highest → lowest priority)
+CLI and Desktop share one requirements file. `config.toml` is a default, not a lock. For managed fleets, deploy the matching `codex-desktop/examples/requirements-*.toml` to `/etc/codex/requirements.toml` (Unix) or `%ProgramData%\OpenAI\Codex\requirements.toml` (Windows). Requires Codex 0.149.0 or later for the Fast mode, Goals, and skill MCP pins in this directory.
 
-1. **Command-line arguments** — Override everything for a single invocation
-2. **Project config** — `.codex/config.toml` (loaded only for trusted projects)
-3. **User config** — `~/.codex/config.toml`
-4. **System config** — `/etc/codex/config.toml` (Unix only)
+## Configuration Hierarchy (highest to lowest priority)
+
+1. **Command-line arguments**: Override everything for a single invocation
+2. **Admin requirements**: `/etc/codex/requirements.toml` (users cannot override pinned fields)
+3. **Project config**: `.codex/config.toml` (loaded only for trusted projects)
+4. **User config**: `~/.codex/config.toml`
+5. **System config**: `/etc/codex/config.toml` (Unix only)
 
 ## Key Security Concepts
 
@@ -59,4 +62,7 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 3. Set `approval_policy = "on-request"` for strict environments.
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
-6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+6. Pin `features.skill_mcp_dependency_install = false` so skills cannot install extra MCP (Model Context Protocol) packages.
+7. On Moderate and Strict, pin `features.fast_mode = false` and `features.goals = false` (Codex 0.149.0+).
+8. Pin `allow_login_shell = false` so shell tools cannot source login profiles.
+9. Audit `.codex/config.toml` in project repositories before marking them as trusted.

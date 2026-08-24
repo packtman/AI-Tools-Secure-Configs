@@ -14,6 +14,17 @@ cli_auth_credentials_store = "keyring"
 # Default model.
 model = "o4-mini"
 
+# WHAT: Allow shell tools to run as login shells (source ~/.zprofile, ~/.bash_profile).
+# WHY: Login shells re-import credentials that shell_environment_policy already stripped.
+allow_login_shell = false
+
 # Disable network in workspace-write sandbox mode at the system level.
 [sandbox_workspace_write]
 network_access = false
+
+# Codex 0.149.0+ org defaults. User and project configs can still override these
+# unless you also deploy /etc/codex/requirements.toml.
+[features]
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false

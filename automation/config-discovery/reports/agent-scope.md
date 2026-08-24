@@ -1,39 +1,26 @@
 # Agent scope for this run
 
-Process only the tools listed below. For each tool:
+This run applied a unique Codex 0.149.0+ config update instead of duplicating open Claude Code PRs.
 
-1. Read the cited missing terms and the upstream URL from the full discovery report.
-2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.
-3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.
-4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.
-5. Validate edited JSON, YAML, and TOML before finishing.
+Process notes:
 
-Do not attempt to review unchanged tools or sources with no missing local terms in this run.
+1. Claude Code missing terms (`ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_MODEL`, `CLAUDE_MODEL`, `CLAUDE_CODE_SUBAGENT_MODEL`) are session overrides. Org allowlisting is open PR #89. No pin.
+2. `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS` disables audit Notification hooks in Desktop/VS Code hosts. Leave unset.
+3. `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS` is a timing knob. No pin.
+4. Claude Desktop `CLAUDE_CODE_*` terms are Claude Code env vars, not Desktop config keys. No pin.
+5. Continue `mcpServers` is open PR #75. No pin.
+6. Unique work: pin Codex `fast_mode`, `goals`, `skill_mcp_dependency_install`, `allow_appshots`, `allow_remote_control`, and `allow_login_shell`. Repair the Desktop config-reference watcher.
 
-## Tools to process (4 of 5 with missing terms)
+## Applied this run
 
-### Claude Code
+### Codex CLI and Codex Desktop
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Source: OpenAI Codex config reference (`https://developers.openai.com/codex/config-reference`)
+- Pins: `features.fast_mode`, `features.goals`, `features.skill_mcp_dependency_install`, `allow_appshots`, `allow_remote_control`, `allow_login_shell`
+- Did not pin: `features.plugins`, `remote_plugin`, `plugin_sharing`, `[marketplaces]` (open PR #87)
 
-### Claude Code
+## Deferred
 
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
-
-### Continue.dev
-
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- OpenAI Platform OpenAPI schema event names
+- Claude Code `pluginSuggestionMarketplaces` (pair with marketplace PR #88 after merge)
+- `disableSideloadFlags` (open PR #61)

@@ -25,10 +25,16 @@ Create `requirements.toml`:
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allow_appshots = false
+allow_remote_control = false
+allow_login_shell = false
 
 [features]
 browser_use = false
 computer_use = false
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false
 ```
 
 ### Step 2: Deploy via GPO File Distribution
@@ -91,10 +97,16 @@ $content = @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allow_appshots = false
+allow_remote_control = false
+allow_login_shell = false
 
 [features]
 browser_use = false
 computer_use = false
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false
 "@
 
 Set-Content -Path $requirementsPath -Value $content -Encoding UTF8

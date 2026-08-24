@@ -10,6 +10,11 @@ model = "o4-mini"
 model_reasoning_effort = "high"
 web_search = "cached"
 
+# WHAT: Allow shell tools to run as login shells (source ~/.zprofile, ~/.bash_profile).
+# WHY: Moderate: login shells re-import credentials that shell_environment_policy already stripped.
+# WHAT BREAKS: Commands that rely on profile-exported PATH extras fail. Put those vars in [shell_environment_policy] set instead.
+allow_login_shell = false
+
 [sandbox_workspace_write]
 network_access = false
 
@@ -21,6 +26,18 @@ memories = false
 codex_hooks = true
 multi_agent = true
 undo = false
+# WHAT: Fast-tier model selection (service_tier = "fast").
+# WHY: Moderate: Fast mode changes spend and processing path without a review gate.
+# WHAT BREAKS: /fast and Fast-tier model picks fail. Developers use the standard catalog instead.
+fast_mode = false
+# WHAT: Persisted goals with automatic continuation across turns.
+# WHY: Moderate: unattended continuation plus on-disk goal state is extra retention and extra shell.
+# WHAT BREAKS: Goal save/resume and auto-continue stop.
+goals = false
+# WHAT: Skills may prompt to install missing MCP (Model Context Protocol) dependencies.
+# WHY: Moderate: auto-install is a supply-chain path. Packages run with the user's identity.
+# WHAT BREAKS: Skills that need extra MCP packages fail until IT installs the reviewed package.
+skill_mcp_dependency_install = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]

@@ -31,9 +31,17 @@ allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
+# Codex 0.149.0+ pins. Pair with requirements.toml on the device.
+allow_appshots = false
+allow_remote_control = false
+allow_login_shell = false
+
 [features]
 browser_use = false
 computer_use = false
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false
 ```
 
 ### Step 2: Create Managed Defaults TOML
