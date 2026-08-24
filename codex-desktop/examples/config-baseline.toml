@@ -10,6 +10,11 @@ model = "o4-mini"
 model_reasoning_effort = "high"
 web_search = "cached"
 
+# WHAT: Allow shell tools to run as login shells (source ~/.zprofile, ~/.bash_profile).
+# WHY: Baseline: login shells still re-import credentials that environment policy stripped.
+# WHAT BREAKS: Commands that rely on profile-exported PATH extras fail. Put those vars in [shell_environment_policy] set instead.
+allow_login_shell = false
+
 [sandbox_workspace_write]
 network_access = false
 
@@ -22,6 +27,10 @@ codex_hooks = true
 multi_agent = true
 undo = true
 shell_snapshot = true
+# WHAT: Skills may prompt to install missing MCP (Model Context Protocol) dependencies.
+# WHY: Baseline: auto-install is still a supply-chain path even for startups.
+# WHAT BREAKS: Skills that need extra MCP packages fail until the user installs a reviewed package.
+skill_mcp_dependency_install = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM", "EDITOR", "NODE_ENV"]

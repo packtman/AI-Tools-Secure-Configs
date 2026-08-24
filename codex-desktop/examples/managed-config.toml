@@ -11,6 +11,8 @@ sandbox_mode    = "workspace-write"
 web_search      = "cached"
 model           = "o4-mini"
 
+allow_login_shell = false
+
 model_reasoning_effort = "high"
 cli_auth_credentials_store = "keyring"
 
@@ -21,6 +23,10 @@ network_access = false
 browser_use = false
 computer_use = false
 codex_hooks = true
+# Codex 0.149.0+ managed defaults. Pair with requirements.toml so users cannot re-enable.
+fast_mode = false
+goals = false
+skill_mcp_dependency_install = false
 
 # OpenTelemetry — point at your corporate OTLP collector
 [otel]

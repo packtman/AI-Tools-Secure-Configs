@@ -112,6 +112,17 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+| `fast_mode` | Fast-tier model selection (`service_tier = "fast"`). Stable in Codex 0.149.0. On by default until pinned. |
+| `goals` | Persisted goals and automatic continuation. Stable in Codex 0.149.0. On by default until pinned. |
+| `skill_mcp_dependency_install` | Skills may prompt to install missing MCP (Model Context Protocol) packages. On by default until pinned. |
+
+Requirements-only keys (not valid in `config.toml`):
+
+| Key | Description |
+|-----|-------------|
+| `allow_appshots` | Set `false` to disable Appshots (screenshots of other desktop apps). Omitted means unconstrained. |
+| `allow_remote_control` | Set `false` to disable device remote control. Omitted means unconstrained. |
+| `allow_login_shell` | Set `false` so shell tools cannot source login profiles (`~/.zprofile`). Login shells re-import credentials that `shell_environment_policy` stripped. |
 
 ### Protected Paths
 
@@ -140,6 +151,8 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] On Moderate and Strict, pin `fast_mode = false`, `goals = false`, `allow_appshots = false`
+- [ ] On all tiers, pin `skill_mcp_dependency_install = false`, `allow_remote_control = false`, and `allow_login_shell = false`
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

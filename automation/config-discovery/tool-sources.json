@@ -231,14 +231,15 @@
         },
         {
           "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "profiles"
+            "fast_mode",
+            "goals",
+            "skill_mcp_dependency_install",
+            "allow_appshots",
+            "allow_remote_control",
+            "allow_login_shell"
           ]
         }
       ]

@@ -9,12 +9,30 @@ cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 web_search = "disabled"
 
+# WHAT: Allow shell tools to run as login shells (source ~/.zprofile, ~/.bash_profile).
+# WHY: Strict: login shells re-import credentials that shell_environment_policy already stripped.
+# WHAT BREAKS: Commands that rely on profile-exported PATH extras fail. Put those vars in [shell_environment_policy] set instead.
+allow_login_shell = false
+
 [sandbox_workspace_write]
 network_access = false
 
-# Disable high-risk features (pinnable via requirements.toml in Enterprise)
+# Disable high-risk features (pinnable via requirements.toml in Enterprise).
+# Codex 0.149.0+ also exposes Fast mode, Goals, and skill MCP installs.
 [features]
 browser_use = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Fast-tier model selection (service_tier = "fast") in the TUI.
+# WHY: Strict: Fast mode is a premium processing path. Keep it off until FinOps and security approve it.
+# WHAT BREAKS: /fast and Fast-tier model picks fail. Developers use the standard catalog instead.
+fast_mode = false
+# WHAT: Persisted goals with automatic continuation across turns.
+# WHY: Strict: goals retain task context on disk and can continue work without a new human prompt.
+# WHAT BREAKS: Goal save/resume and auto-continue stop. Keep using one-shot threads with approval_policy.
+goals = false
+# WHAT: Skills may prompt to install missing MCP (Model Context Protocol) dependencies.
+# WHY: Strict: auto-install is a supply-chain path. Packages run with the user's identity.
+# WHAT BREAKS: Skills that need extra MCP packages fail until IT installs the reviewed package.
+skill_mcp_dependency_install = false

@@ -622,6 +622,66 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 
 ---
 
+## 16. Fast Mode (`features.fast_mode`)
+
+**What it does:** Enables Fast-tier model selection in the TUI, including `/fast` and `service_tier = "fast"` when the active model advertises a Fast tier. Stable in Codex 0.149.0. Vendor default is `true`.
+
+**Why it matters:** Fast mode is a premium processing path. It changes spend, rate limits, and which backend serves the request. It is not a sandbox control, but leaving it unconstrained lets every developer opt into a higher-cost, separately provisioned path.
+
+**Overlap:** Claude Code has its own Fast mode Owner toggle. Pinning Codex `features.fast_mode` does not pin Claude Code `/fast`. Configure both if the org runs both tools.
+
+| Environment | Value | Rationale |
+|-------------|-------|-----------|
+| Strict | `false` | No Fast-tier spend or processing path until FinOps and security approve it. |
+| Moderate | `false` | Same pin. Developers use the standard catalog. |
+| Baseline | unset (`true`) | Startups may use Fast mode. Track spend in the OpenAI dashboard. |
+
+**What breaks:** `/fast` and Fast-tier picks fail. Safe equivalent: keep the pinned model (for example `o4-mini`) and raise `model_reasoning_effort` if you need more thorough analysis.
+
+## 17. Goals (`features.goals`)
+
+**What it does:** Enables persisted goals and automatic continuation across turns. Stable in Codex 0.149.0. Vendor default is `true`.
+
+**Why it matters:** Goals store task context on disk and can continue work without a new human prompt. That is extra data retention plus extra unattended shell, on top of `approval_policy`.
+
+**Overlap:** Claude Code `useAutoModeDuringPlan` and Continue `--auto` are separate unattended-work controls. Pinning Codex Goals does not pin those tools.
+
+| Environment | Value | Rationale |
+|-------------|-------|-----------|
+| Strict | `false` | No persisted auto-continue. Every thread is one-shot with approval_policy. |
+| Moderate | `false` | Same pin for standard enterprise laptops. |
+| Baseline | unset (`true`) | Individual developers may keep Goals. |
+
+**What breaks:** Goal save/resume and auto-continue stop. Safe equivalent: write the goal into the PR description or a ticket, then start a new thread with `approval_policy = "on-request"`.
+
+## 18. Skill MCP Dependency Install (`features.skill_mcp_dependency_install`)
+
+**What it does:** Allows prompting and installing missing MCP (Model Context Protocol) packages that a skill declares. Vendor default is `true`.
+
+**Why it matters:** The install runs with the user's identity. A skill can pull an unreviewed package (dependency confusion, malicious postinstall). This is separate from the MCP server allowlist in `requirements.toml`.
+
+| Environment | Value | Rationale |
+|-------------|-------|-----------|
+| All tiers | `false` | Essential supply-chain control. IT installs reviewed MCP packages instead. |
+
+**What breaks:** Skills that need extra MCP packages fail until the package is installed by a human. Safe equivalent: file an exception, IT installs the package, then re-run the skill.
+
+**False-positive friction:** first-run skills that expect npm/pip on demand. Do not set `skill_mcp_dependency_install = true` on laptops. Handle it as an exception that adds the package to the org image.
+
+## 19. Login Shell (`allow_login_shell`)
+
+**What it does:** When `true`, shell tools can run as login shells and source `~/.zprofile` / `~/.bash_profile`. Vendor default allows login shells unless pinned.
+
+**Why it matters:** `shell_environment_policy` strips secrets from the agent environment. A login shell sources the user's profile and puts those secrets back. This is a bypass of the environment policy, not a convenience flag.
+
+| Environment | Value | Rationale |
+|-------------|-------|-----------|
+| All tiers | `false` | Essential. Put needed PATH extras in `[shell_environment_policy] set` instead. |
+
+**What breaks:** Commands that depend on profile-exported PATH or nvm/pyenv hooks. Safe equivalent: add the required vars to `[shell_environment_policy] set` or use a direnv-style project file that does not contain secrets.
+
+---
+
 ## Summary Matrix
 
 | Setting | Strict (Regulated) | Standard (Development) | Permissive (Research) |
@@ -640,3 +700,7 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 | `--yolo` | Blocked by policy | Blocked by policy | Discouraged |
 | Profile | `strict` | `standard` | `research` |
 | Project trust | Explicit review required | Trusted after review | Trusted after review |
+| `features.fast_mode` | `false` | `false` | unset (`true`) |
+| `features.goals` | `false` | `false` | unset (`true`) |
+| `features.skill_mcp_dependency_install` | `false` | `false` | `false` |
+| `allow_login_shell` | `false` | `false` | `false` |
