@@ -114,6 +114,8 @@
 
   "disableWorkflows": true,
 
+  "fastMode": false,
+
   "channelsEnabled": false,
 
   "autoMemoryEnabled": false,
@@ -132,6 +134,7 @@
 
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
   }
 }
