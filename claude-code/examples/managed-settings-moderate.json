@@ -93,6 +93,7 @@
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "fastMode": false,
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
@@ -129,6 +130,7 @@
   },
 
   "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "0"
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
   }
 }

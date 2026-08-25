@@ -31,7 +31,8 @@ managed-settings.d/
 ├── 30-sandbox.json                ← sandbox configuration
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
-└── 60-telemetry.json              ← telemetry & environment
+├── 60-telemetry.json              ← telemetry & environment
+└── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
 ```
 
 ## Example Files
@@ -138,6 +139,19 @@ managed-settings.d/
   }
 }
 ```
+
+### `65-fast-mode.json`
+
+```json
+{
+  "fastMode": false,
+  "env": {
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
+  }
+}
+```
+
+Use this fragment on Moderate and Strict. Leave it out of Baseline so `/fast` stays available after the Owner console toggle (Team/Enterprise) or provisioned Console access. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
 
 ## Benefits
 

@@ -173,6 +173,18 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Turns Claude Code Fast mode off for every session.
+  // WHY: Fast mode is a research preview that uses Claude Opus at higher per-token
+  //      cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). /fast writes
+  //      fastMode: true to user settings and persists across sessions. Moderate
+  //      keeps standard-speed Opus available and blocks this spend path until
+  //      billing, usage-credit, and exception process exist. Pair with
+  //      CLAUDE_CODE_DISABLE_FAST_MODE=1 so --settings cannot turn it back on.
+  //      This is not Codex features.fast_mode: pin both if the org runs both tools.
+  // BREAKS IF SET TO FALSE: /fast stays disabled, the lightning icon does not
+  //      appear, and sessions stay on standard-speed Opus (or the current model).
+  "fastMode": false,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -252,6 +264,16 @@
   //      (prevents persistent AI context that could contain sensitive data).
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    // WHAT: Session kill switch for Fast mode. Read at startup.
+    // WHY: A managed fastMode: false can still be overridden for one session by
+    //      --settings '{"fastMode": true}'. This env turns Fast mode off and the
+    //      settings key cannot turn it back on. Do not set
+    //      CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK or
+    //      CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS; those skip the org-disabled
+    //      availability check.
+    // BREAKS IF REMOVED: Users can re-enable Fast mode for one session with
+    //      --settings or /fast unless the console Owner toggle is also off.
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
   }
 }

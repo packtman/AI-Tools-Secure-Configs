@@ -30,7 +30,9 @@
             "permissions",
             "disableBypassPermissionsMode",
             "sandbox",
-            "MCP"
+            "MCP",
+            "fastMode",
+            "CLAUDE_CODE_DISABLE_FAST_MODE"
           ]
         },
         {
@@ -55,6 +57,18 @@
             "CLAUDE_CODE_DISABLE_WORKFLOWS",
             "ultracode",
             "managed settings"
+          ]
+        },
+        {
+          "name": "Fast mode documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/fast-mode",
+          "watch_for": [
+            "fast mode",
+            "fastMode",
+            "fastModePerSessionOptIn",
+            "CLAUDE_CODE_DISABLE_FAST_MODE",
+            "research preview"
           ]
         }
       ]

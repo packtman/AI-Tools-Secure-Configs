@@ -38,6 +38,9 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
 | `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
+| `CLAUDE_CODE_DISABLE_FAST_MODE` | Disable Fast mode (research-preview high-cost Opus speed path). The `fastMode` settings key cannot turn it back on while this is set. | `1` for Moderate and Strict |
+| `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` | Skip the Fast mode org-availability check | Do not set. Bypasses "disabled by your organization." |
+| `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` | Treat a failed Fast mode availability check as available | Do not set. Use only as a documented exception when an LLM gateway blocks `api.anthropic.com`. |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
 ## MCP & Tools
@@ -71,6 +74,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "HTTPS_PROXY": "https://proxy.corp.example.com:8443",
     "NO_PROXY": "localhost,127.0.0.1,.corp.example.com",
     "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/corp-ca-bundle.crt",
@@ -88,6 +92,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "DISABLE_AUTOUPDATER": "1"
   }
 }

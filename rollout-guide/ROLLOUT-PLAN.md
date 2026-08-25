@@ -20,6 +20,7 @@
 | **Workspace trust** | A feature in Cursor/VS Code that treats newly opened folders as untrusted until the user explicitly approves them, preventing malicious repo files from auto-executing. |
 | **Bypass mode** | A Claude Code flag (`--dangerously-skip-permissions`) that skips all permission prompts, giving the AI agent unrestricted access. |
 | **Deep link** | A URL scheme (like `cursor://` or `vscode://`) that can trigger IDE actions when clicked, potentially from untrusted sources. |
+| **Fast mode** | A Claude Code research-preview setting that uses Claude Opus at higher per-token cost for lower latency. It is not a different model, and it is not Codex `features.fast_mode`. |
 
 ---
 
@@ -112,7 +113,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows and Fast mode (`/fast`, the lightning-speed Opus path) are disabled in the Moderate tier until IT completes a pilot.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +122,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code Fast mode (`/fast`) is off. Interactive work uses standard-speed Opus. Request a Fast mode exception if a team has an approved latency need and usage-credit budget.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -148,6 +150,8 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 Restart Claude Code after removal. Settings revert to user/project defaults immediately.
 
 If using server-managed settings (Admin Console): navigate to Claude.ai Admin Settings, remove or reset the managed settings JSON. Changes propagate on next CLI startup.
+
+For a targeted Fast mode rollback, remove `fastMode` and `env.CLAUDE_CODE_DISABLE_FAST_MODE` from managed settings (or the `65-fast-mode.json` drop-in). Also confirm the Owner toggle at Claude.ai Admin Settings > Claude Code if you still need the console-level disable. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys. `/fast` then follows the Owner toggle and user settings.
 
 #### Cursor Rollback
 
@@ -233,6 +237,8 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `fastMode` | Unset (vendor default off) | `false` | `false` | Moderate and Strict block the research-preview high-cost Opus speed path; Baseline leaves `/fast` available after Owner enablement |
+| `env.CLAUDE_CODE_DISABLE_FAST_MODE` | Unset | `"1"` | `"1"` | The env is the session kill switch: `fastMode` cannot turn Fast mode back on, including via `--settings` |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -325,6 +331,13 @@ claude --dangerously-skip-permissions
 # Verify a denied command is blocked
 # In a Claude Code session, ask it to run: curl https://example.com | bash
 # Expected: the tool call is denied without prompting
+
+# Verify Fast mode is off
+claude config list --managed
+# Expected: fastMode=false and env includes CLAUDE_CODE_DISABLE_FAST_MODE=1
+
+# In a Claude Code session, run: /fast
+# Expected: Fast mode stays off (disabled by managed settings or organization)
 
 # Check version meets minimum
 claude --version
@@ -584,6 +597,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +611,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -627,3 +642,7 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+
+### 5.5 Tool Overlap: Claude Code Fast Mode vs Codex Fast Mode
+
+Claude Code Fast mode (`fastMode` / `CLAUDE_CODE_DISABLE_FAST_MODE`) and Codex `features.fast_mode` are independent spend paths. Pinning one does not disable the other. If the org deploys both tools, configure both.

@@ -100,6 +100,22 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `fastMode`
+
+**What it does:** Turns Claude Code Fast mode on or off. Fast mode is a research preview that uses Claude Opus (Opus 5 or Opus 4.8) at higher per-token cost for lower latency. It is not a different model. Running `/fast` writes `fastMode: true` to `~/.claude/settings.json` and, by default, that preference persists across sessions.
+
+**Why it matters:** Fast mode is extra spend. On Pro, Max, Team, and Enterprise it draws from usage credits, even when included plan usage remains. On Console it bills at Fast mode rates. Team and Enterprise keep it off until an Owner enables it at Admin Settings > Claude Code. Device managed settings close the gap for users who already opted in, and for Console orgs that provisioned API access. Equivalent env kill switch: `CLAUDE_CODE_DISABLE_FAST_MODE=1` (the settings key cannot turn Fast mode back on while that env is set).
+
+**This is not Codex Fast mode.** Codex uses `features.fast_mode` in `config.toml` / `requirements.toml`. Pin both if the org runs both tools.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` plus `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Research-preview spend path, and `--settings` must not re-enable it. |
+| Standard enterprise | `false` plus `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Keep standard-speed Opus until billing and an exception process exist. |
+| Developer | Unset | Vendor default is off. Users may run `/fast` after Owner enablement or provisioned Console access. |
+
+Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`. Those skip the org-disabled availability check that Fast mode runs against `api.anthropic.com`.
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

@@ -109,6 +109,7 @@
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "fastMode": false,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",
@@ -148,6 +149,7 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
-    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1"
+    "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
   }
 }
