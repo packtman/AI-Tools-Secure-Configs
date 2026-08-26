@@ -233,6 +233,20 @@
         "//etc/shadow",
         "//etc/sudoers"
       ],
+      // WHAT: Honor only managed-settings allowRead entries. User, project, and
+      //      local allowRead lists are ignored.
+      // WHY: allowRead merges across every settings file by default. A more
+      //      specific allowRead can re-open a path inside a managed denyRead
+      //      region (for example, allowRead of ~/.ssh inside denyRead of ~/.ssh
+      //      or ~/). Moderate locks this so developers cannot punch holes in
+      //      the credential deny list.
+      // BREAKS IF FALSE OR REMOVED: A project or user settings file can add
+      //      allowRead for ~/.ssh, ~/.aws, or other denied credential paths
+      //      and the narrower allow wins.
+      // BREAKS IF TRUE WITHOUT A MANAGED allowRead: Developers cannot add
+      //      extra read exceptions. Workspace reads still work because Moderate
+      //      denyRead does not cover the project directory.
+      "allowManagedReadPathsOnly": true,
       // WHAT: Paths that sandboxed commands cannot write to.
       "denyWrite": [
         "~/",

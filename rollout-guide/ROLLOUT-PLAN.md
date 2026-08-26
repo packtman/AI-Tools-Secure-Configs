@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. Sandboxed commands cannot re-open denied credential paths (`~/.ssh`, `~/.aws`, `~/.gnupg`) through a local `allowRead` exception.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -123,6 +123,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
+- Local Claude Code `allowRead` exceptions cannot re-open denied credential directories. Request a managed-settings change if a tool legitimately needs a new read path.
 - Copilot CLI (`gh copilot suggest`) is disabled.
 
 **What is NOT affected:**
@@ -240,6 +241,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | Not set | `true` | `true` | Moderate and Strict ignore user/project `allowRead` so developers cannot re-open denied credential paths. Baseline has no sandbox filesystem rules. |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
@@ -578,6 +580,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `chmod 777 <path>` | Removes all file permission restrictions | Use specific permissions: `chmod 644` for files, `chmod 755` for executables | Claude Code |
 | Reading `.env` files | Credential theft | Use a secrets manager (Vault, AWS Secrets Manager, 1Password CLI). Reference secrets via environment variables: `$DATABASE_URL` | Claude Code, Cursor, Copilot |
 | Reading `~/.ssh/*`, `~/.aws/*` | Key/credential theft | Never let AI tools access credential directories. Configure credentials manually or via your secrets manager. | Claude Code |
+| Local `sandbox.filesystem.allowRead` for denied paths | Hole-punch: a more specific `allowRead` re-opens a path inside managed `denyRead` | Keep credentials out of the sandbox. If a package manager cache or SDK path must be readable, request that path in managed settings instead of a user or project file. | Claude Code |
 | `npm install` (auto-run in Cursor) | Supply chain attack via malicious packages | Cursor will prompt for approval. Review the package name, then approve. This is a one-click approval, not a workflow change. | Cursor |
 | `rm -rf <path>` (Strict only) | Data destruction | In Moderate tier, specific dangerous patterns like `rm -rf /` are blocked but `rm` generally works. In Strict, all `rm` is blocked; use `git clean` or manually delete. | Claude Code (Strict) |
 | Copilot CLI (`gh copilot suggest`) | Generated shell commands on shared systems | Use Copilot Chat in the IDE instead. It generates code snippets you can review before running. | Copilot |
@@ -597,6 +600,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `sandbox.filesystem.allowManagedReadPathsOnly: true` | A local tool needs to read a path inside a denied region (for example a package cache under a blocked home subdirectory) | Do not disable the lock. Add the specific path to managed `allowRead` after review. Strict must keep `allowRead: ["."]` so the project stays readable under `denyRead: ["~/"]`. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

@@ -56,7 +56,7 @@
         "//etc/ssl/certs"
       ],
 
-      "allowManagedReadPathsOnly": false
+      "allowManagedReadPathsOnly": true
     },
 
     "network": {

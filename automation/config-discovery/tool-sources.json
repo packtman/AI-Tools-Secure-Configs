@@ -56,6 +56,18 @@
             "ultracode",
             "managed settings"
           ]
+        },
+        {
+          "name": "Sandboxing documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "watch_for": [
+            "allowManagedReadPathsOnly",
+            "allowManagedDomainsOnly",
+            "denyRead",
+            "allowRead",
+            "managed settings"
+          ]
         }
       ]
     },

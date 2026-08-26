@@ -116,6 +116,7 @@
         "//etc/shadow",
         "//etc/sudoers"
       ],
+      "allowManagedReadPathsOnly": true,
       "denyWrite": [
         "~/",
         "//etc/",
