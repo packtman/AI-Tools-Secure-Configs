@@ -193,6 +193,16 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.filesystem.allowManagedReadPathsOnly: true`
+
+**What:** Honor only `sandbox.filesystem.allowRead` entries from managed settings. User, project, and local `allowRead` lists are ignored. `denyRead` still merges from every file.
+
+**Why (Moderate tier):** `allowRead` is a hole-punch into `denyRead`. Claude Code merges `allowRead` from every settings file unless this lock is set, and the more specific path wins. A developer (or a checked-out project) can therefore re-open `~/.ssh` or `~/.aws` even when managed settings denied those paths. Moderate keeps the credential deny list intact. Baseline leaves this unset because it does not deploy sandbox filesystem rules. Strict also sets `true` and pairs it with `denyRead: ["~/"]` plus `allowRead: ["."]`.
+
+**What breaks if false or removed:** User or project settings can add `allowRead` for denied credential paths and sandboxed Bash can read them.
+
+**What breaks if true:** Developers cannot add extra `allowRead` exceptions locally. File an exception to add a path in managed settings. Workspace reads still work because Moderate `denyRead` does not cover the project directory.
+
 ---
 
 ## `env` settings

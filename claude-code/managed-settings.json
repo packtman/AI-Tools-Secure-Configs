@@ -121,6 +121,9 @@
   "claudeMd": "",
 
   "sandbox": {
+    "filesystem": {
+      "allowManagedReadPathsOnly": true
+    },
     "network": {
       "allowManagedDomainsOnly": false
     }

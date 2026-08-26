@@ -79,6 +79,7 @@ managed-settings.d/
     "allowUnsandboxedCommands": false,
     "filesystem": {
       "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg"],
+      "allowManagedReadPathsOnly": true,
       "denyWrite": ["~/", "//etc/"]
     }
   }

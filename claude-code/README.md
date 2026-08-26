@@ -124,6 +124,8 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.failIfUnavailable` | Fail hard if sandbox cannot start |
 | `sandbox.filesystem.allowWrite` | Paths writable by sandboxed processes |
 | `sandbox.filesystem.denyRead` | Paths blocked from reading |
+| `sandbox.filesystem.allowRead` | Re-open specific paths inside a `denyRead` region (more specific path wins) |
+| `sandbox.filesystem.allowManagedReadPathsOnly` | Honor only managed `allowRead` entries so users cannot hole-punch `denyRead` |
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
@@ -210,6 +212,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Enable sandbox with `sandbox.enabled: true`.
 - [ ] Configure `filesystem.denyRead` for sensitive paths.
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
+- [ ] Set `filesystem.allowManagedReadPathsOnly: true` so user or project `allowRead` cannot re-open denied credential paths.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
 

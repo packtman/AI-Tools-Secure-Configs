@@ -187,6 +187,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.filesystem.allowManagedReadPathsOnly`
+
+**What it does:** Honor only `sandbox.filesystem.allowRead` entries from managed settings. User, project, and local `allowRead` lists are ignored. `denyRead` still merges from every file.
+
+**Why it matters:** `allowRead` is the documented hole-punch into a `denyRead` region, and the more specific path wins. Claude Code merges `allowRead` from every settings file unless this managed-only lock is set. A developer or a checked-out project can therefore re-open `~/.ssh` or `~/.aws` even when IT denied those paths. This is the filesystem counterpart of `sandbox.network.allowManagedDomainsOnly`.
+
+**What breaks if misconfigured or removed:** If set to `false` or omitted, local `allowRead` entries merge and can re-open denied credential paths. If set to `true` without a managed `allowRead` where you also denied a wide region such as `~/`, sandboxed commands cannot read the exceptions you intended (Strict must keep `allowRead: ["."]`).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Pair with `denyRead: ["~/"]` and `allowRead: ["."]` so only the project can be re-opened. |
+| Standard enterprise | `true` | Keep the credential `denyRead` list from being hole-punched by user or project settings. |
+| Developer | unset | Baseline does not deploy sandbox filesystem rules. |
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.
