@@ -213,6 +213,20 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | No external control of the agent. |
 | Standard enterprise | `true` | Unless specific remote control integrations are approved. |
 
+### `disableDesktopLocalSessions`
+
+**What it does:** Turns off Claude Desktop Code sessions that run on the device. SSH sessions to other hosts and cloud sessions stay available. The Local option stays in the dropdown but is grayed out, with a tooltip that the organization turned it off. On Windows the WSL entry is grayed out the same way. Managed-only: user and project settings cannot set this. The CLI ignores it. Only the JSON boolean `true` takes effect (not the string `"true"` or `1`).
+
+**Why it matters:** Local Desktop Code sessions use the laptop filesystem, credentials, and network. That bypasses policy you applied on managed remote hosts. Pair with `sshConfigs` so users land on a working SSH connection, and with `sshHostAllowlist` if you need to limit which hosts Desktop can reach.
+
+**What breaks if misconfigured or removed:** If omitted or not the boolean `true`, developers can start Local sessions on the laptop. If set to `true` without `sshConfigs` or a cloud environment, new Desktop Code sessions have nowhere to go.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | All Desktop Code work must run on SSH or cloud, not the laptop. |
+| Standard enterprise | `true` | Keep Code in Desktop, but do not run it against the unmanaged local disk. |
+| Developer | unset | Local sessions stay available. |
+
 ### `disableSkillShellExecution`
 
 **What it does:** Blocks shell execution in skill files and custom commands from user/project sources.

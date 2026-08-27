@@ -48,6 +48,8 @@ Changes require a full restart — no hot-reload.
 | `disableAutoUpdates` | Boolean | `false` | Disable automatic updates |
 | `autoUpdaterEnforcementHours` | Integer | `72` | Hours before force-restart for pending update (1-72) |
 
+`isClaudeCodeForDesktopEnabled: false` turns the entire Code tab off. To keep Code in Desktop but block on-device sessions, leave that MDM key `true` and set Claude Code managed settings `disableDesktopLocalSessions: true`. Desktop reads that key from local managed settings. The CLI ignores it. Pair with `sshConfigs` so users land on a working SSH connection.
+
 ### Policy Deployment
 
 | Platform | Mechanism |

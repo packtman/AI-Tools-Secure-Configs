@@ -157,6 +157,20 @@
   //      Claude Code sessions.
   "disableRemoteControl": true,
 
+  // WHAT: Turns off Claude Desktop Code sessions that run on the local device.
+  //      SSH sessions to other hosts and cloud sessions stay available.
+  // WHY: Local Desktop Code sessions use the laptop filesystem, credentials,
+  //      and network. That bypasses policy you applied on managed remote hosts.
+  //      Managed-only: user and project settings cannot set this. The CLI
+  //      ignores it. Only the JSON boolean true takes effect (not "true" or 1).
+  //      Pair with sshConfigs so users land on a working SSH connection.
+  // BREAKS IF REMOVED: Developers can start Local Code sessions on the laptop
+  //      even when IT intended all Desktop Code work to run on SSH or cloud.
+  // BREAKS IF TRUE WITHOUT sshConfigs OR CLOUD: The Local option is grayed out
+  //      and new sessions have nowhere to go until you add an SSH connection
+  //      or a cloud environment.
+  "disableDesktopLocalSessions": true,
+
   // WHAT: Prevents Claude Code from registering as a protocol handler for deep links.
   // WHY: Deep links (e.g., claude-code://) from untrusted websites could trigger
   //      Claude Code actions without the user's awareness.

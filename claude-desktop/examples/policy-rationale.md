@@ -55,7 +55,7 @@ Every setting below explains **what it does**, **why you should care**, and **th
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
 | Non-developer users | `false` | Business users have no need for coding tools. Prevents accidental exposure. |
-| Developer teams | `true` | Core functionality. Pair with Claude Code managed-settings.json for governance. |
+| Developer teams | `true` | Core functionality. Pair with Claude Code `managed-settings.json` for governance. If Code should stay in Desktop but not run on the laptop, set `disableDesktopLocalSessions: true` in Claude Code managed settings (not a Desktop MDM key). Deploy `sshConfigs` or a cloud environment first. The CLI ignores that key. `isClaudeCodeForDesktopEnabled: false` is coarser: it turns the entire Code tab off. |
 
 ---
 

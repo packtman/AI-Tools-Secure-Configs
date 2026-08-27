@@ -114,7 +114,7 @@ Machine-wide policies override per-user policies.
 ### For development environments
 
 1. Allow MCP servers (`isLocalDevMcpEnabled = true`) but deploy a curated allowlist.
-2. Set `isClaudeCodeForDesktopEnabled = true` — allow Claude Code access.
+2. Set `isClaudeCodeForDesktopEnabled = true` to allow Claude Code access. If Desktop Code must not run on the laptop, also set Claude Code managed settings `disableDesktopLocalSessions: true` and deploy `sshConfigs` (or a cloud environment) first. That key is not a Desktop MDM preference; Desktop reads it from Claude Code managed settings. The CLI ignores it.
 3. Set `secureVmFeaturesEnabled = false` until Cowork is vetted.
 4. Set `autoUpdaterEnforcementHours = 48` — allow reasonable update window.
 5. Provide a sanctioned `claude_desktop_config.json` with pre-approved servers.

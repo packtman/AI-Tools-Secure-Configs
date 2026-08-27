@@ -183,6 +183,7 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
+| `disableDesktopLocalSessions` | Turn off Desktop Code sessions that run on the device |
 | `channelsEnabled` | Enable/disable channels |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
@@ -204,6 +205,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `disableDesktopLocalSessions: true` if Desktop Code must run on SSH or cloud, not the laptop. Deploy `sshConfigs` first.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

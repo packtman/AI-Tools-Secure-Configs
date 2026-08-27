@@ -90,6 +90,7 @@
   "allowManagedMcpServersOnly": false,
   "allowManagedPluginsOnly": false,
   "disableRemoteControl": true,
+  "disableDesktopLocalSessions": true,
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,

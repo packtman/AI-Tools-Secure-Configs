@@ -182,6 +182,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `allowManagedPermissionRulesOnly` | Block user/project permission rules |
 | `blockedMarketplaces` | Blocklist of plugin marketplace sources |
 | `channelsEnabled` | Enable/disable channels |
+| `disableDesktopLocalSessions` | Turn off Desktop Code sessions that run on the device (CLI ignores this) |
 | `forceRemoteSettingsRefresh` | Block startup until settings fetched |
 | `pluginTrustMessage` | Custom plugin trust warning text |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed `allowRead` applies |

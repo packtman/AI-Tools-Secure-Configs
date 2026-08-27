@@ -141,6 +141,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableDesktopLocalSessions`
+
+**Value:** `true`
+
+**What:** Turns off Claude Desktop Code sessions that run on the local device. SSH sessions to other hosts and cloud sessions stay available. The Local option stays in the environment dropdown but is grayed out. On Windows, WSL is grayed out the same way (WSL availability is also governed separately). Managed-only: user and project settings cannot set this. The CLI ignores it. Only the JSON boolean `true` takes effect.
+
+**Why (Moderate tier):** Local Desktop Code sessions use the laptop filesystem, credentials, and network. That bypasses policy you applied on managed remote hosts. Moderate keeps Code in Desktop (`isClaudeCodeForDesktopEnabled: true`) but requires SSH or cloud. Baseline leaves this unset so local sessions stay available. Strict also sets `true`.
+
+**What breaks if false or removed:** Developers can start Local Code sessions on the laptop even when IT intended all Desktop Code work to run on SSH or cloud.
+
+**What breaks if true without `sshConfigs` or a cloud environment:** New sessions have nowhere to go. Deploy `sshConfigs` (placeholders only in this repo; fill in your hosts) before rollout. Pair with `sshHostAllowlist` if you need to limit which SSH hosts Desktop can reach.
+
+**Overlap:** This is not Claude Desktop MDM `isClaudeCodeForDesktopEnabled`. That key turns the entire Code tab off. This key keeps the Code tab and blocks only on-device sessions. Cursor and Claude Code CLI are unaffected.
+
+---
+
 ## `disableDeepLinkRegistration`
 
 **Value:** `"disable"`
