@@ -10,30 +10,31 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools to process (4 of 6 with missing terms)
 
 ### Claude Code
 
 - Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Missing terms: `ANTHROPIC_DEFAULT_MODEL`, `ANTHROPIC_MODEL`
 
 ### Claude Code
 
 - Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`, `CLAUDE_MODEL`
 
-### Continue.dev
+### Claude Code
 
-- Source: Configuration reference
-- Missing terms: `mcpServers`
+- Source: Dynamic workflows documentation
+- Missing terms: `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
 
-### Claude Desktop
+### Claude Code
 
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+- Source: Desktop local sessions documentation
+- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`
 
-## Deferred (1 tools)
+## Deferred (2 tools)
 
 These tools also have missing terms but are deferred to a follow-up run:
 
+- Claude Desktop (Claude Desktop MCP documentation)
 - OpenAI Platform (OpenAI OpenAPI schema)
