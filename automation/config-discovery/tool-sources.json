@@ -56,6 +56,18 @@
             "ultracode",
             "managed settings"
           ]
+        },
+        {
+          "name": "Desktop local sessions documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/desktop",
+          "watch_for": [
+            "disableDesktopLocalSessions",
+            "sshHostAllowlist",
+            "sshConfigs",
+            "Local sessions",
+            "managed settings"
+          ]
         }
       ]
     },

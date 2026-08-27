@@ -43,7 +43,8 @@ managed-settings.d/
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "YOUR_ORG_UUID",
   "minimumVersion": "2.1.38",
-  "autoUpdatesChannel": "stable"
+  "autoUpdatesChannel": "stable",
+  "disableDesktopLocalSessions": true
 }
 ```
 
