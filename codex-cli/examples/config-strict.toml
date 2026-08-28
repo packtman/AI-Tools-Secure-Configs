@@ -9,6 +9,16 @@ cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 web_search = "disabled"
 
+# WHAT: Extra developer instructions injected into every Codex session.
+# WHY: Strict: the model has no org-specific guardrails unless you set this. Soft control (prompt), not a sandbox.
+# WHAT BREAKS: Removing it does not disable tools. The agent just follows default behavior.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+Do not modify CI/CD, Dockerfile, or infrastructure files unless the user explicitly asks.
+"""
+
 [sandbox_workspace_write]
 network_access = false
 
@@ -18,3 +28,11 @@ browser_use = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Full Chrome DevTools Protocol (CDP) access, including Browser Developer mode.
+# WHY: Strict: CLI and Desktop share feature keys. Pin CDP off even on CLI hosts that also run the app.
+# WHAT BREAKS: Browser Developer mode fails closed on any Codex surface that reads this file.
+browser_use_full_cdp_access = false
+# WHAT: Computer Use in an external browser (not the in-app pane).
+# WHY: Strict: overlap with Desktop. A CLI-only laptop can still launch Desktop later against the same config.
+# WHAT BREAKS: Computer Use in Chrome, Edge, or Safari outside the in-app pane fails.
+browser_use_external = false

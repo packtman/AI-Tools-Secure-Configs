@@ -8,13 +8,27 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
-# Disable all extended features
+# Disable all extended features. Requires Codex 0.150.0 or later for CDP, external browser, and locked-use pins.
 [features]
 browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: Full Chrome DevTools Protocol (CDP) access, including Browser Developer mode.
+# WHY: Strict: CDP lets the agent inspect cookies, storage, and debugger state. Omit means requirements do not pin it.
+# WHAT BREAKS: Browser Developer mode and the ChatGPT desktop CDP toggle fail closed.
+browser_use_full_cdp_access = false
+# WHAT: Computer Use in an external browser (not the in-app pane).
+# WHY: Strict: external browsers carry the user's full cookie jar and logged-in SaaS sessions.
+# WHAT BREAKS: Computer Use in Chrome, Edge, or Safari outside the in-app pane fails.
+browser_use_external = false
+
+# WHAT: Allow Computer Use after a managed macOS device locks.
+# WHY: Strict: a locked Mac should not keep clicking and typing. This key does not enable Computer Use.
+# WHAT BREAKS: Unattended Computer Use after lock screen fails. Unlock the Mac to continue.
+[computer_use]
+allow_locked_computer_use = false
 
 # Deny reads to sensitive directories
 [permissions.filesystem]

@@ -190,7 +190,7 @@
             "configuration",
             "security",
             "sandbox",
-            "policy",
+            "allow_locked_computer_use",
             "permissions"
           ]
         }
@@ -231,14 +231,26 @@
         },
         {
           "name": "OpenAI Codex config reference",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference",
           "watch_for": [
             "config",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "computer_use",
+            "developer_instructions"
+          ]
+        },
+        {
+          "name": "OpenAI Codex managed configuration",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "watch_for": [
+            "requirements",
+            "allow_locked_computer_use",
+            "browser_use_full_cdp_access",
+            "browser_use_external",
+            "MDM"
           ]
         }
       ]

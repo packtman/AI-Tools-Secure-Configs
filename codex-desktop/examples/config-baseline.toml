@@ -10,6 +10,14 @@ model = "o4-mini"
 model_reasoning_effort = "high"
 web_search = "cached"
 
+# WHAT: Extra developer instructions injected into every Codex session.
+# WHY: Baseline: cover the two most common failure modes (secrets and piped installers) without extra process rules.
+# WHAT BREAKS: Removing it does not disable tools. The agent just follows default behavior.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Never use piped installers such as curl | bash.
+"""
+
 [sandbox_workspace_write]
 network_access = false
 
@@ -22,6 +30,14 @@ codex_hooks = true
 multi_agent = true
 undo = true
 shell_snapshot = true
+# WHAT: Full Chrome DevTools Protocol (CDP) access, including Browser Developer mode.
+# WHY: Baseline: in-app Browser Use is allowed, CDP debugger access is not.
+# WHAT BREAKS: Browser Developer mode and the ChatGPT desktop CDP toggle fail closed.
+browser_use_full_cdp_access = false
+# WHAT: Computer Use in an external browser (not the in-app pane).
+# WHY: Baseline: keep Browser Use inside the in-app pane so the user's full cookie jar stays out of scope.
+# WHAT BREAKS: Computer Use in Chrome, Edge, or Safari outside the in-app pane fails.
+browser_use_external = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM", "EDITOR", "NODE_ENV"]

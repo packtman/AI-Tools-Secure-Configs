@@ -10,6 +10,15 @@ model = "o4-mini"
 model_reasoning_effort = "high"
 web_search = "cached"
 
+# WHAT: Extra developer instructions injected into every Codex session.
+# WHY: Moderate: give the model org guardrails without blocking tools. Soft control (prompt), not a sandbox.
+# WHAT BREAKS: Removing it does not disable tools. The agent just follows default behavior.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+"""
+
 [sandbox_workspace_write]
 network_access = false
 
@@ -21,6 +30,14 @@ memories = false
 codex_hooks = true
 multi_agent = true
 undo = false
+# WHAT: Full Chrome DevTools Protocol (CDP) access, including Browser Developer mode.
+# WHY: Moderate: keep Browser Use off and also pin CDP so a later exception cannot enable debugger access locally.
+# WHAT BREAKS: Browser Developer mode and the ChatGPT desktop CDP toggle fail closed.
+browser_use_full_cdp_access = false
+# WHAT: Computer Use in an external browser (not the in-app pane).
+# WHY: Moderate: if Browser Use is later allowed, keep it in the in-app pane.
+# WHAT BREAKS: Computer Use in Chrome, Edge, or Safari outside the in-app pane fails.
+browser_use_external = false
 
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]

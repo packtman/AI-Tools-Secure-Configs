@@ -12,6 +12,7 @@ This directory contains security-hardened configurations for **OpenAI Codex CLI*
 | `examples/config-moderate.toml` | **Moderate** — Balanced development configuration |
 | `examples/config-baseline.toml` | **Baseline** — Essential security only (startups, individual devs) |
 | `examples/system-config.toml` | System-wide defaults (`/etc/codex/config.toml`) |
+| `../codex-desktop/examples/requirements-*.toml` | Shared admin-enforced requirements (CLI and Desktop read the same file) |
 
 ## Configuration Hierarchy (highest → lowest priority)
 
@@ -60,3 +61,5 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+7. Deploy the shared Desktop `requirements.toml` to `/etc/codex/requirements.toml` (or Windows `%ProgramData%\OpenAI\Codex\requirements.toml`) so CDP, external Browser Use, and locked Computer Use pins apply to CLI and Desktop together.
+8. Set `developer_instructions` in `config.toml` or `managed_config.toml`. That key is a prompt, not a sandbox. It is not valid in `requirements.toml`.

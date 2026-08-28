@@ -360,6 +360,10 @@ Controls how much compute the model spends on reasoning before generating a resp
 
 A system-level prompt injected into every Codex session. Used to set behavioral guardrails, coding standards, and security policies.
 
+Valid in `config.toml` and `managed_config.toml` only. Do not put this key in `requirements.toml` (unknown keys can fail the requirements load). It is a prompt, not a sandbox. Pair it with sandbox, approval, and requirements pins.
+
+Requires Codex 0.150.0 or later for the related hard pins: `features.browser_use_full_cdp_access`, `features.browser_use_external`, and `computer_use.allow_locked_computer_use` in the shared Desktop `requirements.toml`.
+
 ### How to Use for Security Guardrails
 
 | Guardrail | Example instruction | Purpose |
@@ -635,7 +639,9 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 | `exclude_tmp` / `exclude_tmpdir` | `true` / `true` | `true` / `true` | `true` / `true` |
 | `model` | Pinned + approved list | Pinned | Pinned or latest |
 | `model_reasoning_effort` | `high` | `medium` | `medium` or `low` |
-| `developer_instructions` | Strict guardrails | Standard guardrails | Minimal |
+| `developer_instructions` | Strict: secrets, no piped installers, parameterized queries, no CI/infra edits | Moderate: secrets, no piped installers, parameterized queries | Baseline: secrets and no piped installers |
+| `features.browser_use_full_cdp_access` | `false` | `false` | `false` |
+| `features.browser_use_external` | `false` | `false` | `false` |
 | Hooks | Full suite | PreToolUse + PostToolUse | Optional |
 | `--yolo` | Blocked by policy | Blocked by policy | Discouraged |
 | Profile | `strict` | `standard` | `research` |
