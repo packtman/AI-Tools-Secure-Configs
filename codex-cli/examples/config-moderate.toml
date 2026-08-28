@@ -6,5 +6,17 @@ approval_policy = "on-request"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 
+# Soft org guardrails. Not a sandbox.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+"""
+
 [sandbox_workspace_write]
 network_access = false
+
+# Pin Codex 0.150 browser-debug paths. Deploy the shared Desktop requirements.toml to lock them.
+[features]
+browser_use_full_cdp_access = false
+browser_use_external = false

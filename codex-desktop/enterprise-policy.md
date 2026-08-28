@@ -35,6 +35,11 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
 
 **Senior/Trusted Developers:**
@@ -46,6 +51,11 @@ allowed_web_search_modes = ["cached", "live"]
 [features]
 browser_use = true
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
 
 **Regulated Environments:**
@@ -59,6 +69,11 @@ browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
 
 ---
@@ -97,6 +112,11 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 EOF
 
 # Encode for MDM
@@ -150,6 +170,11 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 "@ | Set-Content -Path $requirementsPath -Encoding UTF8
 
 # Restrict permissions
@@ -189,6 +214,11 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 EOF
 
 sudo chmod 644 /etc/codex/requirements.toml
@@ -204,9 +234,10 @@ sudo chown root:root /etc/codex/requirements.toml
 1. Use cloud-managed requirements to enforce `read-only` sandbox and disable all extended features
 2. Set `allowed_web_search_modes = []` to disable web search entirely
 3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`
-4. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
-5. Restrict MCP servers to an empty allowlist or specific approved servers only
-6. Add command rules to forbid dangerous operations
+4. Pin `browser_use_full_cdp_access = false`, `browser_use_external = false`, and `[computer_use] allow_locked_computer_use = false` (Codex 0.150+)
+5. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
+6. Restrict MCP servers to an empty allowlist or specific approved servers only
+7. Add command rules to forbid dangerous operations
 
 ### For Development Environments
 

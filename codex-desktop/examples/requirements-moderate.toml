@@ -7,11 +7,25 @@ allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
-# Disable high-risk features but allow core development
+# Disable high-risk features but allow core development. Requires Codex 0.150.0 or later for CDP, external browser, and locked-use pins.
 [features]
 browser_use = false
 computer_use = false
 codex_hooks = true
+# WHAT: Full Chrome DevTools Protocol (CDP) access, including Browser Developer mode.
+# WHY: Moderate: CDP is a debugger backdoor even when Browser Use is off. Omit means a later exception can turn CDP on locally.
+# WHAT BREAKS: Browser Developer mode and the ChatGPT desktop CDP toggle fail closed.
+browser_use_full_cdp_access = false
+# WHAT: Computer Use in an external browser (not the in-app pane).
+# WHY: Moderate: external browsers carry cookies and logged-in SaaS sessions. Pin off even while Browser Use stays disabled.
+# WHAT BREAKS: Computer Use in Chrome, Edge, or Safari outside the in-app pane fails.
+browser_use_external = false
+
+# WHAT: Allow Computer Use after a managed macOS device locks.
+# WHY: Moderate: lock-screen Computer Use is unattended endpoint access. This key does not enable Computer Use.
+# WHAT BREAKS: Unattended Computer Use after lock screen fails. Unlock the Mac to continue.
+[computer_use]
+allow_locked_computer_use = false
 
 # Deny reads to credential files
 [permissions.filesystem]

@@ -29,6 +29,11 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
 
 ### Step 2: Deploy via GPO File Distribution
@@ -95,6 +100,11 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 "@
 
 Set-Content -Path $requirementsPath -Value $content -Encoding UTF8

@@ -25,11 +25,18 @@ web_search = "cached"
 # Reasoning effort — set explicit reasoning level.
 model_reasoning_effort = "high"
 
+# Soft org guardrails. Pair with requirements.toml for hard pins.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+"""
+
 # Sandbox network settings
 [sandbox_workspace_write]
 network_access = false
 
-# Feature flags — disable high-risk features by default.
+# Feature flags: disable high-risk features by default.
 [features]
 browser_use = false
 in_app_browser = false
@@ -37,6 +44,9 @@ computer_use = false
 memories = false
 codex_hooks = true
 multi_agent = true
+# Pin Codex 0.150 browser-debug paths even while Browser Use is off.
+browser_use_full_cdp_access = false
+browser_use_external = false
 
 # Shell environment — only forward essential variables to spawned commands.
 [shell_environment_policy]

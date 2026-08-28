@@ -15,6 +15,18 @@ cli_auth_credentials_store = "keyring"
 # Model selection — pin to a specific model to prevent drift.
 model = "o4-mini"
 
-# Sandbox network settings — disabled by default for security.
+# Soft org guardrails injected into every session.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+"""
+
+# Sandbox network settings: disabled by default for security.
 [sandbox_workspace_write]
 network_access = false
+
+# Pin Codex 0.150 browser-debug paths. Pair with /etc/codex/requirements.toml to lock them.
+[features]
+browser_use_full_cdp_access = false
+browser_use_external = false

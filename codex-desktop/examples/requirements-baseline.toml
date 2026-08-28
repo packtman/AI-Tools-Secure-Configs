@@ -8,9 +8,24 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
-# Only pin the most dangerous feature
+# Pin the most dangerous Computer Use and browser-debug paths. Requires Codex 0.150.0 or later.
+# Browser Use itself stays unconstrained here so Baseline config.toml can keep it on.
 [features]
 computer_use = false
+# WHAT: Full Chrome DevTools Protocol (CDP) access, including Browser Developer mode.
+# WHY: Baseline: CDP is a debugger backdoor. Teams can still use in-app Browser Use without CDP.
+# WHAT BREAKS: Browser Developer mode and the ChatGPT desktop CDP toggle fail closed.
+browser_use_full_cdp_access = false
+# WHAT: Computer Use in an external browser (not the in-app pane).
+# WHY: Baseline: in-app Browser Use is enough for most startups. External browsers expose the full cookie jar.
+# WHAT BREAKS: Computer Use in Chrome, Edge, or Safari outside the in-app pane fails.
+browser_use_external = false
+
+# WHAT: Allow Computer Use after a managed macOS device locks.
+# WHY: Baseline: even if a later exception enables Computer Use, a locked Mac should not keep clicking. Omit means unconstrained.
+# WHAT BREAKS: Unattended Computer Use after lock screen fails. Unlock the Mac to continue.
+[computer_use]
+allow_locked_computer_use = false
 
 # Block privilege escalation
 [rules]

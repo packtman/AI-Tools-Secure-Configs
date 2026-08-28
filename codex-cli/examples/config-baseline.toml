@@ -6,5 +6,16 @@ approval_policy = "never"
 cli_auth_credentials_store = "keyring"
 model = "o4-mini"
 
+# Soft org guardrails covering secrets and piped installers.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Never use piped installers such as curl | bash.
+"""
+
 [sandbox_workspace_write]
 network_access = true
+
+# Pin Codex 0.150 browser-debug paths. Browser Use itself is not pinned on Baseline.
+[features]
+browser_use_full_cdp_access = false
+browser_use_external = false

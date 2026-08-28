@@ -14,6 +14,13 @@ model           = "o4-mini"
 model_reasoning_effort = "high"
 cli_auth_credentials_store = "keyring"
 
+# Soft org guardrails injected into every session. Not a sandbox.
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+"""
+
 [sandbox_workspace_write]
 network_access = false
 
@@ -21,6 +28,9 @@ network_access = false
 browser_use = false
 computer_use = false
 codex_hooks = true
+# Pin Codex 0.150 browser-debug paths. Users can change session defaults; requirements.toml is the lock.
+browser_use_full_cdp_access = false
+browser_use_external = false
 
 # OpenTelemetry — point at your corporate OTLP collector
 [otel]

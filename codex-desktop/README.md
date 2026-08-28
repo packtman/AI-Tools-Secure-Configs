@@ -108,10 +108,18 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 |---------|-------------|
 | `browser_use` | Browser Use and Browser Agent |
 | `in_app_browser` | In-app browser pane |
+| `browser_use_full_cdp_access` | Full Chrome DevTools Protocol (CDP) access and Browser Developer mode (Codex 0.150+) |
+| `browser_use_external` | Computer Use in an external browser (Codex 0.150+) |
 | `computer_use` | Computer Use (macOS only) |
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+
+Requirements-only Computer Use lock (not a `[features]` key):
+
+| Key | Description |
+|-----|-------------|
+| `computer_use.allow_locked_computer_use` | When `false`, Computer Use stops after a managed macOS device locks. Omit means unconstrained. Does not enable Computer Use. |
 
 ### Protected Paths
 
@@ -130,6 +138,8 @@ The Codex Desktop App, CLI, and IDE extension share the same configuration syste
 
 These features introduce additional attack surface that administrators should evaluate.
 
+**Overlap with Codex CLI:** Desktop and CLI share `config.toml`, `requirements.toml`, and `managed_config.toml`. Deploy one `requirements.toml` for both surfaces. If you pin CDP, external Browser Use, or locked Computer Use only in Desktop config, a CLI host that later installs the app will not be locked until the same requirements file is on disk. Do not configure the same keys twice with different values.
+
 ---
 
 ## Deployment Checklist
@@ -140,6 +150,8 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `browser_use_full_cdp_access = false` and `browser_use_external = false` (Codex 0.150+)
+- [ ] Pin `[computer_use] allow_locked_computer_use = false` even when Computer Use is already off
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
@@ -155,3 +167,20 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set up RBAC via ChatGPT Enterprise workspace settings
 - [ ] Periodically audit drift between local configs and managed policies
 - [ ] Review MCP server access and tool permission grants
+
+### Validation (Codex 0.150+)
+
+Confirm the client is new enough, then confirm the pins are on disk (or in MDM):
+
+```bash
+codex --version
+# Expect 0.150.0 or later. Do not pin 0.151 alpha.
+
+# Linux / macOS system file
+grep -n "allow_locked_computer_use\|browser_use_full_cdp_access\|browser_use_external" /etc/codex/requirements.toml
+
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep -E "allow_locked_computer_use|browser_use_full_cdp_access|browser_use_external"
+```
+
+On Windows, open `%ProgramData%\OpenAI\Codex\requirements.toml` and confirm the same three keys. If a user can still enable Browser Developer mode, the requirements file is missing, unsigned, or the client is older than 0.150.0.

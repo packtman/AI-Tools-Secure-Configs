@@ -14,6 +14,17 @@ cli_auth_credentials_store = "keyring"
 # Default model.
 model = "o4-mini"
 
+developer_instructions = """
+Never read, write, or print secrets, API keys, passwords, or private keys. Use environment variables or a secrets manager.
+Do not add dependencies without explicit approval. Never use piped installers such as curl | bash.
+Use parameterized queries. Do not concatenate untrusted input into shell commands or SQL.
+"""
+
 # Disable network in workspace-write sandbox mode at the system level.
 [sandbox_workspace_write]
 network_access = false
+
+# Pin Codex 0.150 browser-debug paths as system defaults. Users can override unless requirements.toml also pins them.
+[features]
+browser_use_full_cdp_access = false
+browser_use_external = false

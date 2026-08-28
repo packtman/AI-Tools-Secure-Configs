@@ -60,6 +60,56 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use_full_cdp_access` (Codex 0.150+)
+
+**What it does:** Enables full Chrome DevTools Protocol (CDP) access in the local runtime, including Browser Developer mode. When pinned `false` in `requirements.toml`, the ChatGPT desktop app cannot turn the matching setting on.
+
+**Why it matters:** CDP is a debugger channel. The agent can inspect cookies, local storage, and page internals, not just click visible UI. Omitting the key leaves CDP unconstrained even when `browser_use = false`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All tiers | `false` in requirements | Teams can still use in-app Browser Use on Baseline without debugger access. |
+
+**What breaks:** Browser Developer mode and the ChatGPT desktop CDP toggle fail closed. Developers describe the page or use the in-app pane without CDP.
+
+## `browser_use_external` (Codex 0.150+)
+
+**What it does:** Allows Computer Use in an external browser (Chrome, Edge, Safari) instead of the in-app pane.
+
+**Why it matters:** External browsers carry the user's full cookie jar, password manager, and logged-in SaaS sessions. The in-app pane is a smaller session.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All tiers | `false` in requirements | Baseline can keep `browser_use = true` for the in-app pane. |
+
+**What breaks:** Computer Use outside the in-app pane fails. File an exception if a workflow must drive the user's real browser, then pair it with `allow_locked_computer_use = false`.
+
+## `computer_use.allow_locked_computer_use` (Codex 0.150+)
+
+**What it does:** Requirements-only. When `false`, Computer Use stops after a managed macOS device locks. This key does not enable Computer Use.
+
+**Why it matters:** If you omit it, requirements do not constrain locked use. A later exception that turns `computer_use` on would then keep clicking after lock screen.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All tiers | `false` | Defense in depth even while Computer Use stays pinned off. |
+
+**What breaks:** Unattended Computer Use after lock screen fails. The user unlocks the Mac to continue.
+
+## `developer_instructions`
+
+**What it does:** Extra text injected into every Codex session. Soft control (prompt), not a sandbox. Valid in `config.toml` and `managed_config.toml` only. Do not put it in `requirements.toml`.
+
+**Why it matters:** Without it, the model has no org-specific guardrails for secrets, piped installers, or SQL concatenation. It does not block tools. Sandbox, approvals, and requirements still do the enforcing.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Secrets, no piped installers, parameterized queries, no CI/infra edits | Highest prompt coverage. |
+| Standard enterprise | Secrets, no piped installers, parameterized queries | Skip the CI/infra line so approved platform work can proceed. |
+| Individual developers | Secrets and no piped installers | Keep it short. |
+
+**What breaks:** Removing it does not disable tools. The agent follows default behavior.
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -155,6 +205,11 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +224,11 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
 
 ### Developer Teams
@@ -185,4 +245,33 @@ computer_use = false
 memories = true
 codex_hooks = true
 multi_agent = true
+browser_use_full_cdp_access = false
+browser_use_external = false
+
+[computer_use]
+allow_locked_computer_use = false
 ```
+
+## Tier delta (Codex 0.150 keys)
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.browser_use` | unconstrained in requirements (config `true`) | `false` | `false` | Baseline keeps in-app browsing. Moderate and Strict remove the web prompt-injection path. |
+| `features.browser_use_full_cdp_access` | `false` | `false` | `false` | CDP is a debugger backdoor. No tier needs it for normal coding. |
+| `features.browser_use_external` | `false` | `false` | `false` | External browsers expose the full cookie jar. In-app pane is enough on Baseline. |
+| `features.computer_use` | `false` | `false` | `false` | Desktop control stays off on every tier. |
+| `computer_use.allow_locked_computer_use` | `false` | `false` | `false` | Omit means unconstrained. Pin off so a later Computer Use exception still stops at lock screen. |
+| `developer_instructions` | secrets + no piped installers | + parameterized queries, no new deps | + no CI/infra edits | Prompt only. Stricter text on Strict. Not valid in `requirements.toml`. |
+
+## Workflow-preservation notes
+
+| Blocked operation | Risk | Safe equivalent |
+|-------------------|------|-----------------|
+| Browser Developer mode / full CDP | Debugger access to cookies and storage | Use the in-app browser pane without CDP, or inspect the page in a human-driven browser |
+| Computer Use in Chrome, Edge, or Safari | The user's full cookie jar and password manager | Keep Browser Use in the in-app pane, or file an exception that still pins `allow_locked_computer_use = false` |
+| Computer Use after the Mac locks | Unattended clicks and typing | Unlock the Mac, then continue the session |
+| Piped installers (`curl \| bash`) via prompt only | Supply-chain install | Download, inspect the script, then run it. Sandbox and command rules are the real block. |
+
+False-positive friction: pinning `browser_use_external = false` while `browser_use = true` (Baseline) is expected. Developers still get in-app browsing. If a workflow must drive the user's real browser, treat it as an exception request, not a default.
+
+CLI and Desktop overlap: deploy one `requirements.toml`. Do not pin these keys only in Desktop `config.toml` and assume CLI hosts are covered.
