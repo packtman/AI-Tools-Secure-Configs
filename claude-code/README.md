@@ -204,6 +204,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `autoContinueAtUsageLimit: false` on Moderate and Strict so sessions do not wait and resume after a usage-limit reset without a person at the keyboard (requires Claude Code 2.1.234 or later).
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

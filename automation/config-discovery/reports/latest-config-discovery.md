@@ -3,6 +3,12 @@
 This report was generated because one or more watched upstream sources changed.
 Use `automation/config-discovery/agent-prompt.md` to turn these signals into a focused config update PR.
 
+## Config update applied (2026-08-29)
+
+Pinned Claude Code `autoContinueAtUsageLimit: false` on Moderate and Strict (Baseline unset). Vendor default is `true`, which waits in the open session and continues the task after a claude.ai usage-limit reset. That resumes Bash, writes, and MCP without a reviewer at the keyboard. Requires Claude Code 2.1.234 or later. Users can still start a wait from the usage-limit options menu. Added watcher `https://code.claude.com/docs/en/settings-reference.md`.
+
+Did not pin in this run (already in open PRs or not a new admin lock): `disableSideloadFlags` (#61), `pluginSuggestionMarketplaces` (#88), `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` (listed as conditional in #67, not a tier default), Codex 0.151 MCP startup grace (operational timeout, not a security pin). Do not pin Codex 0.152 alpha.
+
 ## Summary
 
 | Tool | Source | Change | Status | URL |

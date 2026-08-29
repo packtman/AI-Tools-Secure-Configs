@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `autoContinueAtUsageLimit`
+
+**Value:** `false`
+
+**What:** After a claude.ai usage limit stops the session, do not wait and resume the task automatically. Users can still start a wait from the usage-limit options menu.
+
+**Why (Moderate tier):** The vendor default is `true`. An unattended wait would resume Bash, writes, and MCP after the reset with no reviewer present. Moderate keeps a human in the loop after a usage stop. Requires Claude Code v2.1.234 or later.
+
+**What breaks if removed:** Overnight or weekend sessions continue the paused task as soon as the limit resets.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset, so the vendor default (`true`) remains for local convenience.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

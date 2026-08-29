@@ -42,7 +42,7 @@ managed-settings.d/
 {
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "YOUR_ORG_UUID",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.234",
   "autoUpdatesChannel": "stable"
 }
 ```
@@ -65,6 +65,7 @@ managed-settings.d/
     "disableBypassPermissionsMode": "disable"
   },
   "disableAutoMode": "disable",
+  "autoContinueAtUsageLimit": false,
   "allowManagedPermissionRulesOnly": false
 }
 ```
