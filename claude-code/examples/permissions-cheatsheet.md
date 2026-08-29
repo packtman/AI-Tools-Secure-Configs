@@ -199,6 +199,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `autoContinueAtUsageLimit` | When `false`, do not wait and auto-resume after a claude.ai usage limit (vendor default is `true`; requires v2.1.234+) |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---

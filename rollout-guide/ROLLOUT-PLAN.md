@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. After a claude.ai usage limit, Claude Code will not wait and resume the task by itself. If you will stay at the keyboard, start a wait from the usage-limit options menu.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +121,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code will not auto-continue after a claude.ai usage limit. Start a wait yourself only when you will remain at the machine.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +234,8 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `autoContinueAtUsageLimit` | Unset (vendor default `true`) | `false` | `false` | Vendor default waits and resumes the task after a usage-limit reset. Moderate and Strict keep a human in the loop; Baseline leaves the convenience default |
+| `minimumVersion` | `2.1.38` | `2.1.234` | `2.1.234` | Enterprise tiers require the version that honors `autoContinueAtUsageLimit` |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -328,7 +331,13 @@ claude --dangerously-skip-permissions
 
 # Check version meets minimum
 claude --version
-# Expected: version >= 2.1.38
+# Expected: version >= 2.1.234 (required for autoContinueAtUsageLimit)
+
+# Confirm usage-limit auto-continue is pinned off
+claude config list --managed | grep autoContinueAtUsageLimit
+# Expected: autoContinueAtUsageLimit: false
+# In a session, /config shows "Continue automatically at usage limit" as off.
+# A managed pin hides that row so the user cannot turn it back on.
 
 # Verify org login
 claude auth status
@@ -584,6 +593,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code auto-continue after a usage limit | The vendor default waits in the open session and continues the task when the limit resets, which can resume Bash, writes, and MCP with no reviewer present | Stay at the keyboard and start a wait from the usage-limit options menu, or end the session and continue later. Do not leave an auto-wait running overnight. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +607,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `autoContinueAtUsageLimit: false` | A long task hits a claude.ai usage limit near the end of the day and the developer wants it to resume overnight | Do not pin `true` in managed settings. The developer can start a wait from the usage-limit menu for that session if they will remain at the machine. Overnight unattended resume is an exception: use a dedicated, monitored endpoint, not the org-wide policy. This pin covers Claude Code only. Cursor Auto-review and Copilot cloud agents have separate unattended-run controls. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

@@ -10,30 +10,14 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 5 with missing terms)
+## Tools processed (2026-08-29)
 
 ### Claude Code
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`)
+- Unique control pinned: `autoContinueAtUsageLimit: false` on Moderate and Strict (Baseline unset). Vendor default is `true`. Requires v2.1.234+.
+- Watcher added: `https://code.claude.com/docs/en/settings-reference.md`
 
-### Claude Code
+## Deferred
 
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
-
-### Continue.dev
-
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+Open PRs #61-#96 already cover earlier unique keys. Next unique follow-ups after those merge: pair `disableSideloadFlags` after #61; `pluginSuggestionMarketplaces` after #88; `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` only if an org wants it as a gateway compatibility pin (not a default); `managedSourcesBehavior` / `requiredMaximumVersion` / `httpHookAllowedEnvVars` in later runs; do not pin Codex 0.152 alpha.

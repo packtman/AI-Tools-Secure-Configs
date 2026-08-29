@@ -93,6 +93,7 @@
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "autoContinueAtUsageLimit": false,
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
@@ -101,7 +102,7 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.234",
 
   "sandbox": {
     "enabled": true,

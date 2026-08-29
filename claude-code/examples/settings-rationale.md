@@ -100,6 +100,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `autoContinueAtUsageLimit`
+
+**What it does:** After a claude.ai usage limit stops the session, wait in the open session and continue the task automatically when the limit resets. The vendor default is `true`. Set `false` so Claude Code does not start that wait on its own. Requires Claude Code v2.1.234 or later. Users can still start a wait from the usage-limit options menu.
+
+**Why it matters:** Auto-continue resumes the same turn after an unattended wait. Bash, file writes, and MCP tools can run again overnight or over a weekend with no reviewer at the keyboard. This is separate from `askUserQuestionTimeout` (idle question auto-continue) and from `dialogExpiry` (Remote Control dialog deadlines).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Unattended agent resume is not acceptable after a usage stop. |
+| Standard enterprise | `false` | Keep a human in the loop. Developers who will stay at the machine can start a wait from the menu. |
+| Developer | Not set | Leave the vendor default (`true`) so local sessions can resume after a limit without extra clicks. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
