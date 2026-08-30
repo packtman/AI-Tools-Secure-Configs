@@ -199,6 +199,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `enableArtifact` | When `false`, blocks publishing session output as a claude.ai page (vendor default is on for Team; one-way lock requires v2.1.242+) |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---
