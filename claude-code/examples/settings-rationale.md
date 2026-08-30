@@ -100,6 +100,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `enableArtifact`
+
+**What it does:** Turns off the Artifact tool, which publishes session output as a live page on claude.ai. Claude can publish on its own when the output suits a page, including code and data the session already reached. After the first approve, Claude republishes without asking. Requires Claude Code v2.1.196 or later. From v2.1.242, `false` from any file is one-way: no settings file can turn the tool back on. Prefer this key over the deprecated `disableArtifact`. Equivalent session control: `CLAUDE_CODE_DISABLE_ARTIFACT=1`.
+
+**Why it matters:** A published artifact leaves the managed endpoint and lives on Anthropic servers. On Team plans artifacts are on by default. On Enterprise, an Owner must enable them in claude.ai admin settings, and can later allow org-wide or public sharing. This is separate from Remote Control, Desktop local Code sessions, and Copilot or Cursor sharing.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Session output must not leave the endpoint as a hosted page. |
+| Standard enterprise | `false` | Block unattended publish. Developers who need a review page can file an exception or write a local HTML file. |
+| Developer | Not set | Leave the vendor default so local sessions can publish private pages. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.

@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `enableArtifact`
+
+**Value:** `false`
+
+**What:** Turns off the Artifact tool, which publishes session output as a live page on claude.ai. Claude can publish on its own when the output suits a page. After the first approve, later republishes skip the prompt.
+
+**Why (Moderate tier):** The page can include code and data the session already reached, including MCP connector results. That content leaves the endpoint even when the page starts private. Team plans default artifacts on. From Claude Code v2.1.242, `false` is one-way: nothing, including a later managed `true`, turns the tool back on. Prefer this key over the deprecated `disableArtifact`. Equivalent session control: `CLAUDE_CODE_DISABLE_ARTIFACT=1`.
+
+**What breaks if removed:** Claude Code can upload session output to claude.ai and later share it inside the org or as a public link.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset, so Team and enabled Enterprise orgs keep the vendor convenience default.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

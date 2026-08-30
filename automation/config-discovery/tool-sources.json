@@ -56,6 +56,30 @@
             "ultracode",
             "managed settings"
           ]
+        },
+        {
+          "name": "Settings reference",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/settings-reference.md",
+          "watch_for": [
+            "enableArtifact",
+            "managed settings",
+            "disableBypassPermissionsMode",
+            "sandbox",
+            "MCP"
+          ]
+        },
+        {
+          "name": "Artifacts documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/artifacts",
+          "watch_for": [
+            "enableArtifact",
+            "disableArtifact",
+            "CLAUDE_CODE_DISABLE_ARTIFACT",
+            "publish",
+            "managed settings"
+          ]
         }
       ]
     },

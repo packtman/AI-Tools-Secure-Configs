@@ -173,6 +173,19 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Turns off the Artifact tool, which publishes session output as a live
+  //      page on claude.ai. Claude can do this on its own when the output looks
+  //      like a page, including code and data the session already reached.
+  // WHY: A published artifact leaves the endpoint and lives on Anthropic servers.
+  //      After the first approve, Claude republishes without asking. Team plans
+  //      default artifacts on. An Owner can later share a page inside the org or
+  //      as a public link. From v2.1.242, a false here is one-way: no settings
+  //      file can turn the tool back on. Do not use the deprecated disableArtifact
+  //      key. Equivalent session control: CLAUDE_CODE_DISABLE_ARTIFACT=1.
+  // BREAKS IF REMOVED: Claude Code can upload session output to claude.ai and
+  //      later share it inside the org or as a public link.
+  "enableArtifact": false,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
@@ -193,8 +206,9 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.242 is the minimum that honors enableArtifact as a one-way
+  //      lock, including from project and local files.
+  "minimumVersion": "2.1.242",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
