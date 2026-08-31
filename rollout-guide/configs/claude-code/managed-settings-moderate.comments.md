@@ -167,6 +167,24 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `feedbackDrafts`
+
+**Value:** `"off"`
+
+**What:** Removes the SendFeedback tool so Claude cannot queue product-feedback drafts. Claude-drafted feedback is a user or managed setting. Project and local files are ignored.
+
+**Why (Moderate tier):** The vendor default is `"notify"`: Claude can draft feedback that may include session content (prompts, code, tool output) for a human to send to Anthropic. Moderate and Strict keep that channel off. This is separate from usage telemetry (`CLAUDE_CODE_ENABLE_TELEMETRY`) and from the session-quality survey (`feedbackSurveyRate` / `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY`). `/config` still shows the Claude-drafted feedback row, but a managed value wins and changing the row has no effect.
+
+**What breaks if removed:** Claude can queue SendFeedback drafts again. Session env `CLAUDE_CODE_SEND_FEEDBACK=0` is a one-session kill, not a substitute for the managed key.
+
+**Strict difference:** Also `"off"`.
+
+**Baseline difference:** Unset, so the vendor default `"notify"` remains for low-risk local use.
+
+**Exception handling:** Exception groups must omit `feedbackDrafts` from their managed payload. Do not set `"notify"` in a lower source expecting it to override a higher managed `"off"`.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

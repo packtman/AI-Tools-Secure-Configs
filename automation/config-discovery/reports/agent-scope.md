@@ -1,39 +1,26 @@
 # Agent scope for this run
 
-Process only the tools listed below. For each tool:
+Processed one unique Claude Code admin control that is not in open PRs #61 through #98.
 
-1. Read the cited missing terms and the upstream URL from the full discovery report.
-2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.
-3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.
-4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.
-5. Validate edited JSON, YAML, and TOML before finishing.
+## Applied
 
-Do not attempt to review unchanged tools or sources with no missing local terms in this run.
+### Claude Code `feedbackDrafts`
 
-## Tools to process (4 of 5 with missing terms)
+- Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`)
+- Pin: `"off"` on Moderate and Strict. Baseline unset.
+- Why: vendor default `"notify"` lets Claude queue SendFeedback drafts that may include session content. User or managed only. Distinct from telemetry and from the session-quality survey.
 
-### Claude Code
+## No config update needed (scoped missing terms)
 
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `CLAUDE_MODEL`: model-selection env vars, not org allowlists. Do not pin as a substitute for `availableModels` (open PR #89).
+- `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`: session notify switch, not a durable managed lock.
+- `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`: operational timing. Moderate and Strict already pin `disableWorkflows: true`.
+- Other `CLAUDE_CODE_*` names in the settings-reference missing-term list: session overrides, UX toggles, or Global-config IDE preferences. Dedicated keys already exist in open PRs where they are admin controls.
 
-### Claude Code
+## Deferred
 
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
-
-### Continue.dev
-
-- Source: Configuration reference
-- Missing terms: `mcpServers`
-
-### Claude Desktop
-
-- Source: Claude Desktop MCP documentation
-- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
-
-## Deferred (1 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- OpenAI Platform (OpenAI OpenAPI schema)
+- Claude Desktop MCP env vars
+- OpenAI Platform OpenAPI schema terms
+- `disableSideloadFlags` (open #61)
+- `pluginSuggestionMarketplaces` (wait for #88)
+- `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion`

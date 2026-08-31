@@ -235,6 +235,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | Disabled | No persistent AI memory. Prevents data leakage between sessions. |
 | Standard enterprise | Enabled | Productivity benefit outweighs risk. |
 
+### `feedbackDrafts`
+
+**What it does:** Controls Claude-drafted product feedback. `"off"` removes the SendFeedback tool so Claude cannot queue drafts. `"notify"` shows a card when a draft is queued. `"quiet"` queues drafts without a card. User or managed only. Project and local files are ignored.
+
+**Why it matters:** The vendor default is `"notify"`. Claude can draft feedback that may include session content (prompts, code, tool output) for a human to send to Anthropic. That is a separate data-leaving path from usage telemetry and from the session-quality survey. A managed value wins over `/config`. Session env `CLAUDE_CODE_SEND_FEEDBACK=0` turns the feature off for one session only.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"off"` | Session content should not leave through a product-feedback channel. |
+| Standard enterprise | `"off"` | Keep feedback off until Legal and Security approve the channel. |
+| Developer | Unset | Vendor default `"notify"` is acceptable for low-risk local use. |
+
 ### `CLAUDE_CODE_SKIP_PROMPT_HISTORY`
 
 **What it does:** Skips writing session transcripts to disk.

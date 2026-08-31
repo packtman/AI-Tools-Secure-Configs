@@ -118,6 +118,7 @@
   "minimumVersion": "2.1.38",
 
   "autoMemoryEnabled": false,
+  "feedbackDrafts": "off",
 
   "sandbox": {
     "enabled": true,

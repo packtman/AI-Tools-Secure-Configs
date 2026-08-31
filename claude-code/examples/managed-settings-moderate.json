@@ -95,6 +95,7 @@
   "disableWorkflows": true,
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
+  "feedbackDrafts": "off",
   "forceRemoteSettingsRefresh": false,
 
   "forceLoginMethod": "claudeai",

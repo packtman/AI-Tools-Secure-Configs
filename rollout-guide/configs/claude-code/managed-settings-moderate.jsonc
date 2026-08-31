@@ -173,6 +173,17 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Removes the SendFeedback tool so Claude cannot queue product-feedback drafts.
+  // WHY: Vendor default is "notify": Claude can draft feedback that may include session
+  //      content (prompts, code, tool output) for a human to send to Anthropic. Moderate
+  //      and Strict keep that channel off. Distinct from telemetry env vars and from the
+  //      session-quality survey. User or managed only; project and local files are ignored.
+  // BREAKS IF REMOVED: Claude can queue SendFeedback drafts again. A user /config change
+  //      cannot override a managed "off". Exception groups must omit this key from their
+  //      managed payload. Session env CLAUDE_CODE_SEND_FEEDBACK=0 is a one-session kill,
+  //      not a substitute for the managed key.
+  "feedbackDrafts": "off",
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.
