@@ -117,6 +117,7 @@
   "channelsEnabled": false,
 
   "autoMemoryEnabled": false,
+  "feedbackDrafts": "off",
 
   "claudeMd": "",
 

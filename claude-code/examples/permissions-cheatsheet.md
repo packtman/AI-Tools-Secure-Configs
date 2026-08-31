@@ -200,6 +200,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
+| `feedbackDrafts` | `"off"` removes the SendFeedback tool (user or managed only; project and local files are ignored) |
 
 ---
 

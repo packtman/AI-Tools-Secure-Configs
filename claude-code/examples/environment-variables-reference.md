@@ -36,7 +36,8 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_THINKING` | Disable extended thinking | As needed |
 | `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level | `medium` or `high` |
-| `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress feedback surveys | `1` |
+| `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` | Suppress the session-quality survey | `1` |
+| `CLAUDE_CODE_SEND_FEEDBACK` | One-session kill for Claude-drafted feedback (`SendFeedback`) | `0` (session only; pin `feedbackDrafts: "off"` in managed settings for a durable lock) |
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git instructions | As needed |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 

@@ -156,6 +156,12 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 | `httpHookAllowedEnvVars` | Allowlist for env vars in HTTP hook headers |
 | `disableAllHooks` | Kill switch for all hooks |
 
+### Privacy and feedback
+
+| Setting | Effect |
+|---------|--------|
+| `feedbackDrafts` | `"off"` removes the SendFeedback tool so Claude cannot queue product-feedback drafts that may include session content. User or managed only. |
+
 ---
 
 ## MCP Server Governance
@@ -224,6 +230,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Deploy destructive command blocking hooks (PreToolUse for Bash).
 - [ ] Set `allowedHttpHookUrls` to restrict hook destinations.
 - [ ] Consider `allowManagedHooksOnly: true` for strict environments.
+- [ ] Set `feedbackDrafts: "off"` on Moderate and Strict so Claude cannot queue SendFeedback drafts.
 
 ### Phase 6: Project-Level
 - [ ] Commit `.claude/settings.json` to all repositories.
