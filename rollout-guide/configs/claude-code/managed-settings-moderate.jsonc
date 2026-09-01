@@ -150,6 +150,20 @@
   //      allowlist.
   "allowManagedMcpServersOnly": false,
 
+  // WHAT: Stops Claude Code from fetching MCP connectors attached to the user's
+  //      claude.ai account (Drive, Slack, custom connectors, and similar).
+  // WHY: Vendor default is false, so those connectors load even when you have not
+  //      deployed managed-mcp.json. allowManagedMcpServersOnly does not cover this
+  //      path. A true in managed settings cannot be turned back on by project
+  //      settings. Distinct from allowAllClaudeAiMcps, which only applies when
+  //      managed-mcp.json is already deployed (leave that key unset; default false
+  //      keeps exclusive control). Requires Claude Code v2.1.182+.
+  // BREAKS IF REMOVED: Personal claude.ai connectors load into Claude Code and can
+  //      read or send repo data outside the org MCP allowlist. Exception groups
+  //      must omit this key. Session env ENABLE_CLAUDEAI_MCP_SERVERS=false is a
+  //      one-session kill, not a substitute.
+  "disableClaudeAiConnectors": true,
+
   // WHAT: Blocks the remote control feature, which allows external tools to send
   //      commands to Claude Code sessions.
   // WHY: Remote control could be abused for prompt injection from untrusted sources.
@@ -193,8 +207,8 @@
 
   // WHAT: Enforces a minimum CLI version.
   // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  //      Version 2.1.182 is the minimum that honors disableClaudeAiConnectors.
+  "minimumVersion": "2.1.182",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed

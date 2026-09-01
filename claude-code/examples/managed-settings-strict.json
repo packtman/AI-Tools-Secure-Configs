@@ -104,6 +104,7 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
+  "disableClaudeAiConnectors": true,
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,
@@ -115,7 +116,7 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.182",
 
   "autoMemoryEnabled": false,
 

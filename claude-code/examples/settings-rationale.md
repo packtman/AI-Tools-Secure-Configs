@@ -124,6 +124,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `false` | Let teams use project MCP servers with approval dialogs. |
 | Developer | `false` | Maximum flexibility. |
 
+### `disableClaudeAiConnectors`
+
+**What it does:** Stops Claude Code from fetching MCP connectors attached to the signed-in claude.ai account, so those connectors never connect. MCP is Model Context Protocol, a way for AI tools to call external services.
+
+**Why it matters:** The vendor default is `false`. Without this pin, Drive, Slack, GitHub, and custom claude.ai connectors load into Claude Code even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. A `true` in any file applies; a project-level `false` cannot override a managed `true`. Distinct from `allowAllClaudeAiMcps` (leave unset: default `false` keeps `managed-mcp.json` exclusive). Requires Claude Code v2.1.182 or later. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Personal claude.ai connectors are an unvetted MCP path. |
+| Standard enterprise | `true` | Keep MCP on org-approved servers until connectors are allowlisted. |
+| Developer | Unset | Allow personal connectors after the normal MCP approval prompt. |
+
 ### `forceRemoteSettingsRefresh`
 
 **What it does:** Blocks CLI startup until server-managed settings are freshly fetched. Exits if fetch fails.
