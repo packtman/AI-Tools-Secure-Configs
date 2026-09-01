@@ -88,6 +88,7 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
+  "disableClaudeAiConnectors": true,
   "allowManagedPluginsOnly": false,
   "disableRemoteControl": true,
   "disableSkillShellExecution": false,
@@ -101,7 +102,7 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
   "autoUpdatesChannel": "stable",
-  "minimumVersion": "2.1.38",
+  "minimumVersion": "2.1.182",
 
   "sandbox": {
     "enabled": true,

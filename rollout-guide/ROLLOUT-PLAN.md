@@ -92,7 +92,7 @@
 | 11 | GitHub Copilot Enterprise/Business seats provisioned for pilot teams | IT Ops | [ ] |
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
-| 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 14 | Minimum tool versions enforced: Claude Code >= 2.1.182, Copilot Chat >= 0.17 | IT Ops | [ ] |
 
 ---
 
@@ -112,7 +112,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. MCP connectors from your personal claude.ai account (Drive, Slack, custom connectors) will not load. Use org-approved MCP servers from IT, or a project `.mcp.json` that you approve in the prompt.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -235,6 +235,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
+| `disableClaudeAiConnectors` | Unset | `true` | `true` | Moderate and Strict stop fetching MCP connectors from the signed-in claude.ai account. Baseline leaves personal connectors available after the normal MCP approval prompt. Distinct from `allowAllClaudeAiMcps` (leave unset). Requires Claude Code 2.1.182+ |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
 | `disableRemoteControl` | `false` | `true` | `true` | Both Moderate and Strict block external prompt injection via remote control |
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
@@ -328,11 +329,17 @@ claude --dangerously-skip-permissions
 
 # Check version meets minimum
 claude --version
-# Expected: version >= 2.1.38
+# Expected: version >= 2.1.182 (needed for disableClaudeAiConnectors)
 
 # Verify org login
 claude auth status
 # Expected: shows your org name, not a personal account
+
+# Verify claude.ai connectors are off
+# In a Claude Code session, run /mcp
+# Expected: no Drive, Slack, or other claude.ai account connectors listed
+# Also check: claude config list --managed | grep disableClaudeAiConnectors
+# Expected: true
 ```
 
 #### Audit Logging
@@ -584,6 +591,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +605,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -626,4 +635,4 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Double prompting** | If a developer uses Claude Code inside Cursor's terminal, both tools may prompt for the same command. This is redundant but not harmful. The developer sees one prompt from each tool. |
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
-| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. Claude Code `disableClaudeAiConnectors` covers only claude.ai account connectors fetched by Claude Code. It does not disable Cursor MCP, Copilot MCP, or Claude Desktop connectors. Configure those tools separately. |

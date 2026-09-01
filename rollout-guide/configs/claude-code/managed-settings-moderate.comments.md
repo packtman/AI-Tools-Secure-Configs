@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `disableClaudeAiConnectors`
+
+**Value:** `true`
+
+**What:** Stops Claude Code from fetching or connecting MCP connectors attached to the signed-in claude.ai account.
+
+**Why (Moderate):** The vendor default is `false`, so Drive, Slack, and custom claude.ai connectors load into Claude Code even when you have not deployed `managed-mcp.json`. `allowManagedMcpServersOnly` only locks the `allowedMcpServers` list; it does not stop this fetch. A managed `true` is one-way: a project `.claude/settings.json` cannot set `false` to turn connectors back on. Distinct from `allowAllClaudeAiMcps`, which is relevant only after `managed-mcp.json` is deployed (leave that key unset; the default `false` keeps exclusive control). Requires Claude Code v2.1.182 or later. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute for the managed key.
+
+**What breaks if removed:** Personal claude.ai connectors load and can read or send repository data outside the org MCP allowlist.
+
+**Strict difference:** Also `true`. Strict still needs this pin because `allowManagedMcpServersOnly` does not cover claude.ai connectors unless `managed-mcp.json` is also deployed.
+
+**Baseline difference:** Unset, so startups can use personal claude.ai connectors after the normal MCP approval prompt.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

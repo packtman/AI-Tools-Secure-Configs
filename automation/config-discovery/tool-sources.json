@@ -56,6 +56,30 @@
             "ultracode",
             "managed settings"
           ]
+        },
+        {
+          "name": "Settings reference",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/settings-reference.md",
+          "watch_for": [
+            "disableClaudeAiConnectors",
+            "allowAllClaudeAiMcps",
+            "managed settings",
+            "permissions",
+            "MCP"
+          ]
+        },
+        {
+          "name": "MCP documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/mcp.md",
+          "watch_for": [
+            "disableClaudeAiConnectors",
+            "allowAllClaudeAiMcps",
+            "allowedMcpServers",
+            "managed-mcp.json",
+            "connectors"
+          ]
         }
       ]
     },
