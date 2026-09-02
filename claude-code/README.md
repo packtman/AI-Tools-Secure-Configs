@@ -156,6 +156,12 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 | `httpHookAllowedEnvVars` | Allowlist for env vars in HTTP hook headers |
 | `disableAllHooks` | Kill switch for all hooks |
 
+### Git attribution
+
+| Setting | Effect |
+|---------|--------|
+| `attribution.sessionUrl` | `false` omits the claude.ai session link (`Claude-Session` trailer and PR link) that cloud and Remote Control sessions otherwise append. Any file. |
+
 ---
 
 ## MCP Server Governance
@@ -204,6 +210,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `attribution.sessionUrl: false` on Moderate and Strict so cloud and Remote Control commits do not append a claude.ai session link.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

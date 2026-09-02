@@ -111,6 +111,10 @@
   "disableWorkflows": true,
   "channelsEnabled": false,
 
+  "attribution": {
+    "sessionUrl": false
+  },
+
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
 
