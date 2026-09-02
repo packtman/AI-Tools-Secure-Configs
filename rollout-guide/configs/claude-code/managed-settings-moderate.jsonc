@@ -173,6 +173,17 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Stops Claude Code from appending the claude.ai session link on
+  //      commits and pull requests from cloud or Remote Control sessions.
+  // WHY: The vendor default is true. Session URLs in git history and PR
+  //      text can leak that a change came from a Claude session and can
+  //      expose session IDs in public or broadly shared repos.
+  // BREAKS IF REMOVED: Cloud and Remote Control commits regain a
+  //      Claude-Session trailer and a session link in the PR description.
+  "attribution": {
+    "sessionUrl": false
+  },
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

@@ -213,6 +213,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | No external control of the agent. |
 | Standard enterprise | `true` | Unless specific remote control integrations are approved. |
 
+### `attribution.sessionUrl`
+
+**What it does:** Controls whether Claude Code appends the claude.ai session link when it commits or opens a pull request from a cloud or Remote Control session. The link is a `Claude-Session` trailer on commits and a link in pull request descriptions. Set `false` to omit it.
+
+**Why it matters:** The vendor default is `true`. Session URLs in git history and PR text can leak that a change came from a Claude session and can expose session IDs in public or broadly shared repos. This is separate from usage telemetry, from `feedbackDrafts`, and from Artifact publish. Do not pin `attribution.commit` or `attribution.pr` here: those hide co-author trailers that some orgs want for audit. There is no environment-variable substitute.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Session identifiers should not land in git history or PR text. |
+| Standard enterprise | `false` | Keep session URLs out of shared git until Legal and Security approve the channel. |
+| Developer | Unset | Vendor default `true` is acceptable for low-risk local use. |
+
 ### `disableSkillShellExecution`
 
 **What it does:** Blocks shell execution in skill files and custom commands from user/project sources.

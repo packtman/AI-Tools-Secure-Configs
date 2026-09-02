@@ -118,6 +118,10 @@
 
   "autoMemoryEnabled": false,
 
+  "attribution": {
+    "sessionUrl": false
+  },
+
   "claudeMd": "",
 
   "sandbox": {

@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `attribution.sessionUrl`
+
+**Value:** `false`
+
+**What:** Stops Claude Code from appending the claude.ai session link when it commits or opens a pull request from a cloud or Remote Control session. The link is a `Claude-Session` trailer on commits and a link in pull request descriptions.
+
+**Why (Moderate tier):** The vendor default is `true`. Session URLs in git history and PR text can leak that a change came from a Claude session and can expose session IDs in public or broadly shared repos. This is separate from usage telemetry, from `feedbackDrafts`, and from Artifact publish. Do not pin `attribution.commit` or `attribution.pr`: those hide co-author trailers that some orgs want for audit.
+
+**What breaks if removed:** Cloud and Remote Control commits regain a `Claude-Session` trailer and a session link in the PR description.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset, so startups keep the vendor default (`true`) for local debugging.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`
