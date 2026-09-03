@@ -173,6 +173,17 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Keeps the WebFetch domain safety check on. Claude Code sends each
+  //      requested hostname to api.anthropic.com before fetching.
+  // WHY: The vendor default is unset, so the check runs, but any user or
+  //      project file can set true and skip Anthropic's hostname blocklist.
+  //      A managed false locks the check. Distinct from putting WebFetch in
+  //      ask or allow.
+  // BREAKS IF REMOVED OR SET TRUE: WebFetch can reach any URL without the
+  //      blocklist. Bedrock, Vertex, and Foundry orgs that block
+  //      api.anthropic.com should omit this key in an exception payload.
+  "skipWebFetchPreflight": false,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

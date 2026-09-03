@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `skipWebFetchPreflight`
+
+**Value:** `false`
+
+**What:** Keeps the WebFetch domain safety check on. Claude Code sends each requested hostname to `api.anthropic.com` before fetching.
+
+**Why (Moderate tier):** The vendor default is unset, so the check runs, but any user or project file can set `true` and skip Anthropic's hostname blocklist. A managed `false` locks the check. Distinct from putting `WebFetch` in `ask` or `allow`.
+
+**What breaks if removed or set true:** WebFetch can reach any URL without consulting the blocklist. Bedrock, Vertex, and Foundry orgs that block `api.anthropic.com` should omit this key in an exception payload.
+
+**Strict difference:** Also `false`, because Strict must not let a local file skip the hostname check.
+
+**Baseline difference:** Unset. The vendor default already runs the check, and Baseline does not lock it against a local skip.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

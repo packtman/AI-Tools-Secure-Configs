@@ -213,6 +213,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | `true` | No external control of the agent. |
 | Standard enterprise | `true` | Unless specific remote control integrations are approved. |
 
+### `skipWebFetchPreflight`
+
+**What it does:** Controls whether Claude Code skips the WebFetch domain safety check. When the check runs, Claude Code sends each requested hostname to `api.anthropic.com` before fetching. Set `false` to keep the check on.
+
+**Why it matters:** The vendor default is unset, so the check runs, but any user or project file can set `true` and skip Anthropic's hostname blocklist. A managed `false` locks the check so developers cannot bypass it. This is separate from putting `WebFetch` in `ask` or `allow`. There is no environment-variable substitute. Bedrock, Vertex, and Foundry deployments that block traffic to Anthropic should omit this key in an exception payload, because those environments are the documented reason to skip the check.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Do not let a local file skip the hostname blocklist. |
+| Standard enterprise | `false` | Keep the WebFetch preflight on until Network and Security approve a skip. |
+| Developer | Unset | Vendor default (check runs) is acceptable for low-risk local use. |
+
 ### `disableSkillShellExecution`
 
 **What it does:** Blocks shell execution in skill files and custom commands from user/project sources.

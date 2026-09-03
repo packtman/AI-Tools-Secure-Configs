@@ -30,7 +30,20 @@
             "permissions",
             "disableBypassPermissionsMode",
             "sandbox",
-            "MCP"
+            "MCP",
+            "skipWebFetchPreflight"
+          ]
+        },
+        {
+          "name": "Settings reference",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/settings-reference.md",
+          "watch_for": [
+            "skipWebFetchPreflight",
+            "managed settings",
+            "permissions",
+            "sandbox",
+            "WebFetch"
           ]
         },
         {

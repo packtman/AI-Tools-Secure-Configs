@@ -114,6 +114,8 @@
 
   "disableWorkflows": true,
 
+  "skipWebFetchPreflight": false,
+
   "channelsEnabled": false,
 
   "autoMemoryEnabled": false,

@@ -93,6 +93,7 @@
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "skipWebFetchPreflight": false,
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
