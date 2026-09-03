@@ -109,6 +109,7 @@
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "skipWebFetchPreflight": false,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",

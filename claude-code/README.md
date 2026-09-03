@@ -147,6 +147,12 @@ Hook types: `command` (shell), `http` (webhook), `mcp_tool`, `prompt` (LLM), `ag
 
 See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use examples.
 
+### WebFetch preflight
+
+| Setting | Effect |
+|---------|--------|
+| `skipWebFetchPreflight` | `false` keeps the WebFetch hostname safety check on. Any file. A managed `false` stops user or project files from skipping Anthropic's blocklist. |
+
 ### Managed hooks control
 
 | Setting | Effect |
@@ -204,6 +210,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `skipWebFetchPreflight: false` on Moderate and Strict so user or project files cannot skip the WebFetch hostname safety check.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
