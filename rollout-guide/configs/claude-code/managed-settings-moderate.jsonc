@@ -173,6 +173,20 @@
   //      keyword will not trigger runs, and ultracode is removed from the effort menu.
   "disableWorkflows": true,
 
+  // WHAT: Pauses when a safety classifier flags a request instead of switching
+  //      models and continuing automatically.
+  // WHY: Vendor default is true: Claude Code re-runs flagged cybersecurity or
+  //      biology content on a fallback model and keeps the session there.
+  //      Any user or project file can leave that default on. A managed false
+  //      locks the pause. Distinct from availableModels and from disableAutoMode.
+  //      There is no environment-variable substitute.
+  // BREAKS IF REMOVED OR SET TRUE: Flagged requests continue on the fallback
+  //      model without a human pause. In -p or SDK runs, false fails closed
+  //      with an error instead of auto-continuing. Security research or biology
+  //      teams that need automatic routing should omit the key in an exception
+  //      payload. Requires Claude Code v2.1.170 or later.
+  "switchModelsOnFlag": false,
+
   // WHAT: Forces authentication through Claude.ai org accounts (supports SSO).
   // WHY: Ensures all usage is under your organization's managed identity and billing.
   //      Prevents personal account usage that bypasses managed settings.

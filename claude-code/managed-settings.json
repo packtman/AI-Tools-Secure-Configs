@@ -114,6 +114,8 @@
 
   "disableWorkflows": true,
 
+  "switchModelsOnFlag": false,
+
   "channelsEnabled": false,
 
   "autoMemoryEnabled": false,

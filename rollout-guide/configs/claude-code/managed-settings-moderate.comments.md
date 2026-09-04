@@ -167,6 +167,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `switchModelsOnFlag`
+
+**Value:** `false`
+
+**What:** Pauses when a safety classifier flags a request instead of switching models and continuing automatically. In `/config` this is Switch models when a message is flagged.
+
+**Why (Moderate tier):** Vendor default is `true`: Claude Code re-runs flagged cybersecurity or biology content on a fallback model and keeps the session there. Any user or project file can leave that default on. A managed `false` locks the pause. Distinct from `availableModels` and from `disableAutoMode`. There is no environment-variable substitute.
+
+**What breaks if removed or set true:** Flagged requests continue on the fallback model without a human pause. In `-p` or SDK runs, `false` fails closed with an error instead of auto-continuing. Security research or biology teams that need automatic routing should omit the key in an exception payload. Requires Claude Code v2.1.170 or later.
+
+**Strict difference:** Also `false`, because Strict must not auto-continue after a classifier flag.
+
+**Baseline difference:** Unset. The vendor default (`true`, switch automatically) stays for low-risk local use.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`

@@ -173,6 +173,12 @@ Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wid
 
 See `examples/mcp-security.md` for the complete security guide.
 
+### Classifier model switch
+
+| Setting | Effect |
+|---------|--------|
+| `switchModelsOnFlag` | `false` pauses when a safety classifier flags a request instead of switching models and continuing. Any file. A managed `false` stops user or project files from restoring auto-continue. Requires v2.1.170 or later. |
+
 ---
 
 ## Managed-Only Settings (Cannot Be Overridden)
@@ -204,6 +210,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `switchModelsOnFlag: false` on Moderate and Strict so a safety-classifier flag pauses (or fails closed in `-p`) instead of auto-continuing on a fallback model.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
