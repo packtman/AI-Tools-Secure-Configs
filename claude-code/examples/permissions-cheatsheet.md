@@ -199,6 +199,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `switchModelsOnFlag` | `false` pauses on a safety-classifier flag instead of switching models and continuing; a user or project `true` cannot restore auto-continue |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---

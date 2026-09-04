@@ -100,6 +100,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Disable until IT has a pilot group, usage monitoring, and an exception process. |
 | Developer | `false` | Allow local experimentation after user confirmation prompts. |
 
+### `switchModelsOnFlag`
+
+**What it does:** Chooses what happens when a safety classifier flags a request. `true` switches to the fallback model and continues. `false` pauses an interactive session so the user can switch or edit the prompt; in `-p` or SDK runs the flagged request ends as an error.
+
+**Why it matters:** The vendor default is `true`. Claude Code can re-run flagged cybersecurity or biology content on a fallback model (for example Fable to Opus 4.8) and keep the session there, including on the first request from workspace context. Any user or project file can leave that default on. A managed `false` locks the pause. Distinct from `availableModels` (which only blocks a fallback that is not on the allowlist) and from `disableAutoMode`. There is no environment-variable substitute. Do not pin `CLAUDE_CODE_DISABLE_REFUSAL_FALLBACK`. Requires Claude Code v2.1.170 or later.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Do not auto-continue after a classifier flag. Pause, or fail closed in non-interactive runs. |
+| Standard enterprise | `false` | Keep a human in the loop until Security approves automatic routing for a named workload. |
+| Developer | Unset | Vendor default (switch automatically) is acceptable for low-risk local use. |
+
 ### `allowManagedHooksOnly`
 
 **What it does:** Blocks all hooks except those in managed settings, SDK hooks, and hooks from force-enabled managed plugins.
