@@ -81,7 +81,8 @@
       "Write(./**/*.key)"
     ],
 
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true
   },
 
   "allowManagedPermissionRulesOnly": false,

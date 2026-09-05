@@ -173,6 +173,12 @@ Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wid
 
 See `examples/mcp-security.md` for the complete security guide.
 
+### Working-directory read lock
+
+| Setting | Effect |
+|---------|--------|
+| `permissions.blockReadsOutsideWorkingDirectories` | `true` blocks Read, Grep, Glob, and LSP from paths outside the session working directories, including in bypassPermissions. Any file. If any source sets `true`, a project file cannot lift it. Requires v2.1.257 or later. |
+
 ---
 
 ## Managed-Only Settings (Cannot Be Overridden)
@@ -204,6 +210,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `permissions.blockReadsOutsideWorkingDirectories: true` on Moderate and Strict so Read, Grep, Glob, and LSP cannot leave the working directories.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

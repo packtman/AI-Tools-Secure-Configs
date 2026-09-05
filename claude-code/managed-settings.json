@@ -89,7 +89,8 @@
       "Write(./**/*.pfx)"
     ],
 
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true
   },
 
   "disableAutoMode": "disable",

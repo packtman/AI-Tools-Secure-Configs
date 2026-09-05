@@ -109,6 +109,22 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `permissions.blockReadsOutsideWorkingDirectories`
+
+**Value:** `true`
+
+**What:** Blocks Read, Grep, Glob, and LSP from paths outside the session working directories, including in `bypassPermissions`. Recognized file commands such as `cat` also prompt, even in auto mode.
+
+**Why (Moderate tier):** Vendor default is unset. Pattern-based `Read` deny rules miss sibling repositories, unexpected home files, and mounted volumes. `sandbox.filesystem.denyRead` covers Bash only. If any settings source sets `true`, the block applies and a project file cannot lift it. Distinct from `sandbox.filesystem.denyRead` and from `Read` deny rules. There is no environment-variable substitute. This pin covers Claude Code file tools only. Cursor sandbox and Copilot content exclusion are separate.
+
+**What breaks if removed or set false:** Claude can read files outside the repo through Read, Grep, Glob, or LSP. Monorepo teams that need a sibling path should add it in managed `permissions.additionalDirectories`, or omit the key in an exception payload. Requires Claude Code v2.1.257 or later.
+
+**Strict difference:** Also `true`, because Strict must not allow file-tool reads outside the working directories.
+
+**Baseline difference:** Unset. Pattern-based deny rules stay the only read fence, so local monorepo and adjacent-docs workflows keep working.
+
+---
+
 ## `allowManagedPermissionRulesOnly`
 
 **Value:** `false`
