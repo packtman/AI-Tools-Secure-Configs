@@ -60,6 +60,18 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 |-------------|-------------|-----------|
 | All environments | `"disable"` | There is no legitimate enterprise use case for bypass mode on shared machines. |
 
+### `permissions.blockReadsOutsideWorkingDirectories`
+
+**What it does:** Stops the Read, Grep, Glob, and LSP tools from reading paths outside the session working directories, in every permission mode including `bypassPermissions`. A Bash command that reads a matching path through a recognized file command, such as `cat`, prompts even in auto mode. Requires Claude Code v2.1.257 or later.
+
+**Why it matters:** The vendor default is unset. Pattern-based `Read` deny rules miss sibling repositories, unexpected home files, and mounted volumes. `sandbox.filesystem.denyRead` covers Bash only, not the file tools. If any settings source sets `true`, the block applies and a project file cannot lift it. Distinct from `sandbox.filesystem.denyRead` and from `Read` deny rules. There is no environment-variable substitute. This pin covers Claude Code file tools only. Cursor sandbox and Copilot content exclusion are separate.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Do not let file tools read outside the working directories, including in bypass mode. |
+| Standard enterprise | `true` | Keep a working-directory fence until Security approves a named sibling path in managed `permissions.additionalDirectories`. |
+| Developer | Unset | Vendor default (follow permission mode and deny rules) is acceptable for local monorepo and adjacent-docs work. |
+
 ---
 
 ## Managed-Only Settings

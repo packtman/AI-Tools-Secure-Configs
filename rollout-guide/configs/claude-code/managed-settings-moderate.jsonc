@@ -118,7 +118,21 @@
     // WHY: Bypass mode skips ALL permission prompts, giving the AI unrestricted shell
     //      access. There is no legitimate enterprise use case for this on managed machines.
     // BREAKS IF REMOVED: Users could bypass every deny rule above with a single flag.
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": "disable",
+
+    // WHAT: Blocks Read, Grep, Glob, and LSP from paths outside the session working
+    //      directories, including in bypassPermissions. Recognized file commands
+    //      such as cat also prompt, even in auto mode.
+    // WHY: Vendor default is unset: deny patterns miss sibling repos, home files,
+    //      and mounted volumes. Sandbox denyRead covers Bash only. If any source
+    //      sets true, the block applies and a project file cannot lift it.
+    //      Distinct from sandbox.filesystem.denyRead and from Read deny rules.
+    //      There is no environment-variable substitute.
+    // BREAKS IF REMOVED OR SET FALSE: Claude can read files outside the repo
+    //      through Read/Grep/Glob/LSP. Monorepo teams that need a sibling path
+    //      should add it in managed permissions.additionalDirectories, or omit
+    //      the key in an exception payload. Requires Claude Code v2.1.257 or later.
+    "blockReadsOutsideWorkingDirectories": true
   },
 
   // WHAT: Prevents project-level settings from overriding managed permission rules.

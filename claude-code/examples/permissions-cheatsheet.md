@@ -199,6 +199,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableSkillShellExecution` | Blocks shell execution in skills |
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
+| `permissions.blockReadsOutsideWorkingDirectories` | `true` blocks Read, Grep, Glob, and LSP outside the working directories, including in bypassPermissions; a project `false` cannot lift a managed `true` |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 
 ---
