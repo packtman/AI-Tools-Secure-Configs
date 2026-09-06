@@ -28,7 +28,7 @@ Set these in the `env` block of `managed-settings.json` or `settings.json` to en
 | Variable | Description | Secure value |
 |----------|-------------|-------------|
 | `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable auto memory writes | `1` for sensitive environments |
-| `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments |
+| `CLAUDE_CODE_SKIP_PROMPT_HISTORY` | Skip writing session transcripts to disk | `1` for sensitive environments. This stops new writes only. Use managed `cleanupPeriodDays` to expire existing transcripts. |
 
 ## Behavior Controls
 

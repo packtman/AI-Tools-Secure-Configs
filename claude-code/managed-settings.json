@@ -130,6 +130,8 @@
 
   "minimumVersion": "2.1.38",
 
+  "cleanupPeriodDays": 30,
+
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"

@@ -200,6 +200,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
+| `cleanupPeriodDays` | Deletes transcripts after N days (managed value wins; `0` fails validation) |
 
 ---
 

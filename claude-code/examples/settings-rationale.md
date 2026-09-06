@@ -235,13 +235,25 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Regulated | Disabled | No persistent AI memory. Prevents data leakage between sessions. |
 | Standard enterprise | Enabled | Productivity benefit outweighs risk. |
 
+### `cleanupPeriodDays`
+
+**What it does:** Deletes session transcripts and other Claude Code application data after this many days. A managed value wins over user and project files. Claude Code runs the sweep after a session starts.
+
+**Why it matters:** The vendor default is `30`, but any file can raise it (for example `3650`) and keep prompts, code, and leaked secrets on disk. If any managed source sets this key, `desktopSessionCleanupPeriodDays` is ignored and the same period applies to Desktop and Cowork transcripts. Distinct from `CLAUDE_CODE_SKIP_PROMPT_HISTORY`, which stops writing new transcripts, and from `feedbackDrafts`. There is no environment-variable substitute for the retention period. This pin covers Claude Code transcripts only. Cursor chat history and Copilot conversation logs are separate.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `7` | Keep AI session data for the shortest operational window. Pair with `CLAUDE_CODE_SKIP_PROMPT_HISTORY=1` so new transcripts are not written. |
+| Standard enterprise | `30` | Pin the vendor default so users cannot extend retention. |
+| Developer | Unset | Vendor default of 30 is acceptable; local developers may change it. |
+
 ### `CLAUDE_CODE_SKIP_PROMPT_HISTORY`
 
 **What it does:** Skips writing session transcripts to disk.
 
-**Why it matters:** Session transcripts contain full conversations — prompts, responses, code, and possibly sensitive data. If the machine is compromised, transcripts are a high-value target.
+**Why it matters:** Session transcripts contain full conversations (prompts, responses, code, and possibly sensitive data). If the machine is compromised, transcripts are a high-value target. This env stops new writes. It does not delete existing transcripts; use `cleanupPeriodDays` for that sweep.
 
 | Environment | Recommended | Reasoning |
 |-------------|-------------|-----------|
-| Regulated | `1` | No session history on disk. |
-| Standard enterprise | Not set | Session history aids debugging and productivity. |
+| Regulated | `1` | No new session history on disk. Keep `cleanupPeriodDays` so older transcripts still expire. |
+| Standard enterprise | Not set | Session history aids debugging and productivity. Enforce a managed `cleanupPeriodDays` instead. |

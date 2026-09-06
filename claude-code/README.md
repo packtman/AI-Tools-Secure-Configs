@@ -173,6 +173,12 @@ Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wid
 
 See `examples/mcp-security.md` for the complete security guide.
 
+### Transcript retention
+
+| Setting | Effect |
+|---------|--------|
+| `cleanupPeriodDays` | Deletes session transcripts and other Claude Code application data after N days. Any file. A managed value wins, so users cannot extend retention. Vendor default is `30`. Moderate pins `30`. Strict pins `7`. Baseline leaves the key unset. Distinct from `CLAUDE_CODE_SKIP_PROMPT_HISTORY` (stops new writes) and from `desktopSessionCleanupPeriodDays` (ignored when managed settings set this key). |
+
 ---
 
 ## Managed-Only Settings (Cannot Be Overridden)
@@ -204,6 +210,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `cleanupPeriodDays` on Moderate (`30`) and Strict (`7`) so users cannot extend transcript retention.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

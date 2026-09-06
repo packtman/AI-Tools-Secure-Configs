@@ -102,6 +102,7 @@
 
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.38",
+  "cleanupPeriodDays": 30,
 
   "sandbox": {
     "enabled": true,

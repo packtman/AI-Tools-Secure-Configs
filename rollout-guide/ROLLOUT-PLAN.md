@@ -121,6 +121,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code session transcripts are deleted after 30 days in the Moderate tier (7 days in Strict). Export notes you need to keep before that sweep. Do not set `cleanupPeriodDays` in a user or project file to keep transcripts longer; a managed value wins.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -233,6 +234,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `cleanupPeriodDays` | Unset (vendor default 30) | `30` | `7` | Moderate pins the vendor default so users cannot extend retention. Strict keeps transcripts for 7 days. Baseline leaves the key unset so local developers can change it. |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -329,6 +331,10 @@ claude --dangerously-skip-permissions
 # Check version meets minimum
 claude --version
 # Expected: version >= 2.1.38
+
+# Confirm transcript retention is the managed value
+claude config list --managed | grep cleanupPeriodDays
+# Expected Moderate: 30. Expected Strict: 7. Baseline should not list the key.
 
 # Verify org login
 claude auth status
@@ -584,6 +590,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Keeping Claude Code transcripts longer than the managed period | Session files hold prompts, code, and any secrets that slipped through deny rules | Export notes you need to an approved knowledge base before the sweep. Strict teams that already set `CLAUDE_CODE_SKIP_PROMPT_HISTORY=1` write no new transcripts. Do not set `desktopSessionCleanupPeriodDays` as a substitute; managed `cleanupPeriodDays` already covers Desktop and Cowork. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +604,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `cleanupPeriodDays` | Developer wants 90-day local history for debugging a long incident | Treat this as an exception request. Omit the key in an exception payload, or raise Moderate to a documented org retention number after Legal review. Do not set `0` (validation fails). For long retention after approval, use a large value such as `3650`. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 

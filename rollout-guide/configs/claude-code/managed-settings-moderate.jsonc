@@ -196,6 +196,18 @@
   //      Version 2.1.38 is the minimum for server-managed settings.
   "minimumVersion": "2.1.38",
 
+  // WHAT: Deletes session transcripts and other Claude Code application data
+  //      after this many days. A managed value wins over user and project files.
+  // WHY: Vendor default is 30, but any file can raise it (for example 3650) and
+  //      keep prompts, code, and leaked secrets on disk. Moderate pins the
+  //      default so users cannot extend retention. Strict uses 7. Baseline
+  //      leaves the key unset. Distinct from CLAUDE_CODE_SKIP_PROMPT_HISTORY
+  //      (stops writing new transcripts) and from desktopSessionCleanupPeriodDays
+  //      (ignored when managed settings set this key).
+  // BREAKS IF REMOVED: Users can set a multi-year retention in ~/.claude/settings.json.
+  // BREAKS IF SET TO 0: Validation fails; pick at least 1.
+  "cleanupPeriodDays": 30,
+
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
   //      commands physically cannot access restricted paths (enforced by macOS Seatbelt

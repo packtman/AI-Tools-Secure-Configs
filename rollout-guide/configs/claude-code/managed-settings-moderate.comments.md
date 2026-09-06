@@ -167,6 +167,26 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `cleanupPeriodDays`
+
+**Value:** `30`
+
+**What:** Deletes session transcripts and other Claude Code application data after this many days. A managed value wins over user, project, and local files.
+
+**Why (Moderate tier):** The vendor default is already 30, but any settings file can raise it (for example `3650`) and keep prompts, code, and leaked secrets on disk. Pinning 30 makes the default enforceable. Strict uses `7`. Baseline leaves the key unset so local developers can choose.
+
+**What breaks if removed:** A user or project file can set a multi-year retention and keep transcripts after your org retention policy.
+
+**What breaks if set to 0:** Validation fails. The minimum is `1`. For long retention after Legal approval, use a large value such as `3650`.
+
+**Overlap:** Distinct from `CLAUDE_CODE_SKIP_PROMPT_HISTORY=1`, which stops writing new transcripts (already on Strict). Distinct from `feedbackDrafts`. Do not also pin `desktopSessionCleanupPeriodDays`: when managed settings set `cleanupPeriodDays`, Claude Code ignores the Desktop-only key and applies this period to Desktop and Cowork transcripts too.
+
+**Strict difference:** `7`, because regulated teams should keep AI session data for the shortest operational window.
+
+**Baseline difference:** Unset, so the vendor default of 30 applies and users may change it.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Values:** `"claudeai"` / `"REPLACE_WITH_YOUR_ORG_UUID"`
