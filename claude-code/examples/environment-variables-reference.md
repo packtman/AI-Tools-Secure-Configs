@@ -86,6 +86,7 @@ Do not set `CLAUDE_AUTO_BACKGROUND_TASKS=1` in an organization policy. It force-
 | Variable | Description | Secure value |
 |----------|-------------|-------------|
 | `CLAUDE_CODE_MCP_ALLOWLIST_ENV` | Give stdio MCP servers only a safe baseline plus explicitly configured variables | `1` for all tiers |
+| `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` | Scrub sensitive environment variables from subprocess (Bash, shell) invocations | `1` for all tiers |
 | `MCP_TIMEOUT` | MCP server startup timeout (ms) | `10000` |
 | `MAX_MCP_OUTPUT_TOKENS` | Max token output from MCP tools | `10000` (default) |
 | `MCP_TOOL_TIMEOUT` | Overall MCP tool execution timeout (ms), default is about 28 hours | Set per approved server workload |
@@ -131,7 +132,8 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/corp-ca-bundle.crt",
     "MCP_TIMEOUT": "10000",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
-    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0"
+    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0",
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
   }
 }
 ```
@@ -144,14 +146,14 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
+    "CLAUDE_CODE_AUTO_CONNECT_IDE": "false",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
+    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
-    "CLAUDE_CODE_AUTO_CONNECT_IDE": "false",
-    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
-    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1",
     "DISABLE_AUTOUPDATER": "1"
   }
 }

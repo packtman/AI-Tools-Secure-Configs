@@ -260,16 +260,16 @@
 
     // WHAT: Turns off automatic backgrounding for MCP calls that exceed two minutes.
     // WHY: Keeps long external operations visible until they finish or the user cancels.
-    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0"
+    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0",
+
+    // WHAT: Scrubs sensitive env vars from subprocess (Bash, shell) invocations.
+    // WHY: Prevents leaking credentials via child processes.
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1",
+
     // WHAT: Session kill switch for Fast mode. Read at startup.
     // WHY: A managed fastMode: false can still be overridden for one session by
     //      --settings '{"fastMode": true}'. This env turns Fast mode off and the
-    //      settings key cannot turn it back on. Do not set
-    //      CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK or
-    //      CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS; those skip the org-disabled
-    //      availability check.
-    // BREAKS IF REMOVED: Users can re-enable Fast mode for one session with
-    //      --settings or /fast unless the console Owner toggle is also off.
+    //      settings key cannot turn it back on.
     "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
   }
 }
