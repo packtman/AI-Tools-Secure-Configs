@@ -33,7 +33,8 @@ managed-settings.d/
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
 ├── 60-telemetry.json              ← telemetry & environment
-└── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+├── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+└── 66-desktop-browser.json        ← Desktop Browser pane lock (Moderate vs Strict)
 ```
 
 ## Example Files
@@ -171,6 +172,26 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
 ```
 
 Use this fragment on Moderate and Strict. Leave it out of Baseline so `/fast` stays available after the Owner console toggle (Team/Enterprise) or provisioned Console access. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
+
+### `66-desktop-browser.json`
+
+Moderate (people can still open external sites; Claude cannot act on them):
+
+```json
+{
+  "browserExternalPageTools": "disabled"
+}
+```
+
+Strict (people and Claude cannot navigate to external sites):
+
+```json
+{
+  "disableBrowserExternalNavigation": true
+}
+```
+
+Both keys are managed-only and Desktop-only. The terminal CLI ignores them. Localhost previews keep working. Do not put both keys in the same Strict fragment: `disableBrowserExternalNavigation: true` already blocks navigation. Only the JSON boolean `true` turns that key on; the string `"true"` is ignored. Leave the fragment out of Baseline. There is no environment-variable substitute. Distinct from `WebFetch`, Cursor browser tools, Copilot web search, Claude Desktop MDM, and Claude in Chrome allowlists.
 
 ## Benefits
 

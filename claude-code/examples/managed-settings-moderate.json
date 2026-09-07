@@ -96,6 +96,7 @@
   "disableWorkflows": true,
   "disableAgentView": true,
   "disableArtifact": true,
+  "browserExternalPageTools": "disabled",
   "awaySummaryEnabled": false,
   "fastMode": false,
   "channelsEnabled": false,

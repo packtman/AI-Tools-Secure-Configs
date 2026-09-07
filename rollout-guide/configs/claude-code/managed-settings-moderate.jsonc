@@ -147,6 +147,20 @@
   //   // BREAKS IF true: Developers cannot publish Artifact pages from Claude Code.
   "disableArtifact": true,
 
+  // WHAT: Stops Claude from using tools to read or act on external pages in the
+  //      Desktop app Browser pane. People can still open those sites themselves.
+  //      Localhost previews keep working. Managed only. The terminal CLI ignores
+  //      this key. Distinct from disableBrowserExternalNavigation (Strict), from
+  //      WebFetch, from Cursor browser tools, and from Claude in Chrome lists.
+  // WHY: Vendor default is unset, so Claude can fetch attacker-controlled pages
+  //      or send session data to an external site. Moderate keeps human browsing
+  //      and blocks agent-driven page tools. No env-var substitute. Only
+  //      "disabled" or "disable" turn tools off; any other string leaves them on.
+  // BREAKS IF REMOVED: Claude can read and act on external sites in the pane.
+  //      Exception groups omit this key. Strict uses
+  //      disableBrowserExternalNavigation instead.
+  "browserExternalPageTools": "disabled",
+
   // WHAT: Shows a one-line session recap after the user returns.
   //   // WHY: Recaps can expose sensitive work on shared screens.
   //   // BREAKS IF false: No automatic away-summary line appears.

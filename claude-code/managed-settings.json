@@ -120,6 +120,8 @@
 
   "disableArtifact": true,
 
+  "browserExternalPageTools": "disabled",
+
   "awaySummaryEnabled": false,
 
   "fastMode": false,

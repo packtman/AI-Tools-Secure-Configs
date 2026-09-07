@@ -128,6 +128,34 @@ Every managed setting explained: **what it does**, **why it matters**, and **the
 | Standard enterprise | `true` | Require publication through approved documentation or review systems. |
 | Developer | `false` | Preserve the permission-gated artifact workflow. |
 
+### `browserExternalPageTools`
+
+**What it does:** Stops Claude from using tools to read or act on external pages in the Claude Code Desktop Browser pane. People can still open those sites themselves. Localhost previews keep working. Managed only. The terminal CLI ignores this key.
+
+**Why it matters:** The vendor default is unset, so Claude can fetch attacker-controlled pages or send session data to an external site. Moderate keeps human browsing and blocks agent-driven page tools. Distinct from `disableBrowserExternalNavigation`, from `WebFetch`, from Cursor browser tools, and from Claude in Chrome site lists. No environment-variable substitute. Only `"disabled"` or `"disable"` take effect.
+
+**What breaks:** Claude cannot summarize, click, or fill forms on external sites in the pane. Developers open the site themselves, or use localhost previews for UI work.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | Use `disableBrowserExternalNavigation: true` instead | Block people and Claude, including Claude in Chrome allowlisted sites. |
+| Standard enterprise | `"disabled"` | Keep human browsing; stop agent-driven page tools. |
+| Developer | Unset | Allow Claude to help with external pages after normal Desktop use. |
+
+### `disableBrowserExternalNavigation`
+
+**What it does:** Turns off external browsing in the Claude Code Desktop Browser pane for people and Claude alike, including sites on the Claude in Chrome allowlist. Localhost previews keep working. Managed only. The terminal CLI ignores this key. Only the JSON boolean `true` takes effect; the string `"true"` is ignored.
+
+**Why it matters:** Strict environments should not send source or session data to arbitrary websites through the Desktop Browser pane. This key is stronger than `browserExternalPageTools`. Distinct from Claude Desktop MDM, from `WebFetch`, and from Cursor browser tools.
+
+**What breaks:** Nobody can open external websites in the pane. Use a normal browser for docs. Localhost and file previews still work.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Close the Desktop browsing surface for people and Claude. |
+| Standard enterprise | Unset; use `browserExternalPageTools` | Preserve human browsing. |
+| Developer | Unset | Keep the full Desktop Browser pane. |
+
 ### `awaySummaryEnabled`
 
 **What it does:** Shows a one-line session recap when the user returns after being away. Equivalent environment override: `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` (`0` forces off, `1` forces on).
@@ -477,3 +505,6 @@ These discovery terms are real documentation tokens but are not enterprise secur
 | `ANTHROPIC_MODEL` | Model selection preference. Pinning a model can break teams that use Bedrock, Vertex, Foundry, or approved model allowlists. |
 | `CLAUDE_MODEL` | Not a valid managed settings or hooks control. Treat as documentation noise if it appears in discovery. |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | Subagent model routing preference, not a threat control. Leave unset unless an org model governance standard requires it. |
+| `disableMobileSimulatorTools` | Desktop-only iOS Simulator pane lock. Unique follow-up after this Browser pane pin. |
+| `sshHostAllowlist` | Desktop SSH host patterns are org-specific. Empty array disables SSH; do not ship a fake host list. |
+| `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` | Session thinking UX toggle, not a browsing or MCP lock. |

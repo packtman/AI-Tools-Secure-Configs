@@ -32,7 +32,9 @@ This directory contains comprehensive, security-hardened configurations for **Cl
 | Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
 | Linux | `~/.config/Claude/claude_desktop_config.json` |
 
-Changes require a full restart — no hot-reload.
+Changes require a full restart (no hot-reload).
+
+These Claude Desktop MDM keys do not control the Claude Code Desktop Browser pane. For that surface, pin Claude Code managed settings: Moderate `browserExternalPageTools: "disabled"`, Strict `disableBrowserExternalNavigation: true`. See `claude-code/examples/settings-rationale.md`.
 
 ---
 

@@ -112,6 +112,7 @@
   "disableWorkflows": true,
   "disableAgentView": true,
   "disableArtifact": true,
+  "disableBrowserExternalNavigation": true,
   "disableBundledSkills": true,
   "fileCheckpointingEnabled": false,
   "awaySummaryEnabled": false,

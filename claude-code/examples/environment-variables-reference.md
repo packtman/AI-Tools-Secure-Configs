@@ -93,6 +93,10 @@ Do not set `CLAUDE_AUTO_BACKGROUND_TASKS=1` in an organization policy. It force-
 | `MCP_TOOL_TIMEOUT` | MCP tool execution timeout (ms) | `60000` |
 | `ENABLE_CLAUDEAI_MCP_SERVERS` | Fetch MCP connectors from the signed-in claude.ai account | `false` for one session. Not a substitute for managed `disableClaudeAiConnectors: true`. |
 
+## Desktop Browser pane (no env-var substitute)
+
+`browserExternalPageTools` and `disableBrowserExternalNavigation` are managed settings keys. There is no environment-variable substitute. The terminal CLI ignores both keys. Pin `"disabled"` on Moderate and JSON boolean `true` on Strict. Do not set the string `"true"`.
+
 ## Sandbox
 
 Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `settings.json`, not via environment variables.

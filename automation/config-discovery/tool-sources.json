@@ -64,6 +64,9 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "disableBrowserExternalNavigation",
+            "browserExternalPageTools",
+            "disableMobileSimulatorTools",
             "managed settings",
             "permissions",
             "MCP"
@@ -79,6 +82,18 @@
             "allowedMcpServers",
             "managed-mcp.json",
             "connectors"
+          ]
+        },
+        {
+          "name": "Desktop documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/desktop",
+          "watch_for": [
+            "disableBrowserExternalNavigation",
+            "browserExternalPageTools",
+            "disableMobileSimulatorTools",
+            "sshHostAllowlist",
+            "managed settings"
           ]
         }
       ]

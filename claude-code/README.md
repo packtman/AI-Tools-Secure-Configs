@@ -211,6 +211,8 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 | `allowManagedPermissionRulesOnly` | Block user/project permission rules |
 | `allowManagedHooksOnly` | Block user/project hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
+| `browserExternalPageTools` | Desktop only: stop Claude's tools on external Browser pane pages. Pin `"disabled"` on Moderate. The CLI ignores this key. |
+| `disableBrowserExternalNavigation` | Desktop only: turn off external browsing for people and Claude. Pin `true` on Strict (JSON boolean, not `"true"`). The CLI ignores this key. |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
 | `fastMode` | Enable/disable Claude Code Fast mode (research-preview high-cost Opus speed path) |
@@ -236,6 +238,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
 - [ ] Set `fastMode: false` and `CLAUDE_CODE_DISABLE_FAST_MODE=1` until Fast mode has billing, usage-credit, and an exception process. This is not Codex `features.fast_mode`; pin both if the org runs both tools.
+- [ ] Pin Desktop Browser pane locks: Moderate `browserExternalPageTools: "disabled"` (people can browse, Claude cannot act). Strict `disableBrowserExternalNavigation: true` (people and Claude blocked). The terminal CLI ignores both keys; keep `WebFetch` ask/deny for CLI sessions. Localhost previews keep working.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

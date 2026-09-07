@@ -34,6 +34,22 @@ Use this file with the deployable `managed-settings-moderate.json`. Each key exp
 
 ---
 
+## `browserExternalPageTools`
+
+**Value:** `"disabled"`
+
+**What:** Stops Claude from using tools to read or act on external pages in the Claude Code Desktop Browser pane. People can still open those sites themselves. Localhost dev server and file previews keep working. Managed only. The terminal CLI ignores this key.
+
+**Why (Moderate):** The vendor default is unset, so Claude can fetch attacker-controlled pages (prompt injection) or send session data to an external site. Moderate keeps human browsing and blocks agent-driven page tools. Distinct from `disableBrowserExternalNavigation` (Strict: blocks people and Claude, including Claude in Chrome allowlisted sites). Distinct from `WebFetch` (CLI), Cursor browser tools, Copilot web search, and Claude Desktop MDM. No environment-variable substitute. Only `"disabled"` or `"disable"` turn tools off; any other string leaves them on.
+
+**What breaks if removed:** Claude can read and act on external sites in the Desktop Browser pane.
+
+**Strict difference:** Strict sets `disableBrowserExternalNavigation: true` instead. That key also blocks people from navigating to external sites, including sites on the Claude in Chrome allowlist. Do not also set `browserExternalPageTools` on Strict: it is duplicative once navigation is off.
+
+**Baseline difference:** Unset. People and Claude can use the Desktop Browser pane on external sites, subject to any Claude in Chrome allowlist or blocklist.
+
+---
+
 ## `awaySummaryEnabled`
 
 **Value:** `false`

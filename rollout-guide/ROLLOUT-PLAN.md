@@ -120,7 +120,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows, background agents, and Artifact publishing are disabled in the Moderate tier until IT completes a monitored pilot. MCP calls stay in the foreground even when they run longer than two minutes, so you can see when an external operation is still active. Model selection is limited to Sonnet, Haiku, and Opus. Default in `/model` follows that list. Fable and other unlisted families are not available.
 1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows and Fast mode (`/fast`, the lightning-speed Opus path) are disabled in the Moderate tier until IT completes a pilot.
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. MCP connectors from your personal claude.ai account (Drive, Slack, custom connectors) will not load. Use org-approved MCP servers from IT, or a project `.mcp.json` that you approve in the prompt.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. MCP connectors from your personal claude.ai account (Drive, Slack, custom connectors) will not load. Use org-approved MCP servers from IT, or a project `.mcp.json` that you approve in the prompt. In the Claude Code Desktop Browser pane, Claude cannot read or act on external websites. You can still open those sites yourself. Localhost previews still work.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -137,6 +137,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - The Claude Code IDE extension will not auto-install. Use the approved software catalog or MDM package.
 - Claude Code `/model`, `--model`, and `ANTHROPIC_MODEL` cannot select a family outside the org allowlist. Default remaps to the first allowed family.
 - Claude Code Fast mode (`/fast`) is off. Interactive work uses standard-speed Opus. Request a Fast mode exception if a team has an approved latency need and usage-credit budget.
+- In Claude Code Desktop, Claude cannot use Browser pane tools on external websites. You can still open those sites yourself. Localhost previews still work. (Strict also blocks you from opening external sites in that pane.)
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -146,6 +147,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - Git operations work normally
 - Package managers (`npm`, `pnpm`, `pip`, `cargo`, `go`) work normally
 - Reading source code, searching, and navigating all work normally
+- Claude Code Desktop localhost and file previews in the Browser pane still work
 
 **Need help?** Post in #ai-tools-support. If a specific command is blocked and you believe it should be allowed, file an exception request at [LINK].
 
@@ -169,6 +171,8 @@ To roll back only the background task change, remove `env.CLAUDE_CODE_MCP_AUTO_B
 
 If `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` causes an approved MCP server outage, first add that server's required variables to its managed `env`. Remove the isolation key only as a time-bounded incident rollback, redeploy the policy, restart Claude Code, and notify developers that local MCP servers may temporarily receive their full shell environment.
 For a targeted Fast mode rollback, remove `fastMode` and `env.CLAUDE_CODE_DISABLE_FAST_MODE` from managed settings (or the `65-fast-mode.json` drop-in). Also confirm the Owner toggle at Claude.ai Admin Settings > Claude Code if you still need the console-level disable. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys. `/fast` then follows the Owner toggle and user settings.
+
+For a targeted Desktop Browser rollback, remove `browserExternalPageTools` (Moderate) or `disableBrowserExternalNavigation` (Strict) from managed settings (or the `66-desktop-browser.json` drop-in). Restart the Claude Code Desktop app. The terminal CLI never enforced these keys, so CLI WebFetch behavior does not change.
 
 #### Cursor Rollback
 
@@ -285,6 +289,8 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `disableClaudeAiConnectors` | Unset | `true` | `true` | Moderate and Strict stop fetching MCP connectors from the signed-in claude.ai account. Baseline leaves personal connectors available after the normal MCP approval prompt. Distinct from `allowAllClaudeAiMcps` (leave unset). Requires Claude Code 2.1.182+ |
+| `browserExternalPageTools` | Unset | `"disabled"` | Unset (use `disableBrowserExternalNavigation`) | Moderate stops Claude's Desktop Browser tools on external pages while people can still browse. The CLI ignores this key. No env-var substitute. |
+| `disableBrowserExternalNavigation` | Unset | Unset (use `browserExternalPageTools`) | `true` | Strict turns off external browsing for people and Claude, including Claude in Chrome allowlisted sites. JSON boolean `true` only. Localhost previews keep working. |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
 | `disableRemoteControl` | `false` | `true` | `true` | Both Moderate and Strict block external prompt injection via remote control |
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
@@ -415,6 +421,15 @@ claude auth status
 # Expected: no Drive, Slack, or other claude.ai account connectors listed
 # Also check: claude config list --managed | grep disableClaudeAiConnectors
 # Expected: true
+
+# Verify Desktop Browser pane locks (Desktop app only; CLI ignores these keys)
+claude config list --managed
+# Moderate expected: browserExternalPageTools=disabled
+# Strict expected: disableBrowserExternalNavigation=true
+# In Claude Code Desktop, ask Claude to open https://example.com in the Browser pane
+# Moderate: you can open the site; Claude's tools cannot read or act on it
+# Strict: neither you nor Claude can navigate to external sites
+# Both: localhost previews still work
 ```
 
 On Claude Code 2.1.212 or later, start a test MCP call that runs for more than two minutes. Under Moderate it must remain in the main conversation. Pressing Ctrl+B should still background it intentionally. Under Strict, Ctrl+B and `run_in_background` must be unavailable. Run `/doctor` if the result differs, because invalid managed `env` entries are reported there.
@@ -702,6 +717,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
 | Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 | Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
+| Claude Code Desktop Browser tools on external pages (Moderate) | Claude can fetch attacker-controlled pages or send session data from the Desktop Browser pane | Open the site yourself in the pane, or use a normal browser. For UI work, use localhost previews. | Claude Code Desktop |
+| Claude Code Desktop external browsing (Strict) | People and Claude can navigate to arbitrary websites in the Desktop Browser pane | Use a normal browser for docs. Localhost and file previews still work. | Claude Code Desktop (Strict) |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -725,6 +742,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
 | `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
+| `browserExternalPageTools: "disabled"` | Developer wants Claude to click through an external docs site in the Desktop Browser pane | Keep blocked in Moderate. The developer can open the site themselves in the pane, or use a normal browser. For app previews, use localhost. Do not set any value other than `"disabled"` or `"disable"`. |
+| `disableBrowserExternalNavigation: true` | Strict-tier developer wants to open an allowlisted vendor console in the Desktop Browser pane | This key also blocks Claude in Chrome allowlisted sites. Offer a normal browser or a time-boxed exception that omits the key (and consider `browserExternalPageTools: "disabled"` instead). Do not set the string `"true"`. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -761,4 +780,14 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 ### 5.5 Tool Overlap: Claude Code Fast Mode vs Codex Fast Mode
 
 Claude Code Fast mode (`fastMode` / `CLAUDE_CODE_DISABLE_FAST_MODE`) and Codex `features.fast_mode` are independent spend paths. Pinning one does not disable the other. If the org deploys both tools, configure both.
-| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. Claude Code `disableClaudeAiConnectors` covers only claude.ai account connectors fetched by Claude Code. It does not disable Cursor MCP, Copilot MCP, or Claude Desktop connectors. Configure those tools separately. |
+
+### 5.6 Tool Overlap: Desktop Browser vs WebFetch vs Cursor vs Copilot
+
+| Concern | Guidance |
+|---------|----------|
+| **Claude Code Desktop Browser pane** | `browserExternalPageTools` and `disableBrowserExternalNavigation` are managed-only Desktop keys. The terminal CLI ignores them. |
+| **CLI WebFetch** | Pinning the Desktop Browser keys does not restrict `WebFetch`. Keep `WebFetch` in `ask` (Moderate). Do not set `skipWebFetchPreflight: true` unless egress to `api.anthropic.com` is blocked. |
+| **Cursor browser / Design Mode** | Cursor has its own browser tools. These Claude Code keys do not constrain Cursor. Configure Cursor separately. |
+| **Copilot web search** | Copilot Chat web search is a different control. Pin Copilot policy separately. |
+| **Claude Desktop MDM** | Claude Desktop enterprise policies do not set these Claude Code Desktop Browser keys. Deploy them in Claude Code `managed-settings.json`, MDM, or server-managed settings. |
+| **Claude in Chrome allowlist** | The Desktop Browser inherits Claude in Chrome site lists. `disableBrowserExternalNavigation: true` still blocks those allowlisted sites. `browserExternalPageTools: "disabled"` leaves human browsing on those sites and only stops Claude's tools. |

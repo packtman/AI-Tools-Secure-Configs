@@ -180,7 +180,9 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `allowManagedHooksOnly` | Block user/project/plugin hooks |
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist applies |
 | `allowManagedPermissionRulesOnly` | Block user/project permission rules |
+| `browserExternalPageTools` | Desktop only: stop Claude's tools on external Browser pane pages (`"disabled"`). People can still browse. Localhost previews keep working. |
 | `blockedMarketplaces` | Blocklist of plugin marketplace sources |
+| `disableBrowserExternalNavigation` | Desktop only: turn off external browsing for people and Claude. JSON boolean `true` only. Localhost previews keep working. |
 | `channelsEnabled` | Enable/disable channels |
 | `forceRemoteSettingsRefresh` | Block startup until settings fetched |
 | `pluginTrustMessage` | Custom plugin trust warning text |
