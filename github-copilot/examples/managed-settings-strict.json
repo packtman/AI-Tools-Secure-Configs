@@ -1,0 +1,38 @@
+{
+  "_comment": "STRICT GitHub Copilot enterprise managed settings. Deploy as copilot/managed-settings.json in the source organization's .github-private repository, via MDM string keys, or as a device file. Users cannot override these keys. Use for regulated environments. Replace YOUR-ORG placeholders before deploy. No secrets belong in this file.",
+
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  "enabledPlugins": {},
+
+  "strictKnownMarketplaces": [],
+
+  "allowedMcpServers": [],
+
+  "deniedMcpServers": [
+    {
+      "serverCommand": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    }
+  ],
+
+  "sandbox": {
+    "enabled": true,
+    "allowBypass": false,
+    "sandboxMcpServers": true,
+    "sandboxLspServers": true,
+    "gitAuth": false,
+    "ghAuth": false,
+    "allowDevToolAccess": false
+  },
+
+  "remoteControl": {
+    "mode": "disabled"
+  }
+}

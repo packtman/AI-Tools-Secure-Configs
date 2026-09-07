@@ -10,7 +10,7 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 9 with missing terms)
+## Tools to process (4 of 6 with missing terms)
 
 ### Claude Code
 
@@ -25,19 +25,16 @@ Do not attempt to review unchanged tools or sources with no missing local terms 
 ### Claude Code
 
 - Source: Dynamic workflows documentation
-- Missing terms: `CLAUDE_CODE_SUBAGENT_MODEL`
+- Missing terms: `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
 
-### Codex CLI
+### Claude Desktop
 
-- Source: OpenAI Codex releases
-- Missing terms: `ModelMessages`
+- Source: Claude Desktop MCP documentation
+- Missing terms: `CLAUDE_AUTO_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
-## Deferred (5 tools)
+## Deferred (2 tools)
 
 These tools also have missing terms but are deferred to a follow-up run:
 
-- Codex Desktop (OpenAI Codex config schema)
-- Codex Desktop (OpenAI Codex advanced configuration)
-- Codex Desktop (OpenAI Codex managed configuration)
-- Claude Desktop (Claude Desktop MCP documentation)
 - OpenAI Platform (OpenAI OpenAPI schema)
+- Returns - `Organization object { id, name, type }` - `id (string` ID of the)

@@ -14,12 +14,12 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | Cursor | MCP documentation | content-changed | 200 | https://docs.cursor.com/en/tools/mcp |
 | GitHub Copilot | Organization policy documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
 | GitHub Copilot | Content exclusion documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
+| GitHub Copilot | Enterprise managed settings reference | new-source-baseline | 200 | https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference |
+| GitHub Copilot | MCP enterprise allowlist documentation | new-source-baseline | 200 | https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist |
 | Codex CLI | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
 | Codex CLI | OpenAI Codex releases | content-changed | 200 | https://api.github.com/repos/openai/codex/releases?per_page=10 |
 | Codex Desktop | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
-| Codex Desktop | OpenAI Codex config schema | new-source-baseline | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json |
-| Codex Desktop | OpenAI Codex advanced configuration | new-source-baseline | 200 | https://developers.openai.com/codex/config-advanced.md |
-| Codex Desktop | OpenAI Codex managed configuration | new-source-baseline | 200 | https://developers.openai.com/codex/enterprise/managed-configuration.md |
+| Codex Desktop | OpenAI Codex config reference | content-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
 | Continue.dev | Configuration reference | content-changed | 200 | https://docs.continue.dev/reference |
 | Continue.dev | Continue repository | content-changed | 200 | https://github.com/continuedev/continue |
 | Windsurf | Windsurf documentation | content-changed | 200 | https://docs.windsurf.com/ |
@@ -37,7 +37,6 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | OpenAI Platform | OpenAI OpenAPI schema | content-changed | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
 | Claude API | Anthropic admin API documentation | content-changed | 200 | https://platform.claude.com/docs/en/api/admin.md |
 | Claude API | Anthropic API release notes | content-changed | 200 | https://platform.claude.com/docs/en/release-notes/api.md |
-| Claude API | Inference hooks configuration | new-source-baseline | 200 | https://platform.claude.com/docs/en/manage-claude/inference-hooks.md |
 
 ## Review Details
 
@@ -63,8 +62,8 @@ Agent SDK What's New Resources Settings and permissions Settings Permissions San
 > ... rom being activated. Equivalent to the top-level disableAutoMode setting, which describes the
 full effect. Most useful in managed settings where users cannot override it "disable"
 disableBypassPermissionsMode Set to "disable" to prevent bypassPermissions mode from being
-activated. This disables the --dangerously-skip-permissions command-line flag. Typically placed in
-managed settings t ...
+activated. This disables the --dangerously-skip-permissions command-line flag, and Claude Code
+ignores an agent defin ...
 
 > ... ons Claude Code settings Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Settings and permissions Settings Permissions Sandbox
@@ -107,8 +106,8 @@ StopFailure StopFailure input TeammateIdle TeammateIdle input TeammateIdle decis
 ConfigChange ConfigChange input ConfigChange decision control CwdChanged CwdChanged input CwdChanged
 output DirectoryAdded DirectoryAdded input FileChanged FileChanged input FileChanged output ...
 
-> ... on" : "session_start" }  InstructionsLoaded decision control InstructionsLoaded hooks have no
-decision control. They can't block or modify instruction loading. Use this event for audit logging,
+> ... s have no decision control. They can't block or modify instruction loading. Claude Code discards
+their JSON output fields , such as systemMessage and continue . Use this event for audit logging,
 compliance tracking, or observability.  UserPromptSubmit Runs when the user submits a prompt, before
 Claude processes it. This allows you to add additional context based ...
 
@@ -161,7 +160,7 @@ workflow commands are unavailable, the ultracode keyword no longer triggers a ..
 
 Potential config terms not found in local tool files:
 
-`CLAUDE_CODE_SUBAGENT_MODEL`
+`CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -267,6 +266,77 @@ metrics Copilot LoC metrics Team-level metrics Example schema Enterprise a ...
 Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
 ...
 
+### GitHub Copilot: Enterprise managed settings reference
+
+- Change type: `new-source-baseline`
+- Source URL: https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference
+- Status: `200`
+- Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
+
+**Config update applied (2026-08-14):** Added `managed-settings-strict.json`, `managed-settings-moderate.json`, and `managed-settings-baseline.json` covering `permissions.disableBypassPermissionsMode`, `allowedMcpServers`, `deniedMcpServers`, `enabledPlugins`, `extraKnownMarketplaces`, `strictKnownMarketplaces`, `sandbox`, and `remoteControl`. Omitted `permissions.model` (not a threat control) and `telemetry` (vendor example uses Authorization headers). See `github-copilot/examples/managed-settings-rollout.md`.
+
+Keyword snippets:
+
+> ... ported keys Applying different settings to enterprise teams Example configuration enabledPlugins
+extraKnownMarketplaces strictKnownMarketplaces permissions telemetry remoteControl allowedMcpServers
+deniedMcpServers sandbox Use this reference to understand the currently supported keys in managed-
+settings.json . For deployment methods and supported clients, see Configuring ent ...
+
+> ... ng different settings to enterprise teams Example configuration enabledPlugins
+extraKnownMarketplaces strictKnownMarketplaces permissions telemetry remoteControl allowedMcpServers
+deniedMcpServers sandbox Use this reference to understand the currently supported keys in managed-
+settings.json . For deployment methods and supported clients, see Configuring enterprise-managed s
+...
+
+> ... ged settings schema used by Copilot clients. Copy as Markdown In this article Precedence rules
+Supported keys Applying different settings to enterprise teams Example configuration enabledPlugins
+extraKnownMarketplaces strictKnownMarketplaces permissions telemetry remoteControl allowedMcpServers
+deniedMcpServers sandbox Use this reference to understand the currently suppor ...
+
+> ... ients. Copy as Markdown In this article Precedence rules Supported keys Applying different
+settings to enterprise teams Example configuration enabledPlugins extraKnownMarketplaces
+strictKnownMarketplaces permissions telemetry remoteControl allowedMcpServers deniedMcpServers
+sandbox Use this reference to understand the currently supported keys in managed-settings.json . For
+deploym ...
+
+> ... team's value when set, or falls back to your enterprise default when the team leaves it unset.
+The { "overridable": <VALUE> } syntax applies to the permissions.model ,
+permissions.disableBypassPermissionsMode , allowedMcpServers , and deniedMcpServers keys. Keys not
+marked overridable remain an enterprise-level decision that teams can't modify. enabledPlugins and
+extraKnownMarketplaces ...
+
+### GitHub Copilot: MCP enterprise allowlist documentation
+
+- Change type: `new-source-baseline`
+- Source URL: https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist
+- Status: `200`
+- Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
+
+**Config update applied (2026-08-14):** MCP allowlists are implemented in the new managed-settings tier files. Matchers use `serverUrl` / `serverCommand` only (`serverName` is not a security control). Fail-closed malformed JSON, built-in GitHub MCP exemption, and the Copilot cloud agent coverage gap are documented in the rollout guide.
+
+Keyword snippets:
+
+> ... g enterprise-managed settings . Edit the file to define an allowlist and denylist for MCP
+servers. You can match by name, server URL, or specific commands. For syntax details, see
+allowedMcpServers , and deniedMcpServers in "Enterprise managed settings reference." The following
+example allows servers that match any of the three allowlist entries. The filesystem server config
+...
+
+> ... tings . Edit the file to define an allowlist and denylist for MCP servers. You can match by
+name, server URL, or specific commands. For syntax details, see allowedMcpServers , and
+deniedMcpServers in "Enterprise managed settings reference." The following example allows servers
+that match any of the three allowlist entries. The filesystem server configured to access the root
+...
+
+> ... allowlists You can define an allowlist and denylist to control which MCP servers users in your
+enterprise can run in Copilot clients. These lists are defined in your enterprise's managed-
+settings.json , which you can store on GitHub. For more information, see MCP server usage in your
+company . Prerequisites For any MCP servers to run, the MCP servers in Copilot policy must be e ...
+
+> Configuring an MCP server allowlist for your enterprise - GitHub Docs Skip to main content GitHub
+Docs Version: Free, Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current
+...
+
 ### Codex CLI: OpenAI Codex repository
 
 - Change type: `content-changed`
@@ -290,32 +360,11 @@ environments Issues Plan and track work Code Review Manage code changes ...
 
 Keyword snippets:
 
-> ... - #36908 Improve bearer token secret redaction @copyberry\n- #36910 Negotiate MCP extensions per
-app-server session @copyberry\n- #36912 Read approval policy from the current turn configuration
-@copyberry\n- #36913 Move skill policy resolution into `codex-skills` @copyberry\n- #36916
-Centralize app enabled-state evaluation @copyberry\n- #36917 Test explicit plugin mentio ...
-
 > ... type": "application/octet-stream",         "digest":
-"sha256:f96ee0b079980ebdfd54d148371303094b68b7b26c6d50e183a342fcbfe473f0",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
+"sha256:efdca9fa410766342cc283a57079cffd48148b9d0f3914120a3043cf4f69ab8d",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1425,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:a2aceab2aed9ba335bad5c1 ...
-
-> ... for unfamiliar local projects and enforce managed authentication restrictions before credentials
-are used. (#36960, #37132)\n- Harden plugin isolation and deny network access when policy updates
-fail. (#37027, #36967, #36037)\n\n## Documentation\n- Improve the bundled OpenAI documentation skill
-with targeted official-source lookup and clearer guidance for Codex, m ...
-
-> ... uter construction @copyberry\n- #36120 Delegate readiness waits to tool runtimes @copyberry\n-
-#36121 Sandbox executor skill resource reads @copyberry\n- #36124 Respect filesystem permissions
-during capability discovery @copyberry\n- #36127 Centralize tool registration and protect host tools
-@copyberry\n- #36128 Preserve delegated tasks across remote compaction @copybe ...
-
-Potential config terms not found in local tool files:
-
-`ModelMessages`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+"sha256:3bff0df17c3b8c198436f74 ...
 
 ### Codex Desktop: OpenAI Codex repository
 
@@ -331,127 +380,17 @@ your code editor (VS Code, Cursor, Windsurf), install in your IDE. If you want t
 experience, run codex app or visit the Codex App page . If you are looking for the cloud-based agent
 from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 
-### Codex Desktop: OpenAI Codex config schema
+### Codex Desktop: OpenAI Codex config reference
 
-- Change type: `new-source-baseline`
-- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json
+- Change type: `content-changed`
+- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
 - Status: `200`
 - Related repo paths: codex-desktop/
 
 Keyword snippets:
 
-> ... n": "Collection of common configuration options that a user can define as a unit in
-`config.toml`.", "properties": { "analytics": { "$ref": "#/definitions/AnalyticsConfigToml" },
-"approval_policy": { "$ref": "#/definitions/AskForApproval" }, "approvals_reviewer": { "$ref":
-"#/definitions/ApprovalsReviewer" }, "chatgpt_base_url": { "type": "string" },
-"experimental_compact_ ...
-
-> ... osity" }, "oss_provider": { "type": "string" }, "personality": { "$ref":
-"#/definitions/Personality" }, "plan_mode_reasoning_effort": { "$ref":
-"#/definitions/ReasoningEffort" }, "sandbox_mode": { "$ref": "#/definitions/SandboxMode" },
-"service_tier": { "description": "Optional explicit service tier request id for new turns (for
-example `default`, `priority`, or `flex`; ...
-
-> ... num": [ "none", "friendly", "pragmatic" ], "type": "string" }, "PluginConfig": {
-"additionalProperties": false, "properties": { "enabled": { "default": true, "type": "boolean" },
-"mcp_servers": { "additionalProperties": { "$ref": "#/definitions/PluginMcpServerConfig" },
-"description": "Per-MCP-server policy overlays for MCP servers contributed by this plugin.", "type":
-...
-
-> ... asoning effort for spawned subagents when the spawn call does not select one." }, "enabled": {
-"description": "Whether multi-agent tools are enabled. Defaults to true. An enabled
-`features.multi_agent_v2` setting takes precedence.", "type": "boolean" }, "interrupt_message": {
-"description": "Whether to record a model-visible message when an agent turn is interrupted ...
-
-> ... pproving or denying the request. The legacy value `guardian_subagent` is accepted for
-compatibility.", "enum": [ "user", "auto_review", "guardian_subagent" ], "type": "string" },
-"AppsConfigToml": { "additionalProperties": { "$ref": "#/definitions/AppConfig" }, "description":
-"App/connector settings loaded from `config.toml`.", "properties": { "_default": { "all ...
-
-Potential config terms not found in local tool files:
-
-`McpServerConfig`, `ModelProviderInfo`, `auto_review`, `enabled_tools`, `mcp__`, `mcp_oauth_callback_port`, `memory_mode`, `model-with-reasoning`, `model_auto_compact_token_limit`, `model_providers`, `request_permissions`, `with_additional_permissions`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-### Codex Desktop: OpenAI Codex advanced configuration
-
-- Change type: `new-source-baseline`
-- Source URL: https://developers.openai.com/codex/config-advanced.md
-- Status: `200`
-- Related repo paths: codex-desktop/
-
-Keyword snippets:
-
-> # Advanced Configuration > For the complete documentation index, see
-[llms.txt](https://learn.chatgpt.com/llms.txt). Markdown versions of documentation pages are
-available by appending `.md` to the ...
-
-> ... y key. Examples: ```shell # Dedicated flag codex --model gpt-5.6-terra # Generic key/value
-override (value is TOML, not JSON) codex --config model='"gpt-5.6-terra"' codex --config
-sandbox_workspace_write.network_access=true codex --config
-'shell_environment_policy.include_only=["PATH","HOME"]' ``` Notes: - Keys can use dot notation to
-set nested values (for example ...
-
-> ... vel config keys in the profile file; don't nest them under `[profiles.profile-name]`. ```toml #
-~/.codex/deep-review.config.toml model = "gpt-5.5" model_reasoning_effort = "xhigh" approval_policy
-= "on-request" model_catalog_json = "/Users/me/.codex/model-catalogs/deep-review.json" ``` ```shell
-codex --profile deep-review codex exec --profile deep-review "review thi ...
-
-> ... estrictions still apply. Add request headers when needed: ```toml [model_providers.example]
-http_headers = { "X-Example-Header" = "example-value" } env_http_headers = { "X-Example-Features" =
-"EXAMPLE_FEATURES" } ``` Use command-backed authentication when a provider needs Codex to fetch
-bearer tokens from an external credential helper: ```toml [model_providers.proxy ...
-
-> ... rkspace_write.network_access=true codex --config
-'shell_environment_policy.include_only=["PATH","HOME"]' ``` Notes: - Keys can use dot notation to
-set nested values (for example, `mcp_servers.context7.enabled=false`). - `--config` values are
-parsed as TOML. When in doubt, quote the value so your shell doesn't split it on spaces. - If the
-value can't be parsed a ...
-
-Potential config terms not found in local tool files:
-
-`apps_mcp_product_sku`, `auth_mode`, `feature_enabled`, `guardian_policy_config`, `mcp.call`, `mcp.call.duration_ms`, `mcp.tools.cache_write.duration_ms`, `mcp.tools.fetch_uncached.duration_ms`, `mcp.tools.list.duration_ms`, `model_catalog_json`, `model_instructions_file`, `model_provider`, `model_providers`, `model_verbosity`, `model_warning`, `read_allowed`, `remote_models.fetch_update.duration_ms`, `remote_models.load_cache.duration_ms`, `request_permissions`, `thread.skills.enabled_total`, `tmp_mem_enabled`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-### Codex Desktop: OpenAI Codex managed configuration
-
-- Change type: `new-source-baseline`
-- Source URL: https://developers.openai.com/codex/enterprise/managed-configuration.md
-- Status: `200`
-- Related repo paths: codex-desktop/
-
-Keyword snippets:
-
-> # Managed configuration > For the complete documentation index, see
-[llms.txt](https://learn.chatgpt.com/llms.txt). Markdown versions of documentation pages are
-available by appending `.md` ...
-
-> ... `.md` to the page URL. Managed configuration controls supported local runtime behavior for
-covered capabilities in the ChatGPT desktop app, Codex CLI, and IDE extension. Supported
-requirements can differ by client and version. Managed configuration doesn't grant ChatGPT workspace
-access, assign seats, or replace workspace role-based access control (RBAC). Use [Roles and ...
-
-> ... managed requirements delivered in the cloud config bundle. 3. Legacy `managed_config.toml`
-fields that the local client reinterprets as requirements. 4. macOS managed preferences (MDM)
-delivered through `com.openai.codex:requirements_toml_base64`. Higher-precedence layers override
-ordinary scalar and list values from lower layers. Tables merge by key, while req ...
-
-> # Managed configuration > For the complete documentation index, see
-[llms.txt](https://learn.chatgpt.com/llms.txt). Markdown versions of documentation pages are
-available by appending `.md` to the ...
-
-> ... BAC). Use [Roles and workspace permissions](https://learn.chatgpt.com/docs/enterprise/roles-and-
-workspace-permissions) for workspace feature access and this page for local runtime policy.
-Enterprise admins can control supported local client behavior in two ways: - **Requirements**:
-admin-enforced constraints that users can't override. - **Managed defaults**: start ...
-
-Potential config terms not found in local tool files:
-
-`allowAppshots`, `allow_appshots`, `allow_remote_control`, `allowed_approvals_reviewers`, `allowed_domains`, `allowed_permission_profiles`, `default_permissions`, `guardian_policy_config`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+> # Configuration docs moved This file has moved. Please see the latest configuration documentation
+here: - Full config docs: [docs/config.md](https://github.com/openai/codex/blob/main/docs/ ...
 
 ### Continue.dev: Configuration reference
 
@@ -498,7 +437,7 @@ Contributing Apache-2.0 license Security More items Continue Pioneering open-sou
 
 > ... ce coding agent continue.dev Topics agent ai cli developer-tools open-source Resources Readme
 Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
-Security policy Activity Custom properties Stars 35.4k stars Watchers 164 watching Forks 5.2k forks
+Security policy Activity Custom properties Stars 35.5k stars Watchers 164 watching Forks 5.2k forks
 Report repository Releases Used by Contributors Languages Footer  2026 GitHub, ...
 
 > ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
@@ -551,18 +490,18 @@ certificates from the Windows certificate store again, so sign-in and other H ..
 
 > ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
 Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
-Guide Reporting On this page v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28
-v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v2.2.17 ...
+Guide Reporting On this page v3.7.25 v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18
+v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 ...
 
 > ... eases (Next) Windsurf Plugins Changelog Get Started Features Cascade (JetBrains) Context
 Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security
-FedRAMP Security Admin Guide Reporting On this page v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27
-v3.4.22 v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 ...
+FedRAMP Security Admin Guide Reporting On this page v3.7.25 v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17
+v3.4.27 v3.4.22 v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 ...
 
-> ... worktree that fails now surfaces the git error instead of quietly running in your workspace.
-Terminal: Create New Terminal in Editor Area now works inside worktrees. Codemaps and MCP
-configuration files now open from the remote machine when connected over WSL, SSH, or a dev
-container. Teams plan members no longer see quota warning banners they cannot act on. D ...
+> ... only process the sessions actually fetched for display, eliminating multi-second lag after
+"Reload Window" or while scrolling. Devin Local Fixed authentication issues with certain MCP
+servers, such as self-hosted GitLab servers and older Atlassian MCP instances Download 3.7.25
+v3.7.16 August 10, 2026 Devin Desktop "Restart to Update" now asks for confirmation ...
 
 > ... connection failures under TLS-intercepting proxies. Devin Local Edits produced in autonomous
 mode now produce reviewable diffs. ACU usage is now shown in the /usage command. Skill permissions:
@@ -861,18 +800,20 @@ than purchasing a seat. ### Body Parameters - `email: string` Email of the User.
 or "claude_code_user" or "developer" or 2 more` Role for the invited User. The accepted values
 depend on the organization type. Console and API organizations accept `us ...
 
-> # Admin # Organizations ## Get Current Organization **get** `/v1/organizations/me` Retrieve
-information about the organization associated with the authenticated API key. ### Returns -
-`Organization object { id, name, type }` - `id: string` ID of the Organization. - `name: string`
-Name of the Organization. - `type: "organization"` Object type. For ...
+> ... s/en/api/admin --- # Admin # Organizations ## Get Current Organization **get**
+`/v1/organizations/me` Retrieve information about the organization associated with the authenticated
+API key. ### Returns - `Organization object { id, name, type }` - `id: string` ID of the
+Organization. - `name: string` Name of the Organization. - `type: "organization"` Object type. For
+...
 
 > ... Workspace Members, this is always `"workspace_member_deleted"`. - `"workspace_member_deleted"` -
 `user_id: string` ID of the User. - `workspace_id: string` ID of the Workspace. # Rate Limits ##
 List Workspace Rate Limits **get** `/v1/organizations/workspaces/{workspace_id}/rate_limits` List
 rate-limit overrides configured for a workspace. Returns only the groups and ...
 
-> # Admin # Organizations ## Get Current Organization **get** `/v1/organizations/me` Retrieve
-information about the organization associated with the authenticated API key. ### Returns - `Or ...
+> --- title: Admin url: https://platform.claude.com/docs/en/api/admin --- # Admin # Organizations ##
+Get Current Organization **get** `/v1/organizations/me` Retrieve information about the organizati
+...
 
 Potential config terms not found in local tool files:
 
@@ -889,25 +830,29 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... [Claude Opus 4.8](/docs/en/about-claude/models/migration-guide). Read more in [Fast
-mode](/docs/en/build-with-claude/fast-mode#supported-models). ### June 26, 2026 * We've raised [rate
-limits](/docs/en/api/rate-limits) across the Claude API. Claude Sonnet and Claude Haiku rate limits
-now match Claude Opus at every usage tier, and usage tiers have been consolidated int ...
+> ... about-claude/models/migration-guide). Read more in [Fast
+mode](https://platform.claude.com/docs/en/build-with-claude/fast-mode#supported-models). ### June
+26, 2026 * We've raised [rate limits](https://platform.claude.com/docs/en/api/rate-limits) across
+the Claude API. Claude Sonnet and Claude Haiku rate limits now match Claude Opus at every usage
+tier, and usage tiers ...
 
-> ... t API moved from `/v1/organizations/tunnels` on the Admin API to `/v1/tunnels` on the Claude
-API. The new surface uses the `anthropic-beta: mcp-tunnels-2026-06-22` header and the
-`workspace:manage_tunnels` WIF scope. The previous surface remains available during a migration
-window. See the [Tunnels API reference](/docs/en/api/beta/tunnels). ### June 18, 2026 * The Py ...
+> ... ce_user_data` scope. See [Sessions on users'
+machines](https://platform.claude.com/docs/en/manage-claude/compliance-sessions#retrieve-local-
+sessions). * We've added the `anthropic-workspace-id` response header to the Claude API. It carries
+the `wrkspc_`-prefixed ID of the workspace that the request's API key or access token resolved to,
+including your organization's ...
 
-> ... custom roles. Group and custom-role requests require the `anthropic-beta: ce-user-
-management-2026-07-13` beta header; member and invite requests take no beta header. An Admin API key
-with the `read:org_audit` scope can also call every user-management `GET` endpoint. See [User
-management](/docs/en/manage-claude/user-management). ### July 10, 2026 * [Dreams](/do ...
+> ... {session_id}` retrieves one session's metadata, and `GET
+/v1/compliance/apps/sessions/local/{session_id}/messages` returns its transcript, all with your
+existing Compliance Access Key and the `read:compliance_user_data` scope. See [Sessions on users'
+machines](https://platform.claude.com/docs/en/manage-claude/compliance-sessions#retrieve-local-
+sessions). * We'v ...
 
 > ... d custom-role requests require the `anthropic-beta: ce-user-management-2026-07-13` beta header;
 member and invite requests take no beta header. An Admin API key with the `read:org_audit` scope can
-also call every user-management `GET` endpoint. See [User management](/docs/en/manage-claude/user-
-management). ### July 10, 2026 * [Dreams](/docs/en/managed-agents/drea ...
+also call every user-management `GET` endpoint. See [User
+management](https://platform.claude.com/docs/en/manage-claude/user-management). ### July 10, 2026 *
+[Dreams](h ...
 
 > ... t and available to the agent for that session. ### August 5, 2026 * **Inference hooks** are now
 in beta for Claude Enterprise organizations. Point Claude at your organization's AI security server,
@@ -920,52 +865,14 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-### Claude API: Inference hooks configuration
-
-- Change type: `new-source-baseline`
-- Source URL: https://platform.claude.com/docs/en/manage-claude/inference-hooks.md
-- Status: `200`
-- Related repo paths: claude-api/
-
-Keyword snippets:
-
-> # Inference hooks Send each governed prompt to your organization's AI security server for an allow
-or deny verdict before inference proceeds. --- Inference hooks are in beta and available to Claude
-...
-
-> # Inference hooks Send each governed prompt to your organization's AI security server for an allow
-or deny verdict before inference proceeds. --- Inference hooks are in beta and available to Claude
-Enterprise organizations. Configuring them requires the `organizati ...
-
-> ... ce-api) to audit what happened afterward. *** ## In this section Allow Inference hooks for your
-organization, set up and test your AI security server, choose failure handling, and enforce
-verdicts. The request and verdict schemas, signature verification, operational semantics, and
-integration patterns for building the AI security server.
-
-> ... handling setting decides the outcome: block the request, or allow it to proceed without
-inspection. Enforcement can roll out at your pace, so nobody has to be blocked on day one: shadow
-mode observes verdicts on live traffic without blocking anything, a rollout percentage inspects a
-chosen fraction of requests, and exclusions exempt members of chosen roles entirely. S ...
-
-> ... to request an exception). If your administrators haven't configured one, a built-in default
-directs the user to contact them. Each denial is also recorded in your organization's [Activity
-Feed](/docs/en/manage-claude/compliance-activity-feed). The following diagram traces one example (a
-Cowork request where Claude also calls an O365 tool) to illustrate which parts of th ...
-
-Potential config terms found upstream are already present in local tool files.
-
-## Maintenance Notes (2026-08-11)
-
-Applied config updates from Claude Enterprise Inference hooks (release notes 2026-08-05) and repaired discovery watchers:
-
-- **Claude API / Claude Enterprise admin:** Added `inference_hooks` and `managed_agents.dreams_access_requested` to Baseline/Moderate/Strict org-policy templates. Moderate pins shadow mode + fail-open + 25% rollout. Strict pins enforce + fail-closed + 100% rollout. Baseline leaves hooks off. Dreams access stays false until an org kill switch exists.
-- **Docs:** Updated `claude-api` README tier delta, settings rationale, secure-org-policy rollout/rollback, and `admin-controls` Claude Desktop Inference hooks section + `claude-admin-policy.json`.
-- **Discovery:** Replaced moved Codex Desktop `codex-rs/config.md` stub with schema + advanced + managed-configuration watchers. Added Claude API Inference hooks watcher. Registry: 14 tools / 32 sources.
-- **Deferred duplicates:** Claude Code IDE/agent/artifact/checkpoint/autocompact/AskUserQuestion/peer/parentSettings/strictAllowlist → open #66/#68/#80/#81/#82/#83. Codex Desktop Apps/approvals/plugins → #72/#77/#78/#79. Continue mcpServers → #75. Gemini #64+#76 reconcile after merge. Codex 0.147 Agent Plugins / `--approve-for-me` after #72 merges.
-
-Consecutive live scan after snapshot refresh: `no upstream source changes detected`.
-
 ## Required Follow-Up
+
+This run applied GitHub Copilot managed-settings coverage only (MCP allowlists GA 2026-08-06, Agent Plugins 1.0 GA 2026-08-12). Other tools with missing local terms are deferred so the PR stays tool-focused:
+
+- Claude Code env vars such as `ANTHROPIC_MODEL` and `CLAUDE_CODE_AUTO_CONNECT_IDE` (many already covered in open PRs #66, #68, #80-#85)
+- Claude Desktop MCP env vars (`CLAUDE_CODE_MCP_SERVER_*`)
+- OpenAI Platform schema terms (`allowed_tools`, MCP event names)
+- Claude API `fast-mode-2026-02-01` / `model_group` (open PR #84 covers Inference hooks)
 
 1. Read the changed upstream source.
 2. Check whether the repo's existing tool config, README, rationale, deployment paths, or rollout guide are stale.
