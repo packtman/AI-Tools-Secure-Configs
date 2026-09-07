@@ -191,10 +191,14 @@
   // WHY: Prevents preview/beta versions that may have different security behavior.
   "autoUpdatesChannel": "stable",
 
-  // WHAT: Enforces a minimum CLI version.
-  // WHY: Older versions may not support managed settings or sandbox features.
-  //      Version 2.1.38 is the minimum for server-managed settings.
-  "minimumVersion": "2.1.38",
+  // WHAT: Refuses startup when the installed CLI is older than 2.1.212.
+  // WHY: This is the first version with managed automatic MCP backgrounding controls.
+  //      Unlike minimumVersion, this key blocks startup instead of only preventing
+  //      the updater from selecting an older release.
+  // BREAKS IF TOO HIGH: Developers cannot start Claude Code until IT deploys an
+  //      approved version at or above this floor.
+  // BREAKS IF REMOVED: Older clients can start without the MCP foreground policy.
+  "requiredMinimumVersion": "2.1.212",
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth. Even if Claude is tricked by prompt injection, sandboxed
@@ -248,10 +252,29 @@
   },
 
   // WHAT: Environment variables set for all Claude Code sessions.
-  // WHY: Disables telemetry (data minimization) and disables auto-memory
-  //      (prevents persistent AI context that could contain sensitive data).
+  // WHY: Disables telemetry (data minimization), disables auto-memory
+  //      (prevents persistent AI context), and keeps long MCP calls in the
+  //      foreground instead of moving them to an implicit background task.
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+
+    // WHAT: Gives stdio MCP servers only Claude Code's safe baseline environment
+    //      plus variables explicitly declared in that server's configuration.
+    // WHY: Prevents an MCP process from inheriting unrelated shell credentials.
+    // BREAKS IF REMOVED: Every stdio MCP server can receive the full shell environment,
+    //      including tokens that the server does not need.
+    // BREAKS IF MISCONFIGURED: Servers that relied on inherited variables may fail.
+    //      Declare each required non-secret value or secrets-manager reference explicitly.
+    "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
+
+    // WHAT: Turns off automatic backgrounding for MCP calls that exceed two minutes.
+    // WHY: Keeps long external operations visible until they finish or the user cancels
+    //      them. Explicit Ctrl+B backgrounding remains available when a developer needs it.
+    // BREAKS IF REMOVED: On Claude Code 2.1.212 or later, a long MCP call can continue
+    //      while Claude starts other work, creating unexpected concurrent side effects.
+    // BREAKS IF MISCONFIGURED: A nonzero value changes the delay in milliseconds and can
+    //      make valid long calls leave the foreground sooner than the admin intended.
+    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0"
   }
 }

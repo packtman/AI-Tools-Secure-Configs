@@ -179,6 +179,20 @@ This file accompanies the deployable `managed-settings-moderate.json`. Since pro
 
 ---
 
+## `requiredMinimumVersion`
+
+**Value:** `"2.1.212"`
+
+**What:** Refuses to start Claude Code when the installed version is older than the policy floor. Recovery commands such as `claude update`, `claude install`, and `claude doctor` remain available.
+
+**Why (Moderate tier):** Version 2.1.212 introduces automatic MCP backgrounding and `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`. The hard floor ensures the Moderate foreground policy is understood by every active client. The older `minimumVersion` key only prevents updater downgrades and does not block an outdated client from starting.
+
+**What breaks if too high:** Developers cannot start Claude Code until IT deploys an approved version at or above the configured floor. Pilot the version before raising this value.
+
+**What breaks if removed:** Older clients can start without the expected background task behavior or current security fixes.
+
+---
+
 ## `sandbox` settings
 
 ### `sandbox.enabled: true`
@@ -202,3 +216,29 @@ Disables telemetry. Data minimization principle.
 
 ### `CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1"`
 Prevents Claude Code from saving learnings to disk. Reduces risk of sensitive context persisting across sessions.
+
+### `CLAUDE_CODE_MCP_ALLOWLIST_ENV: "1"`
+
+**What:** Starts stdio MCP servers with Claude Code's safe baseline environment plus only the variables explicitly declared in that server's configuration.
+
+**Why (Moderate tier):** A local MCP process does not need every credential exported in the developer's shell. Restricting inheritance reduces the damage from a compromised or overprivileged server.
+
+**What breaks if removed:** Every stdio MCP server can inherit unrelated shell tokens and credentials.
+
+**What breaks if misconfigured:** A server that relied on an inherited variable may fail to start or authenticate. Add only its required variables to the server's `env` configuration, using your secrets manager rather than literal credentials.
+
+**Tier difference:** Baseline, Moderate, and Strict all set this to `"1"` because ambient credential exposure is not required for normal MCP operation.
+
+### `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS: "0"`
+
+**What:** Keeps every MCP tool call in the foreground instead of automatically moving calls longer than two minutes to background tasks. This control applies to Claude Code 2.1.212 and later.
+
+**Why (Moderate tier):** MCP tools can modify external systems. Keeping a long call visible prevents Claude from starting unrelated work while the external operation is still running. Developers can still press Ctrl+B to background a call intentionally.
+
+**What breaks if removed:** Long MCP calls use the vendor default and move to the background after two minutes. The call continues while Claude works on something else, which can create unexpected concurrent side effects.
+
+**What breaks if misconfigured:** A nonzero value is a delay in milliseconds. A very low value backgrounds routine calls almost immediately, while an invalid value can fall back to vendor behavior.
+
+**Strict difference:** Strict sets `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"` instead, removing explicit and automatic backgrounding for Bash, subagent, and MCP work.
+
+**Baseline difference:** Baseline leaves both variables unset and uses the vendor default, including automatic backgrounding for MCP calls longer than two minutes on Claude Code 2.1.212 or later.
