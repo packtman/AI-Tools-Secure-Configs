@@ -27,11 +27,13 @@ Use numeric prefixes to control merge order:
 managed-settings.json              ← base policy
 managed-settings.d/
 ├── 10-identity.json               ← identity & login restrictions
+├── 15-models.json                 ← model allowlist
 ├── 20-permissions.json            ← permission deny rules
 ├── 30-sandbox.json                ← sandbox configuration
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
-└── 60-telemetry.json              ← telemetry & environment
+├── 60-telemetry.json              ← telemetry & environment
+└── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
 ```
 
 ## Example Files
@@ -42,10 +44,26 @@ managed-settings.d/
 {
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "YOUR_ORG_UUID",
-  "minimumVersion": "2.1.38",
+
+  "requiredMinimumVersion": "2.1.212",
   "autoUpdatesChannel": "stable"
 }
 ```
+
+### `15-models.json`
+
+```json
+{
+  "availableModels": [
+    "sonnet",
+    "haiku",
+    "opus"
+  ],
+  "enforceAvailableModels": true
+}
+```
+
+Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables override `model` for one session and are not an allowlist. An empty `availableModels` array does not lock users out of Default.
 
 ### `20-permissions.json`
 
@@ -133,11 +151,26 @@ managed-settings.d/
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
+    "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0",
     "OTEL_METRICS_EXPORTER": "otlp",
     "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otel.corp.example.com:4318"
   }
 }
 ```
+
+### `65-fast-mode.json`
+
+```json
+{
+  "fastMode": false,
+  "env": {
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
+  }
+}
+```
+
+Use this fragment on Moderate and Strict. Leave it out of Baseline so `/fast` stays available after the Owner console toggle (Team/Enterprise) or provisioned Console access. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
 
 ## Benefits
 

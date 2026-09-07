@@ -1,5 +1,5 @@
 {
-  "_comment": "BASELINE Cursor permissions — broad command auto-run for developer autonomy. Essential restrictions only. Suitable for startups and individual developers.",
+  "_comment": "BASELINE Cursor permissions. Broader terminal auto-run for startups. Auto-review still blocks secret reads and destructive production actions.",
 
   "terminalAllowlist": [
     "ls",
@@ -49,5 +49,16 @@
     "docker compose up"
   ],
 
-  "mcpAllowlist": []
+  "mcpAllowlist": [],
+
+  "autoRun": {
+    "allow_instructions": [
+      "Common local install, build, lint, and test commands may run without asking in non-production workspaces."
+    ],
+    "block_instructions": [
+      "Every command that prints or uploads .env contents, private keys, or cloud credentials should go through approval first.",
+      "Every production database DROP, DELETE without WHERE, or terraform apply to production should go through approval first.",
+      "Every curl or wget piped directly to bash or sh should go through approval first."
+    ]
+  }
 }

@@ -1,13 +1,13 @@
-# Continue.dev — Secure global configuration
+# Continue.dev: Secure global configuration
 # Deploy to: ~/.continue/config.yaml
 # For enterprise, manage configs via Mission Control (formerly Hub)
 # with Organization-level visibility for team-wide enforcement.
 
 name: "secure-enterprise-config"
-version: "1.0.0"
+version: "1.1.0"
 schema: v1
 
-# Model configuration — use environment variables or org secrets, NEVER inline keys.
+# Model configuration: use environment variables or org secrets, NEVER inline keys.
 # Reference secrets with mustache notation: ${{ secrets.SECRET_NAME }}
 models:
   - name: "default"
@@ -31,7 +31,7 @@ embeddingsProvider:
   model: "text-embedding-3-small"
   apiKey: "${{ secrets.OPENAI_API_KEY }}"
 
-# Context providers — limit to safe, read-only providers
+# Context providers: limit to safe, read-only providers
 contextProviders:
   - name: "code"
   - name: "docs"
@@ -40,7 +40,7 @@ contextProviders:
   - name: "tree"
   - name: "codebase"
 
-# MCP servers — only approved servers with explicit environment secrets.
+# MCP servers: only approved servers with explicit environment secrets.
 # MCP tools are only available in agent mode.
 # For enterprise: use org secrets for API keys, never user-level secrets for shared servers.
 mcpServers: []

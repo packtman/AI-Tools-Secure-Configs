@@ -1,0 +1,62 @@
+// STRICT GitHub Copilot enterprise managed settings.
+// Strip comments before deploying as copilot/managed-settings.json, or keep this
+// file for review and deploy the parallel .json. See managed-settings.comments.md.
+// Replace YOUR-ORG placeholders before deploy. No secrets, tokens, or API keys.
+{
+  // WHAT: Blocks bypass / YOLO / allow-all permission mode in Copilot CLI, VS Code, and the Copilot app.
+  // WHY: Strict cannot allow unattended command, path, or URL access. Bypass skips every approval prompt.
+  // BREAKS IF REMOVED: Users can start --yolo / --allow-all, re-enable chat.tools.global.autoApprove, or turn on Allow all in the Copilot app.
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  // WHAT: Auto-installs (true) or blocks (false) named plugins as PLUGIN-NAME@MARKETPLACE-NAME.
+  // WHY: Empty object installs nothing and blocks nothing by name. Combined with an empty marketplace list, developers cannot add plugins.
+  // BREAKS IF POPULATED WITH true: Clients try to install that plugin for every user. The user needs access to the plugin host repo.
+  "enabledPlugins": {},
+
+  // WHAT: Restricts plugin installs to listed marketplaces. An empty array is a complete marketplace lockdown.
+  // WHY: Agent Plugins 1.0 (GA 2026-08-12) packages skills plus MCP servers. Unmanaged marketplaces are an unreviewed tool supply chain.
+  // BREAKS IF OMITTED: Users can install from the default Awesome Copilot marketplace and any other discovered source.
+  "strictKnownMarketplaces": [],
+
+  // WHAT: Allowlist of MCP servers. Empty array blocks every server except built-in first-party Copilot servers.
+  // WHY: MCP allowlists are generally available as of 2026-08-06. Strict keeps MCP to GitHub's built-in server only.
+  // BREAKS IF OMITTED: Any MCP server that is not denied can run (subject to the AI Controls MCP toggle).
+  // NOTE: Copilot cloud agent does not enforce this key. Keep cloud agent disabled in org-policy-strict.json.
+  "allowedMcpServers": [],
+
+  // WHAT: Unconditional MCP denylist. Deny wins over allow. First-party Copilot servers cannot be denied.
+  // WHY: Blocks a local filesystem MCP pointed at the machine root even if a later allowlist exception is added.
+  // BREAKS IF REMOVED: A developer-added filesystem MCP with "/" can expose the entire disk to the model.
+  "deniedMcpServers": [
+    {
+      "serverCommand": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/"
+      ]
+    }
+  ],
+
+  // WHAT: Minimum Copilot CLI sandbox restrictions. Managed true values force the control on. Managed false values forbid a capability.
+  // WHY: CLI command execution is a separate shell surface from Cursor and Claude Code. Strict refuses unsandboxed commands and token injection.
+  // BREAKS IF enabled IS false: Users can disable the sandbox and run agent commands on the host.
+  "sandbox": {
+    "enabled": true,
+    "allowBypass": false,
+    "sandboxMcpServers": true,
+    "sandboxLspServers": true,
+    "gitAuth": false,
+    "ghAuth": false,
+    "allowDevToolAccess": false
+  },
+
+  // WHAT: Whether another client can remotely control Copilot sessions hosted on this device.
+  // WHY: Remote control is a prompt-injection path from a second machine. Strict disables it on the device.
+  // BREAKS IF SET TO enabled: Any authorized client can drive a session on this endpoint.
+  "remoteControl": {
+    "mode": "disabled"
+  }
+}

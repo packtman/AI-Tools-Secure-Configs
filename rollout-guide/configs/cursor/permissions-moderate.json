@@ -38,5 +38,19 @@
     "make test",
     "make lint"
   ],
-  "mcpAllowlist": []
+  "mcpAllowlist": [],
+  "autoRun": {
+    "allow_instructions": [
+      "Safe local build, lint, typecheck, and unit-test commands may run without asking when they do not install packages or change infrastructure."
+    ],
+    "block_instructions": [
+      "Every AWS CLI command should go through approval first.",
+      "Every command that modifies Kubernetes resources should go through approval first.",
+      "Every curl or wget piped to a shell should go through approval first.",
+      "Every command that reads .env, credential, token, PEM, or SSH key files should go through approval first.",
+      "Every sudo command should go through approval first.",
+      "Every git push or force-push should go through approval first.",
+      "Every MCP tool that can write data or call external APIs should go through approval first."
+    ]
+  }
 }

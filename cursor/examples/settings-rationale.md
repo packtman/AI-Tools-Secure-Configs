@@ -323,15 +323,45 @@ The `permissions.json` file (deployed to `~/.cursor/permissions.json`) controls 
 
 | Attribute | Detail |
 |-----------|--------|
-| **What it does** | An array of MCP (Model Context Protocol) tool identifiers that the Agent can invoke without user approval. MCP tools are external services that extend Agent capabilities — database queries, API calls, file system operations, cloud provider interactions. |
-| **Why it matters** | MCP tools often have broad permissions: they can read databases, call APIs, modify cloud infrastructure, or interact with external services. Auto-approving MCP tools means the AI can take real-world actions (creating cloud resources, querying production databases, sending messages) without human review. The blast radius of a hallucinated or manipulated MCP call can be very large. |
-| **Misconfiguration risk** | If MCP tools are added to the allowlist, a prompt injection or Agent hallucination could trigger database modifications, cloud resource creation, API calls to production services, or data exfiltration through external tool calls — all without user awareness or approval. |
+| **What it does** | An array of MCP (Model Context Protocol) entries the Agent can invoke without user approval. Entries use `server:tool` syntax (`github:*`, `*:search`, `*:*`). |
+| **Why it matters** | MCP tools often have broad permissions: they can read databases, call APIs, modify cloud infrastructure, or interact with external services. Auto-approving MCP tools means the AI can take real-world actions without human review. |
+| **Misconfiguration risk** | If MCP tools are added to the allowlist, a prompt injection or Agent hallucination could trigger database modifications, cloud resource creation, API calls to production services, or data exfiltration through external tool calls, all without user awareness or approval. Team dashboard MCP allowlists replace this file when configured; they do not merge. |
 
 | Environment | Recommended Value | Notes |
 |-------------|-------------------|-------|
 | Regulated | `[]` (empty) | All MCP tool calls require explicit approval; no exceptions |
-| Standard Enterprise | `[]` (empty) | MCP tools should always require human-in-the-loop approval |
-| Developer | `[]` or very specific read-only tools | Even for individual developers, MCP auto-approval is risky; the convenience gain is minimal compared to the risk |
+| Standard Enterprise | `[]` (empty) | Approve specific servers only in the team dashboard |
+| Developer | `[]` or very specific read-only tools | Avoid `*:*` |
+
+### 9.3 `autoRun` (Auto-review, Cursor 3.6+)
+
+| Attribute | Detail |
+|-----------|--------|
+| **What it does** | Plain-English `allow_instructions` and `block_instructions` that steer Auto-review for shell, MCP, and Fetch calls. |
+| **Why it matters** | Auto-review is the recommended enterprise default. It runs allowlisted calls, sandboxes shell when possible, and routes the rest through a classifier. Instructions encode org policy in language reviewers can audit. |
+| **Misconfiguration risk** | Auto-review is not a hard security boundary. Over-broad allow instructions or missing block instructions can let cloud mutations, secret reads, or pipe-to-shell run with less friction. Pair with `sandbox.json`, Browser Protection, and hooks. |
+
+| Environment | Recommended Value | Notes |
+|-------------|-------------------|-------|
+| Regulated (Strict) | Broad block list covering installs, secrets, cloud mutate, Browser, MCP | Prefer Allowlist mode as the org default |
+| Standard Enterprise (Moderate) | Block AWS/K8s mutate, pipe-to-shell, secret reads, sudo, git push, MCP writes | Keep Auto-review as default |
+| Developer (Baseline) | Block secret dumps, pipe-to-shell, production destroy | Smaller instruction set |
+
+---
+
+## 9A. `sandbox.json`
+
+| Attribute | Detail |
+|-----------|--------|
+| **What it does** | Controls sandbox filesystem and network reach for agent shell commands (`type`, `networkPolicy`, `disableTmpWrite`, path extras, shared build cache). |
+| **Why it matters** | Sandboxing limits blast radius when Auto-review or Allowlist lets a command run. Deny-by-default network reduces exfiltration and SSRF risk. |
+| **Misconfiguration risk** | `type: insecure_none` disables the sandbox. Broad `networkPolicy.allow` or `default: allow` recreates open egress. Local files cannot weaken team-admin or hardcoded protections. |
+
+| Environment | Recommended Value | Notes |
+|-------------|-------------------|-------|
+| Regulated | `sandbox-strict.json` | No temp writes, no shared cache, minimal registries |
+| Standard Enterprise | `sandbox-moderate.json` | Shared cache on; registries + git hosts |
+| Developer | `sandbox-baseline.json` | Starter deny-by-default allowlist |
 
 ---
 

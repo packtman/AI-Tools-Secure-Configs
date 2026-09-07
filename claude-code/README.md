@@ -165,13 +165,42 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 | `allowedMcpServers` | Allowlist of permitted MCP servers |
 | `deniedMcpServers` | Blocklist of prohibited MCP servers |
 | `allowManagedMcpServersOnly` | Only managed allowlist applies |
+| `disableClaudeAiConnectors` | Stop fetching MCP connectors from the signed-in claude.ai account. Pin `true` on Moderate and Strict. Distinct from `allowAllClaudeAiMcps` (leave unset). |
 | `enableAllProjectMcpServers` | Auto-approve project `.mcp.json` servers |
 | `enabledMcpjsonServers` | Pre-approve specific project servers |
 | `disabledMcpjsonServers` | Block specific project servers |
+| `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` | Prevent stdio servers from inheriting undeclared shell credentials |
 
 Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wide MCP servers.
 
 See `examples/mcp-security.md` for the complete security guide.
+
+---
+
+## Model selection
+
+`ANTHROPIC_MODEL`, `CLAUDE_MODEL`, `--model`, and `/model` override the session model. They are not an organization allowlist. Do not pin those variables in managed `env`.
+
+| Setting | Effect |
+|---------|--------|
+| `availableModels` | Allowlist of families or IDs for the main session, subagents, skills, advisor, and background agents. A managed list replaces user and project entries as of v2.1.175. Do not ship `[]` expecting total lockdown: Default still works. |
+| `enforceAvailableModels` | Extend the allowlist to the Default picker option. Requires Claude Code v2.1.175+ and a non-empty `availableModels` list. |
+
+Cloud sessions on Anthropic-managed VMs ignore device files. Deliver the list through server-managed settings. Claude Enterprise console model restrictions (v2.1.187+) apply in addition to this list; Console API-key orgs have no console control and must use these keys.
+
+---
+
+## Background Task Governance
+
+Claude Code 2.1.212 and later automatically moves a main-conversation MCP call to the background after two minutes. The call remains subject to its wall-clock and idle timeouts, but Claude can begin other work before it settles.
+
+| Tier | Managed `env` control | Workflow effect |
+|------|-----------------------|-----------------|
+| Baseline | None | Vendor default, including automatic MCP backgrounding |
+| Moderate | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS: "0"` | No implicit MCP backgrounding; intentional Ctrl+B backgrounding remains |
+| Strict | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"` | No automatic or explicit Bash, subagent, or MCP background tasks |
+
+Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do not understand the new MCP control cannot start. Baseline retains the softer `minimumVersion` updater floor. See `examples/settings-rationale.md` and `examples/environment-variables-reference.md` for threat, rollback, and gateway compatibility guidance.
 
 ---
 
@@ -184,6 +213,7 @@ See `examples/mcp-security.md` for the complete security guide.
 | `allowManagedMcpServersOnly` | Only managed MCP allowlist |
 | `forceRemoteSettingsRefresh` | Fail-closed startup |
 | `channelsEnabled` | Enable/disable channels |
+| `fastMode` | Enable/disable Claude Code Fast mode (research-preview high-cost Opus speed path) |
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
@@ -196,7 +226,8 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 1: Identity & Access
 - [ ] Set `forceLoginMethod: "claudeai"` to restrict to org accounts.
 - [ ] Set `forceLoginOrgUUID` to lock to your organization.
-- [ ] Set `minimumVersion` to enforce a floor version.
+- [ ] Set `requiredMinimumVersion` for a startup-blocking enterprise floor; `minimumVersion` only prevents updater downgrades.
+- [ ] Pin `availableModels` plus `enforceAvailableModels: true` so `--model`, `ANTHROPIC_MODEL`, and Default cannot pick an unapproved family. Do not set `ANTHROPIC_MODEL` in managed `env` as a substitute.
 - [ ] Set `autoUpdatesChannel: "stable"` for controlled updates.
 
 ### Phase 2: Permissions
@@ -204,6 +235,7 @@ See `examples/mcp-security.md` for the complete security guide.
 - [ ] Set `disableBypassPermissionsMode: "disable"`.
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
+- [ ] Set `fastMode: false` and `CLAUDE_CODE_DISABLE_FAST_MODE=1` until Fast mode has billing, usage-credit, and an exception process. This is not Codex `features.fast_mode`; pin both if the org runs both tools.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox
@@ -216,7 +248,11 @@ See `examples/mcp-security.md` for the complete security guide.
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
 - [ ] Deploy `managed-mcp.json` for org-wide MCP servers.
+- [ ] Set `disableClaudeAiConnectors: true` on Moderate and Strict so claude.ai account connectors do not load.
+- [ ] Leave `allowAllClaudeAiMcps` unset (default `false`) unless you intentionally load claude.ai connectors beside `managed-mcp.json`.
 - [ ] Consider `allowManagedMcpServersOnly: true` for strict environments.
+- [ ] Set `CLAUDE_CODE_MCP_ALLOWLIST_ENV: "1"` and declare each server's required environment explicitly.
+- [ ] Set the tier-appropriate background task control and test a long MCP call on Claude Code 2.1.212 or later.
 
 ### Phase 5: Hooks & Monitoring
 - [ ] Deploy audit logging hooks (PostToolUse).

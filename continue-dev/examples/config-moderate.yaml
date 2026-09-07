@@ -1,7 +1,13 @@
-# Continue.dev — MODERATE configuration
+# Continue.dev: MODERATE configuration
 # Balanced security with developer productivity. Codebase indexing enabled,
-# reasonable context providers. Use for standard enterprise teams.
+# empty default MCP list (add only allowlisted org servers), proxy required.
+# Use for standard enterprise teams. Pair with permissions-moderate.yaml.
 
+# WHAT: Required config identity metadata for Continue schema v1.
+# WHY: Current Continue configs require name, version, and schema.
+# BREAKS: Omitting these can cause config load failures or silent fallback.
+name: "secure-moderate-config"
+version: "1.1.0"
 schema: v1
 
 models:
@@ -34,6 +40,11 @@ contextProviders:
   - name: "terminal"
   - name: "tree"
   - name: "codebase"
+
+# WHAT: Default deny for MCP servers; admins add named allowlisted entries only.
+# WHY: Moderate treats MCP as an exception path, not a default capability.
+# BREAKS: Populating this without review exposes agent tools to third-party servers.
+mcpServers: []
 
 allowAnonymousTelemetry: false
 disableIndexing: false

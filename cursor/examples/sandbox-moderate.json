@@ -1,0 +1,33 @@
+{
+  "_comment": "MODERATE Cursor sandbox.json. Deny-by-default network with common package registries and git hosts. Shared build cache on for productivity. Temp writes allowed.",
+
+  "type": "workspace_readwrite",
+  "disableTmpWrite": false,
+  "enableSharedBuildCache": true,
+  "additionalReadwritePaths": [],
+  "additionalReadonlyPaths": [],
+  "networkPolicy": {
+    "default": "deny",
+    "allow": [
+      "registry.npmjs.org",
+      "registry.yarnpkg.com",
+      "pypi.org",
+      "files.pythonhosted.org",
+      "proxy.golang.org",
+      "sum.golang.org",
+      "crates.io",
+      "static.crates.io",
+      "rubygems.org",
+      "repo.maven.apache.org",
+      "github.com",
+      "api.github.com",
+      "codeload.github.com",
+      "ghcr.io",
+      "*.docker.io"
+    ],
+    "deny": [
+      "169.254.169.254",
+      "metadata.google.internal"
+    ]
+  }
+}

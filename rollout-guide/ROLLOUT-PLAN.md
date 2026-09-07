@@ -20,6 +20,7 @@
 | **Workspace trust** | A feature in Cursor/VS Code that treats newly opened folders as untrusted until the user explicitly approves them, preventing malicious repo files from auto-executing. |
 | **Bypass mode** | A Claude Code flag (`--dangerously-skip-permissions`) that skips all permission prompts, giving the AI agent unrestricted access. |
 | **Deep link** | A URL scheme (like `cursor://` or `vscode://`) that can trigger IDE actions when clicked, potentially from untrusted sources. |
+| **Fast mode** | A Claude Code research-preview setting that uses Claude Opus at higher per-token cost for lower latency. It is not a different model, and it is not Codex `features.fast_mode`. |
 
 ---
 
@@ -35,6 +36,7 @@
 - Claude Code managed-settings-moderate.json to pilot endpoints
 - Cursor permissions-moderate.json + settings.json to pilot endpoints
 - GitHub Copilot org policy (Moderate) scoped to a pilot team
+- GitHub Copilot `managed-settings-moderate.json` as `copilot/managed-settings.json` in `.github-private` (MCP allowlist + plugin catalog + YOLO disabled)
 
 **Exit criteria to proceed:**
 - [ ] Zero security incidents (no credential exposure, no unauthorized network access)
@@ -92,7 +94,11 @@
 | 11 | GitHub Copilot Enterprise/Business seats provisioned for pilot teams | IT Ops | [ ] |
 | 12 | Firewall rules drafted for Copilot hostname blocking (not yet applied) | Network | [ ] |
 | 13 | Linux onboarding script tested on Ubuntu, Fedora, and any other distros in use | IT Ops | [ ] |
-| 14 | Minimum tool versions enforced: Claude Code >= 2.1.38, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 14 | Minimum tool versions enforced: Claude Code >= 2.1.212, Copilot Chat >= 0.17 | IT Ops | [ ] |
+| 15 | Claude Code background policy tested on 2.1.212 or later: a long MCP call stays in the foreground under Moderate | IT Ops | [ ] |
+| 16 | Every approved stdio MCP server declares its required environment; no server depends on ambient shell credentials | Security | [ ] |
+| 17 | Claude Code model allowlist reviewed: `availableModels` families match what the org is licensed and willing to run | Security | [ ] |
+| 14 | Minimum tool versions enforced: Claude Code >= 2.1.182, Copilot Chat >= 0.17 | IT Ops | [ ] |
 
 ---
 
@@ -112,7 +118,9 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 
 **What changes:**
 
-1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows, background agents, and Artifact publishing are disabled in the Moderate tier until IT completes a monitored pilot. MCP calls stay in the foreground even when they run longer than two minutes, so you can see when an external operation is still active. Model selection is limited to Sonnet, Haiku, and Opus. Default in `/model` follows that list. Fable and other unlisted families are not available.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows and Fast mode (`/fast`, the lightning-speed Opus path) are disabled in the Moderate tier until IT completes a pilot.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows are disabled in the Moderate tier until IT completes a pilot for long-running, parallel agent work. MCP connectors from your personal claude.ai account (Drive, Slack, custom connectors) will not load. Use org-approved MCP servers from IT, or a project `.mcp.json` that you approve in the prompt.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -121,6 +129,14 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What will feel different:**
 - You will be prompted more often when Claude Code wants to run shell commands or edit files. This is intentional.
 - Claude Code workflow commands, workflow keyword triggers, and ultracode are unavailable in the Moderate tier.
+- Claude Code versions older than 2.1.212 will ask you to update and will not start. IT will deploy the approved version before the policy reaches your device.
+- Claude Code background agents (`claude agents`, `--bg`, `/background`) are unavailable. Keep work in the foreground session.
+- Claude Code cannot publish Artifacts to claude.ai. Use your team's approved docs or review system instead.
+- Long MCP calls no longer move to the background automatically. Press Ctrl+B only when you intentionally want the current call to continue in the background.
+- Local MCP servers receive only a safe baseline environment and variables declared for that server. IT will migrate approved server credentials to explicit secrets-manager references before rollout.
+- The Claude Code IDE extension will not auto-install. Use the approved software catalog or MDM package.
+- Claude Code `/model`, `--model`, and `ANTHROPIC_MODEL` cannot select a family outside the org allowlist. Default remaps to the first allowed family.
+- Claude Code Fast mode (`/fast`) is off. Interactive work uses standard-speed Opus. Request a Fast mode exception if a team has an approved latency need and usage-credit budget.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -149,6 +165,11 @@ Restart Claude Code after removal. Settings revert to user/project defaults imme
 
 If using server-managed settings (Admin Console): navigate to Claude.ai Admin Settings, remove or reset the managed settings JSON. Changes propagate on next CLI startup.
 
+To roll back only the background task change, remove `env.CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` from Moderate or `env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` from Strict, redeploy the same MDM profile or Admin Console policy, then restart Claude Code. Do not remove the other permission, sandbox, or identity controls. If 2.1.212 itself causes the incident, restore the prior tested `requiredMinimumVersion` value or remove that key temporarily, then deploy the previously approved client version.
+
+If `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` causes an approved MCP server outage, first add that server's required variables to its managed `env`. Remove the isolation key only as a time-bounded incident rollback, redeploy the policy, restart Claude Code, and notify developers that local MCP servers may temporarily receive their full shell environment.
+For a targeted Fast mode rollback, remove `fastMode` and `env.CLAUDE_CODE_DISABLE_FAST_MODE` from managed settings (or the `65-fast-mode.json` drop-in). Also confirm the Owner toggle at Claude.ai Admin Settings > Claude Code if you still need the console-level disable. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys. `/fast` then follows the Owner toggle and user settings.
+
 #### Cursor Rollback
 
 | OS | Action |
@@ -169,6 +190,9 @@ For permissions.json: remove `~/.cursor/permissions.json` to revert to defaults.
 | Content exclusion | Organization Settings -> Copilot -> Content exclusion: remove added patterns |
 | Firewall rules | Remove the block on `*.individual.githubcopilot.com` from firewall/proxy |
 | Seat management | Switch from `selected_teams` back to `all_members` if needed |
+| Server-managed settings | Revert `copilot/managed-settings.json` on the default branch of `.github-private` |
+| File-based settings | Remove the OS path listed in section 4.3 |
+| MDM | Remove `com.github.copilot` (macOS) or `HKLM\SOFTWARE\Policies\GitHubCopilot` (Windows) string values |
 
 #### Communication Template for Rollback
 
@@ -217,6 +241,16 @@ See file: [`rollout-guide/configs/github-copilot/org-policy-moderate.jsonc`](con
 
 See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](configs/github-copilot/copilot-instructions.md)
 
+### 2.7 GitHub Copilot: `managed-settings-moderate.json`
+
+See files:
+
+- [`rollout-guide/configs/github-copilot/managed-settings-moderate.jsonc`](configs/github-copilot/managed-settings-moderate.jsonc)
+- [`rollout-guide/configs/github-copilot/managed-settings-moderate.json`](configs/github-copilot/managed-settings-moderate.json)
+- [`rollout-guide/configs/github-copilot/managed-settings.comments.md`](configs/github-copilot/managed-settings.comments.md)
+
+Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow notes): [`github-copilot/examples/managed-settings-rollout.md`](../github-copilot/examples/managed-settings-rollout.md)
+
 ---
 
 ## 3. TIER DELTA TABLE
@@ -233,8 +267,24 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `allowManagedPermissionRulesOnly` | `false` | `false` | `true` | Strict prevents any user/project override of permission rules |
 | `disableAutoMode` | `"allow"` | `"disable"` | `"disable"` | Moderate disables auto mode (research preview, unreliable safety classifier) |
 | `disableWorkflows` | `false` | `true` | `true` | Baseline allows dynamic workflows with local confirmation; Moderate and Strict block research-preview long-running workflows until admins define rollout controls |
+| `disableAgentView` | `false` | `true` | `true` | Baseline allows background agents; Moderate and Strict keep agent work in the foreground |
+| `disableArtifact` | `false` | `true` | `true` | Baseline keeps permission-gated Artifact publishing; Moderate and Strict block claude.ai Artifact pages |
+| `disableBundledSkills` | Not set | Not set | `true` | Only Strict removes bundled skills so orchestration is limited to reviewed custom or managed skills |
+| `fileCheckpointingEnabled` | Not set (default `true`) | Not set (default `true`) | `false` | Strict minimizes local source snapshots used by `/rewind` |
+| `awaySummaryEnabled` | `true` | `false` | `false` | Moderate and Strict hide return-to-terminal recaps that can expose sensitive work |
+| `requiredMinimumVersion` | Not set (uses soft `minimumVersion`) | `"2.1.212"` | `"2.1.212"` | Enterprise tiers hard-block startup on older clients that lack current controls |
+| `CLAUDE_CODE_MCP_ALLOWLIST_ENV` | `"1"` | `"1"` | `"1"` | Every tier prevents local MCP servers from receiving unrelated shell credentials; required values must be declared per server |
+| Background task control | Not set, vendor default | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS="0"` | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS="1"` | Moderate blocks implicit MCP concurrency but preserves Ctrl+B; Strict removes every Bash, subagent, and MCP background path |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Not set | `"1"` | `"1"` | Moderate and Strict keep Bash, subagent, and MCP work visible in the foreground |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Not set | `"1"` | `"1"` | Enterprise tiers require IDE extension installs through the approved software channel |
+| `CLAUDE_CODE_AUTO_CONNECT_IDE` | Not set | Not set | `"false"` | Strict requires deliberate IDE attachment from an external terminal |
+| `availableModels` | Unset | `["sonnet", "haiku", "opus"]` | `["sonnet", "haiku"]` | Moderate keeps Opus for harder coding tasks; Strict drops Opus and Fable. Do not ship `[]`: named picks are blocked but Default still works |
+| `enforceAvailableModels` | Unset | `true` | `true` | Closes the Default-picker loophole around `availableModels`. Requires Claude Code v2.1.175+. `ANTHROPIC_MODEL` is a session override, not a substitute |
+| `fastMode` | Unset (vendor default off) | `false` | `false` | Moderate and Strict block the research-preview high-cost Opus speed path; Baseline leaves `/fast` available after Owner enablement |
+| `env.CLAUDE_CODE_DISABLE_FAST_MODE` | Unset | `"1"` | `"1"` | The env is the session kill switch: `fastMode` cannot turn Fast mode back on, including via `--settings` |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
+| `disableClaudeAiConnectors` | Unset | `true` | `true` | Moderate and Strict stop fetching MCP connectors from the signed-in claude.ai account. Baseline leaves personal connectors available after the normal MCP approval prompt. Distinct from `allowAllClaudeAiMcps` (leave unset). Requires Claude Code 2.1.182+ |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
 | `disableRemoteControl` | `false` | `true` | `true` | Both Moderate and Strict block external prompt injection via remote control |
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
@@ -244,15 +294,23 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
+| Version floor | `minimumVersion="2.1.38"` (updater floor only) | `requiredMinimumVersion="2.1.212"` | `requiredMinimumVersion="2.1.212"` | Enterprise tiers block outdated clients from starting so the background policy is supported; Baseline does not hard-block startup |
 
 ### 3.2 Cursor
 
 | Setting | Baseline | Moderate | Strict | Reason for Difference |
 |---------|----------|----------|--------|----------------------|
-| `terminalAllowlist` length | ~48 commands (build, install, dev server included) | ~35 commands (read-only + test/lint/build) | ~15 commands (read-only + git status/diff/log only) | Each tier removes more auto-approved commands |
+| Run Mode default | Auto-review | Auto-review | Allowlist | Strict prefers deterministic allowlists over classifier judgment |
+| Run Everything | Disabled | Disabled | Disabled | Unattended full autonomy is never acceptable on org devices |
+| `terminalAllowlist` length | ~48 commands (build, install, dev server included) | ~35 commands (read-only + test/lint/build) | ~11 commands (read-only + git status/diff/log only) | Each tier removes more auto-approved commands |
 | `npm install` / `pip install` / `docker` in allowlist | Yes | No | No | Moderate requires approval for package installs (supply chain risk) |
 | `npm run dev` / `npm run build` in allowlist | Yes | `npm run build` yes, `npm run dev` no | No | Strict requires approval for all non-trivial commands |
-| `mcpAllowlist` | Empty (all MCP prompts) | Empty (all MCP prompts) | Empty (all MCP prompts) | Cursor MCP approval is always prompted; allowlist would auto-approve |
+| `autoRun.block_instructions` | Secrets + pipe-to-shell + prod destroy | Adds AWS/K8s/sudo/git push/MCP writes | Adds Browser, installs, docker push, terraform | Higher tiers force more human gates in Auto-review |
+| `mcpAllowlist` | Empty (all MCP prompts) | Empty (all MCP prompts) | Empty (all MCP prompts) | Keep file empty; approve exceptions only in the team dashboard |
+| Sandbox `networkPolicy.default` | deny | deny | deny | Deny-by-default; allowlists are registry/git focused |
+| `disableTmpWrite` | false | false | true | Strict reduces temp-dir staging for payloads |
+| Browser / file / `.cursor` protections | Browser + file on; `.cursor` off | All on | All on | Prevents unapproved Browser, deletes, external writes, and local rule tampering |
+| BYOK disabled | no | yes | yes | Personal keys bypass Cursor ZDR agreements |
 | `workspace.trust.enabled` | `true` | `true` (MDM enforced) | `true` (MDM enforced) | All tiers enable; Moderate/Strict enforce via MDM so users cannot disable |
 | `workspace.trust.startupPrompt` | `"once"` | `"always"` | `"always"` | Enterprise tiers force trust decision every session |
 | `extensions.autoUpdate` | Not set | `false` | `false` | Prevents unreviewed extension updates |
@@ -274,6 +332,11 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 | `excluded_repositories` | None | 3 sensitive repos | 5+ sensitive repos | Strict excludes more repos from AI processing |
 | `block_individual_traffic` | `true` | `true` | `true` | All tiers block shadow AI via personal accounts |
 | `allow_business_traffic` | `true` | `true` | `false` | Strict limits to enterprise-only hostname |
+| `permissions.disableBypassPermissionsMode` | `"disable"` | `"disable"` | `"disable"` | Blocks Copilot CLI YOLO / VS Code global auto-approve in every tier |
+| `allowedMcpServers` | omitted (all except deny) | GitHub Copilot MCP URL | `[]` (built-in only) | GA 2026-08-06. Empty array blocks non-built-in MCP. Cloud agent does not enforce this key. |
+| `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Deny wins. Blocks a root-disk filesystem MCP in every tier. |
+| `strictKnownMarketplaces` | omitted | org GitHub marketplace repo | `[]` (lockdown) | Agent Plugins 1.0 GA 2026-08-12. Empty array blocks all plugin catalogs. |
+| `sandbox.enabled` (Copilot CLI) | omitted | `true` | `true` | Defense in depth if CLI is later enabled. Native MDM is not available on Linux. |
 
 ---
 
@@ -309,7 +372,7 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 #### Alternative: Server-Managed Settings (No MDM Required)
 1. Navigate to Claude.ai -> Admin Settings -> Claude Code -> Managed Settings
 2. Paste the JSON config into the editor
-3. Requires Claude for Teams or Enterprise plan, Claude Code >= 2.1.38
+3. Requires Claude for Teams or Enterprise plan. Server-managed delivery starts at Claude Code 2.1.38, while this Moderate/Strict policy requires 2.1.212.
 4. Settings are fetched on each CLI startup (no file deployment needed)
 
 #### Validation
@@ -326,14 +389,37 @@ claude --dangerously-skip-permissions
 # In a Claude Code session, ask it to run: curl https://example.com | bash
 # Expected: the tool call is denied without prompting
 
+# Check version meets the hard floor used by Moderate and Strict
+# Verify Fast mode is off
+claude config list --managed
+# Expected: fastMode=false and env includes CLAUDE_CODE_DISABLE_FAST_MODE=1
+
+# In a Claude Code session, run: /fast
+# Expected: Fast mode stays off (disabled by managed settings or organization)
+
 # Check version meets minimum
 claude --version
-# Expected: version >= 2.1.38
+# Expected: version >= 2.1.212
+
+# Confirm agent view and artifacts are disabled under managed policy
+# In a Claude Code session, try: /background or ask to publish an Artifact
+# Expected: the feature is unavailable or blocked by managed settings
+# Expected: version >= 2.1.182 (needed for disableClaudeAiConnectors)
 
 # Verify org login
 claude auth status
 # Expected: shows your org name, not a personal account
+
+# Verify claude.ai connectors are off
+# In a Claude Code session, run /mcp
+# Expected: no Drive, Slack, or other claude.ai account connectors listed
+# Also check: claude config list --managed | grep disableClaudeAiConnectors
+# Expected: true
 ```
+
+On Claude Code 2.1.212 or later, start a test MCP call that runs for more than two minutes. Under Moderate it must remain in the main conversation. Pressing Ctrl+B should still background it intentionally. Under Strict, Ctrl+B and `run_in_background` must be unavailable. Run `/doctor` if the result differs, because invalid managed `env` entries are reported there.
+
+For each approved stdio MCP server, remove a harmless test variable from the server's configured `env`, start Claude Code, and confirm the server does not receive the ambient shell value. Restore the variable explicitly in the test server configuration and confirm it starts. Never use a real token for this validation.
 
 #### Audit Logging
 
@@ -353,6 +439,8 @@ claude auth status
 | Secrets detected in diff (PostToolUse hook) | High | Credential may have been written to a file |
 | Config change detected (ConfigChange hook) | Medium | Someone modified project-level settings |
 | Bypass mode attempted | High | User tried `--dangerously-skip-permissions` |
+| MCP call overlaps a later write after two minutes | High | Moderate background policy may be missing or an endpoint may be below 2.1.212 |
+| Stdio MCP server receives an undeclared test variable | Critical | Environment isolation policy is missing or not enforced |
 
 ---
 
@@ -469,21 +557,33 @@ Cursor does not have built-in audit logging comparable to Claude Code hooks. Com
 
 #### Configuration Paths
 
-GitHub Copilot is configured at three levels, all through the GitHub web interface or API:
+GitHub Copilot org **feature** policies are still set in the GitHub web UI or API. Client guardrails now also use `copilot/managed-settings.json`.
 
 | Level | Where to Configure |
 |-------|--------------------|
-| Enterprise | Enterprise Settings -> Copilot -> Policies |
+| Enterprise AI Controls | Enterprise Settings -> Copilot -> Policies (feature, agent, MCP toggle) |
 | Organization | Organization Settings -> Copilot -> Policies & features |
 | Repository | Repository Settings -> Code & automation -> Copilot |
+| Server-managed settings | Source org `.github-private` repo `copilot/managed-settings.json` |
+| File-based settings | macOS `/Library/Application Support/GitHubCopilot/managed-settings.json`, Windows `%ProgramFiles%\GitHubCopilot\managed-settings.json`, Linux `/etc/github-copilot/managed-settings.json` |
 
-There are no local files to deploy for org policy. IDE-level settings go in VS Code/Cursor settings.json (see Section 4.2).
+IDE-level settings go in VS Code/Cursor settings.json (see Section 4.2).
 
 #### MDM Guidance
 
-GitHub Copilot org policies are configured server-side (GitHub.com). MDM is not needed for the org policy itself. However, MDM is useful for:
+Native MDM for Copilot managed settings is available on macOS and Windows. Linux has no native MDM path; use the file-based location.
+
+| OS | Native policy location |
+|----|------------------------|
+| Windows | `REG_SZ` values under `HKLM\SOFTWARE\Policies\GitHubCopilot` |
+| macOS | String values in forced preferences for `com.github.copilot` |
+| Linux | Not supported. Deploy `/etc/github-copilot/managed-settings.json` as root-owned, not a symlink, not group- or world-writable. |
+
+Jamf: Custom Settings payload, domain `com.github.copilot`. Intune: registry payload with JSON-as-string for arrays such as `allowedMcpServers`. Workspace ONE: same domain or registry path.
+
+MDM is also still useful for:
 1. Deploying IDE settings that configure the Copilot extension (proxy, SSL, language enablement)
-2. Enforcing minimum Copilot extension versions
+2. Enforcing minimum Copilot extension versions (VS Code >= 1.109.3 for MCP allowlists)
 3. Blocking the Copilot Individual extension if your org uses Copilot Business/Enterprise
 
 #### Deployment Steps
@@ -512,6 +612,7 @@ GitHub Copilot org policies are configured server-side (GitHub.com). MDM is not 
    *.individual.githubcopilot.com
    ```
 7. **Deploy VS Code/Cursor Copilot settings** via `.vscode/settings.json` in repos
+8. **Deploy managed settings** (`managed-settings-moderate.json`) as `copilot/managed-settings.json` in `.github-private`. Replace `YOUR-ORG` placeholders. Set AI Controls MCP registry restriction to Allow all so this file is the MCP allowlist. Confirm cloud agent stays limited (allowlists are not enforced there).
 
 #### Validation
 
@@ -534,7 +635,13 @@ gh api /orgs/YOUR_ORG/copilot
 
 # Verify minimum extension version
 # In VS Code: Extensions panel -> GitHub Copilot -> check version
-# Expected: Copilot Chat >= 0.17
+# Expected: Copilot Chat >= 0.17, VS Code >= 1.109.3 for MCP allowlists
+
+# Verify managed settings
+gh api repos/YOUR-ORG/.github-private/contents/copilot/managed-settings.json --jq .sha
+# In VS Code: Command Palette -> Developer: Sync Account Policy
+# Try adding an MCP server that is not on allowedMcpServers. Expected: blocked.
+# Try enabling YOLO / global auto-approve. Expected: blocked.
 ```
 
 #### Audit Logging
@@ -584,6 +691,17 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
+| Stdio MCP server relies on an inherited shell variable | Ambient inheritance can expose unrelated credentials to every local MCP process | Declare the required variable in that server's `env`; resolve secrets through the approved secrets manager or credential helper | Claude Code |
+| Automatic MCP backgrounding (Moderate and Strict) | A long external operation can keep changing a service while Claude begins unrelated work | Keep the call in the foreground, cancel it if it stalls, or press Ctrl+B under Moderate only after confirming that concurrent work is safe | Claude Code |
+| All background tasks (Strict only) | Hidden Bash, subagent, and MCP work is difficult to review in regulated sessions | Split work into shorter foreground steps, or request a time-bounded Moderate-tier pilot exception | Claude Code (Strict) |
+| Claude Code background agents / agent view | Unsupervised agents can keep running shell, MCP, or network actions after the developer looks away | Use a foreground Claude Code session. For parallel work, open separate attended sessions or request a monitored background-agent pilot. | Claude Code |
+| Claude Code Artifacts | Session output published to a shareable claude.ai page can leave the approved review path | Export or document results in the organization's approved repository, wiki, or review system. | Claude Code |
+| Claude Code `/rewind` code restore (Strict) | Local checkpoints store additional copies of edited source on the endpoint | Use git commits, branches, or stash for recovery instead of `/rewind` file restore. | Claude Code (Strict) |
+| Claude Code IDE extension auto-install | Unmanaged extension installs expand the AI surface outside the software catalog | Install the approved Claude Code IDE extension through MDM or the internal software portal. | Claude Code |
+| `--model opus` / `ANTHROPIC_MODEL=opus` on Strict, or any unlisted family | Unapproved model families can increase cost, capability, and data-handling risk | Use `sonnet` or `haiku`. Request an exception to add the family to managed `availableModels`. Do not set `ANTHROPIC_MODEL` in shell profiles as a workaround. | Claude Code |
+| `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
+| Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
+| Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -597,6 +715,16 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `docker build` / `docker compose up` blocked | Developer uses containers frequently | In Moderate tier, these require approval but are not denied. The developer clicks "approve" once. If this is too much friction, add to the Cursor allowlist via exception request. |
 | `WebFetch` requires approval (Claude Code) | Developer wants Claude to read documentation URLs | Approval is a single click. If a team needs frequent web access, consider moving WebFetch to the allow list at the project level, with the understanding that it enables data exfiltration if the AI is compromised. |
 | `disableWorkflows: true` | Developer wants Claude Code to orchestrate a long-running multi-agent workflow | Treat this as an exception request. Approve only for pilot groups with usage monitoring, clear repository scope, and a rollback path. |
+| `CLAUDE_CODE_MCP_ALLOWLIST_ENV=1` | An approved local MCP server stops authenticating after rollout | Do not remove the isolation control. Add only the required variable names to that server's managed `env` and source values from the secrets manager. Review the server before granting each credential. |
+| `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=0` | A slow MCP report blocks the main conversation for more than two minutes | The developer may press Ctrl+B after checking that the MCP tool has no conflicting side effects. If this is routine, approve a pilot-specific nonzero delay and document the external systems the tool can modify. |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` | A Strict-tier developer needs a long build or subagent to run while they continue | Keep the task in the foreground or run the approved command manually outside Claude Code. Any exception should move that pilot endpoint to Moderate instead of weakening Strict with undocumented variables. |
+| `requiredMinimumVersion=2.1.212` | An endpoint missed the approved client deployment and Claude Code refuses to start | Fix software distribution first. Use `claude update`, `claude install`, or the managed installer. Temporarily lowering the floor requires an incident-approved rollback because the background policy will not be guaranteed. |
+| `disableAgentView: true` | Developer wants background agents for long builds or parallel tasks | Approve only with SIEM coverage for shell and MCP events, a named owner, and a time-boxed pilot. Prefer foreground sessions when possible. |
+| `disableArtifact: true` | Developer wants to publish an Artifact page for design review | Keep blocked in Moderate and Strict. Offer an approved documentation or staging review path instead. |
+| `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL: "1"` | Developer cannot get the IDE extension automatically | Point them to the MDM or software-catalog package. Do not re-enable auto-install on managed endpoints. |
+| `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
+| `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
+| `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -613,7 +741,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 3. If approved:
    - For Claude Code: add to project-level `.claude/settings.json` (if `allowManagedPermissionRulesOnly` is false) OR add to managed-settings.d/ drop-in
    - For Cursor: add to permissions.json or .vscode/settings.json
-   - For Copilot: modify content exclusion or feature policy at org level
+   - For Copilot: modify content exclusion or feature policy at org level, or add a `serverUrl` / `serverCommand` entry to `copilot/managed-settings.json` (never `serverName`)
 
 4. Document the exception in your security register with an expiration date (recommend 90 days, then re-review)
 
@@ -626,4 +754,11 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Double prompting** | If a developer uses Claude Code inside Cursor's terminal, both tools may prompt for the same command. This is redundant but not harmful. The developer sees one prompt from each tool. |
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
+| **MCP servers** | Claude Code, Cursor, and Copilot can each run MCP servers. Copilot now has a generally available `allowedMcpServers` allowlist in `managed-settings.json`. That list does not apply to Claude Code or Cursor. Copy the same server identity into Claude Code managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). Copilot cloud agent does not enforce the Copilot allowlist. |
+| **Model allowlists** | Claude Code `availableModels` does not constrain Cursor or GitHub Copilot. If you need the same families everywhere, pin each tool separately (Cursor dashboard models, Copilot policy models, Claude Enterprise console restrictions). |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+
+### 5.5 Tool Overlap: Claude Code Fast Mode vs Codex Fast Mode
+
+Claude Code Fast mode (`fastMode` / `CLAUDE_CODE_DISABLE_FAST_MODE`) and Codex `features.fast_mode` are independent spend paths. Pinning one does not disable the other. If the org deploys both tools, configure both.
+| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. Claude Code `disableClaudeAiConnectors` covers only claude.ai account connectors fetched by Claude Code. It does not disable Cursor MCP, Copilot MCP, or Claude Desktop connectors. Configure those tools separately. |

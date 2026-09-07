@@ -3,8 +3,8 @@
     "tool": "Claude (Desktop & Web)",
     "description": "Claude Team/Enterprise admin console policy reference",
     "reference": "claude.ai → Admin Settings → Claude Code → Managed settings",
-    "last_updated": "2026-07-12",
-    "notes": "Server-managed settings are configured in the admin console and delivered to clients at auth time. This template documents the recommended Enterprise configuration for change control purposes."
+    "last_updated": "2026-08-11",
+    "notes": "Server-managed settings are configured in the admin console and delivered to clients at auth time. Inference hooks are Claude Enterprise console settings under Data and privacy (not MDM plist keys). This template documents the recommended Enterprise configuration for change control purposes."
   },
   "organization": {
     "plan": "enterprise",
@@ -94,13 +94,28 @@
     "training_on_data": false,
     "data_residency": "us",
     "retention_policy": "enterprise_default",
-    "zero_data_retention": true
+    "zero_data_retention": true,
+    "inference_hooks": {
+      "_delivery": "claude.ai → Organization settings → Data and privacy → Inference hooks",
+      "_permission": "organization:manage",
+      "organization_allowed": true,
+      "enforce_verdicts": true,
+      "mode": "enforce",
+      "failure_handling": "block",
+      "endpoint_url": "https://ai-security.example.com/claude/inference-hooks",
+      "prompt_verdict_timeout_ms": 3000,
+      "rollout_percent": 100,
+      "role_exclusions": [],
+      "custom_blocked_prompt_message": "Blocked by organizational AI security policy. Open a security exception ticket before retrying.",
+      "_secret_note": "Webhook signing secret is revealed once at save. Store in secrets manager only. Never commit."
+    }
   },
   "monitoring": {
     "audit_logs": true,
     "usage_analytics": true,
     "contribution_metrics": true,
     "compliance_api": true,
+    "inference_hooks_activity_feed": true,
     "siem_export": {
       "enabled": true,
       "destination": "splunk"

@@ -1,0 +1,66 @@
+{
+  "_doc": "Cursor Enterprise/Teams dashboard policy reference for BASELINE tier. Suitable for startups starting governance. Prefer Moderate before org-wide rollout.",
+
+  "identity": {
+    "sso_enforced": false,
+    "scim_enabled": false,
+    "allowed_team_ids_mdm": ["REPLACE_WITH_TEAM_ID"],
+    "disable_byok": false,
+    "restrict_cli_agents": false,
+    "restrict_cloud_agents": false
+  },
+
+  "privacy": {
+    "privacy_mode_enforced": true,
+    "repository_blocklist": [],
+    "protected_git_scopes": []
+  },
+
+  "run_mode": {
+    "default_mode": "auto-review",
+    "disable_run_everything": true,
+    "allowed_modes": ["auto-review", "allowlist"],
+    "sandbox_enforced": true,
+    "browser_protection": true,
+    "file_deletion_protection": true,
+    "external_file_protection": true,
+    "cursor_directory_protection": false
+  },
+
+  "mcp": {
+    "allowlist_enabled": false,
+    "approved_servers": [],
+    "default_network_mode": "allowlist",
+    "distribute_via_team_marketplace_only": false
+  },
+
+  "marketplace": {
+    "community_plugin_import": false,
+    "admin_edits_only": false
+  },
+
+  "models": {
+    "restrict_to_approved_models": false,
+    "require_admin_approval_for_non_zdr_models": true
+  },
+
+  "extensions": {
+    "install_cooldown_hours": 24,
+    "signature_verification": false,
+    "allowed_extensions_mdm": {
+      "*": true
+    }
+  },
+
+  "cloud_agents": {
+    "computer_use": "disabled",
+    "team_follow_ups": "all_team_members",
+    "network_access": "default_plus_allowlist",
+    "secrets_public_repos": false
+  },
+
+  "monitoring": {
+    "audit_logs_to_siem": false,
+    "hooks_fail_closed": false
+  }
+}

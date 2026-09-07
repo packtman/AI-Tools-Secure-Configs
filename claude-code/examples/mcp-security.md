@@ -36,6 +36,24 @@ In `managed-settings.json`:
 - `deniedMcpServers` — Explicitly blocked servers. Denylist takes precedence over allowlist.
 - `allowManagedMcpServersOnly` — When `true`, only the managed allowlist is respected.
 
+### Claude.ai account connectors
+
+Claude Code can fetch MCP connectors attached to the signed-in claude.ai account (Drive, Slack, custom connectors). That path is separate from `allowedMcpServers` and from `managed-mcp.json`.
+
+Pin `disableClaudeAiConnectors: true` in managed settings on Moderate and Strict. The vendor default is `false`, so those connectors load unless you pin this key or deploy `managed-mcp.json` (which takes exclusive control unless you also set `allowAllClaudeAiMcps: true`).
+
+- Scope: any settings file. A `true` in managed settings cannot be turned off by a project `false`.
+- Requires Claude Code v2.1.182 or later.
+- Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute.
+- Leave `allowAllClaudeAiMcps` unset. The default `false` keeps `managed-mcp.json` exclusive. Set `true` only if IT has allowlisted specific claude.ai connectors.
+- This pin covers Claude Code only. Claude Desktop MDM connector policy is a separate control.
+
+```json
+{
+  "disableClaudeAiConnectors": true
+}
+```
+
 ### Managed MCP file
 
 Deploy `managed-mcp.json` alongside `managed-settings.json` at the system path:

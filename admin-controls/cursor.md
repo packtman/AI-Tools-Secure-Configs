@@ -67,20 +67,38 @@ Admin controls cover identity management, security enforcement, spend governance
 | Privacy Mode (team-wide) | Dashboard → Settings → Privacy | Enforce zero data retention with AI providers |
 | Zero data retention | Dashboard → Settings → Privacy | Per-provider: OpenAI, Anthropic, Google Vertex, xAI |
 | Repository blocklist | Dashboard → Security | Block specific repos from AI access |
+| Protected Git Scopes | Dashboard → Integrations & MCP | Lock a Git org/namespace so only your Cursor org can use it with Cloud Agents, automations, and Bugbot |
+| Disable BYOK | Dashboard → Team Settings → Models | Block personal OpenAI/Anthropic/Azure/Bedrock API keys |
+
+### Agent Runtime Controls (Enterprise)
+
+| Setting | Location | Effect |
+|---------|----------|--------|
+| Run Mode policy | Dashboard → Agents / Security | Set org default to Auto-review or Allowlist; disable Run Everything |
+| Auto-review instructions | Dashboard (overrides local files) | Org-wide plain-English allow/block guidance for shell, MCP, Fetch |
+| Browser Protection | Dashboard → Security | Require approval before Browser tool use |
+| File-Deletion Protection | Dashboard → Security | Require approval before deletes / `rm` |
+| External-File Protection | Dashboard → Security | Require approval for files outside the workspace |
+| `.cursor` Directory Protection | Dashboard → Security | Agents cannot modify `.cursor/` without approval |
+| Hooks distribution | Dashboard / MDM | Server-side or MDM-distributed enforcement hooks (`failClosed` for critical hooks) |
 
 ### MCP Server Governance
 
 | Setting | Location | Effect |
 |---------|----------|--------|
-| MCP allowlist | Dashboard → Security → MCP Servers | Only approved MCP servers permitted |
-| MCP denylist | Dashboard → Security → MCP Servers | Block specific MCP server packages |
+| MCP allowlist | Dashboard → MCP Configuration | Only approved MCP command/URL patterns permitted; uses full command string or URL matching |
+| Per-server tools | Dashboard → MCP Configuration | Restrict tools for each approved server |
+| Per-server network mode | Dashboard → MCP Configuration | Allow all / allowlist / deny all / no sandbox for stdio servers |
+| Local `mcpAllowlist` fallback | `~/.cursor/permissions.json` | `server:tool` syntax; replaced (not merged) when dashboard policy is set |
 
 ### Extension Control
 
 | Setting | Location | Effect |
 |---------|----------|--------|
 | Allowed extensions (dashboard) | Dashboard → Security & Identity | Push extension allowlist to all clients |
-| Allowed extensions (MDM) | `AllowedExtensions` MDM key | Device-level override; JSON string of permitted IDs |
+| Allowed extensions (MDM) | `AllowedExtensions` MDM key | Device-level override; JSON string of permitted publishers/IDs |
+| Install cooldown | Dashboard / help docs | Delay installs/updates until a marketplace version has been public for N hours |
+| Community marketplace import | Dashboard → Plugins | Off by default on Enterprise; keep off for hardened rollouts |
 
 ### Workspace Trust
 
@@ -92,8 +110,9 @@ Admin controls cover identity management, security enforcement, spend governance
 
 | Setting | Location | Effect |
 |---------|----------|--------|
-| Require sandbox | Dashboard → Security | Force sandbox for all agent sessions |
-| Network allowlist/denylist | Dashboard → Security | Control outbound network access from sandbox |
+| Require sandbox | Dashboard → Security | Force sandbox for all local agent shell sessions |
+| Network allowlist/denylist | Dashboard → Security + `sandbox.json` | Control outbound network access from sandbox |
+| Local `sandbox.json` | `~/.cursor/sandbox.json` or `<repo>/.cursor/sandbox.json` | Path extras, temp-write, shared build cache; cannot weaken team-admin policy |
 
 ---
 

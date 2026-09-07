@@ -1,7 +1,14 @@
-# Continue.dev — MODERATE tool permissions
-# Read-only tools auto-approved, write tools require confirmation.
-# Dangerous operations excluded. Use for enterprise development teams.
+# Continue.dev: MODERATE tool permissions
+# Deploy to: ~/.continue/permissions.yaml (or Mission Control org config)
+# Read-only tools auto-approved, write/shell/Skills require confirmation.
+# Artifact upload and Delete excluded. Use for enterprise development teams.
+#
+# Note: --auto overrides all ask/exclude rules. Block --auto with a CLI wrapper
+# for enterprise endpoints that cannot tolerate YOLO execution.
 
+# WHAT: Safe inspection and status tools run without prompts.
+# WHY: Moderate keeps developer flow for reads while gating mutations.
+# BREAKS: Moving writes into allow removes human review of edits.
 allow:
   - "Read(*)"
   - "List(*)"
@@ -9,12 +16,24 @@ allow:
   - "Fetch(*)"
   - "Diff(*)"
   - "AskQuestion(*)"
+  - "Checklist(*)"
+  - "Status(*)"
+  - "CheckBackgroundJob(*)"
+  - "ReportFailure(*)"
 
+# WHAT: Mutations, shell, and Skills require per-call approval.
+# WHY: Enterprise needs human-in-the-loop for state changes and skill loading.
+# BREAKS: Setting these to allow enables unattended edits, shell, or Skills expansion.
 ask:
   - "Edit"
   - "MultiEdit"
   - "Write"
   - "Bash"
+  - "Skills(*)"
 
+# WHAT: Block destructive deletes and artifact uploads that can leave the workstation.
+# WHY: Delete is high-impact; UploadArtifact can exfiltrate workspace contents.
+# BREAKS: Removing UploadArtifact from exclude allows silent data export via agent tools.
 exclude:
   - "Delete"
+  - "UploadArtifact(*)"

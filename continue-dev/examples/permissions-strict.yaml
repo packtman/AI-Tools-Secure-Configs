@@ -1,16 +1,30 @@
-# Continue.dev — STRICT tool permissions
-# Read-only tools only. All write and execute tools excluded.
+# Continue.dev: STRICT tool permissions
+# Deploy to: ~/.continue/permissions.yaml (or Mission Control org config)
+# Read-only tools only. Write, network fetch, artifact upload, and Skills excluded.
 # Use for regulated environments or code review workflows.
+#
+# Note: --auto and --readonly are absolute mode overrides. permissions.yaml cannot
+# block them. Use a CLI wrapper or MDM-blocked binary args for Strict enforcement.
 
+# WHAT: Built-in read-only and session helper tools auto-approved for review workflows.
+# WHY: Strict still needs context (Read/List/Search/Diff) and clarification helpers.
+# BREAKS: Excluding these makes the agent unable to inspect code or ask clarifying questions.
 allow:
   - "Read(*)"
   - "List(*)"
   - "Search(*)"
   - "Diff(*)"
   - "AskQuestion(*)"
+  - "Checklist(*)"
+  - "Status(*)"
+  - "CheckBackgroundJob(*)"
+  - "ReportFailure(*)"
 
 ask: []
 
+# WHAT: Hide state-changing, network, skill-loading, and artifact-upload tools.
+# WHY: Strict blocks writes, shell, arbitrary Fetch, Skills expansion, and UploadArtifact exfil.
+# BREAKS: Removing exclusions lets agents edit code, run shell, load Skills, or upload artifacts.
 exclude:
   - "Edit"
   - "MultiEdit"
@@ -18,3 +32,5 @@ exclude:
   - "Bash"
   - "Fetch(*)"
   - "Delete"
+  - "UploadArtifact(*)"
+  - "Skills(*)"

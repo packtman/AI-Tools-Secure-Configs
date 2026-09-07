@@ -1,0 +1,29 @@
+{
+  "_comment": "STRICT Cursor sandbox.json for ~/.cursor/sandbox.json or <repo>/.cursor/sandbox.json. Deny-by-default network. No temp writes. No shared build cache. Team-admin policy can only tighten this further.",
+
+  "type": "workspace_readwrite",
+  "disableTmpWrite": true,
+  "enableSharedBuildCache": false,
+  "additionalReadwritePaths": [],
+  "additionalReadonlyPaths": [],
+  "networkPolicy": {
+    "default": "deny",
+    "allow": [
+      "registry.npmjs.org",
+      "registry.yarnpkg.com",
+      "pypi.org",
+      "files.pythonhosted.org",
+      "proxy.golang.org",
+      "sum.golang.org",
+      "crates.io",
+      "static.crates.io",
+      "github.com",
+      "api.github.com",
+      "codeload.github.com"
+    ],
+    "deny": [
+      "169.254.169.254",
+      "metadata.google.internal"
+    ]
+  }
+}

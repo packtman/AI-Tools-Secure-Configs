@@ -30,15 +30,21 @@ Continue.dev's agent mode grants tools (filesystem read/write, terminal executio
 | File read | `allow` | Non-destructive. Agent needs free read access for context. |
 | Directory listing | `allow` | Non-destructive. Required for code navigation. |
 | Diff viewing | `allow` | Non-destructive. Required for understanding changes. |
-| File write/edit | `ask` | State-changing. User must review all modifications. |
-| Terminal commands | `ask` | Can execute arbitrary code. User must approve every command. |
-| Git operations | `ask` | Repository-modifying. Push/commit require explicit approval. |
-| Web search | `ask` | Sends queries to external services. May leak project context. |
-| Browser/fetch | `exclude` | Network access to arbitrary URLs. Risk of data exfiltration. |
+| Checklist / Status / CheckBackgroundJob / ReportFailure | `allow` | Built-in session helpers. Needed for usable CLI/TUI sessions. |
+| File write/edit | `ask` (exclude on Strict) | State-changing. User must review all modifications. |
+| Terminal commands (`Bash`) | `ask` (exclude on Strict) | Can execute arbitrary code. User must approve every command. |
+| Skills | `ask` (exclude on Strict) | Skills can expand the tool surface after load. |
+| UploadArtifact | `ask` on Baseline; `exclude` on Moderate/Strict | Uploads workspace content off-box. Treat as exfil path. |
+| Fetch | `allow` on Baseline/Moderate; `exclude` on Strict | Network retrieval can leak prompts or pull untrusted content. |
+| Delete | `ask` on Baseline; `exclude` on Moderate/Strict | Destructive filesystem ops. |
+
+### New built-in tools (2026 CLI defaults)
+
+Upstream `defaultPolicies.ts` now includes `Checklist`, `Status`, `CheckBackgroundJob`, `ReportFailure`, `UploadArtifact`, and `Skills` as first-class tools. Tier files in this repo mirror those names so admins do not inherit unsafe defaults (especially `UploadArtifact: allow` and `Skills: allow`).
 
 ### Misconfiguration Risk
 
-Setting write tools to `allow` means the agent can modify files without review â€” a prompt injection can silently introduce backdoors. Setting read tools to `exclude` makes the agent nearly useless (no code context). Setting all tools to `ask` creates confirmation fatigue, leading users to approve blindly.
+Setting write tools to `allow` means the agent can modify files without review: a prompt injection can silently introduce backdoors. Setting read tools to `exclude` makes the agent nearly useless (no code context). Setting all tools to `ask` creates confirmation fatigue, leading users to approve blindly. Leaving `UploadArtifact` or `Skills` on the upstream default `allow` is especially risky on managed endpoints.
 
 ---
 
@@ -48,7 +54,7 @@ Setting write tools to `allow` means the agent can modify files without review â
 |------|-------------|-------------|
 | **Default** (no flag) | Agent can read and write files, run terminal commands, with permission checks per tool configuration | Standard development. Most flexible, with governance via tool permissions. |
 | `--readonly` | Agent can only read files and provide suggestions. Cannot modify any files or run commands. | Code review, learning, exploration. When you want AI assistance without any risk of modification. |
-| `--auto` | Agent executes approved actions without confirmation. Overrides `ask` permissions to `allow`. | CI/CD pipelines, automated refactoring (with strict workspace sandboxing). **Never use interactively.** |
+| `--auto` | Absolute override: allows every tool and ignores `permissions.yaml`. | Isolated CI runners only. Block on managed developer endpoints with a CLI wrapper. |
 
 ### When to Use Each Mode
 
@@ -62,7 +68,7 @@ Setting write tools to `allow` means the agent can modify files without review â
 
 ### Misconfiguration Risk
 
-Using `--auto` in an interactive IDE session removes all confirmation gates. A prompt injection can modify any file, run any command, and push to git without user awareness. Using `--readonly` for development tasks forces developers to manually apply every suggestion, defeating the purpose of AI assistance.
+Using `--auto` in an interactive IDE or CLI session removes all confirmation gates, including `exclude` rules. A prompt injection can modify any file, run any command, upload artifacts, and load Skills without user awareness. `permissions.yaml` cannot stop `--auto`; only a wrapper, policy engine, or isolated runner can. Using `--readonly` for development tasks forces developers to manually apply every suggestion, which is appropriate for Strict review but not for Moderate daily coding.
 
 ---
 
@@ -127,7 +133,7 @@ Inlining API keys in `config.yaml` means the key is written to disk in plain tex
 | Aspect | Detail |
 |--------|--------|
 | **What it does** | Continue.dev supports Model Context Protocol servers as tools, extending the agent's capabilities with external integrations. |
-| **Recommended** | Audit and scope all MCP servers. Use only approved servers. |
+| **Recommended** | Set `mcpServers: []` in tier configs by default. Audit and allowlist named servers only through change control. |
 
 ### Scoping and Auditing
 
