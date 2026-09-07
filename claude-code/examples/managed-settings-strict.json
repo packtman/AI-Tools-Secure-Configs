@@ -109,6 +109,11 @@
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
+  "disableAgentView": true,
+  "disableArtifact": true,
+  "disableBundledSkills": true,
+  "fileCheckpointingEnabled": false,
+  "awaySummaryEnabled": false,
   "channelsEnabled": false,
 
   "forceLoginMethod": "claudeai",
@@ -148,7 +153,10 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_AUTO_CONNECT_IDE": "false",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
+    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1"
   }

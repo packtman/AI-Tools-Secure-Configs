@@ -24,38 +24,27 @@
         {
           "name": "Managed settings documentation",
           "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
+          "url": "https://code.claude.com/docs/en/settings.md",
           "watch_for": [
             "managed settings",
             "permissions",
             "disableBypassPermissionsMode",
-            "requiredMinimumVersion",
+            "disableAgentView",
+            "disableArtifact",
             "sandbox",
             "MCP"
-          ]
-        },
-        {
-          "name": "Hooks documentation",
-          "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
-          "watch_for": [
-            "PreToolUse",
-            "PostToolUse",
-            "ConfigChange",
-            "audit",
-            "permissions"
-          ]
-        },
-        {
-          "name": "Dynamic workflows documentation",
-          "kind": "docs",
-          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
-          "watch_for": [
-            "dynamic workflows",
-            "disableWorkflows",
-            "CLAUDE_CODE_DISABLE_WORKFLOWS",
-            "ultracode",
-            "managed settings"
+          ],
+          "candidate_allowlist": [
+            "disableAgentView",
+            "disableArtifact",
+            "disableBundledSkills",
+            "fileCheckpointingEnabled",
+            "awaySummaryEnabled",
+            "requiredMinimumVersion",
+            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
+            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
+            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
+            "CLAUDE_CODE_AUTO_CONNECT_IDE"
           ]
         },
         {
@@ -63,18 +52,47 @@
           "kind": "docs",
           "url": "https://code.claude.com/docs/en/env-vars.md",
           "watch_for": [
+            "CLAUDE_CODE_DISABLE_AGENT_VIEW",
+            "CLAUDE_CODE_DISABLE_ARTIFACT",
             "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
-            "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
-            "CLAUDE_AUTO_BACKGROUND_TASKS",
-            "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS",
-            "CLAUDE_CODE_MCP_ALLOWLIST_ENV"
+            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
+            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
+            "managed settings"
           ],
           "candidate_allowlist": [
+            "CLAUDE_CODE_DISABLE_AGENT_VIEW",
+            "CLAUDE_CODE_DISABLE_ARTIFACT",
+            "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS",
+            "CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING",
             "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
-            "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
-            "CLAUDE_AUTO_BACKGROUND_TASKS",
-            "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS",
-            "CLAUDE_CODE_MCP_ALLOWLIST_ENV"
+            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
+            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
+            "CLAUDE_CODE_AUTO_CONNECT_IDE"
+          ]
+        },
+        {
+          "name": "Hooks documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/hooks.md",
+          "watch_for": [
+            "PreToolUse",
+            "PostToolUse",
+            "ConfigChange",
+            "InstructionsLoaded",
+            "audit",
+            "permissions"
+          ]
+        },
+        {
+          "name": "Dynamic workflows documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/workflows.md",
+          "watch_for": [
+            "dynamic workflows",
+            "disableWorkflows",
+            "CLAUDE_CODE_DISABLE_WORKFLOWS",
+            "ultracode",
+            "managed settings"
           ]
         }
       ]
@@ -88,72 +106,40 @@
       ],
       "tier_files": {
         "strict": [
-          "cursor/examples/permissions-strict.json",
-          "cursor/examples/sandbox-strict.json",
-          "cursor/examples/enterprise-policy-strict.json"
+          "cursor/examples/permissions-strict.json"
         ],
         "moderate": [
           "cursor/examples/permissions-moderate.json",
-          "cursor/examples/sandbox-moderate.json",
-          "cursor/examples/enterprise-policy-moderate.json",
           "rollout-guide/configs/cursor/permissions-moderate.json",
           "rollout-guide/configs/cursor/settings.json"
         ],
         "baseline": [
-          "cursor/examples/permissions-baseline.json",
-          "cursor/examples/sandbox-baseline.json",
-          "cursor/examples/enterprise-policy-baseline.json"
+          "cursor/examples/permissions-baseline.json"
         ]
       },
       "sources": [
         {
-          "name": "Enterprise security hardening",
+          "name": "Team administration documentation",
           "kind": "docs",
-          "url": "https://cursor.com/docs/enterprise",
+          "url": "https://docs.cursor.com/en/account/teams/admin-dashboard",
           "watch_for": [
-            "Privacy Mode",
-            "Run Mode",
-            "sandbox",
-            "MCP",
-            "BYOK",
-            "MDM",
-            "audit"
+            "admin",
+            "team",
+            "policy",
+            "audit",
+            "privacy"
           ]
         },
         {
-          "name": "Run Modes and sandbox documentation",
+          "name": "MCP documentation",
           "kind": "docs",
-          "url": "https://cursor.com/docs/agent/security/run-modes",
-          "watch_for": [
-            "Auto-review",
-            "Allowlist",
-            "Run Everything",
-            "sandbox",
-            "Browser Protection",
-            "permissions.json"
-          ]
-        },
-        {
-          "name": "sandbox.json reference",
-          "kind": "docs",
-          "url": "https://cursor.com/docs/reference/sandbox",
-          "watch_for": [
-            "networkPolicy",
-            "disableTmpWrite",
-            "additionalReadwritePaths",
-            "workspace_readwrite"
-          ]
-        },
-        {
-          "name": "MCP and model integration management",
-          "kind": "docs",
-          "url": "https://cursor.com/docs/mcp",
+          "url": "https://docs.cursor.com/en/tools/mcp",
           "watch_for": [
             "MCP",
-            "allowlist",
-            "server:tool",
-            "network",
-            "marketplace"
+            "server",
+            "tools",
+            "approval",
+            "allowlist"
           ]
         }
       ]
@@ -167,67 +153,40 @@
       ],
       "tier_files": {
         "strict": [
-          "github-copilot/examples/org-policy-strict.json",
-          "github-copilot/examples/managed-settings-strict.json"
+          "github-copilot/examples/org-policy-strict.json"
         ],
         "moderate": [
           "github-copilot/examples/org-policy-moderate.json",
-          "github-copilot/examples/managed-settings-moderate.json",
-          "rollout-guide/configs/github-copilot/org-policy-moderate.json",
-          "rollout-guide/configs/github-copilot/managed-settings-moderate.json"
+          "rollout-guide/configs/github-copilot/org-policy-moderate.json"
         ],
         "baseline": [
-          "github-copilot/examples/org-policy-baseline.json",
-          "github-copilot/examples/managed-settings-baseline.json"
+          "github-copilot/examples/org-policy-baseline.json"
         ]
       },
       "sources": [
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
           "watch_for": [
             "policy",
             "organization",
             "Copilot Chat",
             "content exclusion",
-            "CLI"
+            "CLI",
+            "MCP"
           ]
         },
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
+          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
           "watch_for": [
             "content exclusion",
             "repositories",
             "patterns",
             "excluded",
             "audit"
-          ]
-        },
-        {
-          "name": "Enterprise managed settings reference",
-          "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference",
-          "watch_for": [
-            "allowedMcpServers",
-            "deniedMcpServers",
-            "enabledPlugins",
-            "strictKnownMarketplaces",
-            "disableBypassPermissionsMode"
-          ]
-        },
-        {
-          "name": "MCP enterprise allowlist documentation",
-          "kind": "docs",
-          "url": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist",
-          "watch_for": [
-            "allowedMcpServers",
-            "deniedMcpServers",
-            "managed-settings.json",
-            "MCP",
-            "fail closed"
           ]
         }
       ]
@@ -251,15 +210,16 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
+          "name": "OpenAI Codex configuration reference",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/config-reference.md",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "model",
-            "MCP"
+            "approval_policy",
+            "sandbox_mode",
+            "web_search",
+            "features",
+            "permissions",
+            "managed"
           ]
         },
         {
@@ -267,11 +227,12 @@
           "kind": "releases",
           "url": "https://api.github.com/repos/openai/codex/releases?per_page=10",
           "watch_for": [
-            "configuration",
-            "security",
             "sandbox",
-            "policy",
-            "permissions"
+            "approval",
+            "managed",
+            "permissions",
+            "hooks",
+            "MCP"
           ]
         }
       ]
@@ -298,53 +259,27 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex repository",
-          "kind": "repository",
-          "url": "https://github.com/openai/codex",
-          "watch_for": [
-            "desktop",
-            "managed",
-            "config",
-            "requirements",
-            "MDM"
-          ]
-        },
-        {
-          "name": "OpenAI Codex config schema",
-          "kind": "repository",
-          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json",
-          "watch_for": [
-            "approval_policy",
-            "sandbox_mode",
-            "mcp_servers",
-            "features",
-            "apps",
-            "plugin_hooks",
-            "recommended_plugins"
-          ]
-        },
-        {
-          "name": "OpenAI Codex advanced configuration",
+          "name": "OpenAI Codex enterprise admin setup",
           "kind": "docs",
-          "url": "https://developers.openai.com/codex/config-advanced.md",
+          "url": "https://developers.openai.com/codex/enterprise/admin-setup",
           "watch_for": [
-            "config",
-            "sandbox",
-            "approval",
-            "features",
-            "MCP"
+            "admin",
+            "managed",
+            "enterprise",
+            "policy",
+            "SSO"
           ]
         },
         {
           "name": "OpenAI Codex managed configuration",
           "kind": "docs",
-          "url": "https://developers.openai.com/codex/enterprise/managed-configuration.md",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
           "watch_for": [
-            "managed",
-            "requirements",
-            "MDM",
-            "config",
-            "policy"
+            "managed configuration",
+            "requirements.toml",
+            "hooks",
+            "allow_managed_hooks_only",
+            "MDM"
           ]
         }
       ]
@@ -376,34 +311,22 @@
           "url": "https://docs.continue.dev/reference",
           "watch_for": [
             "config",
-            "mcpServers",
+            "permissions",
             "models",
-            "schema",
+            "context",
             "MCP"
           ]
         },
         {
-          "name": "CLI tool permissions documentation",
-          "kind": "docs",
-          "url": "https://docs.continue.dev/cli/tool-permissions",
-          "watch_for": [
-            "permissions.yaml",
-            "UploadArtifact",
-            "Skills",
-            "exclude",
-            "auto"
-          ]
-        },
-        {
-          "name": "Default tool permission policies",
+          "name": "Continue repository",
           "kind": "repository",
-          "url": "https://raw.githubusercontent.com/continuedev/continue/refs/heads/main/extensions/cli/src/permissions/defaultPolicies.ts",
+          "url": "https://github.com/continuedev/continue",
           "watch_for": [
-            "UploadArtifact",
-            "Skills",
-            "CheckBackgroundJob",
-            "permission",
-            "AUTO_MODE"
+            "config.yaml",
+            "policy",
+            "secrets",
+            "permissions",
+            "telemetry"
           ]
         }
       ]
@@ -648,15 +571,27 @@
       },
       "sources": [
         {
-          "name": "Claude Desktop support documentation",
+          "name": "Claude Desktop documentation",
           "kind": "docs",
-          "url": "https://support.anthropic.com/en/",
+          "url": "https://code.claude.com/docs/en/desktop.md",
           "watch_for": [
             "Claude Desktop",
-            "settings",
+            "MCP",
+            "connectors",
             "enterprise",
-            "admin",
-            "data"
+            "policy"
+          ]
+        },
+        {
+          "name": "Claude Desktop local MCP support",
+          "kind": "docs",
+          "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
+          "watch_for": [
+            "MCP",
+            "local",
+            "Claude Desktop",
+            "security",
+            "permissions"
           ]
         }
       ]
@@ -744,22 +679,7 @@
             "workspace",
             "key",
             "audit",
-            "security",
-            "Inference hooks",
-            "Dreams"
-          ]
-        },
-        {
-          "name": "Inference hooks configuration",
-          "kind": "docs",
-          "url": "https://platform.claude.com/docs/en/manage-claude/inference-hooks.md",
-          "watch_for": [
-            "Inference hooks",
-            "AI security server",
-            "Enforce verdicts",
-            "shadow mode",
-            "Activity Feed",
-            "organization:manage"
+            "security"
           ]
         }
       ]
