@@ -10,16 +10,16 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | Claude Code | Managed settings documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
 | Claude Code | Hooks documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
 | Claude Code | Dynamic workflows documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
-| Cursor | Enterprise security hardening | new-source-baseline | 200 | https://cursor.com/docs/enterprise |
-| Cursor | Run Modes and sandbox documentation | new-source-baseline | 200 | https://cursor.com/docs/agent/security/run-modes |
-| Cursor | sandbox.json reference | new-source-baseline | 200 | https://cursor.com/docs/reference/sandbox |
-| Cursor | MCP and model integration management | new-source-baseline | 200 | https://cursor.com/docs/mcp |
+| Cursor | Team administration documentation | content-changed | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
+| Cursor | MCP documentation | content-changed | 200 | https://docs.cursor.com/en/tools/mcp |
 | GitHub Copilot | Organization policy documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
 | GitHub Copilot | Content exclusion documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
 | Codex CLI | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
 | Codex CLI | OpenAI Codex releases | content-changed | 200 | https://api.github.com/repos/openai/codex/releases?per_page=10 |
 | Codex Desktop | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
-| Codex Desktop | OpenAI Codex config reference | content-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
+| Codex Desktop | OpenAI Codex config schema | new-source-baseline | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json |
+| Codex Desktop | OpenAI Codex advanced configuration | new-source-baseline | 200 | https://developers.openai.com/codex/config-advanced.md |
+| Codex Desktop | OpenAI Codex managed configuration | new-source-baseline | 200 | https://developers.openai.com/codex/enterprise/managed-configuration.md |
 | Continue.dev | Configuration reference | content-changed | 200 | https://docs.continue.dev/reference |
 | Continue.dev | Continue repository | content-changed | 200 | https://github.com/continuedev/continue |
 | Windsurf | Windsurf documentation | content-changed | 200 | https://docs.windsurf.com/ |
@@ -37,6 +37,7 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | OpenAI Platform | OpenAI OpenAPI schema | content-changed | 200 | https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml |
 | Claude API | Anthropic admin API documentation | content-changed | 200 | https://platform.claude.com/docs/en/api/admin.md |
 | Claude API | Anthropic API release notes | content-changed | 200 | https://platform.claude.com/docs/en/release-notes/api.md |
+| Claude API | Inference hooks configuration | new-source-baseline | 200 | https://platform.claude.com/docs/en/manage-claude/inference-hooks.md |
 
 ## Review Details
 
@@ -59,16 +60,16 @@ Platform Claude Code on the Web Claude Code on the Web Search... Navigation Sett
 Claude Code settings Getting started Build with Claude Code Administration Configuration Reference
 Agent SDK What's New Resources Settings and permissions Settings Permissions San ...
 
-> ... it in ~/.claude/settings.json instead. Before v2.1.142, project settings could set auto . The
---permission-mode CLI flag overrides this setting for a single session "acceptEdits"
+> ... rom being activated. Equivalent to the top-level disableAutoMode setting, which describes the
+full effect. Most useful in managed settings where users cannot override it "disable"
 disableBypassPermissionsMode Set to "disable" to prevent bypassPermissions mode from being
 activated. This disables the --dangerously-skip-permissions command-line flag. Typically placed in
 managed settings t ...
 
 > ... ons Claude Code settings Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Settings and permissions Settings Permissions Sandbox
-environments Bash sandbox Environments Cloud environments Model and responses Model configuration
-Speed up responses with fast mode Escalate hard decisions with the advisor tool O ...
+environments Bash sandbox Environments Cloud environments Self-hosted environments Model and
+responses Model configuration Speed up responses with fast mode Escalate hard decision ...
 
 > ... , editor settings) Tools and plugins you use across all projects API keys and authentication
 (stored securely) Project scope is best for: Team-shared settings (permissions, hooks, MCP servers)
@@ -77,11 +78,9 @@ for: Personal overrides for a specific project Testing configurations be ...
 
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+`ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**No config update needed in this PR:** Agent/IDE/artifact/away-summary controls are already covered by open PRs #66/#68. `ANTHROPIC_MODEL` is a runtime model selection env var, not a managed security key for this repo's tier files.
 
 ### Claude Code: Hooks documentation
 
@@ -106,7 +105,7 @@ PostToolUseFailure decision control PostToolBatch PostToolBatch input PostToolBa
 > ... askCompleted input TaskCompleted decision control Stop Stop input Stop decision control
 StopFailure StopFailure input TeammateIdle TeammateIdle input TeammateIdle decision control
 ConfigChange ConfigChange input ConfigChange decision control CwdChanged CwdChanged input CwdChanged
-output FileChanged FileChanged input FileChanged output WorktreeCreate WorktreeCreate input ...
+output DirectoryAdded DirectoryAdded input FileChanged FileChanged input FileChanged output ...
 
 > ... on" : "session_start" }  InstructionsLoaded decision control InstructionsLoaded hooks have no
 decision control. They can't block or modify instruction loading. Use this event for audit logging,
@@ -116,7 +115,7 @@ Claude processes it. This allows you to add additional context based ...
 > ... tup , resume , clear , compact , fork Setup which CLI flag triggered setup init , maintenance
 SessionEnd why the session ended clear , resume , logout , prompt_input_exit ,
 bypass_permissions_disabled , other Notification notification type permission_prompt , idle_prompt ,
-auth_success , elicitation_dialog , elicitation_complete , elicitation_response , agent_needs_inp
+auth_success , elicitation_dialog , elicitation_url_dialog , elicitation_complete , elicitation_r
 ...
 
 Potential config terms not found in local tool files:
@@ -124,8 +123,6 @@ Potential config terms not found in local tool files:
 `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**No config update needed in this PR:** `ANTHROPIC_MODEL` / `CLAUDE_MODEL` are not valid hook decision controls. Deferred to open Claude Code PRs for any remaining managed settings parity.
 
 ### Claude Code: Dynamic workflows documentation
 
@@ -168,166 +165,42 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-**No config update needed in this PR:** `CLAUDE_CODE_SUBAGENT_MODEL` is a model routing preference, not a new deny/allow security control. Dynamic workflow disablement is already covered in existing Claude Code tiers / open PRs.
+### Cursor: Team administration documentation
 
-### Cursor: Enterprise security hardening
-
-- Change type: `new-source-baseline`
-- Source URL: https://cursor.com/docs/enterprise
+- Change type: `content-changed`
+- Source URL: https://docs.cursor.com/en/account/teams/admin-dashboard
 - Status: `200`
 - Related repo paths: cursor/, rollout-guide/configs/cursor/
 
 Keyword snippets:
 
-> ... entity-and-access-management.md) - SSO, SCIM, RBAC, and MDM policies - [Privacy & data
-governance](https://cursor.com/docs/enterprise/privacy-and-data-governance.md) - Data flows, Privacy
-Mode, and data residency - [Network configuration](https://cursor.com/docs/enterprise/network-
-configuration.md) - Proxy setup, IP allowlisting, and encryption - [Private connectivity]( ...
+> ... P Cloud Agents Overview Setup Builds Capabilities Best Practices Automations Bugbot Security
+Agents PR Routing & Approval Mobile Security Settings API Integrations Slack Microsoft Teams Jira
+Linear Notion GitHub GitLab Azure DevOps Bitbucket JetBrains Xcode Deeplinks SDK TypeScript Python
+Bridge Changelog CLI Overview Installation Capabilities Changelog Shell Mo ...
 
-> ... prise/endpoint-security.md) - Configure antivirus, EDR, and DLP software - [LLM safety &
-controls](https://cursor.com/docs/enterprise/llm-safety-and-controls.md) - Hooks, terminal
-sandboxing, and agent controls - [Models & integrations](https://cursor.com/docs/enterprise/model-
-and-integration-management.md) - Model controls, MCP, and third-party integrations - [Cyb ...
+### Cursor: MCP documentation
 
-> ... d-controls.md) - Hooks, terminal sandboxing, and agent controls - [Models &
-integrations](https://cursor.com/docs/enterprise/model-and-integration-management.md) - Model
-controls, MCP, and third-party integrations - [Cyber
-Safeguards](https://cursor.com/docs/account/enterprise/cyber-safeguards.md) - Apply for Anthropic's
-Cyber Verification Program (CVP) to use ...
-
-> ... Restrict which users can access agents via CLI | | Cloud Agents | | Restrict which users can
-create Cloud Agents | | Analytics | | Restrict analytics dashboard to admins only | | BYOK | |
-Disable users from using their own API keys | ### Support & Legal | Capability | Individual Plans |
-Teams | Enterprise | | ----------------- | -------------------------------- ...
-
-> ... ions.md) - Org-wide team membership sync and organization groups - [Identity &
-access](https://cursor.com/docs/enterprise/identity-and-access-management.md) - SSO, SCIM, RBAC, and
-MDM policies - [Privacy & data governance](https://cursor.com/docs/enterprise/privacy-and-data-
-governance.md) - Data flows, Privacy Mode, and data residency - [Network configuration]( ...
-
-**Config update applied (2026-07-31):** Added `enterprise-policy-*.json` dashboard checklists for Run Mode, Browser/file/`.cursor` protections, BYOK, MCP network modes, Protected Git Scopes, and marketplace import controls. Updated README rollout plan, tier deltas, deployment, and workflow-preservation notes.
-
-### Cursor: Run Modes and sandbox documentation
-
-- Change type: `new-source-baseline`
-- Source URL: https://cursor.com/docs/agent/security/run-modes
+- Change type: `content-changed`
+- Source URL: https://docs.cursor.com/en/tools/mcp
 - Status: `200`
 - Related repo paths: cursor/, rollout-guide/configs/cursor/
 
 Keyword snippets:
 
-> ... ursor interrupts you for approval. Use them to decide how much autonomy the agent gets for shell
-commands, MCP tools, and Fetch calls. The safest useful setup for most people is **Auto-review**. It
-runs known-safe calls, sandboxes shell commands when it can, and asks a classifier to review
-anything else. ## Pick a mode In the desktop application, go to **Settings > Age ...
+> Cursor Docs - Agent, Rules, MCP, Skills & CLI Skip to main content Cursor Logo Docs API Learn Help
+Search docs... K Sign in Download Command Palette Search for a command to run... Get Started Welcome
+Quickstart ...
 
-> ... ----------------------------------- | :--------------------------- | :--------- |
-:-------------------------------------------------------------------------- | | **Auto-review** |
-Allowlisted calls run immediately. Other shell commands run in the sandbox when possible. Calls that
-do not use the sandbox go to the Auto-review classifier. | Yes, for shell commands | Yes ...
+> ... Palette Search for a command to run... Get Started Welcome Quickstart Models & Pricing Changelog
+Agent Overview Agents Window Agent Review Planning Prompting Debugging Design Mode Tools Security
+Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup Builds
+Capabilities Best Practices Automations Bugbot Security Agents PR Routing & ...
 
-> ... g enabled, supported shell commands can run in the sandbox. | Optional, for shell commands | No
-| You want deterministic behavior with a small set of trusted repeat actions. | | **Run Everything**
-| Every tool call runs automatically. | No | No | You accept the risk and want zero prompts. | ##
-How Auto-review works Auto-review applies to shell, MCP, and Fetch tool calls. ...
-
-> ... em to decide how much autonomy the agent gets for shell commands, MCP tools, and Fetch calls.
-The safest useful setup for most people is **Auto-review**. It runs known-safe calls, sandboxes
-shell commands when it can, and asks a classifier to review anything else. ## Pick a mode In the
-desktop application, go to **Settings > Agents > Approvals & Execution**. | Mode ...
-
-> ... omatically: | Protection | What it does | | :--------------------------- |
-:------------------------------------------------------------------------------------------------- |
-| **Browser Protection** | Prevents the agent from automatically running Browser tools. | | **File-
-Deletion Protection** | Prevents the agent from automatically deleting files, including `rm`
-commands. ...
-
-Potential config terms not found in local tool files:
-
-`CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, `sandbox-exec`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**Config update applied (2026-07-31):** Added tiered `autoRun` permissions, `sandbox-*.json`, and `enterprise-policy-*.json`. Replaced stale Cursor watchers with enterprise, Run Modes, sandbox reference, and MCP docs.
-
-**No config update needed for missing terms:** `CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, and `sandbox-exec` are runtime or platform implementation details injected into sandboxed processes, not admin-tunable policy keys.
-
-### Cursor: sandbox.json reference
-
-- Change type: `new-source-baseline`
-- Source URL: https://cursor.com/docs/reference/sandbox
-- Status: `200`
-- Related repo paths: cursor/, rollout-guide/configs/cursor/
-
-Keyword snippets:
-
-> ... SharedBuildCache` | `boolean` | `false` | Redirects build-tool caches (npm, cargo, pip, etc.) to
-a shared tmpdir so sandboxed and unsandboxed commands share the same caches. | ## `networkPolicy`
-object | Field | Type | Default | Description | | :-------- | :-------------------- | :------- |
-:-------------------------------------------------------------------------------- ...
-
-> ... a paths the agent can read and write. Only applies when `type` is `"workspace_readwrite"`. | |
-`additionalReadonlyPaths` | `string[]` | `[]` | Extra paths the agent can read. | |
-`disableTmpWrite` | `boolean` | `false` | When `true`, removes default write access to `/tmp` and
-system temp directories. | | `enableSharedBuildCache` | `boolean` | `false` | Redirects build-tool
-...
-
-> ... andbox mode. `"workspace_readwrite"` gives read/write access in the workspace.
-`"workspace_readonly"` restricts to read-only. `"insecure_none"` disables the sandbox entirely. | |
-`additionalReadwritePaths` | `string[]` | `[]` | Extra paths the agent can read and write. Only
-applies when `type` is `"workspace_readwrite"`. | | `additionalReadonlyPaths` | `string[]` | `[]` |
-Extra pat ...
-
-> ... ------------------------------------------------------------------------------------------------
------------------------------------------------------------ | | `type` | string |
-`"workspace_readwrite"` | Sandbox mode. `"workspace_readwrite"` gives read/write access in the
-workspace. `"workspace_readonly"` restricts to read-only. `"insecure_none"` disables the sandbox
-entirely. ...
-
-Potential config terms not found in local tool files:
-
-`CURSOR_SANDBOX`, `networkPolicyStrict`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**Config update applied (2026-07-31):** Added Baseline/Moderate/Strict `sandbox-*.json` templates covering `type`, `networkPolicy`, `disableTmpWrite`, and `enableSharedBuildCache`.
-
-### Cursor: MCP and model integration management
-
-- Change type: `new-source-baseline`
-- Source URL: https://cursor.com/docs/mcp
-- Status: `200`
-- Related repo paths: cursor/, rollout-guide/configs/cursor/
-
-Keyword snippets:
-
-> # Model Context Protocol (MCP) ## What is MCP? [Model Context Protocol
-(MCP)](https://modelcontextprotocol.io/introduction) enables Cursor to connect to external tools and
-data sources. Install and manage MCP ...
-
-> ... plugin installation modes under **Dashboard > Plugins**. See [Migrate existing Team
-MCPs](https://cursor.com/docs/plugins.md#migrate-existing-team-mcps) for the full flow. ### MCP
-Allowlist Enterprise admins can control which MCP servers users may run from the Cursor dashboard.
-Open [Team Settings > MCP Configuration](https://cursor.com/dashboard/team-settings#mcp-co ...
-
-> ... URL entry pattern. - **Tool allowlists** restrict which tools from an approved server can run
-automatically. Leave a tool allowlist empty to allow all tools from that server. ### Network
-controls Remote MCP URLs are restricted to the configured URL entry pattern. Local command-based MCP
-servers use their per-server network mode: - **Allow all**: allow outbound net ...
-
-> ... ectly with your tools. Write MCP servers in any language that can print to `stdout` or serve an
-HTTP endpoint - Python, JavaScript, Go, etc. Browse official plugins in the [Cursor
-Marketplace](/marketplace). For community plugins and MCP servers, browse
-[cursor.directory](https://cursor.directory). ### How it works MCP servers expose capabilities
-through the protocol, ...
-
-Potential config terms not found in local tool files:
-
-`mcp.json`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**Config update applied (2026-07-31):** Documented `server:tool` MCP allowlist syntax, dashboard precedence over local `permissions.json`, and per-server network modes in README/admin-controls.
+> ... Security Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup
+Builds Capabilities Best Practices Automations Bugbot Security Agents PR Routing & Approval Mobile
+Security Settings API Integrations Slack Microsoft Teams Jira Linear Notion GitHub GitLab Azure
+DevOps Bitbucket JetBrains Xcode Deeplinks SDK TypeScript Python Bridge Chan ...
 
 ### GitHub Copilot: Organization policy documentation
 
@@ -338,10 +211,10 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... LI command reference CLI plugin reference CLI programmatic reference ACP server CLI
-configuration directory Custom agents configuration Custom instructions support Hooks reference
-Policy conflicts Supported surfaces for policies Managed settings reference Copilot allowlist
-reference MCP allowlist enforcement Metrics data Copilot billing Models and pricing Billing ...
+> ... LoC metrics Team-level metrics Example schema Enterprise administrators Agent session filters
+Agentic audit log events Enterprise managed settings MCP private registry enforcement Policy
+conflicts Tutorials All tutorials GitHub Copilot Cookbook All prompts Communicate effectively Create
+templates Summarize repository activity Synthesize research Create diagrams Ge ...
 
 > Managing GitHub Copilot in your organization - GitHub Docs Skip to main content GitHub Docs Version:
 Free, Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is
@@ -385,10 +258,10 @@ Fix lint errors Refactor for optimization Refactor for sustainability Refactor d
 Refactor data access layers Decouple business logic Handle cross-cutting Simplify inheritance
 hierarchies Fix database deadlocks Translate code Document code File issues without b ...
 
-> ... lot requests (legacy) Billing overview (legacy) Monitor premium requests (legacy) Model
-multipliers for annual plans (legacy) Agentic audit log events Agent session filters Review excluded
-files Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot
-usage metrics Copilot LoC metrics Team-level metrics Example schema Tutorials Al ...
+> ... legacy) What changed with billing (legacy) Copilot requests (legacy) Billing overview (legacy)
+Monitor premium requests (legacy) Model multipliers for annual plans (legacy) Review excluded files
+Copilot usage metrics Copilot usage metrics data Interpret usage metrics Reconciling Copilot usage
+metrics Copilot LoC metrics Team-level metrics Example schema Enterprise a ...
 
 > Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
 Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
@@ -403,7 +276,7 @@ Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current
 
 Keyword snippets:
 
-> ... vigation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
+> ... Skip to content Navigation Menu Sign in Appearance settings Platform AI CODE CREATION GitHub
 Copilot Write better code with AI GitHub Copilot app Direct agents from issue to merge MCP Registry
 Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant dev
 environments Issues Plan and track work Code Review Manage code changes ...
@@ -417,34 +290,32 @@ environments Issues Plan and track work Code Review Manage code changes ...
 
 Keyword snippets:
 
-> ... n, WebSockets, redirects, and LM Studio connections. (#34479, #34509, #34655, #34678, #35023,
-#35056, #35239)\n- Keep MCP connections and Apps tools current when authentication or configuration
-changes, reconnecting closed servers without restarting healthy connections. (#34952, #34957,
-#35028, #35144, #35146, #35151)\n- Preserve submitted messages, final responses, fail ...
-
-> ... ed mention results. (#35000, #35021, #34775, #34778, #35365, #35375)\n- Fix Windows navigation
-keys, reliably terminate sandboxed process trees, and preserve proxy settings during security
-reviews. (#34625, #34624, #35036)\n- Retain more available skills under tight context budgets and
-warn when skill catalogs must be truncated. (#34732, #34738, #34997)\n\n## Docume ...
+> ... - #36908 Improve bearer token secret redaction @copyberry\n- #36910 Negotiate MCP extensions per
+app-server session @copyberry\n- #36912 Read approval policy from the current turn configuration
+@copyberry\n- #36913 Move skill policy resolution into `codex-skills` @copyberry\n- #36916
+Centralize app enabled-state evaluation @copyberry\n- #36917 Test explicit plugin mentio ...
 
 > ... type": "application/octet-stream",         "digest":
-"sha256:6eec0b9d89746416bf1a5ab987da1f6f3e91b6ff07a199b608bbd2219d568208",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1429,         "state": "uploaded"       },
+"sha256:f96ee0b079980ebdfd54d148371303094b68b7b26c6d50e183a342fcbfe473f0",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:a72f36ae3e02e283b65c8a6 ...
+"sha256:a2aceab2aed9ba335bad5c1 ...
 
-> ... ix @copyberry\n- #34581 Add routing-card lexical skill selection @copyberry\n- #34588 Bind MCP
-calls to captured catalog revisions @copyberry\n- #34590 Add keyed shell environment policy filters
-@copyberry\n- #34597 Enforce exact values from managed config requirements @copyberry\n- #34598 Skip
-missing paths in filesystem sandbox entries @copyberry\n- #34601 Sanit ...
+> ... for unfamiliar local projects and enforce managed authentication restrictions before credentials
+are used. (#36960, #37132)\n- Harden plugin isolation and deny network access when policy updates
+fail. (#37027, #36967, #36037)\n\n## Documentation\n- Improve the bundled OpenAI documentation skill
+with targeted official-source lookup and clearer guidance for Codex, m ...
+
+> ... uter construction @copyberry\n- #36120 Delegate readiness waits to tool runtimes @copyberry\n-
+#36121 Sandbox executor skill resource reads @copyberry\n- #36124 Respect filesystem permissions
+during capability discovery @copyberry\n- #36127 Centralize tool registration and protect host tools
+@copyberry\n- #36128 Preserve delegated tasks across remote compaction @copybe ...
 
 Potential config terms not found in local tool files:
 
-`McpConnectionSet`, `McpRuntime`, `forceRefetch`
+`ModelMessages`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**No config update needed in this PR:** `McpConnectionSet`, `McpRuntime`, and `forceRefetch` are internal release/implementation names, not admin config keys. Codex 0.146 managed requirements are in open PR #72. Codex 0.147 alphas mention managed in-app update policy; revisit when a stable documented config key ships.
 
 ### Codex Desktop: OpenAI Codex repository
 
@@ -460,17 +331,127 @@ your code editor (VS Code, Cursor, Windsurf), install in your IDE. If you want t
 experience, run codex app or visit the Codex App page . If you are looking for the cloud-based agent
 from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
 
-### Codex Desktop: OpenAI Codex config reference
+### Codex Desktop: OpenAI Codex config schema
 
-- Change type: `content-changed`
-- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
+- Change type: `new-source-baseline`
+- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/core/config.schema.json
 - Status: `200`
 - Related repo paths: codex-desktop/
 
 Keyword snippets:
 
-> # Configuration docs moved This file has moved. Please see the latest configuration documentation
-here: - Full config docs: [docs/config.md](https://github.com/openai/codex/blob/main/docs/ ...
+> ... n": "Collection of common configuration options that a user can define as a unit in
+`config.toml`.", "properties": { "analytics": { "$ref": "#/definitions/AnalyticsConfigToml" },
+"approval_policy": { "$ref": "#/definitions/AskForApproval" }, "approvals_reviewer": { "$ref":
+"#/definitions/ApprovalsReviewer" }, "chatgpt_base_url": { "type": "string" },
+"experimental_compact_ ...
+
+> ... osity" }, "oss_provider": { "type": "string" }, "personality": { "$ref":
+"#/definitions/Personality" }, "plan_mode_reasoning_effort": { "$ref":
+"#/definitions/ReasoningEffort" }, "sandbox_mode": { "$ref": "#/definitions/SandboxMode" },
+"service_tier": { "description": "Optional explicit service tier request id for new turns (for
+example `default`, `priority`, or `flex`; ...
+
+> ... num": [ "none", "friendly", "pragmatic" ], "type": "string" }, "PluginConfig": {
+"additionalProperties": false, "properties": { "enabled": { "default": true, "type": "boolean" },
+"mcp_servers": { "additionalProperties": { "$ref": "#/definitions/PluginMcpServerConfig" },
+"description": "Per-MCP-server policy overlays for MCP servers contributed by this plugin.", "type":
+...
+
+> ... asoning effort for spawned subagents when the spawn call does not select one." }, "enabled": {
+"description": "Whether multi-agent tools are enabled. Defaults to true. An enabled
+`features.multi_agent_v2` setting takes precedence.", "type": "boolean" }, "interrupt_message": {
+"description": "Whether to record a model-visible message when an agent turn is interrupted ...
+
+> ... pproving or denying the request. The legacy value `guardian_subagent` is accepted for
+compatibility.", "enum": [ "user", "auto_review", "guardian_subagent" ], "type": "string" },
+"AppsConfigToml": { "additionalProperties": { "$ref": "#/definitions/AppConfig" }, "description":
+"App/connector settings loaded from `config.toml`.", "properties": { "_default": { "all ...
+
+Potential config terms not found in local tool files:
+
+`McpServerConfig`, `ModelProviderInfo`, `auto_review`, `enabled_tools`, `mcp__`, `mcp_oauth_callback_port`, `memory_mode`, `model-with-reasoning`, `model_auto_compact_token_limit`, `model_providers`, `request_permissions`, `with_additional_permissions`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+### Codex Desktop: OpenAI Codex advanced configuration
+
+- Change type: `new-source-baseline`
+- Source URL: https://developers.openai.com/codex/config-advanced.md
+- Status: `200`
+- Related repo paths: codex-desktop/
+
+Keyword snippets:
+
+> # Advanced Configuration > For the complete documentation index, see
+[llms.txt](https://learn.chatgpt.com/llms.txt). Markdown versions of documentation pages are
+available by appending `.md` to the ...
+
+> ... y key. Examples: ```shell # Dedicated flag codex --model gpt-5.6-terra # Generic key/value
+override (value is TOML, not JSON) codex --config model='"gpt-5.6-terra"' codex --config
+sandbox_workspace_write.network_access=true codex --config
+'shell_environment_policy.include_only=["PATH","HOME"]' ``` Notes: - Keys can use dot notation to
+set nested values (for example ...
+
+> ... vel config keys in the profile file; don't nest them under `[profiles.profile-name]`. ```toml #
+~/.codex/deep-review.config.toml model = "gpt-5.5" model_reasoning_effort = "xhigh" approval_policy
+= "on-request" model_catalog_json = "/Users/me/.codex/model-catalogs/deep-review.json" ``` ```shell
+codex --profile deep-review codex exec --profile deep-review "review thi ...
+
+> ... estrictions still apply. Add request headers when needed: ```toml [model_providers.example]
+http_headers = { "X-Example-Header" = "example-value" } env_http_headers = { "X-Example-Features" =
+"EXAMPLE_FEATURES" } ``` Use command-backed authentication when a provider needs Codex to fetch
+bearer tokens from an external credential helper: ```toml [model_providers.proxy ...
+
+> ... rkspace_write.network_access=true codex --config
+'shell_environment_policy.include_only=["PATH","HOME"]' ``` Notes: - Keys can use dot notation to
+set nested values (for example, `mcp_servers.context7.enabled=false`). - `--config` values are
+parsed as TOML. When in doubt, quote the value so your shell doesn't split it on spaces. - If the
+value can't be parsed a ...
+
+Potential config terms not found in local tool files:
+
+`apps_mcp_product_sku`, `auth_mode`, `feature_enabled`, `guardian_policy_config`, `mcp.call`, `mcp.call.duration_ms`, `mcp.tools.cache_write.duration_ms`, `mcp.tools.fetch_uncached.duration_ms`, `mcp.tools.list.duration_ms`, `model_catalog_json`, `model_instructions_file`, `model_provider`, `model_providers`, `model_verbosity`, `model_warning`, `read_allowed`, `remote_models.fetch_update.duration_ms`, `remote_models.load_cache.duration_ms`, `request_permissions`, `thread.skills.enabled_total`, `tmp_mem_enabled`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+### Codex Desktop: OpenAI Codex managed configuration
+
+- Change type: `new-source-baseline`
+- Source URL: https://developers.openai.com/codex/enterprise/managed-configuration.md
+- Status: `200`
+- Related repo paths: codex-desktop/
+
+Keyword snippets:
+
+> # Managed configuration > For the complete documentation index, see
+[llms.txt](https://learn.chatgpt.com/llms.txt). Markdown versions of documentation pages are
+available by appending `.md` ...
+
+> ... `.md` to the page URL. Managed configuration controls supported local runtime behavior for
+covered capabilities in the ChatGPT desktop app, Codex CLI, and IDE extension. Supported
+requirements can differ by client and version. Managed configuration doesn't grant ChatGPT workspace
+access, assign seats, or replace workspace role-based access control (RBAC). Use [Roles and ...
+
+> ... managed requirements delivered in the cloud config bundle. 3. Legacy `managed_config.toml`
+fields that the local client reinterprets as requirements. 4. macOS managed preferences (MDM)
+delivered through `com.openai.codex:requirements_toml_base64`. Higher-precedence layers override
+ordinary scalar and list values from lower layers. Tables merge by key, while req ...
+
+> # Managed configuration > For the complete documentation index, see
+[llms.txt](https://learn.chatgpt.com/llms.txt). Markdown versions of documentation pages are
+available by appending `.md` to the ...
+
+> ... BAC). Use [Roles and workspace permissions](https://learn.chatgpt.com/docs/enterprise/roles-and-
+workspace-permissions) for workspace feature access and this page for local runtime policy.
+Enterprise admins can control supported local client behavior in two ways: - **Requirements**:
+admin-enforced constraints that users can't override. - **Managed defaults**: start ...
+
+Potential config terms not found in local tool files:
+
+`allowAppshots`, `allow_appshots`, `allow_remote_control`, `allowed_approvals_reviewers`, `allowed_domains`, `allowed_permission_profiles`, `default_permissions`, `guardian_policy_config`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
 ### Continue.dev: Configuration reference
 
@@ -517,7 +498,7 @@ Contributing Apache-2.0 license Security More items Continue Pioneering open-sou
 
 > ... ce coding agent continue.dev Topics agent ai cli developer-tools open-source Resources Readme
 Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
-Security policy Activity Custom properties Stars 35.2k stars Watchers 165 watching Forks 5.2k forks
+Security policy Activity Custom properties Stars 35.4k stars Watchers 164 watching Forks 5.2k forks
 Report repository Releases Used by Contributors Languages Footer  2026 GitHub, ...
 
 > ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
@@ -536,8 +517,8 @@ Keyword snippets:
 
 > ... . Skip to main content Devin Docs home page English Search...  K Ask Assistant Support Devin
 Devin Search... Navigation Getting Started Welcome to Devin Desktop Cloud CLI Desktop Enterprise Use
-Cases API Federal Devin Desktop Editor Getting Started Set Up Devin Desktop FAQ Recommended
-Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Browser Pr ...
+Cases API Federal Devin Desktop Editor Getting Started Set Up Install Devin Desktop FAQ Recommended
+Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Br ...
 
 > ... ommended Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Browser
 Previews AI Commit Messages DeepWiki Codemaps Vibe and Replace Advanced Devin Local Agent Cascade
@@ -563,25 +544,25 @@ Start Building with Devin! Things to Try Forgot to Import VS Code Configuratio .
 
 Keyword snippets:
 
-> ... r, scroll, and type faster and stay responsive while streaming. A brief remote-connection drop
-no longer flashes a "disconnected" banner. You can now configure a session's network policy and
-grant or deny network access requests inline from the chat, without switching to the web app. Devin
-Local Devin Local customizations and the sidebar skills count now span all ...
+> ... the fork in a new tab, keeping the original conversation open. "Grant access" on a network
+access request is disabled with an explanation when an admin owns the session's network policy.
+Download 3.7.16  v3.6.27 August 1, 2026 Fixed Devin Desktop for Windows loads root and intermediate
+certificates from the Windows certificate store again, so sign-in and other H ...
 
 > ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
 Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
-Guide Reporting On this page v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28 v3.2.23 v3.2.19
-v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v2.2.17 v2.1.32 v2.1.29 ...
+Guide Reporting On this page v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28
+v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v2.2.17 ...
 
 > ... eases (Next) Windsurf Plugins Changelog Get Started Features Cascade (JetBrains) Context
 Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security
-FedRAMP Security Admin Guide Reporting On this page v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18
-v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v ...
+FedRAMP Security Admin Guide Reporting On this page v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27
+v3.4.22 v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 ...
 
-> ... ent space and from a Devin Local session's sidebar context menu, and the Cascade panel's ...
-menu now only offers the customization surfaces that apply to the agent you have open. MCP servers
-reporting "Needs auth" now show an Authenticate button in the Devin Local MCP list, marketplace
-card, and detail page, which clears the stored OAuth credentials and reruns ...
+> ... worktree that fails now surfaces the git error instead of quietly running in your workspace.
+Terminal: Create New Terminal in Editor Area now works inside worktrees. Codemaps and MCP
+configuration files now open from the remote machine when connected over WSL, SSH, or a dev
+container. Teams plan members no longer see quota warning banners they cannot act on. D ...
 
 > ... connection failures under TLS-intercepting proxies. Devin Local Edits produced in autonomous
 mode now produce reviewable diffs. ACU usage is now shown in the /usage command. Skill permissions:
@@ -644,7 +625,7 @@ today's commits to #dev channel > @database Run a query to find inactive us ...
 & Security - Safe execution environments. Trusted Folders - Control execution policies by folder.
 Enterprise Guide - Deploy and manage in a corporate environment. Telemetry & M ...
 
-> ... vigation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub
+> ... Skip to content Navigation Menu Sign in Appearance settings Platform AI CODE CREATION GitHub
 Copilot Write better code with AI GitHub Copilot app Direct agents from issue to merge MCP Registry
 Integrate external tools DEVELOPER WORKFLOWS Actions Automate any workflow Codespaces Instant dev
 environments Issues Plan and track work Code Review Manage code changes ...
@@ -668,10 +649,10 @@ Secret protection Stop leaks before they start EXPLORE Why GitHub Documentation 
 
 Keyword snippets:
 
-> ... ase notes Gemini for Google Cloud release notes Gemini Code Assist release notes Get started Set
-up Gemini Code Assist Write better prompts Configure Gemini for Google Cloud admin settings overview
-Turn off Gemini for Google Cloud products Gemini Code Assist Configure Gemini Code Assist Configure
-Gemini Code Assist release channels Keyboard shortcuts Exclude files f ...
+> ... rn off Gemini for Google Cloud products Get started Set up Gemini Code Assist Write better
+prompts Gemini Code Assist Configure Gemini Code Assist Gemini Code Assist administrator settings
+Configure Gemini Code Assist release channels Keyboard shortcuts Exclude files from Gemini Code
+Assist use Configure local codebase awareness Configure Gemini Code Assist logging ...
 
 > ... pute Data analytics and pipelines Databases Distributed, hybrid, and multicloud Industry
 solutions Migration Networking Observability and monitoring Security Storage Cross-product tools
@@ -765,15 +746,13 @@ Installing MCP servers Option 1: Add a remote HTTP server Option 2: Add a remote
 > ... eveloper Platform Claude Code on the Web Claude Code on the Web Search... Navigation MCP Connect
 Claude Code to tools via MCP Getting started Build with Claude Code Administration Configuration
 Reference Agent SDK What's New Resources Agents and parallel work Overview Create custom subagents
-Agent view Run agent teams Dynamic workflows Isolate sessions with worktrees MCP ...
+Agent view Run agent teams Cross-session messaging Dynamic workflows Isolate ses ...
 
 Potential config terms not found in local tool files:
 
 `CLAUDE_AUTO_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**No config update needed in this PR:** Listed `CLAUDE_CODE_*` MCP env vars are Claude Code runtime terms, not Desktop MDM policy keys. Desktop Browser/SSH work remains in open PR #70.
 
 ### Claude Desktop: Claude Desktop support documentation
 
@@ -784,15 +763,30 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... 78 articles Pro and Max plans 15 articles Team and Enterprise plans 62 articles Identity
-management (SSO, JIT, SCIM) 15 articles Claude Cowork 10 articles Claude Code 20 articles Claude
-Desktop 9 articles Claude Mobile apps 15 articles Claude API and Console 40 articles Connectors 22
-articles Claude in Chrome 5 articles Claude for Education 4 articles Claude for Nonprofi ...
+> ... ter prompts Claude Code cheatsheet Claude Code user FAQ Claude Code power user tips Claude Code:
+Common developer use cases Claude Code communications kit Claude Code champion kit Claude Desktop
+General Install Claude Desktop Deploy Claude Desktop for Windows Deploy Claude Desktop for macOS
+Enterprise configuration for Claude Desktop Use quick entry with Claude Desktop on ...
 
-> ... Italiano   Portugus P  Espaol  English Search for answers or browse by topic Search for
-articles... Claude 78 articles Pro and Max plans 15 articles Team and Enterprise plans 62 articles
-Identity management (SSO, JIT, SCIM) 15 articles Claude Cowork 10 articles Claude Code 20 articles
-Claude Desktop 9 articles Claude Mobile apps 15 articles Claud ...
+> ... nt? Managing your active sessions Understanding your billing address and tax calculation Notice
+regarding consumption tax (JCT) for Japanese customers Configuring session security settings How to
+get support for Claude for Government Public Sector FAQs Claude 4 Invite Contest Conversation
+management Delete or rename a conversation Share and unshare chats Use incogni ...
+
+> ... Pro plan? How do I sign up for the Pro plan? How to change your Pro plan from monthly to annual
+billing Max plan What is the Max plan? How do I sign up for the Max plan? Team and Enterprise plans
+Plan overviews What is the Enterprise plan? What is the Team plan? Get started Get started with the
+Team plan Move your personal Claude account to a Team or Enterprise organ ...
+
+> ... our Team plan from monthly to annual billing Add or update your Team plan's tax or VAT ID Cancel
+your organization's Team plan subscription How am I billed for my Enterprise plan? Admin management
+Roles and permissions Purchase and manage seats on Team plans Purchase and manage seats on
+Enterprise plans Manage members on Team and Enterprise plans Claude Enterpris ...
+
+> ...  K Claude Release notes Get started with Claude Get started with Claude What are some things I
+can use Claude for? Where can I access Claude? How up-to-date is Claude's training data? What
+interfaces can I use to access Claude? Choose a Claude plan Verify your phone number How to gift a
+Claude subscription How to redeem a Claude gift subscription Account manag ...
 
 ### OpenAI Platform: OpenAI OpenAPI repository
 
@@ -847,8 +841,6 @@ Potential config terms not found in local tool files:
 `allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `moderation_result`, `moderation_results`, `organization.data_retention`, `project.data_retention`, `project.model_permissions`, `project.model_permissions.deleted`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-**No config update needed in this PR:** Hosted-tool / MCP / retention admin terms are covered by open PR #69.
 
 ### Claude API: Anthropic admin API documentation
 
@@ -917,11 +909,10 @@ member and invite requests take no beta header. An Admin API key with the `read:
 also call every user-management `GET` endpoint. See [User management](/docs/en/manage-claude/user-
 management). ### July 10, 2026 * [Dreams](/docs/en/managed-agents/drea ...
 
-> ... ks-libraries/cli/quickstart). ### April 7, 2026 * We announced [Claude Mythos
-Preview](https://anthropic.com/glasswing) is available as a gated research preview for defensive
-cybersecurity work as part of [Project Glasswing](https://anthropic.com/glasswing). Access is
-invitation-only. * The [Messages API](/docs/en/api/messages) is now available on Amazon Bedrock as
-...
+> ... t and available to the agent for that session. ### August 5, 2026 * **Inference hooks** are now
+in beta for Claude Enterprise organizations. Point Claude at your organization's AI security server,
+and each governed prompt across claude.ai, Cowork, and Claude Code is held for the server's allow or
+deny verdict before inference proceeds. Requests are signed, failure h ...
 
 Potential config terms not found in local tool files:
 
@@ -929,21 +920,50 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-## Maintenance Decisions (2026-07-31)
+### Claude API: Inference hooks configuration
 
-### Cursor
-- Applied Auto-review `autoRun` instructions across Baseline/Moderate/Strict permissions.
-- Added `sandbox-*.json` and `enterprise-policy-*.json` tier templates.
-- Replaced stale Cursor discovery watchers with `cursor.com/docs/enterprise`, Run Modes, sandbox reference, and MCP docs (14 tools / 31 sources).
-- Runtime terms `CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, `sandbox-exec` are not admin keys.
+- Change type: `new-source-baseline`
+- Source URL: https://platform.claude.com/docs/en/manage-claude/inference-hooks.md
+- Status: `200`
+- Related repo paths: claude-api/
 
-### Deferred (already in open PRs or not admin keys)
-- Claude Code agent/artifact/IDE/workflow controls → open PRs #66/#68
-- Codex CLI 0.146 requirements / Copilot agent apps → open PR #72
-- Codex Desktop / OpenAI Platform → open PR #69
-- Claude Desktop / Claude API → open PR #70
-- Windsurf / Devin → open PR #71
-- Codex release-internal names `McpConnectionSet` / `McpRuntime` / `forceRefetch` → no config keys
+Keyword snippets:
+
+> # Inference hooks Send each governed prompt to your organization's AI security server for an allow
+or deny verdict before inference proceeds. --- Inference hooks are in beta and available to Claude
+...
+
+> # Inference hooks Send each governed prompt to your organization's AI security server for an allow
+or deny verdict before inference proceeds. --- Inference hooks are in beta and available to Claude
+Enterprise organizations. Configuring them requires the `organizati ...
+
+> ... ce-api) to audit what happened afterward. *** ## In this section Allow Inference hooks for your
+organization, set up and test your AI security server, choose failure handling, and enforce
+verdicts. The request and verdict schemas, signature verification, operational semantics, and
+integration patterns for building the AI security server.
+
+> ... handling setting decides the outcome: block the request, or allow it to proceed without
+inspection. Enforcement can roll out at your pace, so nobody has to be blocked on day one: shadow
+mode observes verdicts on live traffic without blocking anything, a rollout percentage inspects a
+chosen fraction of requests, and exclusions exempt members of chosen roles entirely. S ...
+
+> ... to request an exception). If your administrators haven't configured one, a built-in default
+directs the user to contact them. Each denial is also recorded in your organization's [Activity
+Feed](/docs/en/manage-claude/compliance-activity-feed). The following diagram traces one example (a
+Cowork request where Claude also calls an O365 tool) to illustrate which parts of th ...
+
+Potential config terms found upstream are already present in local tool files.
+
+## Maintenance Notes (2026-08-11)
+
+Applied config updates from Claude Enterprise Inference hooks (release notes 2026-08-05) and repaired discovery watchers:
+
+- **Claude API / Claude Enterprise admin:** Added `inference_hooks` and `managed_agents.dreams_access_requested` to Baseline/Moderate/Strict org-policy templates. Moderate pins shadow mode + fail-open + 25% rollout. Strict pins enforce + fail-closed + 100% rollout. Baseline leaves hooks off. Dreams access stays false until an org kill switch exists.
+- **Docs:** Updated `claude-api` README tier delta, settings rationale, secure-org-policy rollout/rollback, and `admin-controls` Claude Desktop Inference hooks section + `claude-admin-policy.json`.
+- **Discovery:** Replaced moved Codex Desktop `codex-rs/config.md` stub with schema + advanced + managed-configuration watchers. Added Claude API Inference hooks watcher. Registry: 14 tools / 32 sources.
+- **Deferred duplicates:** Claude Code IDE/agent/artifact/checkpoint/autocompact/AskUserQuestion/peer/parentSettings/strictAllowlist → open #66/#68/#80/#81/#82/#83. Codex Desktop Apps/approvals/plugins → #72/#77/#78/#79. Continue mcpServers → #75. Gemini #64+#76 reconcile after merge. Codex 0.147 Agent Plugins / `--approve-for-me` after #72 merges.
+
+Consecutive live scan after snapshot refresh: `no upstream source changes detected`.
 
 ## Required Follow-Up
 

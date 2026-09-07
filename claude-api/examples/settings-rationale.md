@@ -150,3 +150,44 @@ Every organization-level security setting explained: **what it does**, **why it 
 | TLS enforcement | Default; never override. All data in transit is encrypted. |
 
 **Risk without allowlisting:** A leaked key can be used from anywhere in the world with no restrictions.
+
+---
+
+## 11. Inference Hooks (Claude Enterprise)
+
+**What it does:** Routes every governed prompt through your organization's AI security server (an HTTPS service you or your DLP vendor operate) for an allow or deny verdict before Claude runs inference. Anthropic signs each request (Standard Webhooks). Denied prompts never reach the model. Denials appear in the Compliance Activity Feed.
+
+**Why it matters:** Endpoint-managed settings and Claude Code permission rules cannot see every prompt surface. Inference hooks run on Anthropic's servers after the client submits and before the model runs, so they cover claude.ai, Cowork, and Claude Code uniformly without installing agents on laptops.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Baseline (startup / non-Enterprise) | Leave off (`organization_allowed: false`) | Feature requires Claude Enterprise and a publicly reachable HTTPS verdict endpoint on port 443. |
+| Moderate (enterprise pilot) | Allow for org, enforce on, **shadow** mode, failure **allow**, rollout 10-25% | Shadow mode exercises the AI security server on live traffic without blocking users. Fail-open avoids a broken webhook outage. |
+| Strict (regulated) | Allow for org, enforce on, mode **enforce**, failure **block**, rollout 100%, no role exclusions | Fail-closed stops prompts when the AI security server is down or times out. 100% inspection removes sampling gaps. |
+
+**What breaks if misconfigured or removed:**
+- Fail-closed with an unhealthy endpoint or tripped circuit breaker blocks all governed prompts org-wide until admins reset enforcement.
+- Fail-open with a down endpoint lets prompts through uninspected (silent gap).
+- Role exclusions skip inspection for those custom roles; machine credentials are always inspected.
+- Platform (API-only) organizations are out of scope; Bedrock and Vertex are not covered.
+- Signing secret is shown once at save. Store it in a secrets manager. Never commit it.
+
+**Overlap with Claude Code managed settings:** Inference hooks inspect prompts server-side. Claude Code `permissions` / sandbox / MCP allowlists still control local tools. Configure both; do not treat one as a substitute for the other.
+
+**Console path:** `claude.ai` → Organization settings → Data and privacy → Inference hooks (requires `organization:manage`).
+
+**Safe developer message when Strict is enforcing:** "Some prompts may be blocked by the organization's AI security policy before Claude answers. If blocked, follow the on-screen exception path. Do not paste secrets into prompts; hooks see transcript text and extracted attachment text."
+
+---
+
+## 12. Managed Agents Dreams (Research Preview)
+
+**What it does:** A dream job reads a Managed Agents memory store plus past session transcripts and writes a reorganized output memory store (duplicates merged, stale entries replaced).
+
+**Why it matters for admins:** Dreams can surface insights from prior transcripts into a new memory store. There is no org-wide disable switch yet (access is request-gated via beta headers `managed-agents-2026-04-01` and `dreaming-2026-04-21`).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| All tiers until an org kill switch ships | `dreams_access_requested: false` | Avoid expanding memory-store blast radius without classification, retention, and an admin off switch. |
+
+**What breaks if enabled without review:** Memory reorganization can concentrate sensitive content into a durable store that later sessions read. Treat access requests as a security change, not a developer convenience.

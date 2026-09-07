@@ -10,12 +10,12 @@ Process only the tools listed below. For each tool:
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## Tools to process (4 of 8 with missing terms)
+## Tools to process (4 of 9 with missing terms)
 
 ### Claude Code
 
 - Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
 
 ### Claude Code
 
@@ -27,16 +27,17 @@ Do not attempt to review unchanged tools or sources with no missing local terms 
 - Source: Dynamic workflows documentation
 - Missing terms: `CLAUDE_CODE_SUBAGENT_MODEL`
 
-### Cursor
+### Codex CLI
 
-- Source: Run Modes and sandbox documentation
-- Missing terms: `CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, `sandbox-exec`
+- Source: OpenAI Codex releases
+- Missing terms: `ModelMessages`
 
-## Deferred (4 tools)
+## Deferred (5 tools)
 
 These tools also have missing terms but are deferred to a follow-up run:
 
-- Cursor (sandbox.json reference)
-- Codex CLI (OpenAI Codex releases)
+- Codex Desktop (OpenAI Codex config schema)
+- Codex Desktop (OpenAI Codex advanced configuration)
+- Codex Desktop (OpenAI Codex managed configuration)
 - Claude Desktop (Claude Desktop MCP documentation)
 - OpenAI Platform (OpenAI OpenAPI schema)

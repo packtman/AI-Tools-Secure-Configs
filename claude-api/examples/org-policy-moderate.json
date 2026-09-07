@@ -36,5 +36,23 @@
   "data_controls": {
     "zero_data_retention": true,
     "disable_training_on_data": true
+  },
+
+  "inference_hooks": {
+    "_comment": "Claude Enterprise console: Data and privacy → Inference hooks. Requires organization:manage. One hook covers claude.ai, Cowork, and Claude Code. Use shadow mode first so the AI security server sees live traffic without blocking users.",
+    "organization_allowed": true,
+    "enforce_verdicts": true,
+    "endpoint_url": "https://ai-security.example.com/claude/inference-hooks",
+    "mode": "shadow",
+    "failure_handling": "allow",
+    "prompt_verdict_timeout_ms": 5000,
+    "rollout_percent": 25,
+    "role_exclusions": [],
+    "custom_blocked_prompt_message": "This prompt was blocked by your organization's AI security policy. Contact security@example.com to request an exception."
+  },
+
+  "managed_agents": {
+    "_comment": "Dreams remains research preview. Keep access off until memory-store classification and retention are approved.",
+    "dreams_access_requested": false
   }
 }
