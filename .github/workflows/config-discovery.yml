@@ -1,8 +1,7 @@
 name: Config Discovery
 
 on:
-  schedule:
-    - cron: "0 13 * * *"
+  # schedule: disabled — re-enable with: schedule: [{cron: "0 13 * * *"}]
   workflow_dispatch:
     inputs:
       force_agent_review:
