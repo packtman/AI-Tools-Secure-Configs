@@ -2,10 +2,12 @@
 // Deploy to ~/.cursor/permissions.json on each developer endpoint.
 // Strip comments before deploying. See ROLLOUT-PLAN.md Section 4.2 for deployment steps.
 //
-// NOTE: Cursor does not support MDM-enforced permissions. This file is user-writable.
-// Use workspace trust (MDM-enforced) and network egress filtering as compensating controls.
+// NOTE: Cursor does not support MDM-enforced permissions.json contents.
+// Use team dashboard Run Mode / MCP policies, workspace trust (MDM), and network egress
+// filtering as compensating controls. Auto-review reads this file unless a team
+// dashboard Auto-review policy is set (dashboard wins).
 {
-  // WHAT: Commands that Cursor's AI agent can run in the terminal without asking.
+  // WHAT: Commands that Cursor's AI agent can run in the terminal without asking in Allowlist mode.
   // WHY: Only read-only commands and standard test/lint/build commands are included.
   //      Commands that install packages, start servers, or modify system state require
   //      user approval. The pnpm commands are included per org requirements.
@@ -65,9 +67,32 @@
     "make lint"
   ],
 
-  // WHAT: MCP tools that can run without approval.
+  // WHAT: MCP tools that can run without approval. Entries use server:tool syntax
+  //       (for example "github:*" or "*:search"). Empty means no MCP auto-run.
   // WHY: Empty array means all MCP tool invocations prompt the user.
   //      In Moderate tier, we do not auto-approve any MCP tools.
   // BREAKS IF POPULATED: Named MCP tools would run without user review.
-  "mcpAllowlist": []
+  // NOTE: Team dashboard MCP allowlist replaces this file when configured.
+  "mcpAllowlist": [],
+
+  // WHAT: Plain-English Auto-review guidance for shell, MCP, and Fetch calls (Cursor 3.6+).
+  // WHY: Auto-review is the recommended enterprise default. These instructions steer the
+  //      classifier toward asking before cloud mutations, secret reads, and pipe-to-shell.
+  // BREAKS IF REMOVED: Auto-review falls back to built-in heuristics only, so more
+  //      high-risk calls may auto-run or more safe calls may prompt.
+  // NOTE: Auto-review is not a hard security boundary. Pair with sandbox.json and hooks.
+  "autoRun": {
+    "allow_instructions": [
+      "Safe local build, lint, typecheck, and unit-test commands may run without asking when they do not install packages or change infrastructure."
+    ],
+    "block_instructions": [
+      "Every AWS CLI command should go through approval first.",
+      "Every command that modifies Kubernetes resources should go through approval first.",
+      "Every curl or wget piped to a shell should go through approval first.",
+      "Every command that reads .env, credential, token, PEM, or SSH key files should go through approval first.",
+      "Every sudo command should go through approval first.",
+      "Every git push or force-push should go through approval first.",
+      "Every MCP tool that can write data or call external APIs should go through approval first."
+    ]
+  }
 }

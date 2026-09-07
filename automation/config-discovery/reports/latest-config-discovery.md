@@ -10,6 +10,10 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | Claude Code | Managed settings documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
 | Claude Code | Hooks documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
 | Claude Code | Dynamic workflows documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
+| Cursor | Enterprise security hardening | new-source-baseline | 200 | https://cursor.com/docs/enterprise |
+| Cursor | Run Modes and sandbox documentation | new-source-baseline | 200 | https://cursor.com/docs/agent/security/run-modes |
+| Cursor | sandbox.json reference | new-source-baseline | 200 | https://cursor.com/docs/reference/sandbox |
+| Cursor | MCP and model integration management | new-source-baseline | 200 | https://cursor.com/docs/mcp |
 | GitHub Copilot | Organization policy documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
 | GitHub Copilot | Content exclusion documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion |
 | Codex CLI | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
@@ -17,8 +21,7 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | Codex Desktop | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
 | Codex Desktop | OpenAI Codex config reference | content-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
 | Continue.dev | Configuration reference | content-changed | 200 | https://docs.continue.dev/reference |
-| Continue.dev | CLI tool permissions documentation | new-source-baseline | 200 | https://docs.continue.dev/cli/tool-permissions |
-| Continue.dev | Default tool permission policies | new-source-baseline | 200 | https://raw.githubusercontent.com/continuedev/continue/refs/heads/main/extensions/cli/src/permissions/defaultPolicies.ts |
+| Continue.dev | Continue repository | content-changed | 200 | https://github.com/continuedev/continue |
 | Windsurf | Windsurf documentation | content-changed | 200 | https://docs.windsurf.com/ |
 | Windsurf | Windsurf changelog | content-changed | 200 | https://windsurf.com/changelog |
 | Tabnine | Tabnine admin documentation | content-changed | 200 | https://docs.tabnine.com/ |
@@ -78,6 +81,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+**No config update needed in this PR:** Agent/IDE/artifact/away-summary controls are already covered by open PRs #66/#68. `ANTHROPIC_MODEL` is a runtime model selection env var, not a managed security key for this repo's tier files.
+
 ### Claude Code: Hooks documentation
 
 - Change type: `content-changed`
@@ -120,6 +125,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+**No config update needed in this PR:** `ANTHROPIC_MODEL` / `CLAUDE_MODEL` are not valid hook decision controls. Deferred to open Claude Code PRs for any remaining managed settings parity.
+
 ### Claude Code: Dynamic workflows documentation
 
 - Change type: `content-changed`
@@ -160,6 +167,167 @@ Potential config terms not found in local tool files:
 `CLAUDE_CODE_SUBAGENT_MODEL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+**No config update needed in this PR:** `CLAUDE_CODE_SUBAGENT_MODEL` is a model routing preference, not a new deny/allow security control. Dynamic workflow disablement is already covered in existing Claude Code tiers / open PRs.
+
+### Cursor: Enterprise security hardening
+
+- Change type: `new-source-baseline`
+- Source URL: https://cursor.com/docs/enterprise
+- Status: `200`
+- Related repo paths: cursor/, rollout-guide/configs/cursor/
+
+Keyword snippets:
+
+> ... entity-and-access-management.md) - SSO, SCIM, RBAC, and MDM policies - [Privacy & data
+governance](https://cursor.com/docs/enterprise/privacy-and-data-governance.md) - Data flows, Privacy
+Mode, and data residency - [Network configuration](https://cursor.com/docs/enterprise/network-
+configuration.md) - Proxy setup, IP allowlisting, and encryption - [Private connectivity]( ...
+
+> ... prise/endpoint-security.md) - Configure antivirus, EDR, and DLP software - [LLM safety &
+controls](https://cursor.com/docs/enterprise/llm-safety-and-controls.md) - Hooks, terminal
+sandboxing, and agent controls - [Models & integrations](https://cursor.com/docs/enterprise/model-
+and-integration-management.md) - Model controls, MCP, and third-party integrations - [Cyb ...
+
+> ... d-controls.md) - Hooks, terminal sandboxing, and agent controls - [Models &
+integrations](https://cursor.com/docs/enterprise/model-and-integration-management.md) - Model
+controls, MCP, and third-party integrations - [Cyber
+Safeguards](https://cursor.com/docs/account/enterprise/cyber-safeguards.md) - Apply for Anthropic's
+Cyber Verification Program (CVP) to use ...
+
+> ... Restrict which users can access agents via CLI | | Cloud Agents | | Restrict which users can
+create Cloud Agents | | Analytics | | Restrict analytics dashboard to admins only | | BYOK | |
+Disable users from using their own API keys | ### Support & Legal | Capability | Individual Plans |
+Teams | Enterprise | | ----------------- | -------------------------------- ...
+
+> ... ions.md) - Org-wide team membership sync and organization groups - [Identity &
+access](https://cursor.com/docs/enterprise/identity-and-access-management.md) - SSO, SCIM, RBAC, and
+MDM policies - [Privacy & data governance](https://cursor.com/docs/enterprise/privacy-and-data-
+governance.md) - Data flows, Privacy Mode, and data residency - [Network configuration]( ...
+
+**Config update applied (2026-07-31):** Added `enterprise-policy-*.json` dashboard checklists for Run Mode, Browser/file/`.cursor` protections, BYOK, MCP network modes, Protected Git Scopes, and marketplace import controls. Updated README rollout plan, tier deltas, deployment, and workflow-preservation notes.
+
+### Cursor: Run Modes and sandbox documentation
+
+- Change type: `new-source-baseline`
+- Source URL: https://cursor.com/docs/agent/security/run-modes
+- Status: `200`
+- Related repo paths: cursor/, rollout-guide/configs/cursor/
+
+Keyword snippets:
+
+> ... ursor interrupts you for approval. Use them to decide how much autonomy the agent gets for shell
+commands, MCP tools, and Fetch calls. The safest useful setup for most people is **Auto-review**. It
+runs known-safe calls, sandboxes shell commands when it can, and asks a classifier to review
+anything else. ## Pick a mode In the desktop application, go to **Settings > Age ...
+
+> ... ----------------------------------- | :--------------------------- | :--------- |
+:-------------------------------------------------------------------------- | | **Auto-review** |
+Allowlisted calls run immediately. Other shell commands run in the sandbox when possible. Calls that
+do not use the sandbox go to the Auto-review classifier. | Yes, for shell commands | Yes ...
+
+> ... g enabled, supported shell commands can run in the sandbox. | Optional, for shell commands | No
+| You want deterministic behavior with a small set of trusted repeat actions. | | **Run Everything**
+| Every tool call runs automatically. | No | No | You accept the risk and want zero prompts. | ##
+How Auto-review works Auto-review applies to shell, MCP, and Fetch tool calls. ...
+
+> ... em to decide how much autonomy the agent gets for shell commands, MCP tools, and Fetch calls.
+The safest useful setup for most people is **Auto-review**. It runs known-safe calls, sandboxes
+shell commands when it can, and asks a classifier to review anything else. ## Pick a mode In the
+desktop application, go to **Settings > Agents > Approvals & Execution**. | Mode ...
+
+> ... omatically: | Protection | What it does | | :--------------------------- |
+:------------------------------------------------------------------------------------------------- |
+| **Browser Protection** | Prevents the agent from automatically running Browser tools. | | **File-
+Deletion Protection** | Prevents the agent from automatically deleting files, including `rm`
+commands. ...
+
+Potential config terms not found in local tool files:
+
+`CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, `sandbox-exec`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+**Config update applied (2026-07-31):** Added tiered `autoRun` permissions, `sandbox-*.json`, and `enterprise-policy-*.json`. Replaced stale Cursor watchers with enterprise, Run Modes, sandbox reference, and MCP docs.
+
+**No config update needed for missing terms:** `CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, and `sandbox-exec` are runtime or platform implementation details injected into sandboxed processes, not admin-tunable policy keys.
+
+### Cursor: sandbox.json reference
+
+- Change type: `new-source-baseline`
+- Source URL: https://cursor.com/docs/reference/sandbox
+- Status: `200`
+- Related repo paths: cursor/, rollout-guide/configs/cursor/
+
+Keyword snippets:
+
+> ... SharedBuildCache` | `boolean` | `false` | Redirects build-tool caches (npm, cargo, pip, etc.) to
+a shared tmpdir so sandboxed and unsandboxed commands share the same caches. | ## `networkPolicy`
+object | Field | Type | Default | Description | | :-------- | :-------------------- | :------- |
+:-------------------------------------------------------------------------------- ...
+
+> ... a paths the agent can read and write. Only applies when `type` is `"workspace_readwrite"`. | |
+`additionalReadonlyPaths` | `string[]` | `[]` | Extra paths the agent can read. | |
+`disableTmpWrite` | `boolean` | `false` | When `true`, removes default write access to `/tmp` and
+system temp directories. | | `enableSharedBuildCache` | `boolean` | `false` | Redirects build-tool
+...
+
+> ... andbox mode. `"workspace_readwrite"` gives read/write access in the workspace.
+`"workspace_readonly"` restricts to read-only. `"insecure_none"` disables the sandbox entirely. | |
+`additionalReadwritePaths` | `string[]` | `[]` | Extra paths the agent can read and write. Only
+applies when `type` is `"workspace_readwrite"`. | | `additionalReadonlyPaths` | `string[]` | `[]` |
+Extra pat ...
+
+> ... ------------------------------------------------------------------------------------------------
+----------------------------------------------------------- | | `type` | string |
+`"workspace_readwrite"` | Sandbox mode. `"workspace_readwrite"` gives read/write access in the
+workspace. `"workspace_readonly"` restricts to read-only. `"insecure_none"` disables the sandbox
+entirely. ...
+
+Potential config terms not found in local tool files:
+
+`CURSOR_SANDBOX`, `networkPolicyStrict`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+**Config update applied (2026-07-31):** Added Baseline/Moderate/Strict `sandbox-*.json` templates covering `type`, `networkPolicy`, `disableTmpWrite`, and `enableSharedBuildCache`.
+
+### Cursor: MCP and model integration management
+
+- Change type: `new-source-baseline`
+- Source URL: https://cursor.com/docs/mcp
+- Status: `200`
+- Related repo paths: cursor/, rollout-guide/configs/cursor/
+
+Keyword snippets:
+
+> # Model Context Protocol (MCP) ## What is MCP? [Model Context Protocol
+(MCP)](https://modelcontextprotocol.io/introduction) enables Cursor to connect to external tools and
+data sources. Install and manage MCP ...
+
+> ... plugin installation modes under **Dashboard > Plugins**. See [Migrate existing Team
+MCPs](https://cursor.com/docs/plugins.md#migrate-existing-team-mcps) for the full flow. ### MCP
+Allowlist Enterprise admins can control which MCP servers users may run from the Cursor dashboard.
+Open [Team Settings > MCP Configuration](https://cursor.com/dashboard/team-settings#mcp-co ...
+
+> ... URL entry pattern. - **Tool allowlists** restrict which tools from an approved server can run
+automatically. Leave a tool allowlist empty to allow all tools from that server. ### Network
+controls Remote MCP URLs are restricted to the configured URL entry pattern. Local command-based MCP
+servers use their per-server network mode: - **Allow all**: allow outbound net ...
+
+> ... ectly with your tools. Write MCP servers in any language that can print to `stdout` or serve an
+HTTP endpoint - Python, JavaScript, Go, etc. Browse official plugins in the [Cursor
+Marketplace](/marketplace). For community plugins and MCP servers, browse
+[cursor.directory](https://cursor.directory). ### How it works MCP servers expose capabilities
+through the protocol, ...
+
+Potential config terms not found in local tool files:
+
+`mcp.json`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+**Config update applied (2026-07-31):** Documented `server:tool` MCP allowlist syntax, dashboard precedence over local `permissions.json`, and per-server network modes in README/admin-controls.
 
 ### GitHub Copilot: Organization policy documentation
 
@@ -260,10 +428,10 @@ reviews. (#34625, #34624, #35036)\n- Retain more available skills under tight co
 warn when skill catalogs must be truncated. (#34732, #34738, #34997)\n\n## Docume ...
 
 > ... type": "application/octet-stream",         "digest":
-"sha256:8e55bac532c56e75ed21fd1bcafb641b6dfec02127ea4ae9cf8e7e708e59b60f",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
+"sha256:6eec0b9d89746416bf1a5ab987da1f6f3e91b6ff07a199b608bbd2219d568208",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1429,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:b7dd86881d468ac74160652 ...
+"sha256:a72f36ae3e02e283b65c8a6 ...
 
 > ... ix @copyberry\n- #34581 Add routing-card lexical skill selection @copyberry\n- #34588 Bind MCP
 calls to captured catalog revisions @copyberry\n- #34590 Add keyed shell environment policy filters
@@ -275,6 +443,8 @@ Potential config terms not found in local tool files:
 `McpConnectionSet`, `McpRuntime`, `forceRefetch`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+**No config update needed in this PR:** `McpConnectionSet`, `McpRuntime`, and `forceRefetch` are internal release/implementation names, not admin config keys. Codex 0.146 managed requirements are in open PR #72. Codex 0.147 alphas mention managed in-app update policy; revisit when a stable documented config key ships.
 
 ### Codex Desktop: OpenAI Codex repository
 
@@ -314,20 +484,15 @@ Keyword snippets:
 > config.yaml Reference | Continue Docs Search...  K Docs Blog IDE Extensions CLI Getting Started
 Install Quick Start Customization Overview Features Agent Chat Autocomplete Edit Customiz ...
 
-> ... arked as required. The top-level properties in the config.yaml configuration file are: name (
-required ) version ( required ) schema ( required ) models context rules prompts docs mcpServers
-data name The name property specifies the name of your project or configuration. name : My Config
-version : 1.0.0 schema : v1 version The version property specifies the version of ...
-
 > ... e Docs Search...  K Docs Blog IDE Extensions CLI Getting Started Install Quick Start
 Customization Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models
 MCP servers Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference
 Migrating Config to YAML Continue Documentation MCP Server config.json Reference ( ...
 
-> ... perties at all levels are optional unless explicitly marked as required. The top-level
-properties in the config.yaml configuration file are: name ( required ) version ( required ) schema
-( required ) models context rules prompts docs mcpServers data name The name property specifies the
-name of your project or configuration. name : My Config version : 1.0.0 schema ...
+> ... Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
+Config to YAML Continue Documentation MCP Server config.json Reference (Deprecated) Context
+Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand
+Configuration Configuring Models, Rules, and Tools Codebase and Documentation Awareness U ...
 
 > ... Search...  K Docs Blog IDE Extensions CLI Getting Started Install Quick Start Customization
 Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models MCP servers
@@ -336,71 +501,29 @@ Config to YAML Continue Documentation MCP Server config.json Reference (Depr ...
 
 Potential config terms found upstream are already present in local tool files.
 
-### Continue.dev: CLI tool permissions documentation
+### Continue.dev: Continue repository
 
-- Change type: `new-source-baseline`
-- Source URL: https://docs.continue.dev/cli/tool-permissions
+- Change type: `content-changed`
+- Source URL: https://github.com/continuedev/continue
 - Status: `200`
 - Related repo paths: continue-dev/
 
 Keyword snippets:
 
-> ... ches the glob **/*.ts # Allow writing only to TypeScript files cn --allow "Write(**/*.ts)" #
-Allow bash but not for install commands cn --allow Bash --exclude "Bash(npm install*)"
-permissions.yaml Persistent permissions are stored in ~/.continue/permissions.yaml . This file is
-updated when you choose "Continue + don't ask again" in the TUI approval prompt. # ~/.continue/per
-...
+> ... ESTING.md TESTING.md docs-search-dark-mode-fix.png docs-search-dark-mode-fix.png package-
+lock.json package-lock.json package.json package.json tsconfig.json tsconfig.json worktree-
+config.yaml worktree-config.yaml View all files Repository files navigation README Code of conduct
+Contributing Apache-2.0 license Security More items Continue Pioneering open-source coding a ...
 
-> ... ly) exclude Hidden from the agent entirely Defaults Read-only tools ( Read , List , Search ,
-Fetch , Diff , AskQuestion , Checklist , Status , CheckBackgroundJob , ReportFailure ,
-UploadArtifact ) default to allow . AskQuestion is a built-in read-only tool that lets the agent
-pause and ask for clarification before continuing. Write tools ( Edit , MultiEdit , Write ) and B
-...
+> ... ce coding agent continue.dev Topics agent ai cli developer-tools open-source Resources Readme
+Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
+Security policy Activity Custom properties Stars 35.2k stars Watchers 165 watching Forks 5.2k forks
+Report repository Releases Used by Contributors Languages Footer  2026 GitHub, ...
 
-> ... ool Permissions Copy page Every tool has one of three permission levels: Permission Behavior
-allow Runs automatically, no prompt ask Prompts for approval before running (TUI only) exclude
-Hidden from the agent entirely Defaults Read-only tools ( Read , List , Search , Fetch , Diff ,
-AskQuestion , Checklist , Status , CheckBackgroundJob , ReportFailure , UploadArtif ...
-
-> ... s CLI CLI Quickstart TUI Mode Headless Mode Configuration Tool Permissions Tool Permissions Copy
-page Every tool has one of three permission levels: Permission Behavior allow Runs automatically, no
-prompt ask Prompts for approval before running (TUI only) exclude Hidden from the agent entirely
-Defaults Read-only tools ( Read , List , Search , Fetch , Diff , AskQ ...
-
-Potential config terms found upstream are already present in local tool files.
-
-### Continue.dev: Default tool permission policies
-
-- Change type: `new-source-baseline`
-- Source URL: https://raw.githubusercontent.com/continuedev/continue/refs/heads/main/extensions/cli/src/permissions/defaultPolicies.ts
-- Status: `200`
-- Related repo paths: continue-dev/
-
-Keyword snippets:
-
-> ... , { tool: "Read", permission: "allow" }, { tool: "Search", permission: "allow" }, { tool:
-"Status", permission: "allow" }, { tool: "ReportFailure", permission: "allow" }, { tool:
-"UploadArtifact", permission: "allow" }, ]; // MCP and Bash are ask in TUI mode, auto in headless if
-(isHeadless) { policies.push({ tool: "Bash", permission: "allow" }); policies.push({ tool: "*" ...
-
-> ... eckBackgroundJob", permission: "allow" }, { tool: "AskQuestion", permission: "allow" }, { tool:
-"Checklist", permission: "allow" }, { tool: "Diff", permission: "allow" }, { tool: "Skills",
-permission: "allow" }, { tool: "Exit", permission: "allow" }, // Exit tool is generally safe
-(headless mode only) { tool: "Fetch", permission: "allow" }, // Technically not read ...
-
-> ... t policies: ToolPermissionPolicy[] = [ // Write tools { tool: "Edit", permission: "ask" }, {
-tool: "MultiEdit", permission: "ask" }, { tool: "Write", permission: "ask" }, { tool:
-"CheckBackgroundJob", permission: "allow" }, { tool: "AskQuestion", permission: "allow" }, { tool:
-"Checklist", permission: "allow" }, { tool: "Diff", permission: "allow" }, { tool: "Skills", permiss
-...
-
-> import { ToolPermissionPolicy } from "./types.js"; /** * Default permission policies for all built-
-in tools. * These policies are applied in order - first match wins. */ export function
-getDefaultToolPol ...
-
-> ... : "UploadArtifact", permission: "allow" }, // Allow MCP tools { tool: "*", permission: "allow"
-}, ]; // Auto mode: Complete override - allow everything without asking export const
-AUTO_MODE_POLICIES: ToolPermissionPolicy[] = [ { tool: "*", permission: "allow" }, ];
+> ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
+the VS Code extension, CLI, and JetBrains plugin. This included removing anonymous telemetry,
+pulling out authentication, squashing bugs, and more. VS Code CLI JetBrains Note: We recommend using
+the Continue CLI instead of the JetBrains plugin. Contributors Thank you to t ...
 
 ### Windsurf: Windsurf documentation
 
@@ -447,13 +570,13 @@ Local Devin Local customizations and the sidebar skills count now span all ...
 
 > ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
 Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
-Guide Reporting On this page v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28 v3.2.23
-v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v2.2.17 v2.1.32 ...
+Guide Reporting On this page v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28 v3.2.23 v3.2.19
+v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v2.2.17 v2.1.32 v2.1.29 ...
 
 > ... eases (Next) Windsurf Plugins Changelog Get Started Features Cascade (JetBrains) Context
 Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security
-FedRAMP Security Admin Guide Reporting On this page v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22
-v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 ...
+FedRAMP Security Admin Guide Reporting On this page v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22 v3.3.18
+v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 v2.3.9 v ...
 
 > ... ent space and from a Devin Local session's sidebar context menu, and the Cascade panel's ...
 menu now only offers the customization surfaces that apply to the agent you have open. MCP servers
@@ -650,6 +773,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+**No config update needed in this PR:** Listed `CLAUDE_CODE_*` MCP env vars are Claude Code runtime terms, not Desktop MDM policy keys. Desktop Browser/SSH work remains in open PR #70.
+
 ### Claude Desktop: Claude Desktop support documentation
 
 - Change type: `content-changed`
@@ -722,6 +847,8 @@ Potential config terms not found in local tool files:
 `allowed_tools`, `checkpoint.permission`, `enabled_for_all_projects`, `enabled_for_selected_projects`, `enabled_per_call`, `label_model`, `mcp`, `mcp_approval_request`, `mcp_approval_response`, `mcp_call`, `mcp_list_tools`, `mcp_list_tools.completed`, `mcp_list_tools.failed`, `mcp_list_tools.in_progress`, `moderation_result`, `moderation_results`, `organization.data_retention`, `project.data_retention`, `project.model_permissions`, `project.model_permissions.deleted`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+**No config update needed in this PR:** Hosted-tool / MCP / retention admin terms are covered by open PR #69.
 
 ### Claude API: Anthropic admin API documentation
 
@@ -802,6 +929,22 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+## Maintenance Decisions (2026-07-31)
+
+### Cursor
+- Applied Auto-review `autoRun` instructions across Baseline/Moderate/Strict permissions.
+- Added `sandbox-*.json` and `enterprise-policy-*.json` tier templates.
+- Replaced stale Cursor discovery watchers with `cursor.com/docs/enterprise`, Run Modes, sandbox reference, and MCP docs (14 tools / 31 sources).
+- Runtime terms `CURSOR_SANDBOX`, `CURSOR_SANDBOX_LANDLOCK_STATUS`, `fully_enforced`, `sandbox-exec` are not admin keys.
+
+### Deferred (already in open PRs or not admin keys)
+- Claude Code agent/artifact/IDE/workflow controls → open PRs #66/#68
+- Codex CLI 0.146 requirements / Copilot agent apps → open PR #72
+- Codex Desktop / OpenAI Platform → open PR #69
+- Claude Desktop / Claude API → open PR #70
+- Windsurf / Devin → open PR #71
+- Codex release-internal names `McpConnectionSet` / `McpRuntime` / `forceRefetch` → no config keys
+
 ## Required Follow-Up
 
 1. Read the changed upstream source.
@@ -810,27 +953,3 @@ Review these terms first. If any are real admin controls, update the affected ti
 4. Preserve the repo's rollout-engineering standard: rollout plan first, config second, tier delta table, deployment steps, workflow-preservation notes.
 5. Keep JSON deployable by updating JSONC plus stripped JSON where applicable.
 6. Validate edited JSON, YAML, TOML, or shell files before merging.
-
-## Maintenance decisions (2026-08-02)
-
-### Continue.dev: applied
-
-Updated Baseline/Moderate/Strict permissions for upstream CLI tools `UploadArtifact`, `Skills`, `Checklist`, `Status`, `CheckBackgroundJob`, and `ReportFailure`. Pinned `name`/`version`/`schema` and `mcpServers: []` on tier configs. Documented no-MDM enforcement, `--auto` wrapper requirement, rollout plan, tier deltas, and SIEM guidance. Discovery now watches tool-permissions docs and `defaultPolicies.ts`.
-
-### Deferred (already covered by open PRs)
-
-- Claude Code agent/artifact/IDE controls: open PRs #66/#68
-- Cursor Auto-review/sandbox/enterprise: open PR #73
-- Codex CLI 0.146 / Copilot agent apps: open PR #72
-- Codex Desktop / OpenAI Platform: open PR #69
-- Claude Desktop Browser/SSH / Claude API tunnels: open PR #70
-- Windsurf/Devin MDM: open PR #71
-- Amazon Q PassRequest/agents: open PR #74
-- Tabnine CLI system settings: open PR #65
-- Gemini CLI v0.51 security keys: open PR #64 (admin console `requiredConfig` / Skills controls remain follow-up)
-
-### No config update needed
-
-- Codex release names `McpConnectionSet`, `McpRuntime`, `forceRefetch`: internal release identifiers, not admin settings.
-- Claude Desktop MCP helper env vars (`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`): Claude Code runtime terms, not Desktop policy keys.
-- `ANTHROPIC_MODEL` / `CLAUDE_MODEL`: model selection env vars, not org policy knobs for this repo's managed settings templates.

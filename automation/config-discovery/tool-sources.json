@@ -68,40 +68,72 @@
       ],
       "tier_files": {
         "strict": [
-          "cursor/examples/permissions-strict.json"
+          "cursor/examples/permissions-strict.json",
+          "cursor/examples/sandbox-strict.json",
+          "cursor/examples/enterprise-policy-strict.json"
         ],
         "moderate": [
           "cursor/examples/permissions-moderate.json",
+          "cursor/examples/sandbox-moderate.json",
+          "cursor/examples/enterprise-policy-moderate.json",
           "rollout-guide/configs/cursor/permissions-moderate.json",
           "rollout-guide/configs/cursor/settings.json"
         ],
         "baseline": [
-          "cursor/examples/permissions-baseline.json"
+          "cursor/examples/permissions-baseline.json",
+          "cursor/examples/sandbox-baseline.json",
+          "cursor/examples/enterprise-policy-baseline.json"
         ]
       },
       "sources": [
         {
-          "name": "Team administration documentation",
+          "name": "Enterprise security hardening",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/account/teams/admin-dashboard",
+          "url": "https://cursor.com/docs/enterprise",
           "watch_for": [
-            "admin",
-            "team",
-            "policy",
-            "audit",
-            "privacy"
+            "Privacy Mode",
+            "Run Mode",
+            "sandbox",
+            "MCP",
+            "BYOK",
+            "MDM",
+            "audit"
           ]
         },
         {
-          "name": "MCP documentation",
+          "name": "Run Modes and sandbox documentation",
           "kind": "docs",
-          "url": "https://docs.cursor.com/en/tools/mcp",
+          "url": "https://cursor.com/docs/agent/security/run-modes",
+          "watch_for": [
+            "Auto-review",
+            "Allowlist",
+            "Run Everything",
+            "sandbox",
+            "Browser Protection",
+            "permissions.json"
+          ]
+        },
+        {
+          "name": "sandbox.json reference",
+          "kind": "docs",
+          "url": "https://cursor.com/docs/reference/sandbox",
+          "watch_for": [
+            "networkPolicy",
+            "disableTmpWrite",
+            "additionalReadwritePaths",
+            "workspace_readwrite"
+          ]
+        },
+        {
+          "name": "MCP and model integration management",
+          "kind": "docs",
+          "url": "https://cursor.com/docs/mcp",
           "watch_for": [
             "MCP",
-            "server",
-            "tools",
-            "approval",
-            "allowlist"
+            "allowlist",
+            "server:tool",
+            "network",
+            "marketplace"
           ]
         }
       ]

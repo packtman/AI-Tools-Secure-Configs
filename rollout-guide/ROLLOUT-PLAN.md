@@ -249,10 +249,17 @@ See file: [`rollout-guide/configs/github-copilot/copilot-instructions.md`](confi
 
 | Setting | Baseline | Moderate | Strict | Reason for Difference |
 |---------|----------|----------|--------|----------------------|
-| `terminalAllowlist` length | ~48 commands (build, install, dev server included) | ~35 commands (read-only + test/lint/build) | ~15 commands (read-only + git status/diff/log only) | Each tier removes more auto-approved commands |
+| Run Mode default | Auto-review | Auto-review | Allowlist | Strict prefers deterministic allowlists over classifier judgment |
+| Run Everything | Disabled | Disabled | Disabled | Unattended full autonomy is never acceptable on org devices |
+| `terminalAllowlist` length | ~48 commands (build, install, dev server included) | ~35 commands (read-only + test/lint/build) | ~11 commands (read-only + git status/diff/log only) | Each tier removes more auto-approved commands |
 | `npm install` / `pip install` / `docker` in allowlist | Yes | No | No | Moderate requires approval for package installs (supply chain risk) |
 | `npm run dev` / `npm run build` in allowlist | Yes | `npm run build` yes, `npm run dev` no | No | Strict requires approval for all non-trivial commands |
-| `mcpAllowlist` | Empty (all MCP prompts) | Empty (all MCP prompts) | Empty (all MCP prompts) | Cursor MCP approval is always prompted; allowlist would auto-approve |
+| `autoRun.block_instructions` | Secrets + pipe-to-shell + prod destroy | Adds AWS/K8s/sudo/git push/MCP writes | Adds Browser, installs, docker push, terraform | Higher tiers force more human gates in Auto-review |
+| `mcpAllowlist` | Empty (all MCP prompts) | Empty (all MCP prompts) | Empty (all MCP prompts) | Keep file empty; approve exceptions only in the team dashboard |
+| Sandbox `networkPolicy.default` | deny | deny | deny | Deny-by-default; allowlists are registry/git focused |
+| `disableTmpWrite` | false | false | true | Strict reduces temp-dir staging for payloads |
+| Browser / file / `.cursor` protections | Browser + file on; `.cursor` off | All on | All on | Prevents unapproved Browser, deletes, external writes, and local rule tampering |
+| BYOK disabled | no | yes | yes | Personal keys bypass Cursor ZDR agreements |
 | `workspace.trust.enabled` | `true` | `true` (MDM enforced) | `true` (MDM enforced) | All tiers enable; Moderate/Strict enforce via MDM so users cannot disable |
 | `workspace.trust.startupPrompt` | `"once"` | `"always"` | `"always"` | Enterprise tiers force trust decision every session |
 | `extensions.autoUpdate` | Not set | `false` | `false` | Prevents unreviewed extension updates |
