@@ -90,6 +90,12 @@
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
   "autoUpdatesChannel": "stable",
   "requiredMinimumVersion": "2.1.212",
+  "availableModels": [
+    "sonnet",
+    "haiku",
+    "opus"
+  ],
+  "enforceAvailableModels": true,
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,

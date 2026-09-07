@@ -5,13 +5,43 @@ Process only the tools listed below. For each tool:
 1. Read the cited missing terms and the upstream URL from the full discovery report.
 2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.
 3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.
-4. If no config update is needed, append a short 'No config update needed' note under that tool section in the discovery report.
+4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.
 5. Validate edited JSON, YAML, and TOML before finishing.
 
 Do not attempt to review unchanged tools or sources with no missing local terms in this run.
 
-## No scoped tools
+## Tools to process (4 of 5 with missing terms)
 
-No unresolved 'Potential config terms not found' sections remain after this maintenance run.
+### Claude Code
 
-Claude Code managed controls were updated for agent view, Artifacts, away summaries, background tasks, IDE install, and the 2.1.212 hard version floor. Discovery watchers were stabilized and candidate filtering was added. See resolution notes in `latest-config-discovery.md`.
+- Source: Managed settings documentation
+- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
+
+### Claude Code
+
+- Source: Hooks documentation
+- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_MODEL`
+
+### Continue.dev
+
+- Source: Configuration reference
+- Missing terms: `mcpServers`
+
+### Claude Desktop
+
+- Source: Claude Desktop MCP documentation
+- Missing terms: `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`
+
+## Deferred (1 tools)
+
+These tools also have missing terms but are deferred to a follow-up run:
+
+- OpenAI Platform (OpenAI OpenAPI schema)
+
+## Outcome (2026-08-21)
+
+- Claude Code `ANTHROPIC_MODEL` / `CLAUDE_MODEL`: mapped to managed `availableModels` + `enforceAvailableModels` (this PR). Baseline stays unset.
+- Claude Code IDE/agent/away env vars: no change; covered by open PR #68.
+- Continue.dev `mcpServers`: no change; covered by open PR #69 / #75.
+- Claude Desktop `CLAUDE_CODE_MCP_SERVER_*`: no change; not Desktop policy keys (PR #69).
+- OpenAI Platform deferred terms: no change; covered by open PR #69.

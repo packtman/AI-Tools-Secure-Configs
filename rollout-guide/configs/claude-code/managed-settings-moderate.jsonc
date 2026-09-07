@@ -148,12 +148,32 @@
   "autoUpdatesChannel": "stable",
 
   // WHAT: Refuses startup when the installed CLI is older than 2.1.212.
-  // WHY: This is the first version with managed automatic MCP backgrounding controls.
-  //      Older clients ignore newer managed controls like MCP foreground policy.
+  // WHY: 2.1.212 adds MCP backgrounding controls, 2.1.175 adds enforceAvailableModels.
+  //      The hard floor ensures both the MCP foreground policy and model allowlist
+  //      are understood by every active client.
   // BREAKS IF TOO HIGH: Developers cannot start Claude Code until IT deploys an
   //      approved version at or above this floor.
   // BREAKS IF REMOVED: Older clients can start without the MCP foreground policy.
   "requiredMinimumVersion": "2.1.212",
+
+  // WHAT: Allowlist of model families users may select for the main session,
+  //      subagents, skills, the advisor, and background agents.
+  // WHY: ANTHROPIC_MODEL, CLAUDE_MODEL, --model, and /model are session
+  //      overrides, not org policy. A managed availableModels list replaces
+  //      user and project entries as of v2.1.175, so developers cannot widen
+  //      it. Keep at least one guaranteed-available family; an empty array
+  //      blocks named models but still leaves the account Default usable.
+  "availableModels": [
+    "sonnet",
+    "haiku",
+    "opus"
+  ],
+
+  // WHAT: Extends availableModels to the Default picker option.
+  // WHY: Without this, Default still resolves to the account or org default,
+  //      which can be a model you intended to restrict.
+  //      Requires Claude Code v2.1.175 or later and a non-empty availableModels list.
+  "enforceAvailableModels": true,
 
   // WHAT: OS-level filesystem and network isolation for Bash commands.
   // WHY: Defense-in-depth even if permission rules are bypassed by prompt injection.

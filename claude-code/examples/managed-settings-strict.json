@@ -122,6 +122,12 @@
   "autoUpdatesChannel": "stable",
   "requiredMinimumVersion": "2.1.212",
 
+  "availableModels": [
+    "sonnet",
+    "haiku"
+  ],
+  "enforceAvailableModels": true,
+
   "autoMemoryEnabled": false,
 
   "sandbox": {

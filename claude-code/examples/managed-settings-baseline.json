@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment": "BASELINE enterprise policy. Essential security only — blocks the most dangerous patterns while maximizing developer autonomy. Suitable for startups, individual developers, and low-risk internal tools.",
+  "_comment": "BASELINE enterprise policy. Essential security only: blocks the most dangerous patterns while maximizing developer autonomy. Suitable for startups, individual developers, and low-risk internal tools. Model selection is unset on purpose; pin availableModels and enforceAvailableModels when you need an org allowlist.",
 
   "permissions": {
     "allow": [

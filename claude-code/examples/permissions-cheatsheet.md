@@ -200,6 +200,8 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableDeepLinkRegistration` | Prevents protocol handler registration |
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
+| `availableModels` | Allowlist of selectable model families; managed list replaces user/project lists as of v2.1.175 |
+| `enforceAvailableModels` | Extend `availableModels` to the Default picker option (managed, v2.1.175+) |
 
 ---
 

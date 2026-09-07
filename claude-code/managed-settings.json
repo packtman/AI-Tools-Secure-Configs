@@ -136,6 +136,14 @@
 
   "requiredMinimumVersion": "2.1.212",
 
+  "availableModels": [
+    "sonnet",
+    "haiku",
+    "opus"
+  ],
+
+  "enforceAvailableModels": true,
+
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
