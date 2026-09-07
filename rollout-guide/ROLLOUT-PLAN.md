@@ -20,6 +20,7 @@
 | **Workspace trust** | A feature in Cursor/VS Code that treats newly opened folders as untrusted until the user explicitly approves them, preventing malicious repo files from auto-executing. |
 | **Bypass mode** | A Claude Code flag (`--dangerously-skip-permissions`) that skips all permission prompts, giving the AI agent unrestricted access. |
 | **Deep link** | A URL scheme (like `cursor://` or `vscode://`) that can trigger IDE actions when clicked, potentially from untrusted sources. |
+| **Fast mode** | A Claude Code research-preview setting that uses Claude Opus at higher per-token cost for lower latency. It is not a different model, and it is not Codex `features.fast_mode`. |
 
 ---
 
@@ -117,6 +118,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 **What changes:**
 
 1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows, background agents, and Artifact publishing are disabled in the Moderate tier until IT completes a monitored pilot. MCP calls stay in the foreground even when they run longer than two minutes, so you can see when an external operation is still active. Model selection is limited to Sonnet, Haiku, and Opus. Default in `/model` follows that list. Fable and other unlisted families are not available.
+1. **Claude Code**: Write, edit, and shell commands now require your approval before running. You will see a prompt asking "Allow this action?" Read-only operations (searching, reading files, listing directories) still run automatically. Dynamic workflows and Fast mode (`/fast`, the lightning-speed Opus path) are disabled in the Moderate tier until IT completes a pilot.
 
 2. **Cursor**: Only safe, read-only terminal commands auto-run (like `git status`, `npm test`, `npm run lint`). Other commands will ask for your approval. Build commands like `npm run build` and `go test` are included in the allowlist.
 
@@ -132,6 +134,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - Local MCP servers receive only a safe baseline environment and variables declared for that server. IT will migrate approved server credentials to explicit secrets-manager references before rollout.
 - The Claude Code IDE extension will not auto-install. Use the approved software catalog or MDM package.
 - Claude Code `/model`, `--model`, and `ANTHROPIC_MODEL` cannot select a family outside the org allowlist. Default remaps to the first allowed family.
+- Claude Code Fast mode (`/fast`) is off. Interactive work uses standard-speed Opus. Request a Fast mode exception if a team has an approved latency need and usage-credit budget.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -163,6 +166,7 @@ If using server-managed settings (Admin Console): navigate to Claude.ai Admin Se
 To roll back only the background task change, remove `env.CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` from Moderate or `env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` from Strict, redeploy the same MDM profile or Admin Console policy, then restart Claude Code. Do not remove the other permission, sandbox, or identity controls. If 2.1.212 itself causes the incident, restore the prior tested `requiredMinimumVersion` value or remove that key temporarily, then deploy the previously approved client version.
 
 If `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` causes an approved MCP server outage, first add that server's required variables to its managed `env`. Remove the isolation key only as a time-bounded incident rollback, redeploy the policy, restart Claude Code, and notify developers that local MCP servers may temporarily receive their full shell environment.
+For a targeted Fast mode rollback, remove `fastMode` and `env.CLAUDE_CODE_DISABLE_FAST_MODE` from managed settings (or the `65-fast-mode.json` drop-in). Also confirm the Owner toggle at Claude.ai Admin Settings > Claude Code if you still need the console-level disable. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys. `/fast` then follows the Owner toggle and user settings.
 
 #### Cursor Rollback
 
@@ -274,6 +278,8 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `CLAUDE_CODE_AUTO_CONNECT_IDE` | Not set | Not set | `"false"` | Strict requires deliberate IDE attachment from an external terminal |
 | `availableModels` | Unset | `["sonnet", "haiku", "opus"]` | `["sonnet", "haiku"]` | Moderate keeps Opus for harder coding tasks; Strict drops Opus and Fable. Do not ship `[]`: named picks are blocked but Default still works |
 | `enforceAvailableModels` | Unset | `true` | `true` | Closes the Default-picker loophole around `availableModels`. Requires Claude Code v2.1.175+. `ANTHROPIC_MODEL` is a session override, not a substitute |
+| `fastMode` | Unset (vendor default off) | `false` | `false` | Moderate and Strict block the research-preview high-cost Opus speed path; Baseline leaves `/fast` available after Owner enablement |
+| `env.CLAUDE_CODE_DISABLE_FAST_MODE` | Unset | `"1"` | `"1"` | The env is the session kill switch: `fastMode` cannot turn Fast mode back on, including via `--settings` |
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
@@ -381,6 +387,14 @@ claude --dangerously-skip-permissions
 # Expected: the tool call is denied without prompting
 
 # Check version meets the hard floor used by Moderate and Strict
+# Verify Fast mode is off
+claude config list --managed
+# Expected: fastMode=false and env includes CLAUDE_CODE_DISABLE_FAST_MODE=1
+
+# In a Claude Code session, run: /fast
+# Expected: Fast mode stays off (disabled by managed settings or organization)
+
+# Check version meets minimum
 claude --version
 # Expected: version >= 2.1.212
 
@@ -676,6 +690,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | Claude Code IDE extension auto-install | Unmanaged extension installs expand the AI surface outside the software catalog | Install the approved Claude Code IDE extension through MDM or the internal software portal. | Claude Code |
 | `--model opus` / `ANTHROPIC_MODEL=opus` on Strict, or any unlisted family | Unapproved model families can increase cost, capability, and data-handling risk | Use `sonnet` or `haiku`. Request an exception to add the family to managed `availableModels`. Do not set `ANTHROPIC_MODEL` in shell profiles as a workaround. | Claude Code |
 | `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
+| Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -697,6 +712,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `disableArtifact: true` | Developer wants to publish an Artifact page for design review | Keep blocked in Moderate and Strict. Offer an approved documentation or staging review path instead. |
 | `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL: "1"` | Developer cannot get the IDE extension automatically | Point them to the MDM or software-catalog package. Do not re-enable auto-install on managed endpoints. |
 | `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
+| `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -728,3 +744,8 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
 | **MCP servers** | Claude Code, Cursor, and Copilot can each run MCP servers. Copilot now has a generally available `allowedMcpServers` allowlist in `managed-settings.json`. That list does not apply to Claude Code or Cursor. Copy the same server identity into Claude Code managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). Copilot cloud agent does not enforce the Copilot allowlist. |
 | **Model allowlists** | Claude Code `availableModels` does not constrain Cursor or GitHub Copilot. If you need the same families everywhere, pin each tool separately (Cursor dashboard models, Copilot policy models, Claude Enterprise console restrictions). |
+| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+
+### 5.5 Tool Overlap: Claude Code Fast Mode vs Codex Fast Mode
+
+Claude Code Fast mode (`fastMode` / `CLAUDE_CODE_DISABLE_FAST_MODE`) and Codex `features.fast_mode` are independent spend paths. Pinning one does not disable the other. If the org deploys both tools, configure both.

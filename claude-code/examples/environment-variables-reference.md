@@ -64,6 +64,9 @@ If `ANTHROPIC_MODEL` names a family outside the list, Claude Code substitutes an
 | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` | Strip Anthropic beta headers and beta tool fields for incompatible gateways | `1` only when your gateway requires it |
 | `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` | Skip auto-install of the IDE extension | `1` for Moderate and Strict |
 | `CLAUDE_CODE_AUTO_CONNECT_IDE` | Override auto IDE connect from an external terminal | `"false"` for Strict |
+| `CLAUDE_CODE_DISABLE_FAST_MODE` | Disable Fast mode (research-preview high-cost Opus speed path). The `fastMode` settings key cannot turn it back on while this is set. | `1` for Moderate and Strict |
+| `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` | Skip the Fast mode org-availability check | Do not set. Bypasses "disabled by your organization." |
+| `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS` | Treat a failed Fast mode availability check as available | Do not set. Use only as a documented exception when an LLM gateway blocks `api.anthropic.com`. |
 | `DISABLE_AUTOUPDATER` | Disable automatic updates | `1` if controlling updates centrally |
 
 ### Background task tier guidance
@@ -120,6 +123,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "HTTPS_PROXY": "https://proxy.corp.example.com:8443",
     "NO_PROXY": "localhost,127.0.0.1,.corp.example.com",
     "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/corp-ca-bundle.crt",
@@ -145,6 +149,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "DISABLE_AUTOUPDATER": "1"
   }
 }

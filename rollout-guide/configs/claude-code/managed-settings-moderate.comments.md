@@ -63,6 +63,25 @@ Use this file with the deployable `managed-settings-moderate.json`. Each key exp
 ---
 
 ## `requiredMinimumVersion`
+## `fastMode`
+
+**Value:** `false`
+
+**What:** Turns Claude Code Fast mode off. Fast mode is a research preview that uses Claude Opus (Opus 5 or Opus 4.8) at higher per-token cost for lower latency. `/fast` writes `fastMode: true` to `~/.claude/settings.json` and, by default, that preference persists across sessions.
+
+**Why (Moderate tier):** Fast mode is extra spend on usage credits (subscription plans) or API tokens (Console), and it is disabled by default for Team and Enterprise until an Owner enables it in Admin Settings. Moderate keeps standard-speed work available and blocks this path until billing, usage-credit, and an exception process exist. Pair with `CLAUDE_CODE_DISABLE_FAST_MODE=1` so `--settings '{"fastMode": true}'` cannot turn it back on for one session.
+
+**What breaks if set to false:** `/fast` stays off, the lightning icon does not appear, and sessions stay on standard-speed Opus (or the current model). Interactive debugging that wanted lower latency uses standard Opus or a lower effort level instead.
+
+**Strict difference:** Also `false`, with the same env kill switch.
+
+**Baseline difference:** Unset. Vendor default is off. Users may run `/fast` after the Owner console toggle (Team/Enterprise) or provisioned Console access.
+
+**Overlap:** Codex `features.fast_mode` is a different product. If the org deploys both Claude Code and Codex, pin both. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`; those skip the org-disabled availability check.
+
+---
+
+## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Value:** `"2.1.212"`
 
@@ -162,3 +181,5 @@ Blocks auto-installation of the Claude Code IDE extension so installs go through
 **Strict difference:** Strict sets `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"` instead, removing explicit and automatic backgrounding for Bash, subagent, and MCP work.
 
 **Baseline difference:** Baseline leaves both variables unset and uses the vendor default, including automatic backgrounding for MCP calls longer than two minutes on Claude Code 2.1.212 or later.
+### `CLAUDE_CODE_DISABLE_FAST_MODE: "1"`
+Session kill switch for Fast mode. Read at startup. The `fastMode` settings key cannot turn Fast mode back on while this is set. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.

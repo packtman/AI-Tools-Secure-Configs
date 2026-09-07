@@ -96,6 +96,7 @@
   "disableAgentView": true,
   "disableArtifact": true,
   "awaySummaryEnabled": false,
+  "fastMode": false,
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
@@ -141,6 +142,7 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",

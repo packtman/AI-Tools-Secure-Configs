@@ -86,6 +86,7 @@
   "disableAgentView": true,
   "disableArtifact": true,
   "awaySummaryEnabled": false,
+  "fastMode": false,
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
   "autoUpdatesChannel": "stable",
@@ -126,6 +127,7 @@
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
     "CLAUDE_CODE_ENABLE_AWAY_SUMMARY": "0",
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
     "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0"
   }

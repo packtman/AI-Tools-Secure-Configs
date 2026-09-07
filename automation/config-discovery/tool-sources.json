@@ -24,61 +24,25 @@
         {
           "name": "Managed settings documentation",
           "kind": "docs",
-          "url": "https://code.claude.com/docs/en/settings.md",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/settings",
           "watch_for": [
             "managed settings",
             "permissions",
             "disableBypassPermissionsMode",
-            "disableAgentView",
-            "disableArtifact",
             "sandbox",
-            "MCP"
-          ],
-          "candidate_allowlist": [
-            "disableAgentView",
-            "disableArtifact",
-            "disableBundledSkills",
-            "fileCheckpointingEnabled",
-            "awaySummaryEnabled",
-            "requiredMinimumVersion",
-            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
-            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
-            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
-            "CLAUDE_CODE_AUTO_CONNECT_IDE"
-          ]
-        },
-        {
-          "name": "Environment variables documentation",
-          "kind": "docs",
-          "url": "https://code.claude.com/docs/en/env-vars.md",
-          "watch_for": [
-            "CLAUDE_CODE_DISABLE_AGENT_VIEW",
-            "CLAUDE_CODE_DISABLE_ARTIFACT",
-            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
-            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
-            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
-            "managed settings"
-          ],
-          "candidate_allowlist": [
-            "CLAUDE_CODE_DISABLE_AGENT_VIEW",
-            "CLAUDE_CODE_DISABLE_ARTIFACT",
-            "CLAUDE_CODE_DISABLE_BUNDLED_SKILLS",
-            "CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING",
-            "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS",
-            "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL",
-            "CLAUDE_CODE_ENABLE_AWAY_SUMMARY",
-            "CLAUDE_CODE_AUTO_CONNECT_IDE"
+            "MCP",
+            "fastMode",
+            "CLAUDE_CODE_DISABLE_FAST_MODE"
           ]
         },
         {
           "name": "Hooks documentation",
           "kind": "docs",
-          "url": "https://code.claude.com/docs/en/hooks.md",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/hooks",
           "watch_for": [
             "PreToolUse",
             "PostToolUse",
             "ConfigChange",
-            "InstructionsLoaded",
             "audit",
             "permissions"
           ]
@@ -86,7 +50,7 @@
         {
           "name": "Dynamic workflows documentation",
           "kind": "docs",
-          "url": "https://code.claude.com/docs/en/workflows.md",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/workflows",
           "watch_for": [
             "dynamic workflows",
             "disableWorkflows",
@@ -96,15 +60,15 @@
           ]
         },
         {
-          "name": "Model configuration documentation",
+          "name": "Fast mode documentation",
           "kind": "docs",
-          "url": "https://code.claude.com/docs/en/model-config.md",
+          "url": "https://code.claude.com/docs/en/fast-mode",
           "watch_for": [
-            "availableModels",
-            "enforceAvailableModels",
-            "ANTHROPIC_MODEL",
-            "advisorModel",
-            "organization model"
+            "fast mode",
+            "fastMode",
+            "fastModePerSessionOptIn",
+            "CLAUDE_CODE_DISABLE_FAST_MODE",
+            "research preview"
           ]
         }
       ]
@@ -179,20 +143,19 @@
         {
           "name": "Organization policy documentation",
           "kind": "docs",
-          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies.md",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization",
           "watch_for": [
             "policy",
             "organization",
             "Copilot Chat",
             "content exclusion",
-            "CLI",
-            "MCP"
+            "CLI"
           ]
         },
         {
           "name": "Content exclusion documentation",
           "kind": "docs",
-          "url": "https://raw.githubusercontent.com/github/docs/main/content/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot.md",
+          "url": "https://docs.github.com/en/copilot/managing-copilot/configuring-and-auditing-content-exclusion",
           "watch_for": [
             "content exclusion",
             "repositories",
@@ -222,16 +185,15 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex configuration reference",
-          "kind": "docs",
-          "url": "https://developers.openai.com/codex/config-reference.md",
+          "name": "OpenAI Codex repository",
+          "kind": "repository",
+          "url": "https://github.com/openai/codex",
           "watch_for": [
-            "approval_policy",
-            "sandbox_mode",
-            "web_search",
-            "features",
-            "permissions",
-            "managed"
+            "config",
+            "sandbox",
+            "approval",
+            "model",
+            "MCP"
           ]
         },
         {
@@ -239,12 +201,11 @@
           "kind": "releases",
           "url": "https://api.github.com/repos/openai/codex/releases?per_page=10",
           "watch_for": [
+            "configuration",
+            "security",
             "sandbox",
-            "approval",
-            "managed",
-            "permissions",
-            "hooks",
-            "MCP"
+            "policy",
+            "permissions"
           ]
         }
       ]
@@ -271,27 +232,27 @@
       },
       "sources": [
         {
-          "name": "OpenAI Codex enterprise admin setup",
-          "kind": "docs",
-          "url": "https://developers.openai.com/codex/enterprise/admin-setup",
+          "name": "OpenAI Codex repository",
+          "kind": "repository",
+          "url": "https://github.com/openai/codex",
           "watch_for": [
-            "admin",
+            "desktop",
             "managed",
-            "enterprise",
-            "policy",
-            "SSO"
+            "config",
+            "requirements",
+            "MDM"
           ]
         },
         {
-          "name": "OpenAI Codex managed configuration",
-          "kind": "docs",
-          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "name": "OpenAI Codex config reference",
+          "kind": "repository",
+          "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md",
           "watch_for": [
-            "managed configuration",
-            "requirements.toml",
-            "hooks",
-            "allow_managed_hooks_only",
-            "MDM"
+            "config",
+            "sandbox",
+            "approval",
+            "model",
+            "profiles"
           ]
         }
       ]
@@ -583,27 +544,27 @@
       },
       "sources": [
         {
-          "name": "Claude Desktop documentation",
+          "name": "Claude Desktop MCP documentation",
           "kind": "docs",
-          "url": "https://code.claude.com/docs/en/desktop.md",
+          "url": "https://docs.anthropic.com/en/docs/claude-code/mcp",
           "watch_for": [
             "Claude Desktop",
             "MCP",
-            "connectors",
-            "enterprise",
-            "policy"
+            "server",
+            "configuration",
+            "allowlist"
           ]
         },
         {
-          "name": "Claude Desktop local MCP support",
+          "name": "Claude Desktop support documentation",
           "kind": "docs",
-          "url": "https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop",
+          "url": "https://support.anthropic.com/en/",
           "watch_for": [
-            "MCP",
-            "local",
             "Claude Desktop",
-            "security",
-            "permissions"
+            "settings",
+            "enterprise",
+            "admin",
+            "data"
           ]
         }
       ]
