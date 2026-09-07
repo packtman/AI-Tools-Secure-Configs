@@ -80,6 +80,7 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
+  "disableClaudeAiConnectors": true,
   "disableRemoteControl": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
@@ -97,6 +98,7 @@
     "opus"
   ],
   "enforceAvailableModels": true,
+  "minimumVersion": "2.1.182",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,

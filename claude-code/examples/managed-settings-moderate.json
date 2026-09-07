@@ -88,6 +88,7 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
+  "disableClaudeAiConnectors": true,
   "allowManagedPluginsOnly": false,
   "disableRemoteControl": true,
   "disableSkillShellExecution": false,

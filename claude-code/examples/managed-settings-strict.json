@@ -104,6 +104,7 @@
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
+  "disableClaudeAiConnectors": true,
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,

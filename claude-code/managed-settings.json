@@ -100,6 +100,8 @@
 
   "allowManagedMcpServersOnly": false,
 
+  "disableClaudeAiConnectors": true,
+
   "allowManagedPluginsOnly": false,
 
   "forceRemoteSettingsRefresh": false,

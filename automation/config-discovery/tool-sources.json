@@ -30,9 +30,7 @@
             "permissions",
             "disableBypassPermissionsMode",
             "sandbox",
-            "MCP",
-            "fastMode",
-            "CLAUDE_CODE_DISABLE_FAST_MODE"
+            "MCP"
           ]
         },
         {
@@ -60,15 +58,27 @@
           ]
         },
         {
-          "name": "Fast mode documentation",
+          "name": "Settings reference",
           "kind": "docs",
-          "url": "https://code.claude.com/docs/en/fast-mode",
+          "url": "https://code.claude.com/docs/en/settings-reference.md",
           "watch_for": [
-            "fast mode",
-            "fastMode",
-            "fastModePerSessionOptIn",
-            "CLAUDE_CODE_DISABLE_FAST_MODE",
-            "research preview"
+            "disableClaudeAiConnectors",
+            "allowAllClaudeAiMcps",
+            "managed settings",
+            "permissions",
+            "MCP"
+          ]
+        },
+        {
+          "name": "MCP documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/mcp.md",
+          "watch_for": [
+            "disableClaudeAiConnectors",
+            "allowAllClaudeAiMcps",
+            "allowedMcpServers",
+            "managed-mcp.json",
+            "connectors"
           ]
         }
       ]

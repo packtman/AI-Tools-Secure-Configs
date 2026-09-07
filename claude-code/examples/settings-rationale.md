@@ -208,6 +208,17 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | All environments | `"1"` | Require each MCP server to declare the minimum environment it needs. |
 
 **What breaks if set:** MCP servers that depended on undeclared shell variables can fail to start or authenticate. Add the required names to the server's `env` configuration and resolve secret values through the approved secrets manager.
+### `disableClaudeAiConnectors`
+
+**What it does:** Stops Claude Code from fetching MCP connectors attached to the signed-in claude.ai account, so those connectors never connect. MCP is Model Context Protocol, a way for AI tools to call external services.
+
+**Why it matters:** The vendor default is `false`. Without this pin, Drive, Slack, GitHub, and custom claude.ai connectors load into Claude Code even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. A `true` in any file applies; a project-level `false` cannot override a managed `true`. Distinct from `allowAllClaudeAiMcps` (leave unset: default `false` keeps `managed-mcp.json` exclusive). Requires Claude Code v2.1.182 or later. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Personal claude.ai connectors are an unvetted MCP path. |
+| Standard enterprise | `true` | Keep MCP on org-approved servers until connectors are allowlisted. |
+| Developer | Unset | Allow personal connectors after the normal MCP approval prompt. |
 
 ### `forceRemoteSettingsRefresh`
 

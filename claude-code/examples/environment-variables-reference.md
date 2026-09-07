@@ -89,6 +89,8 @@ Do not set `CLAUDE_AUTO_BACKGROUND_TASKS=1` in an organization policy. It force-
 | `MCP_TIMEOUT` | MCP server startup timeout (ms) | `10000` |
 | `MAX_MCP_OUTPUT_TOKENS` | Max token output from MCP tools | `10000` (default) |
 | `MCP_TOOL_TIMEOUT` | Overall MCP tool execution timeout (ms), default is about 28 hours | Set per approved server workload |
+| `MCP_TOOL_TIMEOUT` | MCP tool execution timeout (ms) | `60000` |
+| `ENABLE_CLAUDEAI_MCP_SERVERS` | Fetch MCP connectors from the signed-in claude.ai account | `false` for one session. Not a substitute for managed `disableClaudeAiConnectors: true`. |
 
 ## Sandbox
 

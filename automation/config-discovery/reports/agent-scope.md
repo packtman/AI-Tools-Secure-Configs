@@ -1,48 +1,21 @@
 # Agent scope for this run
 
-Process only the tools listed below. For each tool:
+### Claude Code `disableClaudeAiConnectors`
 
-1. Read the cited missing terms and the upstream URL from the full discovery report.
-2. If a term is a real admin or security control, add it to **strict, moderate, and baseline** tier files with tier-appropriate values.
-3. Update rationale, README file tables, rollout tier deltas, and `tool-sources.json` tier_files when you add new example paths.
-4. If no config change is needed, append a short 'No config update needed' note under that tool section in the discovery report.
-5. Validate edited JSON, YAML, and TOML before finishing.
+- Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`) and MCP documentation (`https://code.claude.com/docs/en/mcp.md`)
+- Pin: `true` on Moderate and Strict. Baseline unset.
+- Why: vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
 
-Do not attempt to review unchanged tools or sources with no missing local terms in this run.
+## No config update needed (scoped missing terms)
 
-## Tools to process (4 of 6 with missing terms)
+- `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` / `CLAUDE_MODEL`: model-selection env vars, not org allowlists. Do not pin as a substitute for `availableModels` (open PR #89).
+- `CLAUDE_CODE_AUTO_CONNECT_IDE` / `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`: Global-config IDE preferences, not managed settings.
+- `CLAUDE_CODE_DISABLE_AGENT_VIEW` / `CLAUDE_CODE_DISABLE_ARTIFACT` / `CLAUDE_CODE_DISABLE_FAST_MODE` / `CLAUDE_CODE_AUTO_COMPACT_WINDOW`: session overrides for keys already covered in open PRs.
+- `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`: operational timing. Workflows stay off via `disableWorkflows`.
+- `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL`: per-server identity env vars, not allowlists.
+- Background-task MCP env vars and `WaitForMcpServers`: operational.
+- `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`: gateway compatibility pin, not a tier default (PR #67).
+- `disabledMcpServers`: not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
+- Codex 0.152.0 is now stable. `tools.update_plan.enabled` defaulted off in that release; deferred so this PR stays on the unique Claude Code connector pin. Do not pin 0.152 alpha leftovers.
 
-### Claude Code
-
-- Source: Managed settings documentation
-- Missing terms: `ANTHROPIC_DEFAULT_MODEL`, `ANTHROPIC_MODEL`
-
-### Claude Code
-
-- Source: Hooks documentation
-- Missing terms: `ANTHROPIC_MODEL`, `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`, `CLAUDE_MODEL`
-
-### Claude Code
-
-- Source: Dynamic workflows documentation
-- Missing terms: `CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
-
-### Claude Code
-
-- Source: Fast mode documentation
-- Missing terms: `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
-
-## Deferred (2 tools)
-
-These tools also have missing terms but are deferred to a follow-up run:
-
-- Claude Desktop (Claude Desktop MCP documentation)
-- OpenAI Platform (OpenAI OpenAPI schema)
-
-## Outcome (2026-08-21)
-
-- Claude Code `ANTHROPIC_MODEL` / `CLAUDE_MODEL`: mapped to managed `availableModels` + `enforceAvailableModels` (this PR). Baseline stays unset.
-- Claude Code IDE/agent/away env vars: no change; covered by open PR #68.
-- Continue.dev `mcpServers`: no change; covered by open PR #69 / #75.
-- Claude Desktop `CLAUDE_CODE_MCP_SERVER_*`: no change; not Desktop policy keys (PR #69).
-- OpenAI Platform deferred terms: no change; covered by open PR #69.
+Did not add: `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88), `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion` (still deferred).

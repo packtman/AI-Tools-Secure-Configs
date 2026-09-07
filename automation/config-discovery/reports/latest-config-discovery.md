@@ -10,7 +10,8 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | Claude Code | Managed settings documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
 | Claude Code | Hooks documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
 | Claude Code | Dynamic workflows documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
-| Claude Code | Fast mode documentation | new-source-baseline | 200 | https://code.claude.com/docs/en/fast-mode |
+| Claude Code | Settings reference | new-source-baseline | 200 | https://code.claude.com/docs/en/settings-reference.md |
+| Claude Code | MCP documentation | new-source-baseline | 200 | https://code.claude.com/docs/en/mcp.md |
 | Cursor | Team administration documentation | content-changed | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
 | Cursor | MCP documentation | content-changed | 200 | https://docs.cursor.com/en/tools/mcp |
 | GitHub Copilot | Organization policy documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
@@ -74,6 +75,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+No config update needed: `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` are not org allowlists. Do not pin them as a substitute for `availableModels` (open PR #89).
+
 ### Claude Code: Hooks documentation
 
 - Change type: `content-changed`
@@ -115,6 +118,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+No config update needed: `ANTHROPIC_MODEL` / `CLAUDE_MODEL` are model-selection env vars. `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS` is a notification UX toggle, not a permission or hook lock.
+
 ### Claude Code: Dynamic workflows documentation
 
 - Change type: `content-changed`
@@ -148,54 +153,111 @@ input to a saved workflow Example workflow prompts Audit many files for the same
 > ... sions. Set CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you set it.
 To turn workflows off for your whole organization, set "disableWorkflows": true in managed settings
 , or use the toggle on the Claude Code admin settings page. When workflows are disabled, the bundled
-workflow commands are unavailable, the ultracode keyword no longer triggers a ...
+workflow commands and the /workflow-authoring skill are unavailable, the ultra ...
 
 Potential config terms not found in local tool files:
 
-`CLAUDE_CODE_SUBAGENT_MODEL`, `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
+`CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-### Claude Code: Fast mode documentation
+No config update needed: `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS` is operational timing, not a security lock. Workflows stay off on Moderate and Strict via `disableWorkflows`.
+
+### Claude Code: Settings reference
 
 - Change type: `new-source-baseline`
-- Source URL: https://code.claude.com/docs/en/fast-mode
+- Source URL: https://code.claude.com/docs/en/settings-reference.md
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
 
 Keyword snippets:
 
-> Speed up responses with fast mode - Claude Code Docs Documentation Index Fetch the complete
-documentation index at: /docs/llms.txt Use this file to discover all available pages before
-exploring further. Skip to ma ...
+> ... (#disablebundledskills) | Turn off the [skills](/docs/en/skills#bundled-skills) and
+[workflows](/docs/en/workflows) included with Claude Code | Plugins and skills | Any file | |
+[`disableClaudeAiConnectors`](#disableclaudeaiconnectors) | Turn off [claude.ai
+connectors](/docs/en/mcp#disable-claude-ai-connectors) so Claude Code doesn't fetch them | MCP | Any
+file | | [`disableCommandP ...
 
-> ... usage credits only and not included in the subscription rate limits.  Toggle fast mode Toggle
-fast mode in either of these ways: Type /fast and press Tab to toggle on or off Set "fastMode": true
-in your user settings file By default, fast mode you turn on in an interactive session persists
-across sessions. In non-interactive mode , with the -p flag, /fast works onl ...
+> ... ) | Let Claude send a [push notification to your phone](/docs/en/remote-control#mobile-push-
+notifications) when it decides to | Remote, desktop, and notifications | Any file | |
+[`allowAllClaudeAiMcps`](#allowallclaudeaimcps) | Load the [claude.ai connectors](/docs/en/mcp)
+Claude Code fetches itself alongside a deployed [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-
+contro ...
 
-> ... ore fast mode in that configuration too.  Require per-session opt-in By default, fast mode a
-user turns on in an interactive session persists across sessions. To change this, set
-fastModePerSessionOptIn to true in any settings file , which causes each session to start with fast
-mode off and requires users to explicitly enable it with /fast . Owners on Team or Enterprise plans
-can ...
+> ... sonly) | Make the managed [MCP](/docs/en/mcp) allowlist the only one that applies | MCP |
+Managed | | [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly) | Make [managed
+settings](/docs/en/managed-settings) the only source of [permission
+rules](/docs/en/permissions#managed-settings) | Permission settings | Managed | |
+[`alwaysThinkingEnabled`](#alwaysthink ...
 
-> ... s continue until access is provisioned. Claude AI (Team and Enterprise): an Owner enables it at
-Admin Settings > Claude Code Another option to disable fast mode entirely is to set
-CLAUDE_CODE_DISABLE_FAST_MODE=1 . See Environment variables .  Use fast mode behind proxies and LLM
-gateways Before offering fast mode, Claude Code checks your organization's fast mode availability
-with a req ...
+> ... naged | | [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly) | Make [managed
+settings](/docs/en/managed-settings) the only source of [permission
+rules](/docs/en/permissions#managed-settings) | Permission settings | Managed | |
+[`alwaysThinkingEnabled`](#alwaysthinkingenabled) | Turn [extended thinking](/docs/en/model-
+config#extended-thinking) off for ...
 
-> ... fast mode Fast mode vs effort level Requirements Enable fast mode for your organization Use fast
-mode behind proxies and LLM gateways Require per-session opt-in Handle rate limits Research preview
-See also Model and responses Speed up responses with fast mode Copy page Copy page Get faster Opus
-responses in Claude Code by toggling fast mode. Copy page Copy page Fast mode is ...
+> ... end a [push notification to your phone](/docs/en/remote-control#mobile-push-notifications) when
+it decides to | Remote, desktop, and notifications | Any file | |
+[`allowAllClaudeAiMcps`](#allowallclaudeaimcps) | Load the [claude.ai connectors](/docs/en/mcp)
+Claude Code fetches itself alongside a deployed [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-
+contr ...
 
 Potential config terms not found in local tool files:
 
-`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
+`ANTHROPIC_CUSTOM_MODEL_OPTION`, `ANTHROPIC_DEFAULT_MODEL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_ADVISOR_TOOL`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FAST_MODE`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`, `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `DISABLE_AUTO_COMPACT`, `DISABLE_DOCTOR_COMMAND`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Config update applied from this source: pin `disableClaudeAiConnectors: true` on Moderate and Strict (Baseline unset). Vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset (default `false` keeps `managed-mcp.json` exclusive). Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
+
+No config update needed for the other missing terms in this list: `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` are model-selection env vars, not org allowlists. `CLAUDE_CODE_*` names here are session overrides or UX toggles already covered by dedicated keys in open PRs (`disableAgentView`, `enableArtifact`, `fastMode`, `autoCompactWindow`) or are Global-config IDE preferences (`autoConnectIde`, `autoInstallIdeExtension`).
+
+### Claude Code: MCP documentation
+
+- Change type: `new-source-baseline`
+- Source URL: https://code.claude.com/docs/en/mcp.md
+- Status: `200`
+- Related repo paths: claude-code/, rollout-guide/configs/claude-code/
+
+Keyword snippets:
+
+> ... cal and SSH sessions | The desktop app delivers them in-process | `blocked` entries in your
+organization's [connector tool controls](#organization-controls-on-connector-tools) |
+[`disableClaudeAiConnectors`](#disable-claude-ai-connectors), `ENABLE_CLAUDEAI_MCP_SERVERS`, and
+[`allowAllClaudeAiMcps`](/docs/en/settings-reference#allowallclaudeaimcps) act only on the first
+row, the conn ...
+
+> ... ization's [connector tool controls](#organization-controls-on-connector-tools) |
+[`disableClaudeAiConnectors`](#disable-claude-ai-connectors), `ENABLE_CLAUDEAI_MCP_SERVERS`, and
+[`allowAllClaudeAiMcps`](/docs/en/settings-reference#allowallclaudeaimcps) act only on the first
+row, the connectors Claude Code fetches itself. The other two rows differ from it in these ways: *
+**Clou ...
+
+> ... tings-reference#allowallclaudeaimcps) act only on the first row, the connectors Claude Code
+fetches itself. The other two rows differ from it in these ways: * **Cloud sessions**:
+`allowedMcpServers` and `deniedMcpServers` entries that reach the session, for example through
+[server-managed settings](/docs/en/server-managed-settings), filter the delivered connectors too.
+The s ...
+
+> ... Claude Code v2.1.246 or later; before v2.1.246, a strict session still waited on approval for
+them, which left background sessions waiting at startup. See [Exclusive control with managed-
+mcp.json](/docs/en/managed-mcp#exclusive-control-with-managed-mcp-json) for what the flag does under
+a managed MCP file. [Project server approvals and workspace trust](#project-server-appr ...
+
+> ... s) that pushes messages into your session, so Claude reacts to Telegram messages, Discord chats,
+or webhook events while you're away. ## Find and build MCP servers Browse reviewed connectors in the
+[Anthropic Directory](https://claude.ai/directory). Directory connectors use the same MCP
+infrastructure as Claude Code, so you can add any remote server listed there with ...
+
+Potential config terms not found in local tool files:
+
+`CLAUDE_AUTO_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`, `ENABLE_TOOL_SEARCH`, `MCP_PROTOCOL_NEGOTIATION`, `MCP_SDK_GENERATION`, `WaitForMcpServers`, `allowed-tools`, `disabledMcpServers`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Config update applied from this source: pin `disableClaudeAiConnectors: true` on Moderate and Strict. These docs confirm the key, `ENABLE_CLAUDEAI_MCP_SERVERS`, and `allowAllClaudeAiMcps` act only on connectors Claude Code fetches itself, not Desktop-delivered or cloud-host connectors.
+
+No config update needed for the other missing terms: `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL` are per-server identity env vars, not allowlists. Background-task env vars and `WaitForMcpServers` are operational. `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` remains a gateway compatibility pin, not a tier default (PR #67). `disabledMcpServers` is not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
 
 ### Cursor: Team administration documentation
 
@@ -206,15 +268,10 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... xt surcharge) | | [Claude Fable 5](https://www.anthropic.com/claude) | Anthropic | 300k | 1M |
-Agent, Thinking, Images | Requires data retention approval for Enterprise customers, Teams and
-individual customers with Privacy Mode enabled; Anthropic stores agent input and output data for
-harm-prevention processes; this data is not used to train or improve Anthropi ...
-
-> ... ttps://www.anthropic.com/claude) | Anthropic | 300k | 1M | Agent, Thinking, Images | Requires
-data retention approval for Enterprise customers, Teams and individual customers with Privacy Mode
-enabled; Anthropic stores agent input and output data for harm-prevention processes; this data is
-not used to train or improve Anthropic models or products; Requests that tri ...
+> ... ing Changelog Agent Overview Agents Window Agent Review Planning Prompting Debugging Design Mode
+Tools Security Grok Bot Overview Get Started Use Cases Work with Grok Bot Settings Teams and
+Enterprise Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup
+Builds Capabilities Best Practices Automations Bugbot Security Agents PR Ro ...
 
 ### Cursor: MCP documentation
 
@@ -225,22 +282,19 @@ not used to train or improve Anthropic models or products; Requests that tri ...
 
 Keyword snippets:
 
-> ... oduce issues, narrow the root cause, and verify the fix ### Review changes Inspect diffs, run
-checks, and catch problems before you merge ### Customize Cursor Add plugins, skills, MCPs, and
-rules from one place ### Connect your workflow Work with GitHub, GitLab, Azure DevOps, Bitbucket,
-JetBrains, Slack, Linear, and more ## Models See all model attributes on th ...
+> Cursor Docs - Agent, Rules, MCP, Skills & CLI Skip to main content Cursor Logo Docs API Learn Help
+Search docs... K Sign in Download Command Palette Search for a command to run... Get Started Welcome
+Quickstart ...
 
-> ... or Documentation Cursor is a coding agent for building ambitious software. Use it to understand
-your codebase, plan and build features, fix bugs, review changes, and work with the tools you
-already use. ![Welcome to Cursor, the AI editor and coding agent](/docs-
-static/images/agent/homepage-hero.png) ## Start here ### Get started Go from install to your first
-usef ...
+> ... Palette Search for a command to run... Get Started Welcome Quickstart Models & Pricing Changelog
+Agent Overview Agents Window Agent Review Planning Prompting Debugging Design Mode Tools Security
+Grok Bot Overview Get Started Use Cases Work with Grok Bot Settings Teams and Enterprise Customize
+Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview ...
 
-> ... same per-token rates (no long-context surcharge) | | [Claude Fable
-5](https://www.anthropic.com/claude) | Anthropic | 300k | 1M | Agent, Thinking, Images | Requires
-data retention approval for Enterprise customers, Teams and individual customers with Privacy Mode
-enabled; Anthropic stores agent input and output data for harm-prevention processes; this data is
-not us ...
+> ... terprise Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup
+Builds Capabilities Best Practices Automations Bugbot Security Agents PR Routing & Approval Mobile
+Security Bring Your Own Machine Settings API Origin Overview CLI Create a repository Clone, Push &
+Pull Mirror GitHub Pull requests Browse & Search Settings Codebase settin ...
 
 ### GitHub Copilot: Organization policy documentation
 
@@ -265,15 +319,15 @@ Copilot to create or update issues Create a PR summary Use the GitHub MCP Server
 Use Copilot agents Get started Kick off a task Research, plan, iterate Manage agent sessions Copilot
 code review Review Copilot output Set up Set up for self Install Copilot exten ...
 
-> ... Cloud and local sandboxes Spark Copilot usage metrics All articles Copilot usage metrics
+> ... metry Cloud and local sandboxes Copilot usage metrics All articles Copilot usage metrics
 Prompting Prompt engineering Response customization Context MCP Spaces Repository indexing Content
 exclusion Tools AI tools About Copilot integrations Models Default availability Bring your own key
 Utility models Auto model selection FedRAMP models Base and LTS models Usage limits Billin ...
 
-> ... d agent About cloud agent Agent management Custom agents About automations Rationale,
-confidence, and approvals Access management MCP and cloud agent Risks and mitigations Copilot CLI
-About Copilot CLI Comparing CLI features Copilot CLI in Actions Cancel and roll back Context
-management About remote control Custom agents Autonomous task completion Parallel task ...
+> ... xpand sidebar Scroll breadcrumbs left Home GitHub Copilot How-tos Administer Copilot Manage for
+organization Scroll breadcrumbs right GitHub Copilot Get started Quickstart Copilot CLI quickstart
+Copilot app quickstart What is GitHub Copilot? Plans Features Best practices Enterprise AI
+governance Concepts Completions Code suggestions Code referencing Chat Agents ...
 
 ### GitHub Copilot: Content exclusion documentation
 
@@ -330,11 +384,26 @@ environments Issues Plan and track work Code Review Manage code changes ...
 
 Keyword snippets:
 
+> ... s from optional MCP servers. (#41199)\n- Extensions can now inspect or replace MCP tool results
+before they reach the model. (#41202)\n- Plugin catalogs now combine per-repository configuration
+and report invalid project marketplaces without hiding valid plugins. (#41208)\n\n## Bug Fixes\n\n-
+Preserved restored permission profiles across TUI turns and prevented `/cd` fro ...
+
 > ... type": "application/octet-stream",         "digest":
-"sha256:bdc604689950b71cffbcdc74eed41566776963c905d1476d971ed6549830a667",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
+"sha256:6a23804e7bcd7411c63cdaaa41d5869411a445775dcb1c6816a52f8281c141bb",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1389,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:e033f26658667c0fd249629 ...
+"sha256:e2df79143baff341adcd5d8 ...
+
+> ... 6 Move Guardian review session tests to a separate file @copyberry\n- #41227 Use compatible
+PowerShell for elevated Windows sandbox commands @copyberry\n- #41230 Apply app routing policy to
+unauthenticated plugin reads @copyberry\n- #41231 Instrument the loaded plugin cache @copyberry\n-
+#41232 Expose the PowerShell version in environment context @copyberry\n- #41 ...
+
+> ... across history compaction. (#41660, #41846, #41852)\n- Resumed threads restore their saved
+working directory when none is supplied, and client metadata updates preserve filesystem
+permissions. (#41567, #41464)\n- MCP tools remain available through cache refreshes and remote
+plugin changes; authentication retries use refreshed helper-provided headers. (#41336, #41344, # ...
 
 ### Codex Desktop: OpenAI Codex repository
 
@@ -407,7 +476,7 @@ Contributing Apache-2.0 license Security More items Continue Pioneering open-sou
 
 > ... ce coding agent continue.dev Topics agent ai cli developer-tools open-source Resources Readme
 Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
-Security policy Activity Custom properties Stars 35.6k stars Watchers 163 watching Forks 5.3k forks
+Security policy Activity Custom properties Stars 35.7k stars Watchers 165 watching Forks 5.3k forks
 Report repository Releases Used by Contributors Languages Footer  2026 GitHub, ...
 
 > ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
@@ -424,7 +493,7 @@ the Continue CLI instead of the JetBrains plugin. Contributors Thank you to t ..
 
 Keyword snippets:
 
-> ... . Skip to main content Devin Docs home page English Search...  K Ask Assistant Support Devin
+> ... ip to main content Devin Docs home page English Search...  K Ask Assistant  I Support Devin
 Devin Search... Navigation Getting Started Welcome to Devin Desktop Cloud CLI Desktop Enterprise Use
 Cases API Federal Devin Desktop Editor Getting Started Set Up Install Devin Desktop FAQ Recommended
 Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Br ...
@@ -640,8 +709,8 @@ Keyword snippets:
 
 > ... authentication Where the helper runs Which variables a helper can read Trust a folder before its
 headersHelper runs Add MCP servers from JSON configuration Import MCP servers from Claude Desktop
-Use MCP servers from claude.ai Organization controls on connector tools Disable claude.ai connectors
-Use Claude Code as an MCP server MCP output limits and warnings Raise the limi ...
+Use MCP servers from claude.ai How connectors reach Claude Code Organization controls on connector
+tools Disable claude.ai connectors Use Claude Code as an MCP server MCP output l ...
 
 > Connect Claude Code to tools via MCP - Claude Code Docs Documentation Index Fetch the complete
 documentation index at: /docs/llms.txt Use this file to discover all available pages before
@@ -657,11 +726,18 @@ Claude Code to tools via MCP Getting started Build with Claude Code Administrati
 Reference Agent SDK What's New Resources Agents and parallel work Overview Create custom subagents
 Agent view Run agent teams Cross-session messaging Dynamic workflows Isolate ses ...
 
+> ... fetches them from claude.ai The settings in this section and managed MCP configuration Cloud
+sessions The remote host passes them in Your claude.ai organization settings, plus the allowlist and
+denylist settings that reach the session and any managed-mcp.json on the host that runs it The
+desktop app 's local and SSH sessions The desktop app delivers them in-process b ...
+
 Potential config terms not found in local tool files:
 
 `CLAUDE_AUTO_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+No config update needed for Claude Desktop: these `CLAUDE_CODE_*` names are Claude Code session env vars scraped from the shared MCP docs URL. Connector fetch in Claude Code is governed by `disableClaudeAiConnectors` in this PR. Desktop MDM connector policy is a separate control (open PR #70).
 
 ### Claude Desktop: Claude Desktop support documentation
 
@@ -684,8 +760,8 @@ management Delete or rename a conversation Share and unshare chats Use incogni .
 
 > ... Pro plan? How do I sign up for the Pro plan? How to change your Pro plan from monthly to annual
 billing Max plan What is the Max plan? How do I sign up for the Max plan? Team and Enterprise plans
-Plan overviews What is the Enterprise plan? What is the Team plan? Get started Get started with the
-Team plan Move your personal Claude account to a Team or Enterprise organ ...
+Plan overviews What is the Enterprise plan? What is the Team plan? Claude Team plan for scientists
+Get started Get started with the Team plan Move your personal Claude accou ...
 
 > ... illing Add or update your Team plan's tax or VAT ID Cancel your organization's Team plan
 subscription How am I billed for my Enterprise plan? Understanding your Team plan invoices Admin
@@ -786,7 +862,7 @@ information about the organization associated with the authenticated API key. ##
 
 Potential config terms not found in local tool files:
 
-`always_allow`, `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `model_group`, `slack_channel_id`
+`allowed_inference_geos`, `always_allow`, `fast-mode-2026-02-01`, `mcp-tunnels-2026-05-19`, `model_group`, `slack_channel_id`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
@@ -799,23 +875,20 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 Keyword snippets:
 
-> ... about-claude/models/migration-guide). Read more in [Fast
-mode](https://platform.claude.com/docs/en/build-with-claude/fast-mode#supported-models). ### June
-26, 2026 * We've raised [rate limits](https://platform.claude.com/docs/en/api/rate-limits) across
-the Claude API. Claude Sonnet and Claude Haiku rate limits now match Claude Opus at every usage
-tier, and usage tiers ...
+> ... Python, TypeScript, C#, Go, Java, PHP, and Ruby SDKs under `client.beta.organization`. They
+cover organization info, members, invites, workspaces and workspace members, API keys, rate limits,
+service accounts, workload identity federation issuers and rules, and customer-managed encryption
+keys. Usage and cost reports and the Claude Enterprise user-management and anal ...
 
-> ... ce_user_data` scope. See [Sessions on users'
-machines](https://platform.claude.com/docs/en/manage-claude/compliance-sessions#retrieve-local-
-sessions). * We've added the `anthropic-workspace-id` response header to the Claude API. It carries
-the `wrkspc_`-prefixed ID of the workspace that the request's API key or access token resolved to,
-including your organization's ...
+> ... emoved from an organization. This lets organization admins more easily track usage for each
+account, and ensure key usage is legitimate. These API keys can be scoped to a specific workspace or
+[work on admin endpoints and across any workspace](https://platform.claude.com/docs/en/manage-
+claude/authentication#select-a-workspace) the account has access to. Workspace API ...
 
-> ... {session_id}` retrieves one session's metadata, and `GET
-/v1/compliance/apps/sessions/local/{session_id}/messages` returns its transcript, all with your
-existing Compliance Access Key and the `read:compliance_user_data` scope. See [Sessions on users'
-machines](https://platform.claude.com/docs/en/manage-claude/compliance-sessions#retrieve-local-
-sessions). * We'v ...
+> ... 5-04-14) and [Migrate from `skills-2025-10-02`](https://platform.claude.com/docs/en/build-with-
+claude/skills-guide#migrate-from-skills-2025-10-02). - You can now create **personal keys** and
+**service account keys** in the Claude Console. They act as you or as a [service
+account](https://platform.claude.com/docs/en/manage-claude/workload-identity-federation#ser ...
 
 > ... d custom-role requests require the `anthropic-beta: ce-user-management-2026-07-13` beta header;
 member and invite requests take no beta header. An Admin API key with the `read:org_audit` scope can
@@ -842,25 +915,3 @@ Review these terms first. If any are real admin controls, update the affected ti
 4. Preserve the repo's rollout-engineering standard: rollout plan first, config second, tier delta table, deployment steps, workflow-preservation notes.
 5. Keep JSON deployable by updating JSONC plus stripped JSON where applicable.
 6. Validate edited JSON, YAML, TOML, or shell files before merging.
-
-## Config update applied (2026-08-25)
-
-Claude Code Fast mode is now pinned on Moderate and Strict:
-
-- `fastMode: false`
-- `env.CLAUDE_CODE_DISABLE_FAST_MODE: "1"`
-- Watcher added: `https://code.claude.com/docs/en/fast-mode`
-- Registry: 14 tools / 30 sources
-
-Baseline leaves both unset (vendor default is off). Codex `features.fast_mode` is a different product and is not changed here (open PR #92).
-
-## No config update needed (scoped missing terms)
-
-- `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `CLAUDE_MODEL` / `CLAUDE_CODE_SUBAGENT_MODEL`: session model overrides. The org allowlist is `availableModels` plus `enforceAvailableModels` (open PR #89). Do not pin a model id in managed `env`.
-- `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`: would silence Notification hooks used for audit. Leave unset.
-- `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`: performance knob for workflow command prefixing, not an admin security control.
-- `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`: suppresses Fast mode's org-availability check (and other nonessential traffic). Not a Fast mode disable. Do not pin it as a substitute for `CLAUDE_CODE_DISABLE_FAST_MODE`.
-- `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` / `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`: bypass the org-disabled Fast mode check. Do not set.
-- `fastModePerSessionOptIn`: useful when Fast mode is allowed. Moderate and Strict disable Fast mode entirely, so this key is not necessary.
-- Continue `mcpServers` and Claude Desktop `CLAUDE_CODE_MCP_SERVER_*`: already reviewed in open PRs #75 and #70. The Desktop env names are Claude Code keys, not Claude Desktop MDM keys.
-- Codex 0.150 remains alpha (`0.150.0-alpha.9` at this run). Do not pin alpha keys.
