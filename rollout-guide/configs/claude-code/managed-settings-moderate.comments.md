@@ -81,6 +81,24 @@ Use this file with the deployable `managed-settings-moderate.json`. Each key exp
 
 ---
 
+## `disableMobileSimulatorTools`
+
+**Value:** `true`
+
+**What:** Blocks Claude's tools for controlling and capturing devices in the Claude Code Desktop iOS Simulator pane. People keep manual use of the pane.
+
+**Why (Moderate):** The vendor default is unset, so Claude can tap, screenshot, and extract data from apps running in the simulator. This is a managed-only Desktop key. The terminal CLI ignores it. Only the JSON boolean `true` takes effect (the string `"true"` is ignored). Distinct from computer use, from Desktop Browser pane keys (open PR #108), and from Claude Desktop MDM. There is no environment-variable substitute.
+
+**What breaks if set to true:** Claude cannot drive or capture the iOS Simulator. Developers still tap the pane themselves, or run `xcrun simctl` / Xcode outside Claude. macOS Desktop only.
+
+**What breaks if set to the string `"true"`:** The desktop app ignores the value and logs a warning.
+
+**Strict difference:** Also `true`. This key only removes Claude's access. It does not block people from using the pane.
+
+**Baseline difference:** Unset, so iOS developers can let Claude use the simulator after the in-app settings toggle.
+
+---
+
 ## `disableClaudeAiConnectors`
 
 **Value:** `true`

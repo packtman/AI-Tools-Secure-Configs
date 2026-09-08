@@ -82,6 +82,7 @@
   "allowManagedMcpServersOnly": false,
   "disableClaudeAiConnectors": true,
   "disableRemoteControl": true,
+  "disableMobileSimulatorTools": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,
   "disableAgentView": true,

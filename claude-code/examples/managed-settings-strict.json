@@ -107,6 +107,7 @@
   "disableClaudeAiConnectors": true,
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
+  "disableMobileSimulatorTools": true,
   "disableSkillShellExecution": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,

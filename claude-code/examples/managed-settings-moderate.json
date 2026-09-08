@@ -91,6 +91,7 @@
   "disableClaudeAiConnectors": true,
   "allowManagedPluginsOnly": false,
   "disableRemoteControl": true,
+  "disableMobileSimulatorTools": true,
   "disableSkillShellExecution": false,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,

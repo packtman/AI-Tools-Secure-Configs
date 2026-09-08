@@ -33,7 +33,8 @@ managed-settings.d/
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
 ├── 60-telemetry.json              ← telemetry & environment
-└── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+├── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+└── 67-desktop-simulator.json      ← Desktop iOS Simulator pane lock (Moderate/Strict)
 ```
 
 ## Example Files
@@ -171,6 +172,16 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
 ```
 
 Use this fragment on Moderate and Strict. Leave it out of Baseline so `/fast` stays available after the Owner console toggle (Team/Enterprise) or provisioned Console access. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
+
+### `67-desktop-simulator.json`
+
+```json
+{
+  "disableMobileSimulatorTools": true
+}
+```
+
+Use this fragment on Moderate and Strict. Leave it out of Baseline so iOS developers can still let Claude use the Desktop simulator pane. Managed only. The terminal CLI ignores this key. People keep manual use of the pane. Only the JSON boolean `true` takes effect (the string `"true"` is ignored). There is no environment-variable substitute. Distinct from computer use, from Desktop Browser pane keys (open PR #108), and from Claude Desktop MDM.
 
 ## Benefits
 

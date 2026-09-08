@@ -208,6 +208,20 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | All environments | `"1"` | Require each MCP server to declare the minimum environment it needs. |
 
 **What breaks if set:** MCP servers that depended on undeclared shell variables can fail to start or authenticate. Add the required names to the server's `env` configuration and resolve secret values through the approved secrets manager.
+### `disableMobileSimulatorTools`
+
+**What it does:** Blocks Claude's tools for the Claude Code Desktop iOS Simulator pane. People keep manual use of the pane. Only Claude's access is removed, and nobody can turn it back on from inside the app.
+
+**Why it matters:** The vendor default is unset, so Claude can tap, screenshot, and capture devices in the simulator, including staging app data and auth tokens. Managed only. The terminal CLI ignores this key. Only the JSON boolean `true` takes effect (the string `"true"` is ignored). Distinct from computer use (the simulator pane does not require screen control), from Desktop Browser pane keys (`browserExternalPageTools` / `disableBrowserExternalNavigation` in open PR #108), from Cursor browser tools, and from Claude Desktop MDM. No environment-variable substitute.
+
+**What breaks:** Claude cannot drive or capture the iOS Simulator. Developers still use the pane themselves, or run `xcrun simctl` and Xcode outside Claude. Windows and Linux Desktop have no iOS Simulator pane, so the key is a no-op there.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` | Agent-driven device capture is an unvetted data path. |
+| Standard enterprise | `true` | Keep Claude off the simulator until a named iOS pilot exists. |
+| Developer | Unset | Let iOS developers enable Claude's simulator tools from the Desktop settings toggle. |
+
 ### `disableClaudeAiConnectors`
 
 **What it does:** Stops Claude Code from fetching MCP connectors attached to the signed-in claude.ai account, so those connectors never connect. MCP is Model Context Protocol, a way for AI tools to call external services.

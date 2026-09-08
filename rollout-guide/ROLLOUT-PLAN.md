@@ -137,6 +137,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - The Claude Code IDE extension will not auto-install. Use the approved software catalog or MDM package.
 - Claude Code `/model`, `--model`, and `ANTHROPIC_MODEL` cannot select a family outside the org allowlist. Default remaps to the first allowed family.
 - Claude Code Fast mode (`/fast`) is off. Interactive work uses standard-speed Opus. Request a Fast mode exception if a team has an approved latency need and usage-credit budget.
+- Claude Code Desktop cannot drive or capture the iOS Simulator pane. You can still tap the pane yourself, or use Xcode / `xcrun simctl` outside Claude. The terminal CLI is unchanged.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -169,6 +170,8 @@ To roll back only the background task change, remove `env.CLAUDE_CODE_MCP_AUTO_B
 
 If `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` causes an approved MCP server outage, first add that server's required variables to its managed `env`. Remove the isolation key only as a time-bounded incident rollback, redeploy the policy, restart Claude Code, and notify developers that local MCP servers may temporarily receive their full shell environment.
 For a targeted Fast mode rollback, remove `fastMode` and `env.CLAUDE_CODE_DISABLE_FAST_MODE` from managed settings (or the `65-fast-mode.json` drop-in). Also confirm the Owner toggle at Claude.ai Admin Settings > Claude Code if you still need the console-level disable. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys. `/fast` then follows the Owner toggle and user settings.
+
+For a targeted Desktop iOS Simulator rollback, remove `disableMobileSimulatorTools` from managed settings (or the `67-desktop-simulator.json` drop-in). Restart the Claude Code Desktop app. The terminal CLI never enforced this key, so CLI behavior does not change.
 
 #### Cursor Rollback
 
@@ -285,6 +288,7 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `allowManagedHooksOnly` | `false` | `false` | `true` | Strict locks hooks to IT-deployed only |
 | `allowManagedMcpServersOnly` | `false` | `false` | `true` | Strict locks MCP to IT-approved servers only |
 | `disableClaudeAiConnectors` | Unset | `true` | `true` | Moderate and Strict stop fetching MCP connectors from the signed-in claude.ai account. Baseline leaves personal connectors available after the normal MCP approval prompt. Distinct from `allowAllClaudeAiMcps` (leave unset). Requires Claude Code 2.1.182+ |
+| `disableMobileSimulatorTools` | Unset | `true` | `true` | Moderate and Strict block Claude's Desktop iOS Simulator pane tools. People keep manual use. The CLI ignores this key. JSON boolean `true` only. Distinct from computer use and from Desktop Browser pane keys (open PR #108). |
 | `forceRemoteSettingsRefresh` | Not set | Not set | `true` | Strict fails-closed if managed settings cannot be fetched |
 | `disableRemoteControl` | `false` | `true` | `true` | Both Moderate and Strict block external prompt injection via remote control |
 | `sandbox.enabled` | Not set | `true` | `true` | OS-level isolation in both enterprise tiers |
@@ -415,6 +419,12 @@ claude auth status
 # Expected: no Drive, Slack, or other claude.ai account connectors listed
 # Also check: claude config list --managed | grep disableClaudeAiConnectors
 # Expected: true
+
+# Verify Desktop iOS Simulator tools are off (Desktop app only; CLI ignores this key)
+claude config list --managed | grep disableMobileSimulatorTools
+# Expected: true
+# In Claude Code Desktop on macOS: Claude cannot tap or capture the iOS Simulator pane.
+# People can still use the pane themselves. Do not set the string "true".
 ```
 
 On Claude Code 2.1.212 or later, start a test MCP call that runs for more than two minutes. Under Moderate it must remain in the main conversation. Pressing Ctrl+B should still background it intentionally. Under Strict, Ctrl+B and `run_in_background` must be unavailable. Run `/doctor` if the result differs, because invalid managed `env` entries are reported there.
@@ -702,6 +712,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
 | Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 | Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
+| Claude Code Desktop iOS Simulator tools | Claude can tap, screenshot, and capture apps running in the simulator, including staging data | Keep Claude off the pane. Use the pane yourself, or run `xcrun simctl` / Xcode outside Claude. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -725,6 +736,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
 | `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
+| `disableMobileSimulatorTools: true` | iOS developer wants Claude to tap or screenshot the Desktop simulator pane | Treat this as an exception request. Approve only for a named iOS pilot. Omit the key for that group. Do not set the string `"true"`. People can still use the pane without an exception. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -757,8 +769,10 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **MCP servers** | Claude Code, Cursor, and Copilot can each run MCP servers. Copilot now has a generally available `allowedMcpServers` allowlist in `managed-settings.json`. That list does not apply to Claude Code or Cursor. Copy the same server identity into Claude Code managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). Copilot cloud agent does not enforce the Copilot allowlist. |
 | **Model allowlists** | Claude Code `availableModels` does not constrain Cursor or GitHub Copilot. If you need the same families everywhere, pin each tool separately (Cursor dashboard models, Copilot policy models, Claude Enterprise console restrictions). |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
+| **Claude Code Desktop iOS Simulator pane** | `disableMobileSimulatorTools` is a managed-only Desktop key. The terminal CLI ignores it. It does not replace computer use policy, Cursor browser tools, Copilot, or Claude Desktop MDM. Open PR #108 covers the Desktop Browser pane with different keys. |
 
 ### 5.5 Tool Overlap: Claude Code Fast Mode vs Codex Fast Mode
 
 Claude Code Fast mode (`fastMode` / `CLAUDE_CODE_DISABLE_FAST_MODE`) and Codex `features.fast_mode` are independent spend paths. Pinning one does not disable the other. If the org deploys both tools, configure both.
-| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. Claude Code `disableClaudeAiConnectors` covers only claude.ai account connectors fetched by Claude Code. It does not disable Cursor MCP, Copilot MCP, or Claude Desktop connectors. Configure those tools separately. |
+
+Claude Code `disableClaudeAiConnectors` covers only claude.ai account connectors fetched by Claude Code. It does not disable Cursor MCP, Copilot MCP, or Claude Desktop connectors. Configure those tools separately.

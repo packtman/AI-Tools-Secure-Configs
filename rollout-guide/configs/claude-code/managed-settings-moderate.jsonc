@@ -127,6 +127,19 @@
   //      Claude Code sessions.
   "disableRemoteControl": true,
 
+  // WHAT: Blocks Claude's tools for the desktop app's iOS Simulator pane.
+  // WHY: Vendor default is unset, so Claude can tap, screenshot, and capture
+  //      devices in the simulator, including staging app data and auth tokens.
+  //      Managed only. People keep manual use of the pane. The terminal CLI
+  //      ignores this key. Only the JSON boolean true takes effect (the string
+  //      "true" is ignored). Distinct from computer use, from Desktop Browser
+  //      pane keys (open PR #108), and from Claude Desktop MDM. No env-var
+  //      substitute.
+  // BREAKS IF REMOVED: Claude can control and capture the iOS Simulator again.
+  // BREAKS IF SET TO THE STRING "true": the desktop app ignores it and logs a
+  //      warning. Exception groups omit the key.
+  "disableMobileSimulatorTools": true,
+
   // WHAT: Controls deep-link handler registration.
   //   // WHY: Disable reduces unexpected session starts from untrusted links.
   //   // BREAKS IF allow: OS handlers may register for Claude Code deep links.

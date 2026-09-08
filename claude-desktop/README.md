@@ -58,6 +58,8 @@ Changes require a full restart — no hot-reload.
 
 Machine-level policies override in-app settings. Enterprise policy controls override user-level allowlist settings.
 
+These Claude Desktop MDM keys do not control the Claude Code Desktop iOS Simulator pane. For that surface, pin Claude Code managed settings `disableMobileSimulatorTools: true` on Moderate and Strict. See `claude-code/examples/settings-rationale.md`. Desktop Browser pane locks are a separate Claude Code managed-settings pair (open PR #108).
+
 ---
 
 ## MCP Security Model

@@ -9,9 +9,9 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 |------|--------|--------|--------|-----|
 | Claude Code | Managed settings documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/settings |
 | Claude Code | Hooks documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/hooks |
-| Claude Code | Dynamic workflows documentation | content-changed | 200 | https://docs.anthropic.com/en/docs/claude-code/workflows |
-| Claude Code | Settings reference | new-source-baseline | 200 | https://code.claude.com/docs/en/settings-reference.md |
-| Claude Code | MCP documentation | new-source-baseline | 200 | https://code.claude.com/docs/en/mcp.md |
+| Claude Code | Settings reference | content-changed | 200 | https://code.claude.com/docs/en/settings-reference.md |
+| Claude Code | MCP documentation | content-changed | 200 | https://code.claude.com/docs/en/mcp.md |
+| Claude Code | Desktop documentation | new-source-baseline | 200 | https://code.claude.com/docs/en/desktop |
 | Cursor | Team administration documentation | content-changed | 200 | https://docs.cursor.com/en/account/teams/admin-dashboard |
 | Cursor | MCP documentation | content-changed | 200 | https://docs.cursor.com/en/tools/mcp |
 | GitHub Copilot | Organization policy documentation | content-changed | 200 | https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization |
@@ -19,14 +19,8 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 | Codex CLI | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
 | Codex CLI | OpenAI Codex releases | content-changed | 200 | https://api.github.com/repos/openai/codex/releases?per_page=10 |
 | Codex Desktop | OpenAI Codex repository | content-changed | 200 | https://github.com/openai/codex |
-| Codex Desktop | OpenAI Codex config reference | content-changed | 200 | https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md |
-| Continue.dev | Configuration reference | content-changed | 200 | https://docs.continue.dev/reference |
 | Continue.dev | Continue repository | content-changed | 200 | https://github.com/continuedev/continue |
-| Windsurf | Windsurf documentation | content-changed | 200 | https://docs.windsurf.com/ |
-| Windsurf | Windsurf changelog | content-changed | 200 | https://windsurf.com/changelog |
 | Tabnine | Tabnine admin documentation | content-changed | 200 | https://docs.tabnine.com/ |
-| Tabnine | Tabnine enterprise documentation | content-changed | 200 | https://www.tabnine.com/enterprise |
-| Amazon Q Developer | Amazon Q Developer IAM reference | content-changed | 200 | https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html |
 | Gemini CLI | Gemini CLI repository | content-changed | 200 | https://github.com/google-gemini/gemini-cli |
 | Gemini CLI | Gemini CLI documentation | content-changed | 200 | https://cloud.google.com/gemini/docs/codeassist/gemini-cli |
 | Google Gemini | Vertex AI Gemini safety settings | content-changed | 200 | https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-filters |
@@ -49,7 +43,7 @@ Use `automation/config-discovery/agent-prompt.md` to turn these signals into a f
 
 Keyword snippets:
 
-> ... t apply A value you set is ignored A managed change hasn't reached you A committed key doesn't
+> ... laude Code is lost in new sessions A managed change hasn't reached you A committed key doesn't
 reach teammates Permission rules combine differently than you expected Exceptions to managed
 settings precedence Settings in cloud sessions What's next Settings Claude Code settings Copy page
 Copy page Change Claude Code settings, pick the scope a key belongs in, verify the change ...
@@ -71,11 +65,11 @@ writes for you.  Share settings with your team Commit .claude/settings.j ...
 
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_DEFAULT_MODEL`, `ANTHROPIC_MODEL`
+`ANTHROPIC_DEFAULT_MODEL`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-No config update needed: `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` are not org allowlists. Do not pin them as a substitute for `availableModels` (open PR #89).
+No config update needed: `ANTHROPIC_DEFAULT_MODEL` is a session model pick, not an org allowlist. Do not pin it as a substitute for `availableModels` (open PR #89).
 
 ### Claude Code: Hooks documentation
 
@@ -114,58 +108,15 @@ keep working. Not all events receive this field. Check the JSON example in ea ..
 
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_MODEL`, `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`, `CLAUDE_MODEL`
+`CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-No config update needed: `ANTHROPIC_MODEL` / `CLAUDE_MODEL` are model-selection env vars. `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS` is a notification UX toggle, not a permission or hook lock.
-
-### Claude Code: Dynamic workflows documentation
-
-- Change type: `content-changed`
-- Source URL: https://docs.anthropic.com/en/docs/claude-code/workflows
-- Status: `200`
-- Related repo paths: claude-code/, rollout-guide/configs/claude-code/
-
-Keyword snippets:
-
-> Orchestrate subagents at scale with dynamic workflows - Claude Code Docs Documentation Index Fetch
-the complete documentation index at: /docs/llms.txt Use this file to discover all available pages
-before exploring further. Skip to ma ...
-
-> ... and the Agent SDK . The same disable settings apply on every surface. To turn workflows off for
-yourself: Toggle Dynamic workflows off in /config . Persists across sessions. Set
-"disableWorkflows": true in ~/.claude/settings.json . Persists across sessions. Set
-CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you set it. To turn
-workflows off for y ...
-
-> ... flows off for yourself: Toggle Dynamic workflows off in /config . Persists across sessions. Set
-"disableWorkflows": true in ~/.claude/settings.json . Persists across sessions. Set
-CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you set it. To turn
-workflows off for your whole organization, set "disableWorkflows": true in managed settings , or use
-the toggle on ...
-
-> ... kflow Bundled workflows Watch the run Have Claude write a workflow Ask for a workflow in your
-prompt Dismiss or turn off the keyword Where the keyword works Let Claude decide with ultracode
-Approve the plan before it runs Save the workflow for reuse Distribute a workflow in a plugin Pass
-input to a saved workflow Example workflow prompts Audit many files for the same ...
-
-> ... sions. Set CLAUDE_CODE_DISABLE_WORKFLOWS=1 . Read at startup, so it applies wherever you set it.
-To turn workflows off for your whole organization, set "disableWorkflows": true in managed settings
-, or use the toggle on the Claude Code admin settings page. When workflows are disabled, the bundled
-workflow commands and the /workflow-authoring skill are unavailable, the ultra ...
-
-Potential config terms not found in local tool files:
-
-`CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
-
-Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
-
-No config update needed: `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS` is operational timing, not a security lock. Workflows stay off on Moderate and Strict via `disableWorkflows`.
+No config update needed: `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS` is a notification UX toggle, not a permission or hook lock.
 
 ### Claude Code: Settings reference
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://code.claude.com/docs/en/settings-reference.md
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -184,37 +135,37 @@ notifications) when it decides to | Remote, desktop, and notifications | Any fil
 Claude Code fetches itself alongside a deployed [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-
 contro ...
 
+> ... tions | Managed | | [`disabledMcpjsonServers`](#disabledmcpjsonservers) | Reject specific
+servers from a project's [`.mcp.json`](/docs/en/mcp#project-scope) | MCP | Any file | |
+[`disableMobileSimulatorTools`](#disablemobilesimulatortools) | Block Claude's tools in the
+[desktop](/docs/en/desktop) iOS Simulator pane | Tools | Managed | |
+[`disableRemoteControl`](#disableremotecontrol) ...
+
 > ... sonly) | Make the managed [MCP](/docs/en/mcp) allowlist the only one that applies | MCP |
 Managed | | [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly) | Make [managed
-settings](/docs/en/managed-settings) the only source of [permission
+settings](/docs/en/managed-settings) the only settings source of [permission
 rules](/docs/en/permissions#managed-settings) | Permission settings | Managed | |
-[`alwaysThinkingEnabled`](#alwaysthink ...
+[`alwaysThinkingEnabled`](#al ...
 
-> ... naged | | [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly) | Make [managed
-settings](/docs/en/managed-settings) the only source of [permission
+> ... [`allowManagedPermissionRulesOnly`](#allowmanagedpermissionrulesonly) | Make [managed
+settings](/docs/en/managed-settings) the only settings source of [permission
 rules](/docs/en/permissions#managed-settings) | Permission settings | Managed | |
 [`alwaysThinkingEnabled`](#alwaysthinkingenabled) | Turn [extended thinking](/docs/en/model-
 config#extended-thinking) off for ...
 
-> ... end a [push notification to your phone](/docs/en/remote-control#mobile-push-notifications) when
-it decides to | Remote, desktop, and notifications | Any file | |
-[`allowAllClaudeAiMcps`](#allowallclaudeaimcps) | Load the [claude.ai connectors](/docs/en/mcp)
-Claude Code fetches itself alongside a deployed [`managed-mcp.json`](/docs/en/managed-mcp#exclusive-
-contr ...
-
 Potential config terms not found in local tool files:
 
-`ANTHROPIC_CUSTOM_MODEL_OPTION`, `ANTHROPIC_DEFAULT_MODEL`, `ANTHROPIC_MODEL`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_AUTO_CONNECT_IDE`, `CLAUDE_CODE_DISABLE_ADVISOR_TOOL`, `CLAUDE_CODE_DISABLE_AGENT_VIEW`, `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN`, `CLAUDE_CODE_DISABLE_ARTIFACT`, `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`, `CLAUDE_CODE_DISABLE_FAST_MODE`, `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`, `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`, `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`, `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING`, `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`, `DISABLE_AUTO_COMPACT`, `DISABLE_DOCTOR_COMMAND`
+`ANTHROPIC_CUSTOM_MODEL_OPTION`, `ANTHROPIC_DEFAULT_MODEL`, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_DISABLE_ADVISOR_TOOL`, `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`, `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`, `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`, `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING`, `DISABLE_AUTO_COMPACT`, `DISABLE_DOCTOR_COMMAND`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-Config update applied from this source: pin `disableClaudeAiConnectors: true` on Moderate and Strict (Baseline unset). Vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset (default `false` keeps `managed-mcp.json` exclusive). Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
+Config update applied from this source: pin `disableMobileSimulatorTools: true` on Moderate and Strict (Baseline unset). Vendor default is unset, so Claude can tap, screenshot, and capture devices in the Desktop iOS Simulator pane. Managed only. The terminal CLI ignores this key. People keep manual use of the pane. Only the JSON boolean `true` takes effect (the string `"true"` is ignored). Distinct from computer use and from Desktop Browser pane keys (open PR #108). No env-var substitute.
 
-No config update needed for the other missing terms in this list: `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` are model-selection env vars, not org allowlists. `CLAUDE_CODE_*` names here are session overrides or UX toggles already covered by dedicated keys in open PRs (`disableAgentView`, `enableArtifact`, `fastMode`, `autoCompactWindow`) or are Global-config IDE preferences (`autoConnectIde`, `autoInstallIdeExtension`).
+No config update needed for the other missing terms: `ANTHROPIC_*` names are session model picks, not org allowlists. Remaining `CLAUDE_CODE_*` / `DISABLE_*` names are session UX, one-session kills, or keys already covered in open PRs.
 
 ### Claude Code: MCP documentation
 
-- Change type: `new-source-baseline`
+- Change type: `content-changed`
 - Source URL: https://code.claude.com/docs/en/mcp.md
 - Status: `200`
 - Related repo paths: claude-code/, rollout-guide/configs/claude-code/
@@ -251,13 +202,58 @@ infrastructure as Claude Code, so you can add any remote server listed there wit
 
 Potential config terms not found in local tool files:
 
-`CLAUDE_AUTO_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`, `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`, `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`, `CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`, `ENABLE_TOOL_SEARCH`, `MCP_PROTOCOL_NEGOTIATION`, `MCP_SDK_GENERATION`, `WaitForMcpServers`, `allowed-tools`, `disabledMcpServers`
+`CLAUDE_CODE_MCP_SERVER_NAME`, `CLAUDE_CODE_MCP_SERVER_URL`, `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`, `ENABLE_TOOL_SEARCH`, `MCP_PROTOCOL_NEGOTIATION`, `MCP_SDK_GENERATION`, `WaitForMcpServers`, `allowed-tools`, `disabledMcpServers`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-Config update applied from this source: pin `disableClaudeAiConnectors: true` on Moderate and Strict. These docs confirm the key, `ENABLE_CLAUDEAI_MCP_SERVERS`, and `allowAllClaudeAiMcps` act only on connectors Claude Code fetches itself, not Desktop-delivered or cloud-host connectors.
+No config update needed: `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL` are per-server identity env vars, not allowlists. Background-task env vars and `WaitForMcpServers` are operational. `disabledMcpServers` is not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
 
-No config update needed for the other missing terms: `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL` are per-server identity env vars, not allowlists. Background-task env vars and `WaitForMcpServers` are operational. `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` remains a gateway compatibility pin, not a tier default (PR #67). `disabledMcpServers` is not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
+### Claude Code: Desktop documentation
+
+- Change type: `new-source-baseline`
+- Source URL: https://code.claude.com/docs/en/desktop
+- Status: `200`
+- Related repo paths: claude-code/, rollout-guide/configs/claude-code/
+
+Keyword snippets:
+
+> ... Claude from using tools to read or act on external pages in the Browser pane . Users can still
+navigate to external sites themselves, and local dev server previews are unaffected.
+disableMobileSimulatorTools set to true to block Claude's tools for controlling and capturing
+devices in the iOS Simulator pane . The pane stays usable for the user's own taps; only Claude's
+access is remove ...
+
+> ... eTools managed setting . With tools disabled, users can still navigate to external sites;
+Claude's tools can't read or act on them. To turn off external browsing entirely, set the
+disableBrowserExternalNavigation managed setting to true . This blocks all external navigation in
+the Browser, including sites on your organization's allowlist; localhost dev servers and file
+previews keep workin ...
+
+> ... organization already configured those lists for the extension, the Browser respects them
+automatically. Administrators can also turn off Claude's tools on external pages with the
+browserExternalPageTools managed setting . With tools disabled, users can still navigate to external
+sites; Claude's tools can't read or act on them. To turn off external browsing entirely, set the
+disabl ...
+
+> ... naged devices Cloud sessions SSH sessions Pre-configure SSH connections for your team Restrict
+which SSH hosts users can connect to Enterprise configuration Admin console controls Managed
+settings Device management policies Network access requirements Authentication and SSO Data handling
+Deployment Coming from the CLI? CLI flag equivalents Shared configuration MCP servers f ...
+
+> ... ry Best practices Platforms and integrations Overview Remote Control Claude Code on the web
+Claude Code on desktop Get started Reference Linux (beta) Windows (WSL) Scheduled tasks iOS
+simulator (beta) Mobile Chrome extension Computer use (preview) Visual Studio Code JetBrains IDEs
+Code review & CI/CD Claude Code in Slack Claude Tag On this page Start a session Work with ...
+
+Potential config terms not found in local tool files:
+
+`CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+Config update applied from this source: added this Desktop docs watcher and pinned `disableMobileSimulatorTools: true` on Moderate and Strict (Baseline unset). People keep manual use of the iOS Simulator pane. The terminal CLI ignores this key. JSON boolean `true` only.
+
+No config update needed for `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`: session thinking UX toggle, not a simulator lock. Deferred unique follow-ups from this page: Desktop Browser pane keys (open PR #108) and `sshHostAllowlist` (org-specific SSH host patterns; empty array disables SSH).
 
 ### Cursor: Team administration documentation
 
@@ -271,7 +267,7 @@ Keyword snippets:
 > ... ing Changelog Agent Overview Agents Window Agent Review Planning Prompting Debugging Design Mode
 Tools Security Grok Bot Overview Get Started Use Cases Work with Grok Bot Settings Teams and
 Enterprise Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup
-Builds Capabilities Best Practices Automations Bugbot Security Agents PR Ro ...
+Builds Capabilities Best Practices Choose Where Cloud Agents Run Automation ...
 
 ### Cursor: MCP documentation
 
@@ -291,10 +287,10 @@ Agent Overview Agents Window Agent Review Planning Prompting Debugging Design Mo
 Grok Bot Overview Get Started Use Cases Work with Grok Bot Settings Teams and Enterprise Customize
 Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview ...
 
-> ... terprise Customize Overview Plugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup
-Builds Capabilities Best Practices Automations Bugbot Security Agents PR Routing & Approval Mobile
-Security Bring Your Own Machine Settings API Origin Overview CLI Create a repository Clone, Push &
-Pull Mirror GitHub Pull requests Browse & Search Settings Codebase settin ...
+> ... ugins Rules Skills Subagents Hooks MCP Cloud Agents Overview Setup Builds Capabilities Best
+Practices Choose Where Cloud Agents Run Automations Bugbot Security Agents PR Routing & Approval
+Mobile Security Self-Hosted Machines Settings API Origin Overview CLI Create a repository Clone,
+Push & Pull Mirror GitHub Pull requests Browse & Search Settings Codebase settings ...
 
 ### GitHub Copilot: Organization policy documentation
 
@@ -319,10 +315,10 @@ Copilot to create or update issues Create a PR summary Use the GitHub MCP Server
 Use Copilot agents Get started Kick off a task Research, plan, iterate Manage agent sessions Copilot
 code review Review Copilot output Set up Set up for self Install Copilot exten ...
 
-> ... metry Cloud and local sandboxes Copilot usage metrics All articles Copilot usage metrics
+> ... kills Cloud and local sandboxes Copilot usage metrics All articles Copilot usage metrics
 Prompting Prompt engineering Response customization Context MCP Spaces Repository indexing Content
-exclusion Tools AI tools About Copilot integrations Models Default availability Bring your own key
-Utility models Auto model selection FedRAMP models Base and LTS models Usage limits Billin ...
+exclusion Tools AI tools About Copilot integrations Models Bring your own key Utility models Auto
+model selection Base and LTS models Usage limits Billing Billing for individuals Organizati ...
 
 > ... xpand sidebar Scroll breadcrumbs left Home GitHub Copilot How-tos Administer Copilot Manage for
 organization Scroll breadcrumbs right GitHub Copilot Get started Quickstart Copilot CLI quickstart
@@ -384,26 +380,30 @@ environments Issues Plan and track work Code Review Manage code changes ...
 
 Keyword snippets:
 
-> ... s from optional MCP servers. (#41199)\n- Extensions can now inspect or replace MCP tool results
-before they reach the model. (#41202)\n- Plugin catalogs now combine per-repository configuration
-and report invalid project marketplaces without hiding valid plugins. (#41208)\n\n## Bug Fixes\n\n-
-Preserved restored permission profiles across TUI turns and prevented `/cd` fro ...
+> ... g directory, and thread forks work with symlinked session roots.
+([#42039](https://github.com/openai/codex/pull/42039),
+[#42135](https://github.com/openai/codex/pull/42135))\n\n## Configuration and API Updates\n\n- App-
+server thread metadata includes nullable `model` and `reasoningEffort` fields. Structured
+asynchronous questions are supported through `request_user_input ...
 
 > ... type": "application/octet-stream",         "digest":
-"sha256:6a23804e7bcd7411c63cdaaa41d5869411a445775dcb1c6816a52f8281c141bb",         "label": "",
-"name": "codex-windows-sandbox-setup",         "size": 1389,         "state": "uploaded"       },
+"sha256:65724412517a59f7cd3d6018c08053e9f6eef62a42913e192010554c05bb9db9",         "label": "",
+"name": "codex-windows-sandbox-setup",         "size": 1421,         "state": "uploaded"       },
 {         "content_type": "application/x-msdos-program",         "digest":
-"sha256:e2df79143baff341adcd5d8 ...
+"sha256:18bedfdf2f125a731586cdd ...
 
-> ... 6 Move Guardian review session tests to a separate file @copyberry\n- #41227 Use compatible
-PowerShell for elevated Windows sandbox commands @copyberry\n- #41230 Apply app routing policy to
-unauthenticated plugin reads @copyberry\n- #41231 Instrument the loaded plugin cache @copyberry\n-
-#41232 Expose the PowerShell version in environment context @copyberry\n- #41 ...
+> ... tps://github.com/openai/codex/pull/41929) Open the agents overview directly in the reconnect
+test\n- [#41933](https://github.com/openai/codex/pull/41933) Report configured sandbox policy
+consistently\n- [#41934](https://github.com/openai/codex/pull/41934) Omit undersized WAV output from
+Code Mode\n- [#41936](https://github.com/openai/codex/pull/41936) Attach faile ...
 
-> ... across history compaction. (#41660, #41846, #41852)\n- Resumed threads restore their saved
-working directory when none is supplied, and client metadata updates preserve filesystem
-permissions. (#41567, #41464)\n- MCP tools remain available through cache refreshes and remote
-plugin changes; authentication retries use refreshed helper-provided headers. (#41336, #41344, # ...
+Potential config terms not found in local tool files:
+
+`disable_paste_burst`, `features.context_management.experimental_mode`, `tui.disable_paste_burst`
+
+Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+No config update needed: Codex `tui.auto_recap`, `tui.disable_paste_burst`, and `features.context_management.experimental_mode` are TUI or experimental prefs, not admin locks. Codex 0.152.0 `tools.update_plan.enabled` defaulted off; 0.153.4 is stable.
 
 ### Codex Desktop: OpenAI Codex repository
 
@@ -418,47 +418,6 @@ Keyword snippets:
 your code editor (VS Code, Cursor, Windsurf), install in your IDE. If you want the desktop app
 experience, run codex app or visit the Codex App page . If you are looking for the cloud-based agent
 from OpenAI, Codex Web , go to chatgpt.com/codex . Quickstart Installing a ...
-
-### Codex Desktop: OpenAI Codex config reference
-
-- Change type: `content-changed`
-- Source URL: https://raw.githubusercontent.com/openai/codex/main/codex-rs/config.md
-- Status: `200`
-- Related repo paths: codex-desktop/
-
-Keyword snippets:
-
-> # Configuration docs moved This file has moved. Please see the latest configuration documentation
-here: - Full config docs: [docs/config.md](https://github.com/openai/codex/blob/main/docs/ ...
-
-### Continue.dev: Configuration reference
-
-- Change type: `content-changed`
-- Source URL: https://docs.continue.dev/reference
-- Status: `200`
-- Related repo paths: continue-dev/
-
-Keyword snippets:
-
-> config.yaml Reference | Continue Docs Search...  K Docs Blog IDE Extensions CLI Getting Started
-Install Quick Start Customization Overview Features Agent Chat Autocomplete Edit Customiz ...
-
-> ... e Docs Search...  K Docs Blog IDE Extensions CLI Getting Started Install Quick Start
-Customization Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models
-MCP servers Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference
-Migrating Config to YAML Continue Documentation MCP Server config.json Reference ( ...
-
-> ... Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
-Config to YAML Continue Documentation MCP Server config.json Reference (Deprecated) Context
-Providers (Deprecated) @Codebase (Deprecated) @Docs (Deprecated) Guides How to Understand
-Configuration Configuring Models, Rules, and Tools Codebase and Documentation Awareness U ...
-
-> ... Search...  K Docs Blog IDE Extensions CLI Getting Started Install Quick Start Customization
-Overview Features Agent Chat Autocomplete Edit Customize Customization Overview Models MCP servers
-Rules Prompts Model Providers Model Roles Deep Dives Reference config.yaml Reference Migrating
-Config to YAML Continue Documentation MCP Server config.json Reference (Depr ...
-
-Potential config terms found upstream are already present in local tool files.
 
 ### Continue.dev: Continue repository
 
@@ -476,76 +435,13 @@ Contributing Apache-2.0 license Security More items Continue Pioneering open-sou
 
 > ... ce coding agent continue.dev Topics agent ai cli developer-tools open-source Resources Readme
 Apache-2.0 license Code of conduct Code of conduct Contributing Contributing Security policy
-Security policy Activity Custom properties Stars 35.7k stars Watchers 165 watching Forks 5.3k forks
+Security policy Activity Custom properties Stars 35.8k stars Watchers 171 watching Forks 5.4k forks
 Report repository Releases Used by Contributors Languages Footer  2026 GitHub, ...
 
 > ... ut the Continue Docs . Final 2.0.0 Release We polished Continue and did a final 2.0.0 release of
 the VS Code extension, CLI, and JetBrains plugin. This included removing anonymous telemetry,
 pulling out authentication, squashing bugs, and more. VS Code CLI JetBrains Note: We recommend using
 the Continue CLI instead of the JetBrains plugin. Contributors Thank you to t ...
-
-### Windsurf: Windsurf documentation
-
-- Change type: `content-changed`
-- Source URL: https://docs.windsurf.com/
-- Status: `200`
-- Related repo paths: windsurf/
-
-Keyword snippets:
-
-> ... ip to main content Devin Docs home page English Search...  K Ask Assistant  I Support Devin
-Devin Search... Navigation Getting Started Welcome to Devin Desktop Cloud CLI Desktop Enterprise Use
-Cases API Federal Devin Desktop Editor Getting Started Set Up Install Devin Desktop FAQ Recommended
-Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Br ...
-
-> ... ommended Extensions Models Adaptive Quick Review Tab Command Code Lenses Terminal Browser
-Previews AI Commit Messages DeepWiki Codemaps Vibe and Replace Advanced Devin Local Agent Cascade
-Context Awareness Troubleshooting Agent Command Center Agent Command Center Spaces Devin Agent
-Client Protocol (preview) Building a custom ACP agent Releases Changelog Changelog ( ...
-
-> ... Local Our next-generation agent harness, shared with Devin CLI. Runs on your machine as the
-primary local agent. Usage Credits and usage. Terminal An upgraded Terminal experience. MCP MCP
-servers extend the agent's capabilities. Memories Memories and rules help customize behavior.
-Context Awareness Instantly understands your codebase. Advanced Advanced configur ...
-
-> ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
-Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
-Guide Reporting On this page Set Up Onboarding 1. Select your preferred theme 2. Log In / Sign Up 3.
-Start Building with Devin! Things to Try Forgot to Import VS Code Configuratio ...
-
-### Windsurf: Windsurf changelog
-
-- Change type: `content-changed`
-- Source URL: https://windsurf.com/changelog
-- Status: `200`
-- Related repo paths: windsurf/
-
-Keyword snippets:
-
-> ... the fork in a new tab, keeping the original conversation open. "Grant access" on a network
-access request is disabled with an explanation when an admin owns the session's network policy.
-Download 3.7.16  v3.6.27 August 1, 2026 Fixed Devin Desktop for Windows loads root and intermediate
-certificates from the Windows certificate store again, so sign-in and other H ...
-
-> ... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices
-Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin
-Guide Reporting On this page v3.8.20 v3.7.25 v3.7.16 v3.6.27 v3.6.22 v3.6.21 v3.5.17 v3.4.27 v3.4.22
-v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 v3.0.21 v3.0.12 v2.3.15 ...
-
-> ... eases (Next) Windsurf Plugins Changelog Get Started Features Cascade (JetBrains) Context
-Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security
-FedRAMP Security Admin Guide Reporting On this page v3.8.20 v3.7.25 v3.7.16 v3.6.27 v3.6.22 v3.6.21
-v3.5.17 v3.4.27 v3.4.22 v3.3.18 v3.2.28 v3.2.23 v3.2.19 v3.2.16 v3.1.7 v3.0.28 ...
-
-> ... copied in before the session starts. New settings control whether integrated terminal activity
-and local user-edit activity are shared with ACP agents (both remain on by default). mcp_config.json
-no longer shows spurious "Property is not allowed" warnings. Up/down arrows in the chat input once
-again navigate through previous prompts. Fixed the migration wizard ...
-
-> ... connection failures under TLS-intercepting proxies. Devin Local Edits produced in autonomous
-mode now produce reviewable diffs. ACU usage is now shown in the /usage command. Skill permissions:
-frontmatter now applies to auto-approvals. Enterprise login policies are now enforced in the CLI.
-Added a sandbox.excluded allow/ask/deny config (user and team settings) to run s ...
 
 ### Tabnine: Tabnine admin documentation
 
@@ -565,24 +461,6 @@ documentation index, see llms.txt . This page is also available as Markdown . C 
 Security Privacy Protection Personalization AI Models Integrations System & Hardware Requirements
 Supported Languages Supported IDEs Tabnine Subscription Plans Support & Feedback Getting started I
 ...
-
-### Tabnine: Tabnine enterprise documentation
-
-- Change type: `content-changed`
-- Source URL: https://www.tabnine.com/enterprise
-- Status: `200`
-- Related repo paths: tabnine/
-
-No configured watch keywords were found in the fetched content.
-
-### Amazon Q Developer: Amazon Q Developer IAM reference
-
-- Change type: `content-changed`
-- Source URL: https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonqdeveloper.html
-- Status: `200`
-- Related repo paths: amazon-q-developer/
-
-No configured watch keywords were found in the fetched content.
 
 ### Gemini CLI: Gemini CLI repository
 
@@ -632,10 +510,10 @@ prompts Gemini Code Assist Configure Gemini Code Assist Gemini Code Assist admin
 Configure Gemini Code Assist release channels Keyboard shortcuts Exclude files from Gemini Code
 Assist use Configure local codebase awareness Configure Gemini Code Assist logging ...
 
-> ... pute Data analytics and pipelines Databases Distributed, hybrid, and multicloud Industry
-solutions Migration Networking Observability and monitoring Security Storage Cross-product tools
-close Access and resources management Costs and usage management Infrastructure as code SDK,
-languages, frameworks, and tools / Console English Deutsch Espaol Espaol - Amrica L ...
+> ... d Products Agent Platform Apigee API Management BigQuery Compute Engine Cloud CDN Cloud Run
+Cloud Storage Cloud SQL Gemini Enterprise Google Kubernetes Engine Looker Cross-product Tools Access
+and resources management Costs and usage management Infrastructure as code SDK, languages,
+frameworks, and tools Technology Areas AI and ML Application development Applicat ...
 
 ### Google Gemini: Vertex AI Gemini safety settings
 
@@ -667,8 +545,8 @@ responses Content Credentials AI Content Detection API Text and code generation 
 System instructions Structured output Content generation parameters Image generatio ...
 
 > Safety and content filters | Gemini Enterprise Agent Platform | Google Cloud Documentation Skip to
-main content Technology areas close AI and ML Application development Application hosting Compute
-Data anal ...
+main content Documentation close Get Started Get Started with Google Cloud Product List Cloud
+Customer Care ...
 
 ### Google Gemini: Google Cloud organization policies
 
@@ -679,11 +557,11 @@ Data anal ...
 
 Keyword snippets:
 
-> Organization Policy overview | Google Cloud Documentation Skip to main content Technology areas
-close AI and ML Application development Application hosting Compute Data analytics and pipelines
-Databa ...
+> Organization Policy overview | Google Cloud Documentation Skip to main content Documentation close
+Get Started Get Started with Google Cloud Product List Cloud Customer Care Featured Products Agent P
+...
 
-> ... nce Resources Cross-product tools More Console Discover Product overview Hierarchy evaluation
+> ... re Overview Guides Reference Resources Console Discover Product overview Hierarchy evaluation
 Get started Enforce an organization policy Create resource restrictions Create custom constraints
 Create organization policies Test custom constraints with Gemini Cloud Assist Test organization
 policies Apply organization policies Scope organization policies with tags Manage b ...
@@ -695,8 +573,8 @@ Restrict identities with domain-restricted sharing Monitor Audit logging for Org
 
 > ... rict resource locations Disable Cloud Logging for the Cloud Healthcare API Restrict identities
 Domain-restricted sharing Restrict identities with domain-restricted sharing Monitor Audit logging
-for Organization Policy Troubleshoot Troubleshoot organization policies AI and ML Application
-development Application hosting Compute Data analytics and pipelines Database ...
+for Organization Policy Troubleshoot Troubleshoot organization policies Get Started Get Started with
+Google Cloud Product List Cloud Customer Care Featured Products Agent ...
 
 ### Claude Desktop: Claude Desktop MCP documentation
 
@@ -737,7 +615,7 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-No config update needed for Claude Desktop: these `CLAUDE_CODE_*` names are Claude Code session env vars scraped from the shared MCP docs URL. Connector fetch in Claude Code is governed by `disableClaudeAiConnectors` in this PR. Desktop MDM connector policy is a separate control (open PR #70).
+No config update needed for Claude Desktop: these `CLAUDE_CODE_*` names are Claude Code session env vars scraped from the shared MCP docs URL. Desktop iOS Simulator lock in Claude Code is `disableMobileSimulatorTools` (this PR). Desktop MDM connector policy is a separate control (open PR #70).
 
 ### Claude Desktop: Claude Desktop support documentation
 
@@ -827,6 +705,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+No config update needed: these OpenAPI schema names are API request/response fields or audit event types, not OpenAI Platform org-policy admin locks already covered in `openai-platform/examples/`.
+
 ### Claude API: Anthropic admin API documentation
 
 - Change type: `content-changed`
@@ -866,6 +746,8 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
+No config update needed: `mcp-tunnels-2026-05-19` is covered by open PR #70. `fast-mode-2026-02-01` is an API beta header, not a Claude Code Fast mode lock. `allowed_inference_geos`, `always_allow`, `model_group`, and `slack_channel_id` are Admin API fields, not new tier defaults.
+
 ### Claude API: Anthropic API release notes
 
 - Change type: `content-changed`
@@ -903,9 +785,11 @@ deny verdict before inference proceeds. Requests are signed, failure h ...
 
 Potential config terms not found in local tool files:
 
-`LanguageModel`, `LanguageModelSession`, `allowed_domains`, `blocked_domains`, `fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`, `permission_policy`, `policy_violation_investigation`
+`LanguageModel`, `LanguageModelSession`, `allowed_domains`, `blocked_domains`, `fast-mode-2026-02-01`, `mcp_oauth`, `model_context_window_exceeded`, `permission_policy`, `policy_violation_investigation`, `thinking.block_binding.prefix_mismatch_behavior`
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
+
+No config update needed: these release-note names are API types, beta headers, or event fields. `thinking.block_binding.prefix_mismatch_behavior` is an API thinking-block field, not a managed settings key. Inference hooks remain console settings (open PR #84). Dreams stays off until an org-level disable ships.
 
 ## Required Follow-Up
 

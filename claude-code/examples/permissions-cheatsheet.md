@@ -188,6 +188,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domain allowlist applies |
 | `strictKnownMarketplaces` | Restrict plugin marketplace sources |
 | `wslInheritsWindowsSettings` | WSL reads Windows managed settings |
+| `disableMobileSimulatorTools` | Desktop only: block Claude's iOS Simulator pane tools. People keep manual use. JSON boolean `true` only. The CLI ignores this key. |
 
 ## Works from Any Scope (but most useful in managed)
 

@@ -1,21 +1,19 @@
 # Agent scope for this run
 
-### Claude Code `disableClaudeAiConnectors`
+### Claude Code `disableMobileSimulatorTools`
 
-- Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`) and MCP documentation (`https://code.claude.com/docs/en/mcp.md`)
+- Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`) and Desktop documentation (`https://code.claude.com/docs/en/desktop`)
 - Pin: `true` on Moderate and Strict. Baseline unset.
-- Why: vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
+- Why: vendor default is unset, so Claude can tap, screenshot, and capture devices in the Desktop iOS Simulator pane, including staging app data and auth tokens. Managed only. People keep manual use of the pane. The terminal CLI ignores this key. Only the JSON boolean `true` takes effect (the string `"true"` is ignored). Distinct from computer use, from Desktop Browser pane keys (open PR #108), and from Claude Desktop MDM. No env-var substitute.
 
 ## No config update needed (scoped missing terms)
 
-- `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` / `CLAUDE_MODEL`: model-selection env vars, not org allowlists. Do not pin as a substitute for `availableModels` (open PR #89).
-- `CLAUDE_CODE_AUTO_CONNECT_IDE` / `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`: Global-config IDE preferences, not managed settings.
-- `CLAUDE_CODE_DISABLE_AGENT_VIEW` / `CLAUDE_CODE_DISABLE_ARTIFACT` / `CLAUDE_CODE_DISABLE_FAST_MODE` / `CLAUDE_CODE_AUTO_COMPACT_WINDOW`: session overrides for keys already covered in open PRs.
-- `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`: operational timing. Workflows stay off via `disableWorkflows`.
-- `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL`: per-server identity env vars, not allowlists.
-- Background-task MCP env vars and `WaitForMcpServers`: operational.
-- `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`: gateway compatibility pin, not a tier default (PR #67).
-- `disabledMcpServers`: not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
-- Codex 0.152.0 is now stable. `tools.update_plan.enabled` defaulted off in that release; deferred so this PR stays on the unique Claude Code connector pin. Do not pin 0.152 alpha leftovers.
+- `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION`: session model picks, not org allowlists. Do not pin as a substitute for `availableModels` (open PR #89).
+- `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`: notification UX toggle, not a hook lock.
+- Remaining `CLAUDE_CODE_DISABLE_*` env vars: session UX or one-session kills already covered in open PRs.
+- `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL`: runtime labels, not allowlists.
+- `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`: session thinking UX toggle.
+- Codex `tui.disable_paste_burst` / `features.context_management.experimental_mode`: TUI or experimental prefs, not admin locks.
+- `mcp-tunnels-2026-05-19`: covered by open PR #70.
 
-Did not add: `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88), `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion` (still deferred).
+Did not add: `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88), `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion` (still deferred), Desktop Browser pane keys (open #108), `sshHostAllowlist` (org-specific host patterns), `cleanupPeriodDays` (open #105), `permissions.blockReadsOutsideWorkingDirectories` (open #104).
