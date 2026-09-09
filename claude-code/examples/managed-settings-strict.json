@@ -105,6 +105,7 @@
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
   "disableClaudeAiConnectors": true,
+  "wslInheritsWindowsSettings": true,
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,

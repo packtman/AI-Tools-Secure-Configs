@@ -102,6 +102,8 @@
 
   "disableClaudeAiConnectors": true,
 
+  "wslInheritsWindowsSettings": true,
+
   "allowManagedPluginsOnly": false,
 
   "forceRemoteSettingsRefresh": false,

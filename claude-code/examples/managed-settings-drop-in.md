@@ -33,7 +33,8 @@ managed-settings.d/
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
 ├── 60-telemetry.json              ← telemetry & environment
-└── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+├── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+└── 68-wsl-windows-settings.json   ← WSL inherits Windows MDM (Moderate/Strict, Windows file or HKLM only)
 ```
 
 ## Example Files
@@ -171,6 +172,16 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
 ```
 
 Use this fragment on Moderate and Strict. Leave it out of Baseline so `/fast` stays available after the Owner console toggle (Team/Enterprise) or provisioned Console access. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
+
+### `68-wsl-windows-settings.json`
+
+```json
+{
+  "wslInheritsWindowsSettings": true
+}
+```
+
+Deploy this fragment to `C:\Program Files\ClaudeCode\managed-settings.d\` or set the same JSON boolean in `HKLM\SOFTWARE\Policies\ClaudeCode`. Use it on Moderate and Strict Windows fleets that also run WSL. Leave it out of Baseline, and do not put it only in `/etc/claude-code` or in Claude.ai server-managed settings: those sources ignore the key. Native Windows, macOS, and native Linux sessions ignore it.
 
 ## Benefits
 

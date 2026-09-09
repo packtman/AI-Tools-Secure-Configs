@@ -120,6 +120,25 @@
   //      one-session kill, not a substitute.
   "disableClaudeAiConnectors": true,
 
+  // WHAT: Makes Claude Code on WSL read managed settings from the Windows
+  //      policy chain (HKLM and C:\Program Files\ClaudeCode\ first, then
+  //      /etc/claude-code only if those Windows files have no policy key).
+  // WHY: Vendor default is false, so a WSL session on a Windows laptop ignores
+  //      Intune or the Windows managed-settings.json and reads only
+  //      /etc/claude-code. That leaves a Windows-MDM fleet looking compliant
+  //      while WSL runs without the same deny rules, MCP lock, or login pin.
+  //      Managed only. Honored only when set in HKLM or the Windows file
+  //      (both require Windows admin). Server-managed settings ignore this
+  //      key. No effect on native Windows, macOS, or native Linux. No env-var
+  //      substitute. JSON boolean true only. Distinct from parentSettingsBehavior
+  //      (open PR #83) and policyHelper (open PR #85).
+  // BREAKS IF REMOVED: WSL sessions skip Windows MDM and fall back to
+  //      /etc/claude-code (or no managed file). BREAKS IF true with a weaker
+  //      Windows policy than /etc/claude-code: WSL follows Windows and ignores
+  //      the Linux file. Exception groups that need independent Linux policy
+  //      omit the key.
+  "wslInheritsWindowsSettings": true,
+
   // WHAT: Blocks the remote control feature, which allows external tools to send
   //      commands to Claude Code sessions.
   // WHY: Remote control could be abused for prompt injection from untrusted sources.

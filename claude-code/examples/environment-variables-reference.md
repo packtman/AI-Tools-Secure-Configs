@@ -2,6 +2,8 @@
 
 Set these in the `env` block of `managed-settings.json` or `settings.json` to enforce organization-wide behavior.
 
+`wslInheritsWindowsSettings` is a managed settings key. There is no environment-variable substitute. Pin the JSON boolean `true` on Moderate and Strict in the Windows managed file or HKLM. Do not set the string `"true"`. Do not put this key only in `/etc/claude-code` or in Claude.ai server-managed settings.
+
 ## Authentication & Identity
 
 | Variable | Description | Secure value |

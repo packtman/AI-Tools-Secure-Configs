@@ -64,6 +64,7 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "wslInheritsWindowsSettings",
             "managed settings",
             "permissions",
             "MCP"

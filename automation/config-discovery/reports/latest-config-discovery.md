@@ -208,7 +208,9 @@ Potential config terms not found in local tool files:
 
 Review these terms first. If any are real admin controls, update the affected tier files and rationale docs.
 
-Config update applied from this source: pin `disableClaudeAiConnectors: true` on Moderate and Strict (Baseline unset). Vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset (default `false` keeps `managed-mcp.json` exclusive). Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
+Config update applied from this source: pin `wslInheritsWindowsSettings: true` on Moderate and Strict (Baseline unset). Vendor default `false` means WSL reads only `/etc/claude-code` and ignores Windows MDM. Managed only. Honored only in HKLM or `C:\Program Files\ClaudeCode\`. Server-managed settings ignore this key. No effect on native Windows, macOS, or native Linux. No env-var substitute. JSON boolean `true` only. Distinct from `parentSettingsBehavior` (open PR #83) and `policyHelper` (open PR #85).
+
+The prior `disableClaudeAiConnectors` pin remains on Moderate and Strict from main.
 
 No config update needed for the other missing terms in this list: `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` are model-selection env vars, not org allowlists. `CLAUDE_CODE_*` names here are session overrides or UX toggles already covered by dedicated keys in open PRs (`disableAgentView`, `enableArtifact`, `fastMode`, `autoCompactWindow`) or are Global-config IDE preferences (`autoConnectIde`, `autoInstallIdeExtension`).
 

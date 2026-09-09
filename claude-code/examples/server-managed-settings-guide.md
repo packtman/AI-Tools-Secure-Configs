@@ -169,5 +169,5 @@ Ask a user to run:
 
 - Settings apply uniformly to all users (no per-group support yet).
 - MCP server configurations cannot be distributed via server-managed settings.
-- `policyHelper` and `wslInheritsWindowsSettings` are not honored (use MDM).
+- `policyHelper` and `wslInheritsWindowsSettings` are not honored in server-managed settings. Deploy `policyHelper` and `wslInheritsWindowsSettings` with MDM (for WSL inheritance, use HKLM or `C:\Program Files\ClaudeCode\` on Windows).
 - Not available with Bedrock, Vertex, Foundry, or custom `ANTHROPIC_BASE_URL`.

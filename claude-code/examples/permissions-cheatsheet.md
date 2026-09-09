@@ -187,7 +187,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed `allowRead` applies |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domain allowlist applies |
 | `strictKnownMarketplaces` | Restrict plugin marketplace sources |
-| `wslInheritsWindowsSettings` | WSL reads Windows managed settings |
+| `wslInheritsWindowsSettings` | WSL reads Windows managed settings. Pin `true` on Moderate and Strict in HKLM or `C:\Program Files\ClaudeCode\`. Server-managed settings ignore this key. |
 
 ## Works from Any Scope (but most useful in managed)
 

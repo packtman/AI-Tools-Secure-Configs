@@ -218,6 +218,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
+| `wslInheritsWindowsSettings` | WSL reads Windows managed settings (HKLM / `C:\Program Files\ClaudeCode\`). Pin `true` on Moderate and Strict in the Windows file or HKLM. Server-managed settings ignore this key. The CLI on macOS and native Linux ignores it. |
 
 ---
 
@@ -248,6 +249,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
 - [ ] Deploy `managed-mcp.json` for org-wide MCP servers.
+- [ ] Pin `wslInheritsWindowsSettings: true` on Moderate and Strict in the Windows managed file or HKLM so WSL sessions follow the same Windows MDM policy. Do not rely on server-managed settings or `/etc/claude-code` for this key.
 - [ ] Set `disableClaudeAiConnectors: true` on Moderate and Strict so claude.ai account connectors do not load.
 - [ ] Leave `allowAllClaudeAiMcps` unset (default `false`) unless you intentionally load claude.ai connectors beside `managed-mcp.json`.
 - [ ] Consider `allowManagedMcpServersOnly: true` for strict environments.

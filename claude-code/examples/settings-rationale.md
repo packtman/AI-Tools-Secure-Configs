@@ -220,6 +220,20 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `true` | Keep MCP on org-approved servers until connectors are allowlisted. |
 | Developer | Unset | Allow personal connectors after the normal MCP approval prompt. |
 
+### `wslInheritsWindowsSettings`
+
+**What it does:** Makes Claude Code on WSL (Windows Subsystem for Linux) read managed settings from the Windows policy chain. HKLM and `C:\Program Files\ClaudeCode\` take priority over `/etc/claude-code`.
+
+**Why it matters:** The vendor default is `false`. Without this pin, a Windows laptop that looks MDM-compliant still runs ungoverned Claude Code inside WSL. Deny rules, MCP locks, and `forceLoginOrgUUID` on the host do not apply. The key is managed-only and is honored only when set in HKLM or the Windows managed-settings file (both require Windows admin). Server-managed settings ignore it. Native Windows, macOS, and native Linux ignore it. There is no environment-variable substitute. Only the JSON boolean `true` turns the chain on.
+
+**What breaks:** Setting `true` does not block developer commands. If Windows policy is weaker than a separately deployed `/etc/claude-code`, WSL follows Windows and ignores the Linux file. If you remove the key, WSL goes back to `/etc/claude-code` only.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `true` in the Windows managed file or HKLM | Close the WSL policy-bypass path on mixed OS endpoints. |
+| Standard enterprise | `true` in the Windows managed file or HKLM | One Windows MDM payload should cover host and WSL sessions. |
+| Developer | Unset | Keep an independent `/etc/claude-code` until Windows MDM is in place. |
+
 ### `forceRemoteSettingsRefresh`
 
 **What it does:** Blocks CLI startup until server-managed settings are freshly fetched. Exits if fetch fails.

@@ -81,6 +81,24 @@ Use this file with the deployable `managed-settings-moderate.json`. Each key exp
 
 ---
 
+## `wslInheritsWindowsSettings`
+
+**Value:** `true`
+
+**What:** Makes Claude Code on WSL (Windows Subsystem for Linux) read managed settings from the Windows policy chain. HKLM and `C:\Program Files\ClaudeCode\` take priority. Claude Code reads `/etc/claude-code` only when those Windows files do not deliver a policy key.
+
+**Why (Moderate):** The vendor default is `false`, so a developer who opens Claude Code inside WSL on a Windows laptop ignores Intune and the Windows managed-settings file. That is a silent policy gap on mixed Windows and WSL fleets. Pin `true` in the Windows file or HKLM so WSL follows the same Moderate deny rules, MCP lock, and login pin as the host. Managed only. Server-managed settings do not honor this key. No effect on native Windows, macOS, or native Linux. No env-var substitute. JSON boolean `true` only. Distinct from `parentSettingsBehavior` (open PR #83) and `policyHelper` (open PR #85).
+
+**What breaks if removed:** WSL sessions skip Windows MDM and use `/etc/claude-code` only (or no managed file).
+
+**What breaks if true with a weaker Windows policy than `/etc/claude-code`:** WSL follows Windows and ignores the Linux file. Keep Windows and Linux fragments aligned, or omit the key for Linux-only images.
+
+**Strict difference:** Also `true`.
+
+**Baseline difference:** Unset. WSL keeps an independent `/etc/claude-code` path until the org is ready to inherit Windows MDM.
+
+---
+
 ## `disableClaudeAiConnectors`
 
 **Value:** `true`
