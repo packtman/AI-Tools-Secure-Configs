@@ -964,6 +964,34 @@
         "... Local Our next-generation agent harness, shared with Devin CLI. Runs on your machine as the primary local agent. Usage Credits and usage. Terminal An upgraded Terminal experience. MCP MCP servers extend the agent\u2019s capabilities. Memories Memories and rules help customize behavior. Context Awareness Instantly understands your codebase. Advanced Advanced configur ...",
         "... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin Guide Reporting On this page Set Up Onboarding 1. Select your preferred theme 2. Log In / Sign Up 3. Start Building with Devin! Things to Try Forgot to Import VS Code Configuratio ..."
       ]
+    },
+    "claude-code:Scheduled tasks documentation": {
+      "candidate_allowlist": null,
+      "config_candidates": [
+        "CLAUDE_CODE_DISABLE_CRON"
+      ],
+      "config_candidates_missing_locally": [],
+      "content_length": 17141,
+      "content_type": "text/markdown; charset=utf-8",
+      "etag": null,
+      "final_url": "https://code.claude.com/docs/en/scheduled-tasks.md",
+      "hash_basis": "normalized-source-v1",
+      "kind": "docs",
+      "last_changed_at": "2026-09-10T13:06:53+00:00",
+      "last_modified": "Thu, 10 Sep 2026 13:06:54 GMT",
+      "name": "Scheduled tasks documentation",
+      "sha256": "85f1e8bd1cfba8726f25fc4348f82275cbaf8edf228289c897caf7cb2eee018c",
+      "status": 200,
+      "title_or_prefix": "> ## Documentation Index > Fetch the complete documentation index at: https://code.claude.com/docs/llms.txt > Use this f",
+      "tool_display_name": "Claude Code",
+      "tool_id": "claude-code",
+      "url": "https://code.claude.com/docs/en/scheduled-tasks.md",
+      "watch_snippets": [
+        "... ported. When both day-of-month and day-of-week are constrained, a date matches if either field matches. This follows standard vixie-cron semantics. ## Disable scheduled tasks Set `CLAUDE_CODE_DISABLE_CRON=1` in your environment to disable the scheduler entirely. The cron tools and `/loop` become unavailable, and any already-scheduled tasks stop firing. See [Environment variables](/ ...",
+        "... complete documentation index at: https://code.claude.com/docs/llms.txt > Use this file to discover all available pages before exploring further. # Run prompts on a schedule > Use /loop and the cron scheduling tools to run prompts repeatedly, poll for status, or set one-time reminders within a Claude Code session. Scheduled tasks let Claude re-run a prompt automa ...",
+        "... , Claude uses these tools: | Tool | Purpose | | :----------- | :-------------------------------------------------------------------------------------------------------------- | | `CronCreate` | Schedule a new task. Accepts a 5-field cron expression, the prompt to run, and whether it recurs or fires once. | | `CronList` | List all scheduled tasks with their IDs, schedu ...",
+        "... further. # Run prompts on a schedule > Use /loop and the cron scheduling tools to run prompts repeatedly, poll for status, or set one-time reminders within a Claude Code session. Scheduled tasks let Claude re-run a prompt automatically on an interval. Use them to poll a deployment, babysit a PR, check back on a long-running build, or remind yourself to do something later ..."
+      ]
     }
   }
 }

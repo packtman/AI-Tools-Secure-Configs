@@ -412,6 +412,20 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Regulated | `1` | No session history on disk. |
 | Standard enterprise | Not set | Session history aids debugging and productivity. |
 
+### `CLAUDE_CODE_DISABLE_CRON`
+
+**What it does:** Disables session-scoped scheduled tasks. The `/loop` skill and the `CronCreate`, `CronList`, and `CronDelete` tools become unavailable, and any already-scheduled session tasks stop firing, including a task that is mid-run. There is no `settings.json` key; this environment variable is the documented org disable.
+
+**Why it matters:** A `/loop` or natural-language reminder keeps using the session's shell, file, and MCP permissions between turns while Claude Code is idle. Backgrounding the session carries `/loop` tasks into a background session that keeps running without a terminal. `disableWorkflows`, `disableAgentView`, and `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` do not cover this path. Strict `disableBundledSkills` hides `/loop` but does not stop `CronCreate`.
+
+**What breaks:** Developers cannot poll CI, babysit a PR, or set in-session reminders with `/loop`. Safe equivalents: run the check once in the open session, use a GitHub Actions `schedule` workflow, or request a time-boxed exception. This pin does not stop Claude Desktop scheduled tasks, cloud Routines, Cursor Automations, Copilot cloud agent, or GitHub Actions.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `"1"` | No unattended in-session agent loops on the endpoint. |
+| Standard enterprise | `"1"` | Keep autonomous looping off until a monitored pilot exists. |
+| Developer | Not set | Preserve `/loop` for local polling. |
+
 ### `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`
 
 **What it does:** Disables Bash and subagent `run_in_background`, automatic backgrounding, MCP backgrounding, and the Ctrl+B shortcut.

@@ -909,6 +909,8 @@ Review these terms first. If any are real admin controls, update the affected ti
 
 ## Required Follow-Up
 
+Config update applied this run: pin `env.CLAUDE_CODE_DISABLE_CRON: "1"` on Moderate and Strict (Baseline unset). Vendor default leaves session `/loop` and `CronCreate` on. There is no settings.json key. `disableBundledSkills` is not a substitute. Added watcher `https://code.claude.com/docs/en/scheduled-tasks.md`.
+
 1. Read the changed upstream source.
 2. Check whether the repo's existing tool config, README, rationale, deployment paths, or rollout guide are stale.
 3. If a config change is needed, update only the affected tool and tier files.

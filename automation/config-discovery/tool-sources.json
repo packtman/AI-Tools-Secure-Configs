@@ -64,6 +64,7 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "CLAUDE_CODE_DISABLE_CRON",
             "managed settings",
             "permissions",
             "MCP"
@@ -79,6 +80,18 @@
             "allowedMcpServers",
             "managed-mcp.json",
             "connectors"
+          ]
+        },
+        {
+          "name": "Scheduled tasks documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/scheduled-tasks.md",
+          "watch_for": [
+            "CLAUDE_CODE_DISABLE_CRON",
+            "/loop",
+            "CronCreate",
+            "scheduled tasks",
+            "managed settings"
           ]
         }
       ]

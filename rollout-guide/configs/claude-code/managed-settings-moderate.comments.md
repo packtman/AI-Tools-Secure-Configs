@@ -199,3 +199,17 @@ Blocks auto-installation of the Claude Code IDE extension so installs go through
 **Baseline difference:** Baseline leaves both variables unset and uses the vendor default, including automatic backgrounding for MCP calls longer than two minutes on Claude Code 2.1.212 or later.
 ### `CLAUDE_CODE_DISABLE_FAST_MODE: "1"`
 Session kill switch for Fast mode. Read at startup. The `fastMode` settings key cannot turn Fast mode back on while this is set. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
+
+### `CLAUDE_CODE_DISABLE_CRON: "1"`
+
+**What:** Turns off session-scoped scheduled tasks. `/loop`, `CronCreate`, `CronList`, and `CronDelete` become unavailable, and any already-queued session tasks stop firing, including a task that is mid-run.
+
+**Why (Moderate tier):** Vendor default leaves the scheduler on. A `/loop 5m` or "remind me in 45 minutes" prompt can keep running shell, file, and MCP tools after the developer looks away. `disableWorkflows` covers dynamic workflows, not cron. `disableAgentView` covers background agents, not session cron. `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` covers `run_in_background`, not the scheduler. Strict `disableBundledSkills` hides the `/loop` skill but does not stop `CronCreate`. There is no `settings.json` key; this env is the documented org disable.
+
+**What breaks if removed:** Developers can schedule unattended prompts in an open or backgrounded session. Resume with `--resume` can restore unexpired tasks.
+
+**What breaks if misconfigured:** Setting `"0"` or omitting the variable leaves the vendor scheduler on. A deny rule for `CronCreate` does not cancel tasks already queued.
+
+**Does not cover:** Claude Desktop scheduled tasks, cloud Routines, Cursor Automations, Copilot cloud agent, or GitHub Actions `schedule` triggers. Pin those tools separately.
+
+**Tier difference:** Baseline leaves the variable unset. Moderate and Strict set `"1"`.

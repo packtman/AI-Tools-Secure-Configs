@@ -270,6 +270,21 @@
     // WHY: A managed fastMode: false can still be overridden for one session by
     //      --settings '{"fastMode": true}'. This env turns Fast mode off and the
     //      settings key cannot turn it back on.
-    "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
+    "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
+
+    // WHAT: Disables session-scoped scheduled tasks: /loop, CronCreate,
+    //      CronList, CronDelete, and any tasks already queued in the session.
+    // WHY: Vendor default leaves the scheduler on. A /loop or natural-language
+    //      reminder keeps running shell, file, and MCP tools between turns while
+    //      the session is idle. disableBundledSkills hides the /loop skill on
+    //      Strict but does not stop CronCreate. disableAgentView and
+    //      CLAUDE_CODE_DISABLE_BACKGROUND_TASKS do not cover this path. There is
+    //      no settings.json key; this env is the documented org disable.
+    //      Does not stop Claude Desktop scheduled tasks, cloud Routines, Cursor
+    //      Automations, Copilot cloud agent, or GitHub Actions schedules.
+    // BREAKS IF REMOVED: Developers can schedule unattended prompts that fire
+    //      after they look away. Exception groups omit this env and keep SIEM
+    //      coverage for CronCreate.
+    "CLAUDE_CODE_DISABLE_CRON": "1"
   }
 }

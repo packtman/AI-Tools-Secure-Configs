@@ -204,6 +204,20 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 
 ---
 
+## Scheduled Task Governance
+
+Session-scoped scheduled tasks (`/loop`, `CronCreate`, `CronList`, `CronDelete`) fire between turns while Claude Code is idle. Backgrounding the session carries `/loop` tasks into a background session. There is no `settings.json` key; pin `env.CLAUDE_CODE_DISABLE_CRON`.
+
+| Tier | Managed `env` control | Workflow effect |
+|------|-----------------------|-----------------|
+| Baseline | None | `/loop` and cron tools remain available |
+| Moderate | `CLAUDE_CODE_DISABLE_CRON: "1"` | Session scheduler, `/loop`, and cron tools are off. Already-queued session tasks stop |
+| Strict | `CLAUDE_CODE_DISABLE_CRON: "1"` | Same as Moderate. `disableBundledSkills` is not a substitute |
+
+This pin does not stop Claude Desktop scheduled tasks, cloud Routines, Cursor Automations, Copilot cloud agent, or GitHub Actions schedules. Configure those tools separately.
+
+---
+
 ## Managed-Only Settings (Cannot Be Overridden)
 
 | Setting | Effect |
@@ -236,6 +250,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Set `disableAutoMode: "disable"` (if not using auto mode).
 - [ ] Set `disableWorkflows: true` until dynamic workflows have a pilot and usage monitoring.
 - [ ] Set `fastMode: false` and `CLAUDE_CODE_DISABLE_FAST_MODE=1` until Fast mode has billing, usage-credit, and an exception process. This is not Codex `features.fast_mode`; pin both if the org runs both tools.
+- [ ] Set `CLAUDE_CODE_DISABLE_CRON=1` on Moderate and Strict until `/loop` has a monitored pilot. This does not stop Desktop scheduled tasks, cloud Routines, Cursor Automations, or GitHub Actions.
 - [ ] Consider `allowManagedPermissionRulesOnly: true` for maximum control.
 
 ### Phase 3: Sandbox

@@ -33,7 +33,8 @@ managed-settings.d/
 ├── 40-hooks.json                  ← audit hooks
 ├── 50-mcp.json                    ← MCP server restrictions
 ├── 60-telemetry.json              ← telemetry & environment
-└── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+├── 65-fast-mode.json              ← Fast mode disable (Moderate/Strict)
+└── 66-cron.json                   ← session scheduled-task disable (Moderate/Strict)
 ```
 
 ## Example Files
@@ -171,6 +172,18 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
 ```
 
 Use this fragment on Moderate and Strict. Leave it out of Baseline so `/fast` stays available after the Owner console toggle (Team/Enterprise) or provisioned Console access. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`.
+
+### `66-cron.json`
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_DISABLE_CRON": "1"
+  }
+}
+```
+
+Use this fragment on Moderate and Strict. Leave it out of Baseline so `/loop` stays available for local polling. This does not stop Claude Desktop scheduled tasks, cloud Routines, Cursor Automations, Copilot cloud agent, or GitHub Actions. Do not treat a `CronCreate` deny rule as a substitute: it does not cancel tasks already queued.
 
 ## Benefits
 

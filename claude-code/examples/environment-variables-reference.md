@@ -59,6 +59,7 @@ If `ANTHROPIC_MODEL` names a family outside the list, Claude Code substitutes an
 | `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | Disable Claude-provided skills and workflows | Prefer managed `disableBundledSkills: true` for Strict |
 | `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` | Disable local file snapshots used by `/rewind` | Prefer managed `fileCheckpointingEnabled: false` for Strict |
 | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Disable Bash, subagent, and MCP background tasks, auto-backgrounding, and Ctrl+B | `1` for Moderate and Strict |
+| `CLAUDE_CODE_DISABLE_CRON` | Disable session-scoped scheduled tasks (`/loop`, `CronCreate` / `CronList` / `CronDelete`, and already-queued session tasks). There is no settings.json key. Does not stop Desktop scheduled tasks, cloud Routines, Cursor Automations, Copilot cloud agent, or GitHub Actions. | `1` for Moderate and Strict |
 | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | Delay before a long MCP call moves to the background, requires Claude Code 2.1.212 or later | `0` for Moderate |
 | `CLAUDE_AUTO_BACKGROUND_TASKS` | Force automatic backgrounding, including long MCP calls in non-interactive mode on 2.1.212 or later | Leave unset in managed tiers |
 | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` | Strip Anthropic beta headers and beta tool fields for incompatible gateways | `1` only when your gateway requires it |
@@ -76,6 +77,16 @@ If `ANTHROPIC_MODEL` names a family outside the list, Claude Code substitutes an
 | Baseline | Neither variable set | Uses the vendor default. On Claude Code 2.1.212 or later, MCP calls longer than two minutes move to the background. |
 | Moderate | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=0` | Long MCP calls stay visible. Developers can still intentionally background work with Ctrl+B. |
 | Strict | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1` | All automatic and explicit Bash, subagent, and MCP background task paths are disabled. |
+
+### Scheduled task tier guidance
+
+| Tier | Managed value | What changes |
+|------|---------------|--------------|
+| Baseline | Not set | `/loop` and cron tools remain available in the session. |
+| Moderate | `CLAUDE_CODE_DISABLE_CRON=1` | Session scheduler, `/loop`, and cron tools are off. Already-queued session tasks stop. |
+| Strict | `CLAUDE_CODE_DISABLE_CRON=1` | Same as Moderate. `disableBundledSkills` is not a substitute: it hides `/loop` but leaves `CronCreate` available. |
+
+Do not treat a `permissions.deny` entry for `CronCreate` as a substitute. Deny rules do not cancel tasks that are already queued. Desktop scheduled tasks and cloud Routines are separate surfaces; this variable does not disable them.
 
 Do not set `CLAUDE_AUTO_BACKGROUND_TASKS=1` in an organization policy. It force-enables automatic backgrounding and extends it to non-interactive runs, where a one-shot process can end before the result arrives.
 
@@ -127,6 +138,7 @@ Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `setti
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
+    "CLAUDE_CODE_DISABLE_CRON": "1",
     "HTTPS_PROXY": "https://proxy.corp.example.com:8443",
     "NO_PROXY": "localhost,127.0.0.1,.corp.example.com",
     "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/corp-ca-bundle.crt",
