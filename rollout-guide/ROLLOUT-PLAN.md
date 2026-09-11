@@ -21,6 +21,7 @@
 | **Bypass mode** | A Claude Code flag (`--dangerously-skip-permissions`) that skips all permission prompts, giving the AI agent unrestricted access. |
 | **Deep link** | A URL scheme (like `cursor://` or `vscode://`) that can trigger IDE actions when clicked, potentially from untrusted sources. |
 | **Fast mode** | A Claude Code research-preview setting that uses Claude Opus at higher per-token cost for lower latency. It is not a different model, and it is not Codex `features.fast_mode`. |
+| **Appshots** | A ChatGPT desktop (macOS) feature that captures the frontmost window (image plus available text) and sends it to ChatGPT. Disable it with Codex `allow_appshots = false` in `requirements.toml`. |
 
 ---
 
@@ -337,6 +338,15 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Deny wins. Blocks a root-disk filesystem MCP in every tier. |
 | `strictKnownMarketplaces` | omitted | org GitHub marketplace repo | `[]` (lockdown) | Agent Plugins 1.0 GA 2026-08-12. Empty array blocks all plugin catalogs. |
 | `sandbox.enabled` (Copilot CLI) | omitted | `true` | `true` | Defense in depth if CLI is later enabled. Native MDM is not available on Linux. |
+
+### 3.4 Codex Desktop and CLI (`requirements.toml`)
+
+Deploy one shared `requirements.toml` for ChatGPT desktop, Codex CLI, and the IDE extension. These keys are not valid in `config.toml`.
+
+| Setting | Baseline | Moderate | Strict | Reason for Difference |
+|---------|----------|----------|--------|----------------------|
+| `allow_appshots` | Unset (unconstrained) | `false` | `false` | Moderate and Strict block ChatGPT desktop on macOS window capture (image plus available text). Baseline leaves Appshots available. Distinct from `computer_use`. |
+| `allow_remote_control` | Unset (unconstrained) | `false` | `false` | Moderate and Strict block device remote control. Does not disable SSH. Distinct from Claude Code `disableRemoteControl` and Copilot `remoteControl.mode`. |
 
 ---
 
@@ -702,6 +712,8 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
 | Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 | Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
+| Codex Appshots (Moderate and Strict) | Frontmost Mac window image and text sent to ChatGPT without a file-picker review | Attach a file you chose, or paste a redacted screenshot. Request a macOS-only Appshots exception if a named workflow needs live window capture. | Codex Desktop |
+| Codex device remote control (Moderate and Strict) | Another client can drive this device's Codex session | Use approved remote desktop or SSH. Claude Code `disableRemoteControl` and Copilot `remoteControl.mode` do not cover Codex. | Codex Desktop, Codex CLI |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -725,6 +737,8 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
 | `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
+| `allow_appshots = false` | Developer wants to capture a Mac window into ChatGPT instead of attaching a file | Approve only for a named macOS workflow with a data-handling review. Do not set `true` as a global default. Attach a chosen file instead. |
+| `allow_remote_control = false` | Developer wants to drive a Codex session from another client | Keep SSH and approved remote desktop. Do not confuse this with Claude Code or Copilot remote-control pins. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -761,4 +775,14 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 ### 5.5 Tool Overlap: Claude Code Fast Mode vs Codex Fast Mode
 
 Claude Code Fast mode (`fastMode` / `CLAUDE_CODE_DISABLE_FAST_MODE`) and Codex `features.fast_mode` are independent spend paths. Pinning one does not disable the other. If the org deploys both tools, configure both.
-| **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. Claude Code `disableClaudeAiConnectors` covers only claude.ai account connectors fetched by Claude Code. It does not disable Cursor MCP, Copilot MCP, or Claude Desktop connectors. Configure those tools separately. |
+
+### 5.6 Tool Overlap: Remote Control and Window Capture
+
+Claude Code `disableRemoteControl`, Copilot `remoteControl.mode`, and Codex `allow_remote_control` are independent. Pinning one does not cover the others. Codex `allow_appshots` is also independent: it is ChatGPT desktop on macOS window capture, not Computer Use, not Browser Use, and not Claude Code Desktop Browser pane keys.
+
+| Concern | Guidance |
+|---------|----------|
+| **Gap: Claude Code remote control vs Codex** | `disableRemoteControl: true` in Claude Code managed settings does not disable Codex device remote control. Set `allow_remote_control = false` in the shared Codex `requirements.toml`. |
+| **Gap: Copilot remote control vs Codex** | Copilot `remoteControl.mode` (`requireSSO` or `disabled`) does not cover Codex. Configure both. |
+| **Appshots vs Computer Use** | `allow_appshots = false` stops a person from capturing the frontmost Mac window into ChatGPT. `computer_use = false` stops the agent from clicking native apps. Pin both on Moderate and Strict. |
+| **SSH still works** | Codex `allow_remote_control = false` does not disable SSH remote connections. Keep host allowlists and jump-host policy separate. |

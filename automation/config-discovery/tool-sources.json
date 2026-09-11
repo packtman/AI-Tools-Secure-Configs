@@ -261,8 +261,20 @@
             "config",
             "sandbox",
             "approval",
-            "model",
-            "profiles"
+            "allow_appshots",
+            "allow_remote_control"
+          ]
+        },
+        {
+          "name": "Managed configuration documentation",
+          "kind": "docs",
+          "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+          "watch_for": [
+            "allow_appshots",
+            "allow_remote_control",
+            "requirements.toml",
+            "Appshots",
+            "remote control"
           ]
         }
       ]

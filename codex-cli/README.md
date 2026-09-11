@@ -60,3 +60,4 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+7. If you also deploy Codex Desktop, use one shared `/etc/codex/requirements.toml`. Moderate and Strict templates pin `allow_appshots = false` and `allow_remote_control = false`. Appshots is ChatGPT desktop on macOS only (CLI cannot create a new Appshot). Device remote control applies to CLI, Desktop, and the IDE extension. Claude Code `disableRemoteControl` and Copilot `remoteControl.mode` do not cover Codex.

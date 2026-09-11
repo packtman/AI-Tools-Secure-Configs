@@ -964,6 +964,33 @@
         "... Local Our next-generation agent harness, shared with Devin CLI. Runs on your machine as the primary local agent. Usage Credits and usage. Terminal An upgraded Terminal experience. MCP MCP servers extend the agent\u2019s capabilities. Memories Memories and rules help customize behavior. Context Awareness Instantly understands your codebase. Advanced Advanced configur ...",
         "... ins Changelog Get Started Features Cascade (JetBrains) Context Awareness Best Practices Troubleshooting Accounts Usage Quota Analytics Teams & Enterprise Security FedRAMP Security Admin Guide Reporting On this page Set Up Onboarding 1. Select your preferred theme 2. Log In / Sign Up 3. Start Building with Devin! Things to Try Forgot to Import VS Code Configuratio ..."
       ]
+    },
+    "codex-desktop:Managed configuration documentation": {
+      "candidate_allowlist": null,
+      "config_candidates": [],
+      "config_candidates_missing_locally": [],
+      "content_length": 474641,
+      "content_type": "text/html; charset=utf-8",
+      "etag": "\"6cff23b4a164140525b7e81c0deadbd9\"",
+      "final_url": "https://learn.chatgpt.com/docs/enterprise/managed-configuration",
+      "hash_basis": "normalized-source-v1",
+      "kind": "docs",
+      "last_changed_at": "2026-09-11T13:06:19+00:00",
+      "last_modified": "Fri, 11 Sep 2026 12:13:43 GMT",
+      "name": "Managed configuration documentation",
+      "sha256": "dda694fe898115558a2552990f9a2c3abaacaaf0666dcaef9dc0f82f0a4f41ca",
+      "status": 200,
+      "title_or_prefix": "Managed configuration | ChatGPT Learn For the complete documentation index, see llms.txt . Markdown versions of document",
+      "tool_display_name": "Codex Desktop",
+      "tool_id": "codex-desktop",
+      "url": "https://developers.openai.com/codex/enterprise/managed-configuration",
+      "watch_snippets": [
+        "... trust_level = \"untrusted\" ; it does not make approval_policy = \"untrusted\" a supported explicit setting. Disable Appshots To disable Appshots for managed users, set the top-level allow_appshots requirement: allow_appshots = false Where Appshots are available, allow_appshots = false disables them. If you omit the key, requirements don't constrain Appshots, and normal prod ...",
+        "... llowAppshots ; an omitted or null allowAppshots value doesn't disable Appshots. Disable device remote control To disable device remote control for managed users, set the top-level allow_remote_control requirement: allow_remote_control = false Where device remote control is supported, allow_remote_control = false disables it. If you omit the key, requirements don't constrain dev ...",
+        "... keys, Configuration precedence for overrides, and repo plugin settings for project-level configuration. Workspace GitHub import and sync is separate. Admin-enforced requirements (requirements.toml) Requirements constrain security-sensitive settings (approval policy, approvals reviewer, automatic review policy, sandbox mode, permission profiles, web search mode, managed hook ...",
+        "... hats Sites Visualizations Scheduled tasks Long-running work Notifications Pets Codex Micro Capabilities Browser Computer use Voice Plugins Web search Image generation Image inputs Appshots Browser extension Work with files Reference Commands Slash commands Settings Troubleshooting Overview Customization Overview Memories Computer History Config file Config Basics Ad ...",
+        "... ective requirements through configRequirements/read receive the same restriction as allowAppshots ; an omitted or null allowAppshots value doesn't disable Appshots. Disable device remote control To disable device remote control for managed users, set the top-level allow_remote_control requirement: allow_remote_control = false Where device remote control is supported, allo ..."
+      ]
     }
   }
 }

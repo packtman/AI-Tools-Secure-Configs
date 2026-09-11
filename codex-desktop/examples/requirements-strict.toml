@@ -8,6 +8,16 @@ allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
 enforce_residency = "us"
 
+# WHAT: Disable Appshots (ChatGPT desktop on macOS captures the frontmost window image plus available text and sends it to ChatGPT).
+# WHY: Strict: omit leaves Appshots unconstrained. A hotkey can share email, credentials, or regulated data from any Mac window. Distinct from Computer Use (agent clicks) and Browser Use.
+# BREAKS IF omitted or true: Screen Recording and Accessibility capture stay available. CLI cannot create Appshots; it can still see an Appshot already in chat history.
+allow_appshots = false
+
+# WHAT: Disable device remote control for managed Codex clients (ChatGPT desktop, Codex CLI, IDE extension).
+# WHY: Strict: omit leaves remote control unconstrained. Distinct from Claude Code disableRemoteControl and Copilot remoteControl.mode. Does not disable SSH.
+# BREAKS IF omitted or true: a remote client can control this device's Codex session. SSH remote connections keep working.
+allow_remote_control = false
+
 # Disable all extended features
 [features]
 browser_use = false

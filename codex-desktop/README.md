@@ -51,6 +51,7 @@ Requirements are constraints that **users cannot override**. They control securi
 - Web search mode restrictions
 - MCP server allowlists
 - Feature flag pins
+- Appshots and device remote control (`allow_appshots`, `allow_remote_control`)
 - Command rules (prompt/forbidden)
 - Filesystem deny-read rules
 
@@ -121,10 +122,12 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 
 ## Security Differences: Codex Desktop vs. Codex CLI
 
-The Codex Desktop App, CLI, and IDE extension share the same configuration system (`config.toml`) and managed configuration layers. The desktop app additionally provides:
+The Codex Desktop App, CLI, and IDE extension share the same configuration system (`config.toml`) and managed configuration layers (`requirements.toml`). Deploy one shared `requirements.toml`. Appshots is ChatGPT desktop on macOS only; the CLI cannot create a new Appshot. Device remote control applies to all three clients. The desktop app additionally provides:
 
+- **Appshots** — capture the frontmost Mac window (image plus available text) into ChatGPT. Pin `allow_appshots = false` in requirements. Distinct from Computer Use.
 - **Browser Use** — AI can browse websites (allowlist/blocklist controlled)
 - **Computer Use** — AI can interact with desktop apps (macOS only; not available in EEA/UK/Switzerland)
+- **Device remote control** — another client can drive this device's Codex session. Pin `allow_remote_control = false` in requirements. Does not disable SSH. Distinct from Claude Code `disableRemoteControl` and Copilot `remoteControl.mode`.
 - **Codex Pets** — Visual overlays (low security risk)
 - **Context-aware suggestions** — Follow-up recommendations
 
@@ -140,6 +143,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `allow_appshots = false` and `allow_remote_control = false` on Moderate and Strict (omit leaves both unconstrained)
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

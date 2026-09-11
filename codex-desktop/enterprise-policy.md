@@ -31,6 +31,8 @@ Admins can configure different policies for different user groups. If a user mat
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allow_appshots = false
+allow_remote_control = false
 
 [features]
 browser_use = false
@@ -53,6 +55,8 @@ computer_use = false
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = ["disabled"]
+allow_appshots = false
+allow_remote_control = false
 
 [features]
 browser_use = false
@@ -93,6 +97,8 @@ com.openai.codex
 cat > /tmp/codex-requirements.toml << 'EOF'
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allow_appshots = false
+allow_remote_control = false
 
 [features]
 browser_use = false
@@ -146,6 +152,8 @@ if (-not (Test-Path $requirementsDir)) {
 @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allow_appshots = false
+allow_remote_control = false
 
 [features]
 browser_use = false
@@ -185,6 +193,8 @@ sudo mkdir -p /etc/codex
 sudo tee /etc/codex/requirements.toml > /dev/null << 'EOF'
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
+allow_appshots = false
+allow_remote_control = false
 
 [features]
 browser_use = false
@@ -204,9 +214,10 @@ sudo chown root:root /etc/codex/requirements.toml
 1. Use cloud-managed requirements to enforce `read-only` sandbox and disable all extended features
 2. Set `allowed_web_search_modes = []` to disable web search entirely
 3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`
-4. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
-5. Restrict MCP servers to an empty allowlist or specific approved servers only
-6. Add command rules to forbid dangerous operations
+4. Pin `allow_appshots = false` and `allow_remote_control = false` (omit leaves both unconstrained; Appshots is macOS ChatGPT desktop capture; remote control does not cover SSH)
+5. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
+6. Restrict MCP servers to an empty allowlist or specific approved servers only
+7. Add command rules to forbid dangerous operations
 
 ### For Development Environments
 

@@ -8,6 +8,10 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
+# Appshots (allow_appshots) and device remote control (allow_remote_control) stay unset on Baseline.
+# Vendor default: omitted keys are unconstrained, so ChatGPT desktop on macOS can capture windows and remote control can stay available.
+# Pin both to false when you move to Moderate. These keys belong in requirements.toml only, not config.toml.
+
 # Only pin the most dangerous feature
 [features]
 computer_use = false

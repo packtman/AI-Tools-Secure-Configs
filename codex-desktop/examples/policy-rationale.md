@@ -126,6 +126,38 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `allow_appshots` (in requirements.toml)
+
+**What it does:** Set to `false` to disable Appshots for managed users. Appshots is a ChatGPT desktop feature on macOS: both Command keys (or a custom hotkey) capture the frontmost window image plus available text and send it to ChatGPT. These keys belong in `requirements.toml` only, not `config.toml`.
+
+**Why it matters:** If you omit the key, requirements do not constrain Appshots. A developer (or a prompt that asks them to share a window) can send email, calendar, credentials, or regulated data from any Mac app. This is screen capture plus Accessibility text, not Computer Use (the agent does not click or type) and not Browser Use.
+
+**What breaks if misconfigured:** `false` removes the Appshots hotkey on ChatGPT desktop. People can still attach a file they chose. Codex CLI cannot create a new Appshot; it can still see an Appshot already in a resumed chat. Setting `true` or omitting the key leaves Appshots unconstrained.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Window capture is an unreviewed data-exfiltration path. |
+| Standard enterprise | `false` | Disable until a named exception covers a specific macOS workflow. |
+| Individual developers | Unset | Leave Appshots available for local ChatGPT desktop use. |
+
+---
+
+## `allow_remote_control` (in requirements.toml)
+
+**What it does:** Set to `false` to disable device remote control for managed Codex clients (ChatGPT desktop, Codex CLI, and the IDE extension). If omitted, requirements do not constrain remote control. This requirement does not disable SSH remote connections.
+
+**Why it matters:** Remote control lets another client drive the session on this device. That is a prompt-injection and unattended-action path, similar in outcome to Claude Code `disableRemoteControl` and Copilot `remoteControl.mode`, but those pins do not cover Codex. Pin Codex separately.
+
+**What breaks if misconfigured:** `false` blocks device remote control. Developers who need to drive a machine from another client should use an approved remote-desktop or SSH path instead. Setting `true` or omitting the key leaves remote control unconstrained.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No unattended remote drive of a developer endpoint. |
+| Standard enterprise | `false` | Disable until a monitored remote-work exception exists. |
+| Individual developers | Unset | Leave remote control available for personal setups. |
+
+---
+
 ## `deny_read` (in requirements.toml)
 
 **What it does:** Prevents the agent from reading specified file paths or patterns, even in writable sandbox modes.
@@ -157,6 +189,13 @@ memories = false
 multi_agent = false
 ```
 
+Also pin in the same `requirements.toml`:
+
+```toml
+allow_appshots = false
+allow_remote_control = false
+```
+
 ### Standard Enterprise
 
 ```toml
@@ -169,6 +208,13 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+```
+
+Also pin in the same `requirements.toml`:
+
+```toml
+allow_appshots = false
+allow_remote_control = false
 ```
 
 ### Developer Teams

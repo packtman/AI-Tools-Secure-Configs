@@ -30,6 +30,8 @@ com.openai.codex
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+allow_appshots = false
+allow_remote_control = false
 
 [features]
 browser_use = false
