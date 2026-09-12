@@ -173,6 +173,18 @@
             "excluded",
             "audit"
           ]
+        },
+        {
+          "name": "Enterprise managed settings reference",
+          "kind": "docs",
+          "url": "https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference",
+          "watch_for": [
+            "keychainAccess",
+            "userPolicy",
+            "addCurrentWorkingDirectory",
+            "sandbox",
+            "remoteControl"
+          ]
         }
       ]
     },

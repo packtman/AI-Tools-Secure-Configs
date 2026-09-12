@@ -50,7 +50,15 @@
     "sandboxLspServers": true,
     "gitAuth": false,
     "ghAuth": false,
-    "allowDevToolAccess": false
+    "allowDevToolAccess": false,
+    // WHAT: Forbids sandboxed Copilot CLI processes from reading the macOS Keychain.
+    // WHY: Distinct from gitAuth/ghAuth, which only block Copilot-injected GitHub tokens. Keychain also stores AWS, Azure, gcloud, and browser secrets.
+    // BREAKS IF OMITTED: Users can keep Keychain access on. Windows and Linux ignore this Seatbelt key.
+    "userPolicy": {
+      "seatbelt": {
+        "keychainAccess": false
+      }
+    }
   },
 
   // WHAT: Whether another client can remotely control Copilot sessions hosted on this device.

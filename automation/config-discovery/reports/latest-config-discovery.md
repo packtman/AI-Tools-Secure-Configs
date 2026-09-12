@@ -296,6 +296,16 @@ Builds Capabilities Best Practices Automations Bugbot Security Agents PR Routing
 Security Bring Your Own Machine Settings API Origin Overview CLI Create a repository Clone, Push &
 Pull Mirror GitHub Pull requests Browse & Search Settings Codebase settin ...
 
+### GitHub Copilot: Enterprise managed settings reference
+
+- Change type: `new-source-baseline` (watcher added this run)
+- Source URL: https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference
+- Related repo paths: github-copilot/, rollout-guide/configs/github-copilot/
+
+Config update applied from this source: pin `sandbox.userPolicy.seatbelt.keychainAccess: false` on Moderate and Strict (Baseline unset). Managed `false` forbids Keychain reads from the Copilot CLI sandbox. Omit leaves the user's setting. Distinct from `gitAuth` / `ghAuth`. Windows and Linux ignore this Seatbelt key.
+
+No config update needed for `addCurrentWorkingDirectory`: pinning `false` would block workspace writes unless the org ships explicit path grants.
+
 ### GitHub Copilot: Organization policy documentation
 
 - Change type: `content-changed`

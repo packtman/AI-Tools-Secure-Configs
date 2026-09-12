@@ -273,6 +273,8 @@ MCP servers provide Copilot with additional context by serving structured data f
 
 Tier files: `managed-settings-strict.json`, `managed-settings-moderate.json`, `managed-settings-baseline.json`. Rollout: `managed-settings-rollout.md`.
 
+Moderate and Strict also set `sandbox.userPolicy.seatbelt.keychainAccess` to `false`. That forbids macOS Keychain reads from the Copilot CLI sandbox. It is distinct from `gitAuth` / `ghAuth`, which only block Copilot-injected GitHub tokens. Baseline leaves the key unset. Windows and Linux ignore this Seatbelt setting.
+
 ### Agent Plugins 1.0
 
 Agent Plugins 1.0 (generally available in VS Code, Copilot CLI, and the Copilot app as of 2026-08-12) can bundle a skill and an MCP server in one package.

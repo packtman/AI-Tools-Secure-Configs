@@ -68,7 +68,15 @@
     "enabled": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
-    "sandboxLspServers": true
+    "sandboxLspServers": true,
+    // WHAT: Forbids sandboxed Copilot CLI processes from reading the macOS Keychain.
+    // WHY: Managed false prohibits the capability. Omit leaves the user's setting. Keychain holds cloud tokens, certs, and Wi-Fi secrets that gitAuth/ghAuth do not cover.
+    // BREAKS IF OMITTED: Users can leave Keychain access on, so a prompt-injected command can steal tokens from the Keychain. Windows and Linux ignore this Seatbelt key.
+    "userPolicy": {
+      "seatbelt": {
+        "keychainAccess": false
+      }
+    }
   },
 
   // WHAT: Allows remote control of sessions on this device only from an SSO-authorized client for the listed orgs.

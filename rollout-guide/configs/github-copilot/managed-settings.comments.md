@@ -29,6 +29,7 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `sandbox.gitAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for Git HTTPS inside the sandbox. |
 | `sandbox.ghAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for GitHub CLI inside the sandbox. |
 | `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
+| `sandbox.userPolicy.seatbelt.keychainAccess` | omitted | `false` | `false` | Enterprise tiers forbid Keychain reads from the Copilot CLI sandbox. Baseline leaves the user's setting. macOS only. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks remote control of sessions on the device. Moderate requires SSO for listed orgs. |
 | `permissions.model` | omitted | omitted | omitted | Model picker is not a security control for these tiers. |
 | `telemetry` | omitted | omitted | omitted | OTEL export can carry Authorization headers. Configure collector auth in a secrets manager, not in this JSON. |
@@ -83,11 +84,13 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 
 ### `sandbox`
 
-**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
+**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`. Moderate and Strict set `userPolicy.seatbelt.keychainAccess` to `false`.
 
-**Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately.
+**Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately. `gitAuth` and `ghAuth` only block Copilot-injected GitHub tokens. The macOS Keychain is a separate store for AWS, Azure, gcloud, browser, and Wi-Fi secrets. A managed `false` prohibits that capability. Omitting the key leaves the user's setting unchanged.
 
 **What breaks if Strict disables `allowDevToolAccess`:** Package restore, authenticated registries, and shared caches can fail until you grant explicit paths. Use the exception process, not a blanket `true`.
+
+**What breaks if `keychainAccess` is `false`:** Tools that read Git or cloud credentials from the macOS Keychain fail inside the Copilot CLI sandbox. Run those commands in a host terminal you control, or inject short-lived tokens from a secrets manager. Windows and Linux ignore this Seatbelt key. Claude Code `sandbox.credentials` and Codex `[permissions.filesystem]` do not cover Copilot CLI.
 
 **Linux MDM:** Native MDM is not supported on Linux. Use the file-based path `/etc/github-copilot/managed-settings.json` owned by root, not a symlink, and not group- or world-writable.
 
