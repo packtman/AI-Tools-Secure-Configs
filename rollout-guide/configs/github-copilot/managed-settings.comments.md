@@ -29,6 +29,7 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `sandbox.gitAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for Git HTTPS inside the sandbox. |
 | `sandbox.ghAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for GitHub CLI inside the sandbox. |
 | `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
+| `sandbox.userPolicy.network.allowLocalNetwork` | omitted | `false` | `false` | Enterprise tiers forbid loopback and LAN access from the Copilot CLI sandbox. Baseline leaves the user's setting. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks remote control of sessions on the device. Moderate requires SSO for listed orgs. |
 | `permissions.model` | omitted | omitted | omitted | Model picker is not a security control for these tiers. |
 | `telemetry` | omitted | omitted | omitted | OTEL export can carry Authorization headers. Configure collector auth in a secrets manager, not in this JSON. |
@@ -83,11 +84,13 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 
 ### `sandbox`
 
-**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
+**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`. Moderate and Strict set `userPolicy.network.allowLocalNetwork` to `false`.
 
-**Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately.
+**Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately. `gitAuth` and `ghAuth` only block Copilot-injected GitHub tokens. Local-network access is a separate capability: a managed `false` prohibits loopback and LAN reachability. Omitting the key leaves the user's setting unchanged.
 
 **What breaks if Strict disables `allowDevToolAccess`:** Package restore, authenticated registries, and shared caches can fail until you grant explicit paths. Use the exception process, not a blanket `true`.
+
+**What breaks if `allowLocalNetwork` is `false`:** Sandboxed Copilot CLI cannot reach localhost, Docker sockets on the LAN, or other RFC1918 services (local admin UIs, sidecar APIs, some cloud-metadata helpers). Run those calls in a host terminal you control, or file a time-boxed exception. Do not set `allowOutbound` to `false` in this template: that blocks npm, git remotes, and package registries. Claude Code `sandbox.network` and Codex network requirements do not cover Copilot CLI.
 
 **Linux MDM:** Native MDM is not supported on Linux. Use the file-based path `/etc/github-copilot/managed-settings.json` owned by root, not a symlink, and not group- or world-writable.
 
@@ -107,3 +110,5 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `telemetry` | Vendor examples put collector `Authorization` headers in JSON. That is a secret. If you need OTEL, inject headers from a secrets manager outside this repo. |
 | `serverName` matchers | Documented as convenience only. Users can rename servers. |
 | Registry-only MCP policy | Preview, name/ID matching, weaker than managed-settings allowlists. GitHub says do not combine it with this file. |
+| `sandbox.userPolicy.network.allowOutbound` | Capability lock that blocks all outbound network in the sandbox. That breaks npm, git remotes, and package registries. Use a proxy or host-terminal workflow instead of this repo template. |
+| `sandbox.addCurrentWorkingDirectory` | Needs org-specific path grants to remain usable. |

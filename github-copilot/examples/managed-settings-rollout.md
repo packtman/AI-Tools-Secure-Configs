@@ -3,7 +3,7 @@
 **Tool:** GitHub Copilot (Business or Enterprise)
 **Tier:** Moderate (Enterprise), with Strict and Baseline deltas in the table below
 **Environment:** Standard enterprise, mixed OS (macOS, Windows, Linux), MDM available (Jamf + Intune), SIEM available
-**Upstream change this rollout covers:** MCP allowlists in `copilot/managed-settings.json` (GA 2026-08-06) and Agent Plugins 1.0 governance via `enabledPlugins` / `strictKnownMarketplaces` (GA 2026-08-12)
+**Upstream change this rollout covers:** MCP allowlists in `copilot/managed-settings.json` (GA 2026-08-06), Agent Plugins 1.0 governance via `enabledPlugins` / `strictKnownMarketplaces` (GA 2026-08-12), and Copilot CLI sandbox `userPolicy.network.allowLocalNetwork` (managed `false` forbids loopback and LAN)
 
 This guide is for IT admins who have not used Copilot as a daily driver. Pair it with `org-policy-moderate.json` (GitHub.com AI Controls) and `copilot-instructions.md` (repo instructions). Managed settings are a separate, stronger control plane than the AI Controls MCP registry toggle.
 
@@ -97,10 +97,11 @@ This guide is for IT admins who have not used Copilot as a daily driver. Pair it
 | Copilot CLI `--yolo` / VS Code global auto-approve | `disableBypassPermissionsMode` is `disable` | Approve tools one at a time. If a workflow is blocked, file an exception. Do not look for a bypass flag. |
 | Copilot cloud agent MCP | Allowlists are not enforced on cloud agent | Cloud agent stays limited in org policy. Do not assume this file covers it. |
 | Package restore inside Copilot CLI sandbox (if CLI is later enabled) | Sandbox is forced on | Restore packages on the host terminal, or request a path grant. |
+| Localhost or LAN calls from Copilot CLI sandbox | `userPolicy.network.allowLocalNetwork` is `false` | Use the host terminal for local admin UIs, Docker APIs, or sidecar services. Do not set `allowOutbound` to `false` to work around this. |
 
 **Message to send before rollout:**
 
-> Starting [DATE], GitHub Copilot will load enterprise managed settings. Two changes matter for daily work. First, Copilot will only connect to approved MCP servers (the built-in GitHub MCP is already approved). Second, plugins can only be installed from our org marketplace. Copilot will also refuse YOLO / allow-all. If a server or plugin you need is missing, file an exception with the exact URL or command. Do not put tokens in config files.
+> Starting [DATE], GitHub Copilot will load enterprise managed settings. Three changes matter for daily work. First, Copilot will only connect to approved MCP servers (the built-in GitHub MCP is already approved). Second, plugins can only be installed from our org marketplace. Third, Copilot CLI sandbox cannot reach localhost or LAN services. Copilot will also refuse YOLO / allow-all. If a server, plugin, or local-network workflow you need is missing, file an exception. Do not put tokens in config files.
 
 ### 1.4 Rollback procedure
 
@@ -108,7 +109,7 @@ This guide is for IT admins who have not used Copilot as a daily driver. Pair it
 
 | Channel | What to revert |
 |---------|----------------|
-| Server-managed | Revert `copilot/managed-settings.json` on the default branch of `.github-private`. Optionally delete `copilot/team-mappings.json` and `copilot/teams/*.json`. |
+| Server-managed | Revert `copilot/managed-settings.json` on the default branch of `.github-private`. To roll back only the local-network pin, delete `sandbox.userPolicy.network`. Optionally delete `copilot/team-mappings.json` and `copilot/teams/*.json`. |
 | File-based | Remove `/Library/Application Support/GitHubCopilot/managed-settings.json` (macOS), `%ProgramFiles%\GitHubCopilot\managed-settings.json` (Windows), `/etc/github-copilot/managed-settings.json` (Linux). |
 | MDM | Remove string values under `com.github.copilot` (macOS) and `HKLM\SOFTWARE\Policies\GitHubCopilot` (Windows). |
 | AI Controls | Leave the MCP toggle as it was. Do not re-enable registry-only restriction unless you are abandoning managed-settings allowlists. |
@@ -154,6 +155,7 @@ Replace `YOUR-ORG` and `YOUR-ORG/YOUR-PLUGIN-MARKETPLACE` before deploy. Never c
 | `sandbox.enabled` | omitted | `true` | `true` | CLI sandbox floor for enterprise. Baseline leaves it optional. |
 | `sandbox.allowBypass` | omitted | `false` | `false` | Model cannot request unsandboxed commands. |
 | `sandbox.gitAuth` / `ghAuth` / `allowDevToolAccess` | omitted | omitted | `false` | Strict blocks token injection and registry caches. |
+| `sandbox.userPolicy.network.allowLocalNetwork` | omitted | `false` | `false` | Enterprise tiers forbid loopback and LAN access from the Copilot CLI sandbox. Baseline leaves the user's setting. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks device-side remote control. Moderate requires SSO. |
 | Org policy MCP availability (companion) | often enabled | enabled | disabled | AI Controls kill switch is separate. Strict can disable MCP entirely. |
 
@@ -182,6 +184,7 @@ Native MDM does not drop a JSON file. It sets one string per key. Nested keys us
 | `permissions.disableBypassPermissionsMode` | `disable` |
 | `sandbox.enabled` | `true` |
 | `sandbox.allowBypass` | `false` |
+| `sandbox.userPolicy.network.allowLocalNetwork` | `false` |
 | `allowedMcpServers` | `[{"serverUrl":"https://api.githubcopilot.com/*"}]` |
 | `deniedMcpServers` | `[{"serverCommand":["npx","-y","@modelcontextprotocol/server-filesystem","/"]}]` |
 | `strictKnownMarketplaces` | `[{"source":"github","repo":"YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"}]` |
@@ -248,6 +251,7 @@ gh api \
 | Awesome Copilot / random marketplace plugin | Plugin can ship an MCP server | Add the plugin to the org marketplace after review, then set `enabledPlugins` to `true` if it must be default. |
 | `--yolo` / Allow all | Unattended shell, path, and URL access | Approve each tool. For repetitive low-risk tools, request a narrower allow, not bypass. |
 | Copilot CLI unsandboxed command | Host compromise | Run the command in a local terminal you control, or request a sandbox path grant. |
+| Copilot CLI sandbox to localhost or LAN | SSRF to local admin UIs, Docker APIs, or sidecar services | Run those calls in a host terminal you control. Do not set `allowOutbound` to `false` in this template. |
 | Root filesystem MCP | Disk exfil | Use a project-scoped filesystem MCP path, then add that exact `serverCommand` to the allowlist. |
 | Cloud agent MCP | Allowlist not enforced | Keep cloud agent disabled or limited. Do not use cloud agent as an MCP bypass. |
 
@@ -258,6 +262,7 @@ gh api \
 | `allowedMcpServers` with only the GitHub URL | Playwright, internal APIs, and stdio servers stop | Add one matcher per server. Prefer `serverUrl` or `serverCommand`. Expire exceptions in 90 days. |
 | `strictKnownMarketplaces` placeholder repo | Plugin UI shows nothing | Publish the marketplace before Phase 2, or omit both marketplace keys until it exists. |
 | `sandbox.allowDevToolAccess: false` (Strict) | npm/pip restore fails in CLI | Grant specific cache paths. Do not set the flag back to `true` for the whole org. |
+| `sandbox.userPolicy.network.allowLocalNetwork: false` | Local dev servers and Docker APIs fail inside Copilot CLI | Use the host terminal, or grant a time-boxed exception. Do not also pin `allowOutbound: false`. |
 | Malformed JSON | Client treats allowlist as empty and blocks all non-built-in MCP | Validate JSON in CI before merge. Failed policy fails closed. |
 
 ### Tool overlap
@@ -268,4 +273,5 @@ Claude Code, Cursor, and Copilot can each run MCP servers and a shell.
 |---------|----------|
 | Double MCP config | An allowlisted Copilot MCP server is not automatically allowed in Claude Code or Cursor. Copy the same server identity into Claude Code `allowedMcpServers` / managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). |
 | Double shell | Copilot CLI sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. Configure each tool. Do not weaken one because another looks covered. |
+| Local-network SSRF | Copilot `allowLocalNetwork: false` does not cover Claude Code `sandbox.network`, Codex network requirements, or Cursor MCP network modes. Pin each tool if the org deploys more than one agent shell. |
 | Cloud agent gap | Only Copilot cloud agent skips this MCP allowlist. Keep it limited in org policy. Claude Code remote control and Cursor cloud agents are separate kill switches. |

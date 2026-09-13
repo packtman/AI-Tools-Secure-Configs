@@ -29,7 +29,12 @@
     "sandboxLspServers": true,
     "gitAuth": false,
     "ghAuth": false,
-    "allowDevToolAccess": false
+    "allowDevToolAccess": false,
+    "userPolicy": {
+      "network": {
+        "allowLocalNetwork": false
+      }
+    }
   },
 
   "remoteControl": {

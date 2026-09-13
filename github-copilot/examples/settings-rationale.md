@@ -289,6 +289,18 @@ Pair plugin governance with MCP allowlists. A plugin can ship an MCP server that
 
 Set to `"disable"` in every tier. This blocks Copilot CLI `--yolo` / `--allow-all`, VS Code `chat.tools.global.autoApprove`, and the Copilot app Allow all setting. It is the Copilot equivalent of Claude Code `disableBypassPermissionsMode`.
 
+### Copilot CLI sandbox local network (`sandbox.userPolicy.network.allowLocalNetwork`)
+
+Set to `false` on Moderate and Strict. Baseline leaves it unset.
+
+**What it does:** For capability settings, a managed `false` prohibits the capability. Omitting the key leaves the user's setting. `false` stops sandboxed Copilot CLI processes from reaching loopback and LAN destinations.
+
+**Why:** Local admin UIs, Docker APIs, sidecar services, and some cloud-metadata helpers sit on localhost or RFC1918. `gitAuth` / `ghAuth` only block Copilot-injected GitHub tokens. Claude Code `sandbox.network` and Codex network requirements do not cover Copilot CLI.
+
+**What breaks if omitted:** Users can leave local-network access on, so a prompt-injected sandbox command can probe internal listeners.
+
+**What not to pin:** `allowOutbound: false` blocks npm, git remotes, and package registries. Keep outbound open in this template.
+
 ---
 
 ## 6. Seat Management

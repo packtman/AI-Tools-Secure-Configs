@@ -1,21 +1,18 @@
 # Agent scope for this run
 
-### Claude Code `disableClaudeAiConnectors`
+### GitHub Copilot `sandbox.userPolicy.network.allowLocalNetwork`
 
-- Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`) and MCP documentation (`https://code.claude.com/docs/en/mcp.md`)
-- Pin: `true` on Moderate and Strict. Baseline unset.
-- Why: vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
+- Source: Enterprise managed settings reference (`https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference`)
+- Pin: `false` on Moderate and Strict. Baseline unset.
+- Why: for Copilot CLI sandbox capability settings, managed `false` prohibits the capability. Omitting the key leaves the user's setting, so loopback and LAN stay reachable from the sandbox. Distinct from `gitAuth` / `ghAuth` (those only block Copilot-injected GitHub tokens), from Claude Code `sandbox.network`, from Codex network requirements, and from Cursor MCP network modes. Do not pin `allowOutbound: false` in this template (that blocks npm and git remotes).
 
 ## No config update needed (scoped missing terms)
 
 - `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` / `CLAUDE_MODEL`: model-selection env vars, not org allowlists. Do not pin as a substitute for `availableModels` (open PR #89).
-- `CLAUDE_CODE_AUTO_CONNECT_IDE` / `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`: Global-config IDE preferences, not managed settings.
-- `CLAUDE_CODE_DISABLE_AGENT_VIEW` / `CLAUDE_CODE_DISABLE_ARTIFACT` / `CLAUDE_CODE_DISABLE_FAST_MODE` / `CLAUDE_CODE_AUTO_COMPACT_WINDOW`: session overrides for keys already covered in open PRs.
-- `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`: operational timing. Workflows stay off via `disableWorkflows`.
+- Remaining `CLAUDE_CODE_DISABLE_*` env vars: session UX, already-covered keys, or one-session kills.
 - `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL`: per-server identity env vars, not allowlists.
-- Background-task MCP env vars and `WaitForMcpServers`: operational.
-- `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`: gateway compatibility pin, not a tier default (PR #67).
-- `disabledMcpServers`: not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
-- Codex 0.152.0 is now stable. `tools.update_plan.enabled` defaulted off in that release; deferred so this PR stays on the unique Claude Code connector pin. Do not pin 0.152 alpha leftovers.
+- `sandbox.addCurrentWorkingDirectory: false`: would block workspace writes without org-specific path grants.
+- `sandbox.userPolicy.network.allowOutbound: false`: blocks npm, git remotes, and package registries.
+- `sandbox.userPolicy.seatbelt.keychainAccess`: open PR #113 pins this separately.
 
-Did not add: `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88), `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion` (still deferred).
+Did not add: `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88), Gemini `security.disableAlwaysAllow` / `admin.mcp.config` (wait for #64+#76), `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion` (still deferred).

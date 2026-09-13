@@ -337,6 +337,7 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Deny wins. Blocks a root-disk filesystem MCP in every tier. |
 | `strictKnownMarketplaces` | omitted | org GitHub marketplace repo | `[]` (lockdown) | Agent Plugins 1.0 GA 2026-08-12. Empty array blocks all plugin catalogs. |
 | `sandbox.enabled` (Copilot CLI) | omitted | `true` | `true` | Defense in depth if CLI is later enabled. Native MDM is not available on Linux. |
+| `sandbox.userPolicy.network.allowLocalNetwork` | omitted | `false` | `false` | Forbids loopback and LAN access from the Copilot CLI sandbox. Omit leaves the user's setting. Do not also pin `allowOutbound`. |
 
 ---
 

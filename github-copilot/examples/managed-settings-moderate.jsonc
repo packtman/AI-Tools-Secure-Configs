@@ -68,7 +68,15 @@
     "enabled": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
-    "sandboxLspServers": true
+    "sandboxLspServers": true,
+    // WHAT: Forbids sandboxed Copilot CLI processes from reaching the local network (loopback and LAN).
+    // WHY: Managed false prohibits the capability. Omit leaves the user's setting. Local listeners and RFC1918 hosts are a common SSRF path that gitAuth/ghAuth do not cover.
+    // BREAKS IF OMITTED: Users can leave local-network access on, so a prompt-injected command can hit localhost admin UIs, Docker APIs, or cloud metadata helpers. Do not also set allowOutbound false in this template (that blocks npm and git remotes).
+    "userPolicy": {
+      "network": {
+        "allowLocalNetwork": false
+      }
+    }
   },
 
   // WHAT: Allows remote control of sessions on this device only from an SSO-authorized client for the listed orgs.

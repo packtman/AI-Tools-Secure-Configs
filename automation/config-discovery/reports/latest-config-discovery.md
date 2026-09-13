@@ -296,6 +296,8 @@ Builds Capabilities Best Practices Automations Bugbot Security Agents PR Routing
 Security Bring Your Own Machine Settings API Origin Overview CLI Create a repository Clone, Push &
 Pull Mirror GitHub Pull requests Browse & Search Settings Codebase settin ...
 
+Config update applied this run: pin `sandbox.userPolicy.network.allowLocalNetwork: false` on Moderate and Strict (Baseline unset). Vendor rule: for Copilot CLI sandbox capability settings, managed `false` prohibits the capability. Omitting the key leaves the user's setting. Distinct from `gitAuth` / `ghAuth`, Claude Code `sandbox.network`, Codex network requirements, and Cursor MCP network modes. Do not pin `allowOutbound: false` in this template.
+
 ### GitHub Copilot: Organization policy documentation
 
 - Change type: `content-changed`
