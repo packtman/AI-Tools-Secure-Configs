@@ -24,6 +24,7 @@
 
   "sandbox": {
     "enabled": true,
+    "failIfUnavailable": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
     "sandboxLspServers": true,

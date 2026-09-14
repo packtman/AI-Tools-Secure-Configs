@@ -45,6 +45,11 @@
   // BREAKS IF enabled IS false: Users can disable the sandbox and run agent commands on the host.
   "sandbox": {
     "enabled": true,
+    // WHAT: Force-on lock. Managed true, with enabled true, blocks model and tool execution when Copilot cannot enforce the sandbox backend.
+    // WHY: Without this pin, a missing or broken sandbox backend can still run agent commands on the host. This property does not enable sandboxing by itself.
+    // BREAKS IF true: Copilot CLI refuses tools until the sandbox backend is present. Fix the backend. Do not omit this key on Strict.
+    // DISTINCT FROM: Claude Code sandbox.failIfUnavailable. Copilot userPolicy.network / seatbelt keys do not fail-close the sandbox.
+    "failIfUnavailable": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
     "sandboxLspServers": true,

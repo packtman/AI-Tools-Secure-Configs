@@ -23,6 +23,7 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `allowedMcpServers` | omitted (all allowed except deny) | `https://api.githubcopilot.com/*` | `[]` (built-in only) | Empty array blocks every non-built-in server. Omit the key to allow all except the denylist. |
 | `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Deny always wins. All tiers block a root-filesystem MCP. |
 | `sandbox.enabled` | omitted | `true` | `true` | Copilot CLI sandbox is a minimum floor. Baseline leaves it to the user. |
+| `sandbox.failIfUnavailable` | omitted | `true` | `true` | Force-on lock. With `enabled: true`, a missing sandbox backend blocks tools instead of running unsandboxed. Omit leaves the user's setting. |
 | `sandbox.allowBypass` | omitted | `false` | `false` | Prevents the model from requesting unsandboxed commands. |
 | `sandbox.sandboxMcpServers` | omitted | `true` | `true` | Local MCP processes started by Copilot CLI run inside the sandbox. |
 | `sandbox.sandboxLspServers` | omitted | `true` | `true` | Language servers started by Copilot CLI run inside the sandbox. |
@@ -83,9 +84,11 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 
 ### `sandbox`
 
-**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
+**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `failIfUnavailable: true` (a force-on setting) blocks model and tool execution when Copilot cannot validate, compile, or enforce that sandbox with an available backend. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
 
-**Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately.
+**Why:** Copilot CLI is a shell agent. `enabled: true` alone is not fail-closed: if Seatbelt, the Linux sandbox backend, or policy compile fails, commands can still run on the host. Managed `true` for `failIfUnavailable` closes that gap. Managed `false` or omit leaves the user's setting. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately. Claude Code `sandbox.failIfUnavailable` does not cover Copilot CLI.
+
+**What breaks if `failIfUnavailable` is `true`:** Copilot CLI refuses tools on hosts with no working sandbox backend. Install or repair the backend, then retry. Do not set the key to `false` as an org-wide workaround.
 
 **What breaks if Strict disables `allowDevToolAccess`:** Package restore, authenticated registries, and shared caches can fail until you grant explicit paths. Use the exception process, not a blanket `true`.
 
@@ -107,3 +110,5 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `telemetry` | Vendor examples put collector `Authorization` headers in JSON. That is a secret. If you need OTEL, inject headers from a secrets manager outside this repo. |
 | `serverName` matchers | Documented as convenience only. Users can rename servers. |
 | Registry-only MCP policy | Preview, name/ID matching, weaker than managed-settings allowlists. GitHub says do not combine it with this file. |
+| `sandbox.userPolicy.network.allowOutbound` | Capability lock that blocks all outbound network in the sandbox. That breaks npm, git remotes, and package registries. |
+| `sandbox.addCurrentWorkingDirectory` | Managed `false` needs org-specific path grants before it is a usable template. |

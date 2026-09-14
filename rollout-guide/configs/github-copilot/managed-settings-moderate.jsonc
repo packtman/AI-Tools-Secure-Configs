@@ -66,6 +66,10 @@
   // BREAKS IF enabled IS OMITTED: CLI users can run without a sandbox if the feature policy is later turned on.
   "sandbox": {
     "enabled": true,
+    // WHAT: Force-on lock. Managed true, with enabled true, blocks model and tool execution when Copilot cannot enforce the sandbox backend.
+    // WHY: enabled true alone can still fall through to unsandboxed commands if the sandbox backend is missing. Managed false or omit leaves the user's setting.
+    // BREAKS IF true: Copilot CLI refuses tools on hosts with no sandbox backend. Repair the backend or use a host terminal. Do not set this to false.
+    "failIfUnavailable": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
     "sandboxLspServers": true

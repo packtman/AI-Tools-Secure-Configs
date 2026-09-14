@@ -329,6 +329,8 @@ organization Scroll breadcrumbs right GitHub Copilot Get started Quickstart Copi
 Copilot app quickstart What is GitHub Copilot? Plans Features Best practices Enterprise AI
 governance Concepts Completions Code suggestions Code referencing Chat Agents ...
 
+Config update applied this run: pin `sandbox.failIfUnavailable: true` on Moderate and Strict (Baseline unset). Vendor rule: for Copilot CLI sandbox force-on settings, managed `true` enforces the setting. Combined with `enabled: true`, Copilot blocks model and tool execution when it cannot enforce the sandbox backend, instead of running unsandboxed. Managed `false` or omit leaves the user's setting. Distinct from Claude Code `sandbox.failIfUnavailable`. Distinct from open PRs #113 Keychain and #114 local-network (`userPolicy`). Watcher added: `docs.github.com/en/copilot/reference/enterprise-managed-settings-reference`.
+
 ### GitHub Copilot: Content exclusion documentation
 
 - Change type: `content-changed`
@@ -360,6 +362,8 @@ metrics Copilot LoC metrics Team-level metrics Example schema Enterprise a ...
 > Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
 Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
 ...
+
+No config update needed from content exclusion docs: no new exclusion control. This run's unique pin is Copilot CLI `sandbox.failIfUnavailable`.
 
 ### Codex CLI: OpenAI Codex repository
 

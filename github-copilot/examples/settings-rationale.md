@@ -285,6 +285,20 @@ Agent Plugins 1.0 (generally available in VS Code, Copilot CLI, and the Copilot 
 
 Pair plugin governance with MCP allowlists. A plugin can ship an MCP server that still has to pass `allowedMcpServers`.
 
+### Copilot CLI sandbox fail-closed (`sandbox.failIfUnavailable`)
+
+Force-on setting. Managed `true`, combined with `sandbox.enabled: true`, blocks model and tool execution when Copilot cannot validate, compile, or enforce the sandbox with an available backend. Managed `false` or omit leaves the user's setting. This property does not enable sandboxing by itself.
+
+| Aspect | Detail |
+|--------|--------|
+| **What it does** | Makes the managed Copilot CLI sandbox mandatory. If the backend is missing (macOS Seatbelt compile failure, Linux sandbox unavailable, policy compile error), Copilot CLI refuses tools instead of running them on the host. |
+| **Why it matters** | `sandbox.enabled: true` alone is not fail-closed. A broken backend can still execute agent commands unsandboxed. That undoes the sandbox floor on Moderate and Strict. |
+| **Recommended value** | `true` on Moderate and Strict. Omit on Baseline (Baseline does not force the sandbox on). |
+| **Misconfiguration risk** | Omitting the key re-opens unsandboxed fallback. Setting `false` in managed settings does not lock fail-open; it leaves the user setting. Do not use `false` as a template value. Copilot CLI on hosts without a backend will stop until IT repairs the backend. |
+| **Overlap** | Claude Code has its own `sandbox.failIfUnavailable`. Pinning Copilot does not cover Claude Code, Cursor terminals, or Codex sandbox modes. |
+
+Vendor source: [Enterprise managed settings reference](https://docs.github.com/en/copilot/reference/enterprise-managed-settings-reference).
+
 ### Bypass / YOLO (`permissions.disableBypassPermissionsMode`)
 
 Set to `"disable"` in every tier. This blocks Copilot CLI `--yolo` / `--allow-all`, VS Code `chat.tools.global.autoApprove`, and the Copilot app Allow all setting. It is the Copilot equivalent of Claude Code `disableBypassPermissionsMode`.
