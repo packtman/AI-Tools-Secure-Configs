@@ -9,6 +9,8 @@
 
     "allowUnsandboxedCommands": false,
 
+    "allowAppleEvents": false,
+
     "failIfUnavailable": true,
 
     "excludedCommands": [

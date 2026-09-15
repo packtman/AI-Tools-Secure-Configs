@@ -64,9 +64,22 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "allowAppleEvents",
             "managed settings",
             "permissions",
             "MCP"
+          ]
+        },
+        {
+          "name": "Sandboxing documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "watch_for": [
+            "allowAppleEvents",
+            "failIfUnavailable",
+            "allowManagedReadPathsOnly",
+            "enableWeakerNetworkIsolation",
+            "sandbox"
           ]
         },
         {

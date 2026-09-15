@@ -204,6 +204,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 | `availableModels` | Allowlist of selectable model families; managed list replaces user/project lists as of v2.1.175 |
 | `enforceAvailableModels` | Extend `availableModels` to the Default picker option (managed, v2.1.175+) |
+| `sandbox.allowAppleEvents` | Block sandboxed macOS commands from sending Apple Events (`open`, `osascript`) |
 
 ---
 

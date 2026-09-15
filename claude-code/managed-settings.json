@@ -131,6 +131,7 @@
   "claudeMd": "",
 
   "sandbox": {
+    "allowAppleEvents": false,
     "network": {
       "allowManagedDomainsOnly": false
     }

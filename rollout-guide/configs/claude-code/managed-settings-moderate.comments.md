@@ -125,6 +125,24 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.allowAppleEvents: false`
+
+**What:** Blocks sandboxed macOS commands from sending Apple Events. `open`, `osascript`, and in-sandbox browser-auth helpers fail with error `-600`.
+
+**Why (Moderate tier):** Vendor default is already `false`, but user or CLI settings can set `true` and remove code-execution isolation. Sandboxed commands can then launch other applications unsandboxed with no prompt and send AppleScript to running apps such as Terminal (TCC still applies). Project settings cannot enable this key. Managed `false` is the lock.
+
+**What breaks if omitted:** Developers can enable the key locally and escape the sandbox.
+
+**What breaks if true:** Isolation is gone. For one tool that needs Apple Events, add it to `excludedCommands` instead.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset. Vendor default stays off. Users may enable it locally.
+
+**Overlap:** Copilot CLI Keychain (`sandbox.userPolicy.seatbelt.keychainAccess`, open PR #113) is a different macOS Seatbelt capability. Cursor sandbox policy does not cover Claude Code Apple Events.
+
+**Platform:** macOS only. Windows and Linux ignore the key. JSON boolean `false` only.
+
 ---
 
 ## `minimumVersion`

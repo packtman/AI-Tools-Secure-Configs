@@ -221,6 +221,11 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
+    // WHAT: Block sandboxed macOS commands from sending Apple Events (open, osascript, browser-auth helpers).
+    // WHY: Vendor default is false, but user or CLI settings can set true. That removes code-execution isolation: sandboxed commands can launch other apps unsandboxed with no prompt, then send AppleScript to running apps such as Terminal (TCC still applies).
+    // BREAKS IF OMITTED: Developers can enable the key in ~/.claude/settings.json and escape the sandbox.
+    // BREAKS IF true: Isolation is gone. For one tool that needs Apple Events, add it to excludedCommands instead of lifting the sandbox.
+    "allowAppleEvents": false,
     "failIfUnavailable": false,
     "filesystem": {
       "denyRead": [

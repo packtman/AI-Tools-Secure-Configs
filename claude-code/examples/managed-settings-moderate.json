@@ -119,6 +119,7 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
+    "allowAppleEvents": false,
     "failIfUnavailable": false,
     "filesystem": {
       "denyRead": [

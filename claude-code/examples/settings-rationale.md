@@ -297,6 +297,26 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.allowAppleEvents`
+
+**What it does:** Lets sandboxed commands on macOS send Apple Events. `open`, `osascript`, and tools that open URLs in a browser need this; without it they fail with error `-600`.
+
+**Why it matters:** Vendor default is `false`, but the key is honored from user, managed, or CLI settings. Project settings cannot enable it. Setting `true` removes code-execution isolation: sandboxed commands can launch other applications unsandboxed with no user prompt, and can send AppleScript to running applications such as Terminal, subject to the per-app macOS automation-consent prompt (TCC). Managed `false` is the lock that stops a developer from turning that path on.
+
+**What breaks if omitted:** Developers can set `allowAppleEvents: true` in `~/.claude/settings.json` or `--settings` and escape the sandbox.
+
+**What breaks if true:** Isolation is gone for that session. Prefer `excludedCommands` for one tool that needs Apple Events.
+
+**What breaks if false:** `open`, `osascript`, and in-sandbox browser-auth helpers fail with error `-600` on macOS. Windows and Linux ignore this key.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Keep Seatbelt isolation. File an `excludedCommands` exception for a named tool if required. |
+| Standard enterprise | `false` | Same lock. Do not rely on the vendor default remaining false. |
+| Developer | Unset | Baseline leaves the vendor default. Users may enable it locally if they accept the isolation loss. |
+
+**Overlap:** Copilot CLI `sandbox.userPolicy.seatbelt.keychainAccess` (open PR #113) is a different macOS Seatbelt capability. Cursor sandbox policy does not cover Claude Code Apple Events. Pin each tool separately.
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.
