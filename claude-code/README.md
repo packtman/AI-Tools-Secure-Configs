@@ -121,6 +121,7 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.enabled` | Enable/disable sandbox |
 | `sandbox.autoAllowBashIfSandboxed` | Auto-approve sandboxed Bash (no per-command prompts) |
 | `sandbox.allowUnsandboxedCommands` | Allow escape hatch to run outside sandbox |
+| `sandbox.enableWeakerNetworkIsolation` | Let sandboxed macOS commands reach `com.apple.trustd.agent` (MITM-proxy TLS path) |
 | `sandbox.failIfUnavailable` | Fail hard if sandbox cannot start |
 | `sandbox.filesystem.allowWrite` | Paths writable by sandboxed processes |
 | `sandbox.filesystem.denyRead` | Paths blocked from reading |
@@ -244,6 +245,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] Set `enableWeakerNetworkIsolation: false` on Moderate and Strict so user or project settings cannot open the macOS trustd path.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.

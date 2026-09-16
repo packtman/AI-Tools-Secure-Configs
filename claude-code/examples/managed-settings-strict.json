@@ -136,6 +136,7 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": false,
     "allowUnsandboxedCommands": false,
+    "enableWeakerNetworkIsolation": false,
     "failIfUnavailable": true,
     "filesystem": {
       "denyRead": [

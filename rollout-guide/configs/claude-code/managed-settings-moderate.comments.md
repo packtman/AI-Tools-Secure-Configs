@@ -125,6 +125,24 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.enableWeakerNetworkIsolation: false`
+
+**What:** Blocks sandboxed macOS commands from reaching `com.apple.trustd.agent` (the system TLS trust service).
+
+**Why (Moderate tier):** Vendor default is already `false`, but Any-file scope means user, project, or CLI settings can set `true`. That opens a data exfiltration path through the trust service. Managed `false` is the lock. Distinct from `allowAppleEvents` (open PR #116) and from `allowUnsandboxedCommands`.
+
+**What breaks if omitted:** Developers can enable the key in a repo or user settings and weaken Seatbelt network isolation.
+
+**What breaks if true:** Isolation is weaker. For a Go CLI that fails TLS behind a MITM proxy, add it to `excludedCommands` instead.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset. Vendor default stays off. Users may enable it locally.
+
+**Overlap:** Copilot CLI local-network and Keychain pins (open PRs #114 and #113) are different sandbox keys. Cursor sandbox policy does not cover Claude Code trustd.
+
+**Platform:** macOS only. Windows and Linux ignore the key. JSON boolean `false` only. No env-var substitute.
+
 ---
 
 ## `minimumVersion`

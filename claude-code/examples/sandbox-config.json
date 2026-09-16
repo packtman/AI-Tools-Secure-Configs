@@ -9,6 +9,8 @@
 
     "allowUnsandboxedCommands": false,
 
+    "enableWeakerNetworkIsolation": false,
+
     "failIfUnavailable": true,
 
     "excludedCommands": [

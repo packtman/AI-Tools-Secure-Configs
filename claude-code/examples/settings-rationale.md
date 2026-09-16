@@ -297,6 +297,26 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.enableWeakerNetworkIsolation`
+
+**What it does:** Lets sandboxed commands on macOS reach the system TLS trust service, `com.apple.trustd.agent`. Go-based tools such as `gh`, `gcloud`, and `terraform` need it to verify TLS certificates when you use `network.httpProxyPort` with a MITM proxy (a proxy that intercepts HTTPS) and a custom CA.
+
+**Why it matters:** Vendor default is `false`, but the key is Any-file scope. User, project, or CLI `--settings` can set `true`. Vendor docs say this reduces security by opening a potential data exfiltration path through the trust service. Project settings cannot enable `allowAppleEvents` (open PR #116). They can enable this key. Managed `false` is the lock.
+
+**What breaks if omitted:** Developers can set `enableWeakerNetworkIsolation: true` in `.claude/settings.json`, `~/.claude/settings.json`, or `--settings` and weaken Seatbelt network isolation.
+
+**What breaks if true:** Sandboxed commands can talk to `com.apple.trustd.agent`. Prefer `excludedCommands` for a named Go CLI that fails TLS.
+
+**What breaks if false:** `gh`, `gcloud`, and `terraform` may fail TLS verification behind a MITM proxy with a custom CA. Windows and Linux ignore this key.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Keep Seatbelt network isolation. File an `excludedCommands` exception for a named tool if required. |
+| Standard enterprise | `false` | Same lock. Do not rely on the vendor default remaining false. |
+| Developer | Unset | Baseline leaves the vendor default. Users may enable it locally if they accept the isolation loss. |
+
+**Overlap:** Distinct from `sandbox.allowUnsandboxedCommands` (already pinned: full unsandboxed retry). Distinct from `sandbox.allowAppleEvents` (open PR #116: Apple Events / `open` / `osascript`). Distinct from Copilot CLI `sandbox.userPolicy.network.allowLocalNetwork` (open PR #114) and Copilot Keychain (open PR #113). Cursor sandbox policy does not cover Claude Code trustd. Pin each tool separately.
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.
@@ -477,3 +497,4 @@ These discovery terms are real documentation tokens but are not enterprise secur
 | `ANTHROPIC_MODEL` | Model selection preference. Pinning a model can break teams that use Bedrock, Vertex, Foundry, or approved model allowlists. |
 | `CLAUDE_MODEL` | Not a valid managed settings or hooks control. Treat as documentation noise if it appears in discovery. |
 | `CLAUDE_CODE_SUBAGENT_MODEL` | Subagent model routing preference, not a threat control. Leave unset unless an org model governance standard requires it. |
+| `sandbox.enableWeakerNestedSandbox` | Linux and WSL2 sibling of this PR's macOS trustd lock. Vendor default is already `false`. Defer until a unique nested-container pin is needed. |

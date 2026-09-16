@@ -221,6 +221,17 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
+    // WHAT: Lets sandboxed macOS commands reach com.apple.trustd.agent (system TLS trust).
+    // WHY: Vendor default is already false, but the key is Any-file scope, so user,
+    //      project, or CLI settings can set true. That opens a data exfiltration path
+    //      through the trust service. Managed false is the lock. Distinct from
+    //      allowAppleEvents (open PR #116) and from allowUnsandboxedCommands. If gh,
+    //      gcloud, or terraform fail TLS behind a MITM proxy, add the tool to
+    //      excludedCommands instead of setting true.
+    // BREAKS IF REMOVED: Developers can set true locally or in a repo and weaken
+    //      Seatbelt network isolation. BREAKS IF true: sandboxed commands can talk
+    //      to trustd.agent. macOS only. JSON boolean false only. No env-var substitute.
+    "enableWeakerNetworkIsolation": false,
     "failIfUnavailable": false,
     "filesystem": {
       "denyRead": [

@@ -95,6 +95,7 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
+    "enableWeakerNetworkIsolation": false,
     "filesystem": {
       "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg"],
       "denyWrite": ["~/", "//etc/"]

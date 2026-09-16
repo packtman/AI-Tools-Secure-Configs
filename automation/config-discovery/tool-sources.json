@@ -64,9 +64,22 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "enableWeakerNetworkIsolation",
             "managed settings",
             "permissions",
             "MCP"
+          ]
+        },
+        {
+          "name": "Sandboxing documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "watch_for": [
+            "enableWeakerNetworkIsolation",
+            "enableWeakerNestedSandbox",
+            "failIfUnavailable",
+            "allowManagedReadPathsOnly",
+            "sandbox"
           ]
         },
         {
