@@ -221,6 +221,19 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
+    // WHAT: Lets the Linux sandbox bind-mount the container's existing /proc
+    //      instead of mounting a fresh one (needed only in unprivileged Docker).
+    // WHY: Vendor default is already false, but the key is Any-file scope, so user,
+    //      project, or CLI settings can set true. That exposes process information
+    //      to sandboxed commands and weakens bubblewrap isolation. Managed false
+    //      is the lock. Distinct from enableWeakerNetworkIsolation (macOS trustd,
+    //      open PR #117) and from allowAppleEvents (open PR #116). If bubblewrap
+    //      cannot start in Docker, enable unprivileged user namespaces or run on
+    //      the host. Do not set true.
+    // BREAKS IF REMOVED: Developers can set true locally or in a repo and leak
+    //      /proc into the sandbox. BREAKS IF true: nested isolation is weaker.
+    //      Linux and WSL2 only. JSON boolean false only. No env-var substitute.
+    "enableWeakerNestedSandbox": false,
     "failIfUnavailable": false,
     "filesystem": {
       "denyRead": [

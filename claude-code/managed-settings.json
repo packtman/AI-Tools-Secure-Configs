@@ -131,6 +131,7 @@
   "claudeMd": "",
 
   "sandbox": {
+    "enableWeakerNestedSandbox": false,
     "network": {
       "allowManagedDomainsOnly": false
     }

@@ -136,6 +136,7 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": false,
     "allowUnsandboxedCommands": false,
+    "enableWeakerNestedSandbox": false,
     "failIfUnavailable": true,
     "filesystem": {
       "denyRead": [

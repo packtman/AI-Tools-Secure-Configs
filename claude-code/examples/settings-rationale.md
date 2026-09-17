@@ -297,6 +297,22 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.enableWeakerNestedSandbox`
+
+**What it does:** Lets the Linux sandbox bind-mount the container's existing `/proc` instead of mounting a fresh one, so bubblewrap can start inside an unprivileged Docker container.
+
+**Why it matters:** Vendor default is already `false`, but Any-file scope means user, project, or CLI `--settings` can set `true`. That exposes process information to sandboxed commands and considerably weakens Linux sandbox isolation. Managed `false` is the lock. There is no env-var substitute. JSON boolean `false` only. The string `"false"` is ignored. Linux and WSL2 only. macOS ignores the key. Distinct from `sandbox.enableWeakerNetworkIsolation` (macOS trustd, open PR #117) and from `sandbox.allowAppleEvents` (open PR #116).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Lock the default so a repo cannot weaken nested isolation. |
+| Standard enterprise | `false` | Same lock. If bubblewrap cannot start in Docker, enable unprivileged user namespaces or run on the host. |
+| Developer | Unset | Vendor default stays off. Users may enable it locally for Docker. |
+
+**What breaks if omitted:** Developers can set `true` in `.claude/settings.json` and leak `/proc` to sandboxed commands.
+
+**What breaks if true:** Nested isolation is weaker. Do not set `true`. Use a host or container that can mount `/proc`, or enable unprivileged user namespaces.
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.

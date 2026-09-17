@@ -95,7 +95,7 @@ Do not set `CLAUDE_AUTO_BACKGROUND_TASKS=1` in an organization policy. It force-
 
 ## Sandbox
 
-Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `settings.json`, not via environment variables.
+Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `settings.json`, not via environment variables. There is no env-var substitute for `sandbox.enableWeakerNestedSandbox`. Pin the JSON boolean `false` in managed settings. The string `"false"` is ignored.
 
 ## Network & Proxy
 

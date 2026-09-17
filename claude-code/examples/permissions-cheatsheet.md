@@ -204,6 +204,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 | `availableModels` | Allowlist of selectable model families; managed list replaces user/project lists as of v2.1.175 |
 | `enforceAvailableModels` | Extend `availableModels` to the Default picker option (managed, v2.1.175+) |
+| `sandbox.enableWeakerNestedSandbox` | Keep Linux/WSL2 bubblewrap on a fresh `/proc`. Pin `false` so user or project settings cannot weaken nested isolation |
 
 ---
 

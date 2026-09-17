@@ -125,6 +125,24 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.enableWeakerNestedSandbox: false`
+
+**What:** Keeps Linux/WSL2 bubblewrap on a fresh `/proc` instead of bind-mounting the container's existing `/proc`.
+
+**Why (Moderate tier):** Vendor default is already `false`, but Any-file scope means user, project, or CLI settings can set `true`. That exposes process information to sandboxed commands and weakens nested isolation. Managed `false` is the lock. Distinct from `enableWeakerNetworkIsolation` (open PR #117) and from `allowAppleEvents` (open PR #116). Distinct from `allowUnsandboxedCommands`.
+
+**What breaks if omitted:** Developers can enable the key in a repo or user settings and weaken Linux sandbox isolation.
+
+**What breaks if true:** Nested isolation is weaker. If bubblewrap cannot start in unprivileged Docker, enable unprivileged user namespaces or run on the host. Do not set the key to `true`.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset. Vendor default stays off. Users may enable it locally.
+
+**Overlap:** Copilot CLI sandbox pins (open PRs #113-#115) are different keys. Cursor sandbox policy does not cover Claude Code `/proc`. The macOS trustd pin (open PR #117) does not cover this Linux path.
+
+**Platform:** Linux and WSL2 only. macOS ignores the key. JSON boolean `false` only. No env-var substitute.
+
 ---
 
 ## `minimumVersion`
