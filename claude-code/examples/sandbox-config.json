@@ -81,7 +81,9 @@
         "*.ngrok-free.app"
       ],
 
-      "allowManagedDomainsOnly": false
+      "allowManagedDomainsOnly": false,
+
+      "allowLocalBinding": false
     }
   }
 }

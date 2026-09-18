@@ -297,6 +297,18 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.network.allowLocalBinding`
+
+**What it does:** Lets sandboxed commands bind to localhost ports on macOS, for example to start a local-dev server.
+
+**Why it matters:** Vendor default is already `false`, but the key is Any-file scope. User, project, or CLI `--settings` can set `true` and open a local listener inside the sandbox. That can serve workspace files or accept inbound connections even when outbound domain allowlists are locked. Permission denies for `nc` and `python -m http.server` are a different layer and miss other bind methods. Managed `false` is the lock. There is no env-var substitute. JSON boolean `false` only. macOS only.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | No localhost bind from sandboxed commands. |
+| Standard enterprise | `false` | Use `excludedCommands` for a named local-dev server. |
+| Developer | Unset | Vendor default stays off. Users may enable it locally. |
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.

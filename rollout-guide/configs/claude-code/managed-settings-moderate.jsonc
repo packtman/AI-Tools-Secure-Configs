@@ -239,6 +239,21 @@
         ".",
         "/tmp"
       ]
+    },
+    // WHAT: Lets sandboxed commands bind to localhost ports on macOS.
+    // WHY: Vendor default is already false, but Any-file scope means user,
+    //      project, or CLI --settings can set true and start a local listener
+    //      (dev server, python -m http.server, or similar) even when outbound
+    //      domains are locked. Managed false is the lock. No env-var substitute.
+    //      JSON boolean false only. macOS only. Linux and Windows ignore the key.
+    //      Distinct from Copilot sandbox.userPolicy.network.allowLocalNetwork
+    //      (open PR #114) and from Claude Code enableWeakerNetworkIsolation
+    //      (open PR #117).
+    // BREAKS IF REMOVED: A repo or user setting can enable localhost bind for
+    //      every sandboxed command. If a named local-dev server needs a port,
+    //      add it to sandbox.excludedCommands instead of setting this true.
+    "network": {
+      "allowLocalBinding": false
     }
   },
 

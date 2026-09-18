@@ -125,6 +125,24 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.network.allowLocalBinding: false`
+
+**What:** Stops sandboxed commands from binding localhost ports on macOS.
+
+**Why (Moderate tier):** Vendor default is already `false`, but Any-file scope means user, project, or CLI settings can set `true`. That lets a sandboxed command start a local listener and serve workspace files even when outbound domains are locked. Managed `false` is the lock. Distinct from `sandbox.allowUnsandboxedCommands`. Distinct from Copilot `sandbox.userPolicy.network.allowLocalNetwork` (open PR #114). Distinct from Claude Code `enableWeakerNetworkIsolation` (open PR #117) and `allowAppleEvents` (open PR #116).
+
+**What breaks if omitted:** Developers can enable the key in a repo or user settings and open localhost bind for every sandboxed command.
+
+**What breaks if true:** Sandboxed Bash can bind 127.0.0.1. If a named local-dev server needs a port, add that command to `sandbox.excludedCommands`. Do not set the key to `true`.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset. Vendor default stays off. Users may enable it locally.
+
+**Overlap:** Copilot CLI local-network pin (open PR #114) is a different product and a different key. Cursor sandbox policy does not cover Claude Code Seatbelt bind.
+
+**Platform:** macOS only. Linux and Windows ignore the key. JSON boolean `false` only. No env-var substitute.
+
 ---
 
 ## `minimumVersion`

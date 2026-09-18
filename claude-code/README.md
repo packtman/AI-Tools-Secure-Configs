@@ -124,6 +124,7 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.failIfUnavailable` | Fail hard if sandbox cannot start |
 | `sandbox.filesystem.allowWrite` | Paths writable by sandboxed processes |
 | `sandbox.filesystem.denyRead` | Paths blocked from reading |
+| `sandbox.network.allowLocalBinding` | Allow sandboxed commands to bind localhost ports (macOS) |
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
@@ -217,6 +218,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
+| `sandbox.network.allowLocalBinding` | Lock macOS localhost bind off |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
 ---
@@ -244,6 +246,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] Set `network.allowLocalBinding: false` on Moderate and Strict so user or project settings cannot open localhost bind on macOS.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
