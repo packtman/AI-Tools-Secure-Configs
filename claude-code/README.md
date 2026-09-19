@@ -124,6 +124,7 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.failIfUnavailable` | Fail hard if sandbox cannot start |
 | `sandbox.filesystem.allowWrite` | Paths writable by sandboxed processes |
 | `sandbox.filesystem.denyRead` | Paths blocked from reading |
+| `sandbox.network.allowAllUnixSockets` | Allow sandboxed commands to connect to every Unix socket (Linux/WSL2 permit path; WSL interop) |
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
@@ -217,6 +218,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
+| `sandbox.network.allowAllUnixSockets` | Lock Unix-socket and WSL interop off |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
 ---
@@ -244,6 +246,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] Set `network.allowAllUnixSockets: false` on Moderate and Strict so user or project settings cannot open every Unix socket or WSL Windows-binary interop.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.

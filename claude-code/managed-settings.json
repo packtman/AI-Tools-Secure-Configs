@@ -132,7 +132,8 @@
 
   "sandbox": {
     "network": {
-      "allowManagedDomainsOnly": false
+      "allowManagedDomainsOnly": false,
+      "allowAllUnixSockets": false
     }
   },
 

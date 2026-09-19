@@ -98,6 +98,9 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
     "filesystem": {
       "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg"],
       "denyWrite": ["~/", "//etc/"]
+    },
+    "network": {
+      "allowAllUnixSockets": false
     }
   }
 }

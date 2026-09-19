@@ -121,6 +121,9 @@
         ".",
         "/tmp"
       ]
+    },
+    "network": {
+      "allowAllUnixSockets": false
     }
   },
   "env": {

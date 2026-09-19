@@ -239,6 +239,22 @@
         ".",
         "/tmp"
       ]
+    },
+    // WHAT: Lets sandboxed commands connect to every Unix socket.
+    // WHY: Vendor default is already false, but Any-file scope means user,
+    //      project, or CLI --settings can set true. On Linux and WSL2 this is
+    //      the only permit path (seccomp cannot inspect socket paths). On WSL2,
+    //      true also reopens the interop socket that launches cmd.exe and
+    //      powershell.exe. Docker, SSH-agent, D-Bus, and X11 sockets can
+    //      bypass the sandbox. Managed false is the lock. No env-var substitute.
+    //      JSON boolean false only. Distinct from allowUnixSockets (macOS path
+    //      list, org-specific, not pinned here) and from allowLocalBinding
+    //      (open PR #119, macOS localhost TCP bind).
+    // BREAKS IF REMOVED: A repo or user setting can enable every Unix socket
+    //      for sandboxed Bash. If a named tool needs a socket, add it to
+    //      sandbox.excludedCommands instead of setting this true.
+    "network": {
+      "allowAllUnixSockets": false
     }
   },
 

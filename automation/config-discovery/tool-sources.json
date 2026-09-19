@@ -64,9 +64,20 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "allowAllUnixSockets",
             "managed settings",
             "permissions",
             "MCP"
+          ]
+        },
+        {
+          "name": "Sandboxing documentation",
+          "kind": "docs",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "watch_for": [
+            "allowAllUnixSockets",
+            "allowUnixSockets",
+            "sandbox"
           ]
         },
         {

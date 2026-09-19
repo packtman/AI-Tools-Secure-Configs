@@ -297,6 +297,22 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.network.allowAllUnixSockets`
+
+**What it does:** Lets sandboxed commands connect to every Unix socket. On Linux and WSL2 this is the only permit path, because the seccomp filter cannot inspect socket paths. On WSL2, `true` also reopens the interop socket that launches Windows binaries such as `cmd.exe` and `powershell.exe`.
+
+**Why it matters:** Vendor default is already `false`, but Any-file scope means user, project, or CLI `--settings` can set `true`. That grants access to Docker, SSH-agent, D-Bus, and X11 sockets and can bypass the sandbox. Permission denies for `nc` do not cover Unix sockets. Managed `false` is the lock. There is no env-var substitute. JSON boolean `false` only. Distinct from `sandbox.network.allowUnixSockets` (macOS path list, org-specific, not pinned here) and from `sandbox.network.allowLocalBinding` (open PR #119, macOS localhost TCP bind).
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Lock the Linux/WSL2 Unix-socket and WSL interop path. |
+| Standard enterprise | `false` | Same lock. Use `sandbox.excludedCommands` for a named tool that needs a socket. |
+| Developer | Unset | Vendor default stays off. Users may enable it locally. |
+
+**What breaks if omitted:** A repo `.claude/settings.json` can set `true` and open every Unix socket for sandboxed Bash.
+
+**What breaks if true:** Sandboxed commands can talk to `/var/run/docker.sock`, SSH-agent, and on WSL2 can launch `cmd.exe` / `powershell.exe`. Do not set `true`. Add the named command to `excludedCommands`.
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.

@@ -154,7 +154,8 @@
       ]
     },
     "network": {
-      "allowManagedDomainsOnly": true
+      "allowManagedDomainsOnly": true,
+      "allowAllUnixSockets": false
     }
   },
 

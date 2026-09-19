@@ -125,6 +125,24 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.network.allowAllUnixSockets: false`
+
+**What:** Stops sandboxed commands from connecting to every Unix socket.
+
+**Why (Moderate tier):** Vendor default is already `false`, but Any-file scope means user, project, or CLI settings can set `true`. On Linux and WSL2 this is the only permit path, because seccomp cannot inspect socket paths. On WSL2, `true` also reopens the interop socket that launches `cmd.exe` and `powershell.exe`. Docker, SSH-agent, D-Bus, and X11 sockets can bypass the sandbox. Managed `false` is the lock. Distinct from `sandbox.network.allowUnixSockets` (macOS path list, not pinned here). Distinct from `sandbox.network.allowLocalBinding` (open PR #119). Distinct from Copilot `sandbox.userPolicy.network.allowLocalNetwork` (open PR #114).
+
+**What breaks if omitted:** Developers can enable the key in a repo or user settings and open every Unix socket for sandboxed Bash.
+
+**What breaks if true:** Sandboxed Bash can talk to `/var/run/docker.sock` and, on WSL2, launch Windows binaries. If a named tool needs a socket, add that command to `sandbox.excludedCommands`. Do not set the key to `true`.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset. Vendor default stays off. Users may enable it locally.
+
+**Overlap:** Copilot CLI local-network pin (open PR #114) is a different product and a different key. Cursor sandbox policy does not cover Claude Code Unix sockets. `allowLocalBinding` (open PR #119) is macOS localhost TCP bind, not Unix sockets.
+
+**Platform:** All platforms. Linux and WSL2 are the unique permit path. JSON boolean `false` only. No env-var substitute.
+
 ---
 
 ## `minimumVersion`
