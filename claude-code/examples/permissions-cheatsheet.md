@@ -201,6 +201,7 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `disableWorkflows` | Disables dynamic workflows and bundled workflow commands |
 | `fastMode` | Turns Claude Code Fast mode on or off (research-preview high-cost Opus speed path) |
 | `disableClaudeAiConnectors` | Stops fetching MCP connectors from the signed-in claude.ai account |
+| `enableAllProjectMcpServers` | When `false`, each project `.mcp.json` server still needs a prompt (Any-file; pin in managed settings) |
 | `disableAllHooks` | Disables all hooks (managed hooks require managed-level setting) |
 | `availableModels` | Allowlist of selectable model families; managed list replaces user/project lists as of v2.1.175 |
 | `enforceAvailableModels` | Extend `availableModels` to the Default picker option (managed, v2.1.175+) |

@@ -1,21 +1,23 @@
 # Agent scope for this run
 
-### Claude Code `disableClaudeAiConnectors`
+### Claude Code `enableAllProjectMcpServers`
 
 - Source: Settings reference (`https://code.claude.com/docs/en/settings-reference.md`) and MCP documentation (`https://code.claude.com/docs/en/mcp.md`)
-- Pin: `true` on Moderate and Strict. Baseline unset.
-- Why: vendor default `false` fetches claude.ai account MCP connectors even when `managed-mcp.json` is not deployed. `allowManagedMcpServersOnly` does not cover this path. Leave `allowAllClaudeAiMcps` unset. Session env `ENABLE_CLAUDEAI_MCP_SERVERS=false` is a one-session kill, not a substitute. Requires Claude Code v2.1.182+.
+- Pin: `false` on Moderate and Strict. Baseline unset.
+- Why: vendor default is unset (ask per server), but Any-file scope means a repo `.claude/settings.json`, user settings, `--settings`, or the approval dialog ("approve all") can set `true` and skip review. Managed `false` is the lock in a trusted folder. Distinct from `allowManagedMcpServersOnly` (locks `allowedMcpServers` only). Distinct from `disableClaudeAiConnectors` (claude.ai account connectors). Distinct from `enabledMcpjsonServers` / `disabledMcpjsonServers` (org-specific name lists). No env-var substitute. JSON boolean `false` only.
 
 ## No config update needed (scoped missing terms)
 
 - `ANTHROPIC_MODEL` / `ANTHROPIC_DEFAULT_MODEL` / `ANTHROPIC_CUSTOM_MODEL_OPTION` / `CLAUDE_MODEL`: model-selection env vars, not org allowlists. Do not pin as a substitute for `availableModels` (open PR #89).
-- `CLAUDE_CODE_AUTO_CONNECT_IDE` / `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`: Global-config IDE preferences, not managed settings.
-- `CLAUDE_CODE_DISABLE_AGENT_VIEW` / `CLAUDE_CODE_DISABLE_ARTIFACT` / `CLAUDE_CODE_DISABLE_FAST_MODE` / `CLAUDE_CODE_AUTO_COMPACT_WINDOW`: session overrides for keys already covered in open PRs.
-- `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`: operational timing. Workflows stay off via `disableWorkflows`.
-- `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL`: per-server identity env vars, not allowlists.
-- Background-task MCP env vars and `WaitForMcpServers`: operational.
-- `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`: gateway compatibility pin, not a tier default (PR #67).
-- `disabledMcpServers`: not the vendor key (`deniedMcpServers` / `disabledMcpjsonServers` already exist).
-- Codex 0.152.0 is now stable. `tools.update_plan.enabled` defaulted off in that release; deferred so this PR stays on the unique Claude Code connector pin. Do not pin 0.152 alpha leftovers.
+- `allowUnixSockets`: org-specific macOS path list. Arrays merge across scopes, so an empty template is not a lock.
+- `allowMachLookup`: org-specific XPC / Mach service list. Same merge rule. Do not pin `[]`.
+- `sandbox.filesystem.disabled`: User or managed. Current Moderate/Strict templates already configure `sandbox.filesystem`, which restricts this key to managed settings. Deferred so this PR stays unique.
+- `sandbox.credentials.allowPlaintextInject`: User or managed default `false`. Deferred so this PR stays unique.
+- Copilot `addCurrentWorkingDirectory: false`: needs org-specific path grants.
+- Copilot `failIfUnavailable` / `allowLocalNetwork` / `keychainAccess` (open #113-#115).
+- Codex Appshots / remote control (open #112).
+- Codex `browser_use.allow_history_access` (wait for #96+#112).
+- Gemini `security.disableAlwaysAllow` / `admin.mcp.config` (wait for #64+#76).
+- `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88).
 
-Did not add: `disableSideloadFlags` (open #61), `pluginSuggestionMarketplaces` (wait for #88), `managedSourcesBehavior` / `httpHookAllowedEnvVars` / `requiredMaximumVersion` (still deferred).
+Did not add: `allowAllUnixSockets` (open #120), `allowLocalBinding` (open #119), `enableWeakerNestedSandbox` (open #118), `enableWeakerNetworkIsolation` (open #117), `allowAppleEvents` (open #116).

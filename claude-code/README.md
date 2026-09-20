@@ -166,7 +166,7 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 | `deniedMcpServers` | Blocklist of prohibited MCP servers |
 | `allowManagedMcpServersOnly` | Only managed allowlist applies |
 | `disableClaudeAiConnectors` | Stop fetching MCP connectors from the signed-in claude.ai account. Pin `true` on Moderate and Strict. Distinct from `allowAllClaudeAiMcps` (leave unset). |
-| `enableAllProjectMcpServers` | Auto-approve project `.mcp.json` servers |
+| `enableAllProjectMcpServers` | Auto-approve every server in a project `.mcp.json`. Pin `false` on Moderate and Strict so each server still needs a prompt. Distinct from `allowManagedMcpServersOnly` and from `disableClaudeAiConnectors`. |
 | `enabledMcpjsonServers` | Pre-approve specific project servers |
 | `disabledMcpjsonServers` | Block specific project servers |
 | `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` | Prevent stdio servers from inheriting undeclared shell credentials |
@@ -249,6 +249,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.
 - [ ] Deploy `managed-mcp.json` for org-wide MCP servers.
 - [ ] Set `disableClaudeAiConnectors: true` on Moderate and Strict so claude.ai account connectors do not load.
+- [ ] Set `enableAllProjectMcpServers: false` on Moderate and Strict so a project `.mcp.json` cannot skip the per-server approval prompt.
 - [ ] Leave `allowAllClaudeAiMcps` unset (default `false`) unless you intentionally load claude.ai connectors beside `managed-mcp.json`.
 - [ ] Consider `allowManagedMcpServersOnly: true` for strict environments.
 - [ ] Set `CLAUDE_CODE_MCP_ALLOWLIST_ENV: "1"` and declare each server's required environment explicitly.

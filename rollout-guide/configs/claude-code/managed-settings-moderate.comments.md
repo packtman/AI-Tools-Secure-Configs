@@ -97,6 +97,22 @@ Use this file with the deployable `managed-settings-moderate.json`. Each key exp
 
 ---
 
+## `enableAllProjectMcpServers`
+
+**Value:** `false`
+
+**What:** Stops Claude Code from auto-approving every MCP server defined in a project `.mcp.json` file. MCP is Model Context Protocol, a way for AI tools to call external services.
+
+**Why (Moderate):** The vendor default is unset, which asks once per server. Any-file scope means a repo `.claude/settings.json`, `~/.claude/settings.json`, `--settings`, or the approval dialog ("approve all", which writes this key to `.claude/settings.local.json`) can set `true` and skip review. Managed `false` is the lock in a trusted folder. Distinct from `allowManagedMcpServersOnly` (that key only locks the `allowedMcpServers` list; Moderate keeps it `false` so project MCP still works after a prompt). Distinct from `disableClaudeAiConnectors` (claude.ai account connectors, not `.mcp.json`). Distinct from `enabledMcpjsonServers` (named allowlist, org-specific) and `disabledMcpjsonServers` (named denylist, org-specific). No env-var substitute. JSON boolean `false` only. The string `"false"` is ignored.
+
+**What breaks if removed:** A project can auto-connect every `.mcp.json` server, including filesystem or shell servers, without a prompt.
+
+**Strict difference:** Also `false`. Strict still needs this pin because `allowManagedMcpServersOnly` does not replace the project `.mcp.json` approval path. If managed `allowedMcpServers` is unset, every matching server is still allowed and auto-approval would skip the prompt.
+
+**Baseline difference:** Unset, so startups can click "approve all" for local experimentation.
+
+---
+
 ## `forceLoginMethod` / `forceLoginOrgUUID`
 
 **Value:** `"2.1.212"`

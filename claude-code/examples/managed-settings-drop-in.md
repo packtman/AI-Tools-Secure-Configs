@@ -140,7 +140,9 @@ Do not put `ANTHROPIC_MODEL` or `CLAUDE_MODEL` in this fragment. Those variables
     { "serverName": "filesystem" },
     { "serverName": "shell" }
   ],
-  "allowManagedMcpServersOnly": false
+  "allowManagedMcpServersOnly": false,
+  "disableClaudeAiConnectors": true,
+  "enableAllProjectMcpServers": false
 }
 ```
 

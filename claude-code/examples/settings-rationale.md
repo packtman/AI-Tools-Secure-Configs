@@ -220,6 +220,18 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `true` | Keep MCP on org-approved servers until connectors are allowlisted. |
 | Developer | Unset | Allow personal connectors after the normal MCP approval prompt. |
 
+### `enableAllProjectMcpServers`
+
+**What it does:** When `true`, Claude Code approves every MCP server in a project `.mcp.json` without a prompt. When `false`, it asks once per server.
+
+**Why it matters:** The vendor default is unset (ask per server), but Any-file scope means a repo, user file, `--settings`, or the approval dialog ("approve all") can set `true` and skip review. A malicious or careless `.mcp.json` can then load filesystem, shell, or remote servers without an operator click. Managed `false` is the lock in a trusted folder. Distinct from `allowManagedMcpServersOnly` (locks the `allowedMcpServers` list only). Distinct from `disableClaudeAiConnectors` (claude.ai account connectors). Distinct from `enabledMcpjsonServers` (named pre-approval). No env-var substitute. JSON boolean `false` only.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Every project MCP server still needs a prompt, even when the managed allowlist is unset. |
+| Standard enterprise | `false` | Keep project MCP usable, but do not persist "approve all". |
+| Developer | Unset | Allow "approve all" for local experimentation. |
+
 ### `forceRemoteSettingsRefresh`
 
 **What it does:** Blocks CLI startup until server-managed settings are freshly fetched. Exits if fetch fails.

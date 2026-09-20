@@ -54,6 +54,25 @@ Pin `disableClaudeAiConnectors: true` in managed settings on Moderate and Strict
 }
 ```
 
+### Project `.mcp.json` auto-approval
+
+Claude Code can auto-approve every MCP server listed in a project `.mcp.json` when `enableAllProjectMcpServers` is `true`. The approval dialog writes that key to `.claude/settings.local.json` if the developer clicks "approve all".
+
+Pin `enableAllProjectMcpServers: false` in managed settings on Moderate and Strict. The vendor default is unset (ask per server), but Any-file scope means a repo, user file, `--settings`, or that dialog can set `true` and skip review.
+
+- Scope: any settings file. In a trusted folder, a managed `false` overrides a project or local `true`. In an untrusted folder, Claude Code ignores the shared project file and still honors user, managed, and `--settings` values.
+- Distinct from `allowManagedMcpServersOnly`, which only locks the `allowedMcpServers` list. Moderate keeps that key `false` so project MCP still works after a prompt.
+- Distinct from `disableClaudeAiConnectors`, which covers claude.ai account connectors, not `.mcp.json`.
+- Distinct from `enabledMcpjsonServers` (named pre-approval) and `disabledMcpjsonServers` (named reject). Use those for org-specific exceptions. A `disabledMcpjsonServers` entry still rejects a server.
+- No env-var substitute. JSON boolean `false` only.
+- This pin covers Claude Code only. Cursor MCP, Copilot MCP, and Claude Desktop connectors are separate controls.
+
+```json
+{
+  "enableAllProjectMcpServers": false
+}
+```
+
 ### Managed MCP file
 
 Deploy `managed-mcp.json` alongside `managed-settings.json` at the system path:
@@ -135,6 +154,6 @@ Project-scoped MCP servers (`.mcp.json` committed to a repository) require trust
 }
 ```
 
-- `enableAllProjectMcpServers: false` — Require explicit approval for each project MCP server.
+- `enableAllProjectMcpServers: false`: Require explicit approval for each project MCP server. Pin this in managed settings on Moderate and Strict; the example above is not enough if a repo or the approval dialog can still set `true`.
 - `enabledMcpjsonServers` — Pre-approve specific servers by name.
 - `disabledMcpjsonServers` — Block specific servers by name.

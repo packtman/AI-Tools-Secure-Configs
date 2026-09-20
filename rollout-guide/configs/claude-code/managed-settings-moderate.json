@@ -81,6 +81,7 @@
   "allowManagedHooksOnly": false,
   "allowManagedMcpServersOnly": false,
   "disableClaudeAiConnectors": true,
+  "enableAllProjectMcpServers": false,
   "disableRemoteControl": true,
   "disableDeepLinkRegistration": "disable",
   "disableWorkflows": true,

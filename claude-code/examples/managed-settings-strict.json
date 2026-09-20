@@ -105,6 +105,7 @@
   "allowManagedHooksOnly": true,
   "allowManagedMcpServersOnly": true,
   "disableClaudeAiConnectors": true,
+  "enableAllProjectMcpServers": false,
   "forceRemoteSettingsRefresh": true,
   "disableRemoteControl": true,
   "disableSkillShellExecution": true,

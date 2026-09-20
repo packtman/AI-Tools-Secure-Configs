@@ -64,6 +64,7 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "enableAllProjectMcpServers",
             "managed settings",
             "permissions",
             "MCP"
@@ -76,6 +77,7 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "enableAllProjectMcpServers",
             "allowedMcpServers",
             "managed-mcp.json",
             "connectors"

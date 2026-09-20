@@ -120,6 +120,24 @@
   //      one-session kill, not a substitute.
   "disableClaudeAiConnectors": true,
 
+  // WHAT: When true, approve every MCP server in a project .mcp.json without a
+  //      prompt. MCP is Model Context Protocol, a way for AI tools to call
+  //      external services.
+  // WHY: Vendor default is unset, which asks once per server, but Any-file
+  //      scope means a repo .claude/settings.json or the approval dialog
+  //      ("approve all") can set true and skip review. Managed false is the
+  //      lock in a trusted folder. Distinct from allowManagedMcpServersOnly
+  //      (that key only locks the allowedMcpServers list; Moderate keeps it
+  //      false so project MCP still works after a prompt). Distinct from
+  //      disableClaudeAiConnectors (claude.ai account connectors, not
+  //      .mcp.json). Distinct from enabledMcpjsonServers (named allowlist,
+  //      org-specific). No env-var substitute. JSON boolean false only.
+  // BREAKS IF REMOVED: A project can auto-connect every .mcp.json server,
+  //      including filesystem or shell servers, without a prompt. Exception
+  //      groups that need a named pre-approval should use
+  //      enabledMcpjsonServers, not true.
+  "enableAllProjectMcpServers": false,
+
   // WHAT: Blocks the remote control feature, which allows external tools to send
   //      commands to Claude Code sessions.
   // WHY: Remote control could be abused for prompt injection from untrusted sources.
