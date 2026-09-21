@@ -138,6 +138,7 @@
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": true,
     "filesystem": {
+      "disabled": false,
       "denyRead": [
         "~/",
         "//etc/",

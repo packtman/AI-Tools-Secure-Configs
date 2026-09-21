@@ -137,6 +137,7 @@ Starting [DATE], we are rolling out security configurations for Claude Code, Cur
 - The Claude Code IDE extension will not auto-install. Use the approved software catalog or MDM package.
 - Claude Code `/model`, `--model`, and `ANTHROPIC_MODEL` cannot select a family outside the org allowlist. Default remaps to the first allowed family.
 - Claude Code Fast mode (`/fast`) is off. Interactive work uses standard-speed Opus. Request a Fast mode exception if a team has an approved latency need and usage-credit budget.
+- Claude Code filesystem isolation stays on. If a tool cannot run inside the sandbox, ask IT to add it to `sandbox.excludedCommands`. Do not set `sandbox.filesystem.disabled` to true.
 - `curl | bash` install patterns are blocked. Download scripts first, review them, then run them.
 - `.env` files are hidden from AI tools. Use environment variables via your secrets manager instead.
 - Copilot CLI (`gh copilot suggest`) is disabled.
@@ -291,6 +292,7 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
+| `sandbox.filesystem.disabled` | Unset | `false` | `false` | Moderate and Strict keep filesystem isolation on. Vendor default is already false, but User settings and `--settings` can set true unless managed settings configure `sandbox.filesystem`. Pinning false is the value lock and the who lock. Baseline does not deploy sandbox filesystem rules. Distinct from `allowManagedReadPathsOnly` (open PR #94). Requires Claude Code 2.1.216+. Do not set `true`. |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
@@ -415,6 +417,11 @@ claude auth status
 # Expected: no Drive, Slack, or other claude.ai account connectors listed
 # Also check: claude config list --managed | grep disableClaudeAiConnectors
 # Expected: true
+
+# Verify filesystem isolation stays on (Claude Code 2.1.216+)
+# claude config list --managed | grep -A2 filesystem
+# Expected: disabled is false (not true). denyRead entries still apply.
+# Do not set sandbox.filesystem.disabled to true as a workaround for a blocked path.
 ```
 
 On Claude Code 2.1.212 or later, start a test MCP call that runs for more than two minutes. Under Moderate it must remain in the main conversation. Pressing Ctrl+B should still background it intentionally. Under Strict, Ctrl+B and `run_in_background` must be unavailable. Run `/doctor` if the result differs, because invalid managed `env` entries are reported there.
@@ -702,6 +709,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
 | Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 | Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
+| Claude Code `sandbox.filesystem.disabled: true` | Turns off host filesystem isolation while keeping network isolation. Sandboxed commands can then read credential files, write `~/.claude/settings.json`, and drop executables on `$PATH`. `denyRead` is not enforced. | Keep isolation on. If a named tool cannot run inside the filesystem sandbox, ask IT to add it to `sandbox.excludedCommands` and run it in a normal terminal. Do not set `disabled: true`. | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -725,6 +733,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
 | `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
+| `sandbox.filesystem.disabled: false` | A tool writes outside `allowWrite` (home-directory caches, global package stores) and the developer wants isolation off | Do not set `disabled: true`. Add a specific `allowWrite` path, or add the named command to `sandbox.excludedCommands`. `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` is not a reason to omit this pin. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
@@ -754,6 +763,7 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Double prompting** | If a developer uses Claude Code inside Cursor's terminal, both tools may prompt for the same command. This is redundant but not harmful. The developer sees one prompt from each tool. |
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
+| **Sandbox filesystem isolation** | Claude Code `sandbox.filesystem.disabled` does not control Cursor sandbox or Copilot CLI sandbox. Pin each tool separately. This key is also distinct from `allowManagedReadPathsOnly` (open PR #94), which locks `allowRead` lists rather than the isolation layer. |
 | **MCP servers** | Claude Code, Cursor, and Copilot can each run MCP servers. Copilot now has a generally available `allowedMcpServers` allowlist in `managed-settings.json`. That list does not apply to Claude Code or Cursor. Copy the same server identity into Claude Code managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). Copilot cloud agent does not enforce the Copilot allowlist. |
 | **Model allowlists** | Claude Code `availableModels` does not constrain Cursor or GitHub Copilot. If you need the same families everywhere, pin each tool separately (Cursor dashboard models, Copilot policy models, Claude Enterprise console restrictions). |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |

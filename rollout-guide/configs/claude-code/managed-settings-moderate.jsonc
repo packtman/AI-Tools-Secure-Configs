@@ -223,6 +223,21 @@
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": false,
     "filesystem": {
+      // WHAT: Keep the sandbox filesystem layer on (unrestricted host read/write stays off).
+      // WHY: Vendor default is already false, but User, managed, and --settings can set true.
+      //      A true value skips denyRead and credentials.files deny while keeping network isolation.
+      //      Pinning false in managed settings also locks the key: once sandbox.filesystem is
+      //      present, only managed settings can change it. Project files cannot set it.
+      //      Distinct from allowManagedReadPathsOnly (locks allowRead lists, open PR #94).
+      //      Distinct from allowUnsandboxedCommands (runs outside the sandbox entirely).
+      //      CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1 independently keeps isolation on, even if this
+      //      key is true. That env is not a substitute for the managed lock.
+      //      Requires Claude Code v2.1.216+. JSON boolean false only. Do not set true.
+      // BREAKS IF true: sandboxed commands can read and write the host filesystem, including
+      //      ~/.claude/settings.json, PATH executables, and credential files. denyRead is not enforced.
+      // BREAKS IF removed: ~/.claude/settings.json or --settings can set true unless another
+      //      managed sandbox.filesystem block is already deployed.
+      "disabled": false,
       "denyRead": [
         "~/.ssh",
         "~/.aws",

@@ -16,6 +16,8 @@
     ],
 
     "filesystem": {
+      "disabled": false,
+
       "allowWrite": [
         ".",
         "/tmp/build-output",

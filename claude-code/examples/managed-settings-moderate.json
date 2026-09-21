@@ -121,6 +121,7 @@
     "allowUnsandboxedCommands": false,
     "failIfUnavailable": false,
     "filesystem": {
+      "disabled": false,
       "denyRead": [
         "~/.ssh",
         "~/.aws",

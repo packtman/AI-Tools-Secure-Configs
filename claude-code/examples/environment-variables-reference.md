@@ -97,6 +97,10 @@ Do not set `CLAUDE_AUTO_BACKGROUND_TASKS=1` in an organization policy. It force-
 
 Sandbox is configured via `sandbox.enabled` in `managed-settings.json` or `settings.json`, not via environment variables.
 
+There is no environment variable that sets `sandbox.filesystem.disabled`. Pin JSON boolean `false` in managed settings on Moderate and Strict. Do not use a string `"false"`. Do not set `true`.
+
+`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` independently keeps filesystem isolation on: Claude Code then ignores `filesystem.disabled` from every source, including managed settings. That env is a complementary control already pinned on all tiers. It is not a substitute for the managed JSON lock. If an admin unsets the env thinking it only scrubs subprocess credentials, the JSON pin is what still keeps User and `--settings` from turning isolation off.
+
 ## Network & Proxy
 
 | Variable | Description | Secure value |

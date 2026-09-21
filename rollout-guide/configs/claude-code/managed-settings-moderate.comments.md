@@ -113,6 +113,24 @@ Use this file with the deployable `managed-settings-moderate.json`. Each key exp
 
 ## `sandbox` settings
 
+### `sandbox.filesystem.disabled: false`
+
+**Value:** `false`
+
+**What:** Keeps the sandbox filesystem layer on. When `true`, sandboxed commands get unrestricted host read and write, and `denyRead` plus `credentials.files` deny entries are not enforced. Network isolation stays on.
+
+**Why (Moderate tier):** Vendor default is already `false`, but User settings and `--settings` can set `true` unless managed settings configure `sandbox.filesystem`. Pinning `false` here is the value lock and also the who lock: once this object is present, only managed settings can change the key. Project files cannot set it. Distinct from `allowManagedReadPathsOnly` (open PR #94). Distinct from `allowUnsandboxedCommands`. Distinct from Unix-socket, localhost-bind, Apple Events, and nested-sandbox pins (open PRs #116-#120). `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` independently ignores `disabled` from every source; it is not a substitute for this pin. Requires Claude Code v2.1.216+. JSON boolean `false` only. Do not set `true`.
+
+**What breaks if set to true:** Sandboxed commands can read credential files, write `~/.claude/settings.json`, and drop executables on `$PATH`. Later commands can widen access.
+
+**What breaks if removed:** `~/.claude/settings.json` or `--settings` can turn isolation off unless another managed `sandbox.filesystem` block is already deployed.
+
+**Strict difference:** Also `false`.
+
+**Baseline difference:** Unset. Baseline does not deploy sandbox filesystem rules.
+
+**Safe equivalent:** If a named tool cannot run inside filesystem isolation, add it to `sandbox.excludedCommands` and run it in a normal terminal. Do not set `disabled: true`.
+
 ### `sandbox.enabled: true`
 OS-level isolation for Bash commands. Defense-in-depth: the sandbox is enforced by the OS (Seatbelt on macOS, bubblewrap on Linux), not by Claude Code itself.
 

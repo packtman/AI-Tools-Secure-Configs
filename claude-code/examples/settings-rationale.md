@@ -297,6 +297,22 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.filesystem.disabled`
+
+**What it does:** Turns the sandbox filesystem layer off while keeping network isolation. When `true`, sandboxed commands get unrestricted host read and write, and `denyRead` plus `credentials.files` deny entries are not enforced.
+
+**Why it matters:** The vendor default is `false` (filesystem isolation on). Scope is User or managed, plus `--settings`. Project `.claude/settings.json` cannot set it. On a machine without a managed `sandbox.filesystem` block, `~/.claude/settings.json` or `--settings` can set `true` and skip isolation. Deploying this key in managed settings also locks who can change it: once managed settings configure `sandbox.filesystem` at all, only managed settings can set it. Distinct from `allowManagedReadPathsOnly` (locks `allowRead` lists; open PR #94). Distinct from `allowUnsandboxedCommands` (runs the command outside the sandbox). Distinct from Unix-socket, localhost-bind, Apple Events, and nested-sandbox pins (open PRs #116-#120). `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` independently ignores `disabled` from every source, including managed settings, and keeps isolation on. That env is not a substitute for the JSON lock: an admin who unsets it thinking it only scrubs subprocess credentials would reopen this path. No env-var substitute that sets this key. JSON boolean `false` only. Do not set `true`. Requires Claude Code v2.1.216 or later.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Keep host filesystem isolation on. Use `excludedCommands` for a named tool that cannot run inside the sandbox. |
+| Standard enterprise | `false` | Same lock. Network isolation is not a substitute for filesystem isolation. |
+| Developer | Unset | Baseline does not deploy sandbox filesystem rules. |
+
+**What breaks if set to true:** Sandboxed commands can read credential files, write `~/.claude/settings.json`, and drop executables on `$PATH`. Later commands can widen access. `denyRead` is not enforced.
+
+**What breaks if removed:** User settings or `--settings` can turn isolation off unless another managed `sandbox.filesystem` block is already present.
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.

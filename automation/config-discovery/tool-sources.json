@@ -64,6 +64,7 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "sandbox.filesystem.disabled",
             "managed settings",
             "permissions",
             "MCP"

@@ -185,9 +185,12 @@ These keys are **only** read from managed settings and have no effect in user/pr
 | `forceRemoteSettingsRefresh` | Block startup until settings fetched |
 | `pluginTrustMessage` | Custom plugin trust warning text |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed `allowRead` applies |
+| `sandbox.filesystem.disabled` | Pin `false` in managed settings so User/`--settings` cannot skip filesystem isolation (User or managed; deploying it also locks the key to managed) |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domain allowlist applies |
 | `strictKnownMarketplaces` | Restrict plugin marketplace sources |
 | `wslInheritsWindowsSettings` | WSL reads Windows managed settings |
+
+`sandbox.filesystem.disabled` is User or managed (project files cannot set it). After managed settings include any `sandbox.filesystem` block, only managed settings can change it.
 
 ## Works from Any Scope (but most useful in managed)
 

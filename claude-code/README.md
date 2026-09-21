@@ -124,6 +124,7 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.failIfUnavailable` | Fail hard if sandbox cannot start |
 | `sandbox.filesystem.allowWrite` | Paths writable by sandboxed processes |
 | `sandbox.filesystem.denyRead` | Paths blocked from reading |
+| `sandbox.filesystem.disabled` | Skip filesystem isolation while keeping network isolation. Pin `false` on Moderate and Strict. Baseline unset. Requires v2.1.216+. Do not set `true`. |
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
@@ -217,6 +218,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 | `blockedMarketplaces` | Block plugin marketplace sources |
 | `strictKnownMarketplaces` | Restrict marketplace sources |
 | `sandbox.filesystem.allowManagedReadPathsOnly` | Only managed read paths |
+| `sandbox.filesystem.disabled` | User or managed. Pin `false` so isolation stays on. Deploying any `sandbox.filesystem` block also locks the key to managed settings. |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed domains |
 
 ---
@@ -240,6 +242,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 
 ### Phase 3: Sandbox
 - [ ] Enable sandbox with `sandbox.enabled: true`.
+- [ ] Pin `sandbox.filesystem.disabled: false` on Moderate and Strict (v2.1.216+) so User settings and `--settings` cannot skip filesystem isolation. Do not set `true`.
 - [ ] Configure `filesystem.denyRead` for sensitive paths.
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
