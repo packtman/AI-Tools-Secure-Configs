@@ -239,6 +239,21 @@
         ".",
         "/tmp"
       ]
+    },
+    // WHAT: Stops the sandbox proxy from substituting real masked credentials
+    //       into plain HTTP requests.
+    // WHY: Moderate keeps mask substitution on TLS only. User settings and
+    //      --settings can set this true, which sends the real secret in
+    //      cleartext to an unverified host. JSON boolean false only.
+    //      Requires Claude Code v2.1.199 or later. No environment variable
+    //      sets this key. Project files ignore it.
+    // BREAKS IF REMOVED: A user settings file or --settings flag can turn
+    //      plaintext injection on. A local HTTP service can then receive a
+    //      masked token.
+    // BREAKS IF SET TRUE: Masked credentials travel on plain HTTP. Do not
+    //      use the string "false".
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
 

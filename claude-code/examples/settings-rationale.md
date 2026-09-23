@@ -297,6 +297,26 @@ Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` or `CLAUDE_CODE_SKIP_FAST_MODE
 | Standard enterprise | `false` | Prefer `excludedCommands` for specific known-incompatible tools. |
 | Developer | `true` | Convenience for edge cases, with user approval as the gate. |
 
+### `sandbox.credentials.allowPlaintextInject`
+
+**What it does:** Controls whether the sandbox proxy may substitute a real masked credential into a plain HTTP request. `false` allows that substitution only on TLS-terminated HTTPS. `true` also allows it on plain HTTP.
+
+**Why it matters:** On plain HTTP the upstream host is unverified and the credential travels in cleartext. The vendor default is already `false`, but the scope is user or managed. A user settings file or a `--settings` flag can set `true`. Project `.claude/settings.json` and `.claude/settings.local.json` cannot. Managed settings are the highest-precedence boolean source, so a managed `false` overrides both. There is no environment variable that sets this key. Use the JSON boolean `false`. The string `"false"` is not the documented type. Requires Claude Code v2.1.199 or later. Moderate and Strict already require 2.1.212, so do not raise the version floor for this key.
+
+This is not a credential deny list. `sandbox.credentials.files` and `sandbox.credentials.envVars` name which secrets to hide or mask, and those names are org-specific. This key only locks the plaintext injection escape hatch. `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` strips variables from child processes. It does not control proxy substitution. Cursor and GitHub Copilot sandboxes do not read this Claude Code key, so do not copy it into those tools.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Masked secrets stay off cleartext HTTP. |
+| Standard enterprise | `false` | Same lock. A trusted HTTP lab is an exception, not the default. |
+| Developer | Unset | Baseline leaves the vendor default. A lab can opt in from user settings. |
+
+**What breaks if removed:** User settings or `--settings` can turn plaintext injection on. A later mask entry can then send the real secret to an HTTP host on the allowlist.
+
+**What breaks if set `true`:** Authentication to an HTTP-only test service starts working inside the sandbox, and so does credential theft on that path. Do not set `true` on Moderate or Strict.
+
+**Safe equivalent:** Use HTTPS, or run that one command in a normal terminal (add it to `sandbox.excludedCommands` only after review). Do not set `true`.
+
 ### `sandbox.network.allowManagedDomainsOnly`
 
 **What it does:** Only domains in the managed-level allowlist are accessible from sandboxed Bash commands. Non-allowed domains are blocked without prompting.

@@ -137,6 +137,9 @@
         ".",
         "/tmp"
       ]
+    },
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
 

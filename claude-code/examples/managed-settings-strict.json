@@ -155,6 +155,9 @@
     },
     "network": {
       "allowManagedDomainsOnly": true
+    },
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
 

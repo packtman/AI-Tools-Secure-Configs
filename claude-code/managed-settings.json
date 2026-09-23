@@ -133,6 +133,9 @@
   "sandbox": {
     "network": {
       "allowManagedDomainsOnly": false
+    },
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
 

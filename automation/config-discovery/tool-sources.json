@@ -64,6 +64,7 @@
           "watch_for": [
             "disableClaudeAiConnectors",
             "allowAllClaudeAiMcps",
+            "allowPlaintextInject",
             "managed settings",
             "permissions",
             "MCP"

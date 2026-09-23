@@ -127,6 +127,7 @@ Claude Code's sandbox provides OS-level filesystem and network isolation for Bas
 | `sandbox.network.allowedDomains` | Domains accessible from sandbox |
 | `sandbox.network.deniedDomains` | Domains always blocked |
 | `sandbox.network.allowManagedDomainsOnly` | Only managed-level domain allowlist applies |
+| `sandbox.credentials.allowPlaintextInject` | Allow masked credentials on plain HTTP. Pin `false` on Moderate and Strict. Baseline leaves it unset. |
 
 See `examples/sandbox-config.json` for a complete example.
 
@@ -244,6 +245,7 @@ Moderate and Strict use `requiredMinimumVersion: "2.1.212"` so clients that do n
 - [ ] Configure `filesystem.denyWrite` to restrict writes.
 - [ ] Configure `network.allowedDomains` for legitimate package registries.
 - [ ] Set `allowUnsandboxedCommands: false`.
+- [ ] Set `sandbox.credentials.allowPlaintextInject: false` on Moderate and Strict so user settings cannot inject masked secrets into plain HTTP. Leave it unset on Baseline.
 
 ### Phase 4: MCP Governance
 - [ ] Define `allowedMcpServers` and `deniedMcpServers`.

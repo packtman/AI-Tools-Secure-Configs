@@ -125,6 +125,16 @@ Prevents the "try without sandbox" escape hatch. A crafted failure could trick u
 ### `sandbox.failIfUnavailable: false`
 In Moderate tier, allow work to continue if the sandbox is unavailable (e.g., missing bubblewrap on a new machine). In Strict tier, this is `true` (fail-closed).
 
+### `sandbox.credentials.allowPlaintextInject: false`
+
+**What:** Stops the sandbox proxy from substituting a real masked credential into a plain HTTP request. Substitution stays on TLS-terminated HTTPS only.
+
+**Why (Moderate tier):** The vendor default is already `false`, but user settings and `--settings` can set `true`. On plain HTTP the host is unverified and the secret travels in cleartext. A managed JSON boolean `false` is the lock. Project files ignore this key. There is no environment variable substitute. Requires Claude Code v2.1.199 or later, which the existing 2.1.212 floor already covers. Strict uses the same value. Baseline leaves it unset so a lab can opt in.
+
+**What breaks if removed:** A user settings file can turn plaintext injection on. A local HTTP service can then receive a masked token.
+
+**What breaks if set `true`:** Masked credentials leave the endpoint in cleartext. For an HTTP-only test service, run that command in a normal terminal instead.
+
 ---
 
 ## `minimumVersion`

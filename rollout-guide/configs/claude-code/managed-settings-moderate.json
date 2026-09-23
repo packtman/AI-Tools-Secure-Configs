@@ -121,6 +121,9 @@
         ".",
         "/tmp"
       ]
+    },
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
   "env": {

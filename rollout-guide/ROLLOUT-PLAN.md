@@ -168,6 +168,8 @@ If using server-managed settings (Admin Console): navigate to Claude.ai Admin Se
 To roll back only the background task change, remove `env.CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` from Moderate or `env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` from Strict, redeploy the same MDM profile or Admin Console policy, then restart Claude Code. Do not remove the other permission, sandbox, or identity controls. If 2.1.212 itself causes the incident, restore the prior tested `requiredMinimumVersion` value or remove that key temporarily, then deploy the previously approved client version.
 
 If `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` causes an approved MCP server outage, first add that server's required variables to its managed `env`. Remove the isolation key only as a time-bounded incident rollback, redeploy the policy, restart Claude Code, and notify developers that local MCP servers may temporarily receive their full shell environment.
+
+For a targeted plaintext-injection rollback, remove only `sandbox.credentials.allowPlaintextInject` from the managed file (and from `managed-settings.d/30-sandbox.json` if you deployed that fragment). Redeploy through the same MDM profile or Admin Console policy, restart Claude Code, and confirm `claude config list --managed` no longer shows the key. User settings can then set it. Do not remove the rest of `sandbox`.
 For a targeted Fast mode rollback, remove `fastMode` and `env.CLAUDE_CODE_DISABLE_FAST_MODE` from managed settings (or the `65-fast-mode.json` drop-in). Also confirm the Owner toggle at Claude.ai Admin Settings > Claude Code if you still need the console-level disable. Restart Claude Code and confirm `claude config list --managed` no longer reports those keys. `/fast` then follows the Owner toggle and user settings.
 
 #### Cursor Rollback
@@ -291,6 +293,7 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `sandbox.autoAllowBashIfSandboxed` | Not set | `true` | `false` | Moderate auto-approves sandboxed commands for productivity; Strict still requires approval |
 | `sandbox.failIfUnavailable` | Not set | `false` | `true` | Strict refuses to run if sandbox cannot start |
 | `sandbox.network.allowManagedDomainsOnly` | Not set | `false` (users approve new domains) | `true` | Strict locks network egress to managed allowlist |
+| `sandbox.credentials.allowPlaintextInject` | Unset (vendor default `false`, user settings can set `true`) | `false` | `false` | Moderate and Strict lock mask substitution to TLS-terminated HTTPS. Baseline leaves a lab able to opt in. Requires Claude Code v2.1.199+. No env-var substitute. Project files ignore the key. |
 | `autoMemoryEnabled` | Not set | Not set | `false` (disabled) | Strict prevents persistent AI memory across sessions |
 | `forceLoginMethod` | Not set | `"claudeai"` | `"claudeai"` | Enterprise tiers force org-managed login |
 | `forceLoginOrgUUID` | Not set | Set to org UUID | Set to org UUID | Prevents personal account usage |
@@ -415,6 +418,11 @@ claude auth status
 # Expected: no Drive, Slack, or other claude.ai account connectors listed
 # Also check: claude config list --managed | grep disableClaudeAiConnectors
 # Expected: true
+
+# Verify plaintext credential injection is locked off (Moderate and Strict)
+claude config list --managed
+# Expected: sandbox.credentials.allowPlaintextInject=false
+# A user settings value of true must not win. Baseline leaves the key unset.
 ```
 
 On Claude Code 2.1.212 or later, start a test MCP call that runs for more than two minutes. Under Moderate it must remain in the main conversation. Pressing Ctrl+B should still background it intentionally. Under Strict, Ctrl+B and `run_in_background` must be unavailable. Run `/doctor` if the result differs, because invalid managed `env` entries are reported there.
@@ -441,6 +449,7 @@ For each approved stdio MCP server, remove a harmless test variable from the ser
 | Bypass mode attempted | High | User tried `--dangerously-skip-permissions` |
 | MCP call overlaps a later write after two minutes | High | Moderate background policy may be missing or an endpoint may be below 2.1.212 |
 | Stdio MCP server receives an undeclared test variable | Critical | Environment isolation policy is missing or not enforced |
+| Managed `sandbox.credentials.allowPlaintextInject` is missing or `true` | High | Masked credentials can be injected into plain HTTP |
 
 ---
 
@@ -702,6 +711,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `/advisor` or Fable advisor | Advisor model is constrained by the same allowlist. Fable is excluded until an explicit exception | Use `/advisor` with Sonnet (Moderate also allows Opus), or request Fable after usage-credit review | Claude Code |
 | Claude Code Fast mode (`/fast`) | Research-preview Opus speed path at higher per-token cost ($10 / $50 per million tokens on Opus 5 and Opus 4.8). Persists across sessions unless disabled. | Keep standard-speed Opus. For lower latency without Fast mode, lower effort level for straightforward tasks. If a team has an approved usage-credit budget, file a Fast mode exception. | Claude Code |
 | Claude Code claude.ai MCP connectors | Personal Drive, Slack, or custom connectors can read or send repository data outside the org MCP allowlist | Ask IT to add the needed server to `managed-mcp.json` or a project `.mcp.json`. Do not set `allowAllClaudeAiMcps: true` unless those connectors are allowlisted. | Claude Code |
+| Claude Code plaintext credential injection (`sandbox.credentials.allowPlaintextInject: true`) | The sandbox proxy can place a real masked secret into an unverified plain HTTP request | Use HTTPS. If a named tool only speaks HTTP, run it in a normal terminal, or add that command to `sandbox.excludedCommands` after review. Do not set `true`. Developer message: "Claude Code will not inject masked credentials into plain HTTP. Use HTTPS, or run that one command outside the sandbox." | Claude Code |
 
 ### 5.2 Common False-Positive Friction Points
 
@@ -725,6 +735,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `availableModels` / `enforceAvailableModels` | Developer needs Opus (Strict) or Fable (Moderate/Strict) for a specific task | Add the family to the managed list for a time-boxed pilot. Do not tell the developer to export `ANTHROPIC_MODEL`. Keep at least one guaranteed-available entry. Never use `[]` as lockdown. |
 | `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
+| `sandbox.credentials.allowPlaintextInject: false` | A local HTTP mock or legacy registry needs a masked token inside the sandbox | Do not set `true` on Moderate or Strict. Prefer HTTPS. For one approved command, add it to `sandbox.excludedCommands` and run it in a normal terminal. A Baseline lab may set `true` in user settings only. This key is not a substitute for naming secrets in `sandbox.credentials.envVars`, and Cursor or Copilot sandboxes do not read it. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
