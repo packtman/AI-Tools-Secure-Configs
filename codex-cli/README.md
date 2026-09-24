@@ -60,3 +60,4 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+7. Browser history is a desktop requirements key, `browser_use.allow_history_access = false`, in the shared `requirements.toml`. The CLI does not browse. Deploy that file once for the desktop app, the CLI, and the IDE extension. Do not add a second copy under a CLI-only path.

@@ -13,6 +13,12 @@ browser_use = false
 computer_use = false
 codex_hooks = true
 
+# WHAT: stops Browser Use from reading the local browser's visited URLs and search history.
+# WHY (Moderate): features.browser_use = false turns Browser Use off. Omitting this key leaves history at the product default, so a later exception that allows Browser Use can still read it. Users cannot override a requirements value.
+# WHAT BREAKS: "open what I was just looking at" fails. Paste the specific URL. Do not set true. JSON/TOML boolean false only.
+[browser_use]
+allow_history_access = false
+
 # Deny reads to credential files
 [permissions.filesystem]
 deny_read = [

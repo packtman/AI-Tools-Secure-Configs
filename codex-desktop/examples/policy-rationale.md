@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.allow_history_access` (requirements.toml)
+
+**What it does:** Stops Browser Use from reading the local browser's visited URLs and search history. This key lives in the `[browser_use]` table. It is separate from the `[features]` flag `browser_use`, which turns the whole Browser Use feature on or off.
+
+**Why it matters:** Browser history can include internal hostnames, ticket URLs, and search terms. OpenAI's managed-configuration guide sets `allow_history_access = false` in `requirements.toml`. Omitting the key leaves normal history settings in place. `features.browser_use = false` turns Browser Use off, and a later exception that allows Browser Use would still be able to read history unless this key is `false`. A value in `requirements.toml` cannot be overridden by `config.toml`.
+
+**What breaks if removed or set to `true`:** Codex can read browser history whenever Browser Use is allowed. Set the TOML boolean `false`. The string `"false"` is not the documented value.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | History stays blocked even if a later exception allows Browser Use. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. Paste a specific URL when a task needs a page. |
+| Individual developers (Baseline) | unset | Browser Use stays available. History follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.allow_history_access` | unset | `false` | `false` | Baseline keeps local browser workflows on the product default. Moderate and Strict pin `false` so an exception that allows Browser Use cannot also read visited URLs and search history. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -155,6 +177,9 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+
+[browser_use]
+allow_history_access = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +194,9 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+
+[browser_use]
+allow_history_access = false
 ```
 
 ### Developer Teams

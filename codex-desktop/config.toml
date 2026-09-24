@@ -38,6 +38,12 @@ memories = false
 codex_hooks = true
 multi_agent = true
 
+# WHAT: stops Browser Use from reading local browser history.
+# WHY: this template matches Moderate. requirements.toml is the lock users cannot override.
+# WHAT BREAKS: history-based resume fails. Paste the specific URL. Do not set true.
+[browser_use]
+allow_history_access = false
+
 # Shell environment — only forward essential variables to spawned commands.
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]

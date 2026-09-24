@@ -22,6 +22,13 @@ browser_use = false
 computer_use = false
 codex_hooks = true
 
+# Default only. requirements.toml is the lock users cannot override.
+# WHAT: stops Browser Use from reading local browser history when this file is reapplied at launch.
+# WHY: a host that has not received requirements.toml yet still starts with history off.
+# WHAT BREAKS: history-based resume fails until restart if a user flips this during a session. The requirements pin closes that gap.
+[browser_use]
+allow_history_access = false
+
 # OpenTelemetry — point at your corporate OTLP collector
 [otel]
 environment = "prod"

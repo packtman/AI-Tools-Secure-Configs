@@ -22,5 +22,11 @@ codex_hooks = true
 multi_agent = true
 undo = false
 
+# WHAT: stops Browser Use from reading local browser history in this config file.
+# WHY (Moderate): a laptop that has not received requirements.toml yet still starts with history off. The requirements file is the lock users cannot override.
+# WHAT BREAKS: history-based resume fails. Paste the specific URL. Do not set true.
+[browser_use]
+allow_history_access = false
+
 [shell_environment_policy]
 include_only = ["PATH", "HOME", "USER", "SHELL", "LANG", "TERM"]
