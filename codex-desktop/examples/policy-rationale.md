@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.allow_global_persistent_approval` (requirements.toml)
+
+**What it does:** Stops Browser Use from creating or honoring an "Always allow" approval that covers every site, such as allowing downloads from any site. Existing saved approvals are ignored, not deleted. This key lives in the `[browser_use]` table of `requirements.toml`. It is separate from the `[features]` flag `browser_use`, which turns the whole Browser Use feature on or off.
+
+**Why it matters:** A global persistent approval lets one click authorize later browser actions on sites the admin never reviewed. OpenAI documents this key only under managed requirements. Setting it to `true` or omitting it does not create an approval, and it also does not block one. `features.browser_use = false` turns Browser Use off, and a later exception that allows Browser Use would still be able to use Always allow unless this key is `false`. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`. Do not pin org-specific `browser_use.origins` in this template.
+
+**What breaks if removed or set to `true`:** Codex can save and honor an Always allow approval for every site whenever Browser Use is allowed. Set the TOML boolean `false`. The string `"false"` is not the documented value.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Always allow for every site stays blocked even if a later exception allows Browser Use. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. Approve the current turn for the specific site. |
+| Individual developers (Baseline) | unset | Browser Use stays available. Always allow follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.allow_global_persistent_approval` | unset | `false` | `false` | Baseline keeps local browser approvals on the product default. Moderate and Strict pin `false` so an exception that allows Browser Use cannot also save an approval that covers every site. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).

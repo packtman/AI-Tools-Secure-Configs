@@ -107,6 +107,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | Feature | Description |
 |---------|-------------|
 | `browser_use` | Browser Use and Browser Agent |
+| `browser_use.allow_global_persistent_approval` | Requirements lock: Browser Use cannot save or honor an "Always allow" approval that covers every site when set to `false` |
 | `in_app_browser` | In-app browser pane |
 | `computer_use` | Computer Use (macOS only) |
 | `codex_hooks` | Lifecycle hooks |
@@ -140,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `browser_use.allow_global_persistent_approval = false` in `requirements.toml` on Moderate and Strict so a Browser Use exception cannot save "Always allow" for every site
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

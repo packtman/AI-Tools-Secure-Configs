@@ -13,6 +13,12 @@ browser_use = false
 computer_use = false
 codex_hooks = true
 
+# WHAT: stops Browser Use from creating or honoring an "Always allow" approval that covers every site.
+# WHY (Moderate): features.browser_use = false turns Browser Use off. Omitting this key does not block Always allow, so a later exception that allows Browser Use can still save a global approval. Users cannot override a requirements value. This key belongs in requirements.toml, not config.toml.
+# WHAT BREAKS: a saved "allow downloads from any site" approval is ignored until this key is removed. Approve the current turn for the site you need. Do not set true. Existing saved approvals are ignored, not deleted. TOML boolean false only.
+[browser_use]
+allow_global_persistent_approval = false
+
 # Deny reads to credential files
 [permissions.filesystem]
 deny_read = [
