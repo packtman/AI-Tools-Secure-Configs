@@ -60,3 +60,4 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+7. Saved native-app approvals are a desktop requirements key, `computer_use.allow_persistent_approval = false`, in the shared `requirements.toml`. The CLI does not drive desktop apps. Deploy that file once for the desktop app, the CLI, and the IDE extension. Do not add a second copy under a CLI-only path, and do not put this key in `config.toml`.

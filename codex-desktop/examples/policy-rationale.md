@@ -74,6 +74,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `computer_use.allow_persistent_approval` (requirements.toml)
+
+**What it does:** Removes the option to save a native-app approval across sessions. Approvals for the current session remain available. This key lives in the `[computer_use]` table of `requirements.toml`. It is separate from the `[features]` flag `computer_use`, which turns Computer Use, Record & Replay, and related install flows on or off.
+
+**Why it matters:** A saved app approval lets one click authorize later desktop actions in that app without a fresh review. OpenAI documents this key under managed requirements. Setting it to `true` or omitting it does not approve an app, and it also does not block a saved approval. `features.computer_use = false` turns Computer Use off, and a later exception that allows Computer Use would still be able to save app approvals unless this key is `false`. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`. Do not pin org-specific bundle IDs, Windows app IDs, or executable publisher rules in this template.
+
+**What breaks if removed or set to `true`:** Codex can offer a saved app approval for later sessions whenever Computer Use is allowed. Set the TOML boolean `false`. The string `"false"` is not the documented value.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Saved app approvals stay blocked even if a later exception allows Computer Use. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. Approve the app for the current session. |
+| Individual developers (Baseline) | unset | Computer Use stays off via the feature pin. Saved approvals follow the product default if Computer Use is later allowed locally. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `computer_use.allow_persistent_approval` | unset | `false` | `false` | Baseline leaves saved app approvals on the product default. Moderate and Strict pin `false` so an exception that allows Computer Use cannot also remember an app across sessions. |
+
+---
+
 ## `memories`
 
 **What it does:** Enables Memories, allowing Codex to carry context from past sessions into future work.

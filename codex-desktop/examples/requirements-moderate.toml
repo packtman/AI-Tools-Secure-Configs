@@ -13,6 +13,12 @@ browser_use = false
 computer_use = false
 codex_hooks = true
 
+# WHAT: removes the option to save native-app approvals across sessions. Approvals for the current session remain available.
+# WHY (Moderate): features.computer_use = false turns Computer Use off. Omitting this key does not block saved approvals, so a later exception that allows Computer Use can still remember an app. Users cannot override a requirements value. This key belongs in requirements.toml, not config.toml. Do not list org-specific app identities here.
+# WHAT BREAKS: the user cannot keep an app approval for the next session until this key is removed. Approve the app for the current session. Do not set true. Setting true, or omitting the key, does not approve an app. TOML boolean false only.
+[computer_use]
+allow_persistent_approval = false
+
 # Deny reads to credential files
 [permissions.filesystem]
 deny_read = [

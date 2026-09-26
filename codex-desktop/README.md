@@ -109,6 +109,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `browser_use` | Browser Use and Browser Agent |
 | `in_app_browser` | In-app browser pane |
 | `computer_use` | Computer Use (macOS only) |
+| `computer_use.allow_persistent_approval` | Requirements lock: Computer Use cannot save an app approval across sessions when set to `false` |
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
@@ -140,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `computer_use.allow_persistent_approval = false` in `requirements.toml` on Moderate and Strict so a Computer Use exception cannot save an app approval across sessions
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
