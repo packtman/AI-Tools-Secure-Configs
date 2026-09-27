@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.disable_auto_review` (requirements.toml)
+
+**What it does:** Skips automatic review for Browser Use and asks the person for approval instead. Automatic review is Codex's reviewer subagent, which can approve an eligible action without a person clicking. This key lives in the `[browser_use]` table of `requirements.toml`. It is separate from the `[features]` flag `browser_use`, which turns the whole Browser Use feature on or off.
+
+**Why it matters:** Automatic review can approve a browser action (a new site, an upload, or a download) without a person looking at it. OpenAI documents this key under managed requirements. Setting it to `false`, or omitting it, leaves automatic review available when other settings allow it. `features.browser_use = false` turns Browser Use off, and a later exception that allows Browser Use would still be able to use automatic review unless this key is `true`. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`. Do not pin org-specific site lists under `browser_use.origins` in this template. This key does not turn off model safety monitoring.
+
+**What breaks if removed or set to `false`:** Browser Use can send eligible actions to automatic review whenever Browser Use is allowed. Set the TOML boolean `true`. The string `"true"` is not the documented value.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `true` in `requirements.toml` | Browser actions wait for a person even if a later exception allows Browser Use. |
+| Standard enterprise (Moderate) | `true` in `requirements.toml` | Same lock. The person approves the current browser action. |
+| Individual developers (Baseline) | unset | Browser Use stays available. Automatic review follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.disable_auto_review` | unset | `true` | `true` | Baseline keeps automatic review on the product default so local browser workflows keep working. Moderate and Strict pin `true` in `requirements.toml`. `features.browser_use = false` turns Browser Use off and still leaves automatic review available if a later exception allows the feature. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).

@@ -262,7 +262,8 @@
             "sandbox",
             "approval",
             "model",
-            "profiles"
+            "profiles",
+            "disable_auto_review"
           ]
         }
       ]

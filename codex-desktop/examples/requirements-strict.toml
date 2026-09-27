@@ -16,6 +16,12 @@ computer_use = false
 memories = false
 multi_agent = false
 
+# WHAT: skips automatic review for Browser Use and asks the person for approval instead.
+# WHY (Strict): features.browser_use = false turns Browser Use off. Omitting this key, or setting it to false, leaves automatic review available if a later exception allows Browser Use. Users cannot override a requirements value. This key belongs in requirements.toml, not config.toml.
+# WHAT BREAKS: a browser action that automatic review would have approved now waits for a person. Approve that action. Do not set false. TOML boolean true only. This does not turn off model safety monitoring.
+[browser_use]
+disable_auto_review = true
+
 # Deny reads to sensitive directories
 [permissions.filesystem]
 deny_read = [

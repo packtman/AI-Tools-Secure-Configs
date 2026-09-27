@@ -34,6 +34,9 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use]
+disable_auto_review = true
 ```
 
 ### Step 2: Create Managed Defaults TOML
