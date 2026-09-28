@@ -12,6 +12,10 @@ allowed_web_search_modes = ["cached"]
 browser_use = false
 computer_use = false
 codex_hooks = true
+# WHAT: disables local scheduled tasks in the Codex desktop app.
+# WHY (Moderate): a local scheduled task runs unattended in a project folder or worktree and can edit files while nobody is watching. Omitting this key leaves the feature available. Setting it to true does not turn it off and does not bypass other availability checks. Users cannot override a requirements value. This key belongs in requirements.toml, not config.toml.
+# WHAT BREAKS: existing local scheduled tasks in the desktop app stop. Run the prompt in an attended chat instead. Do not set true. TOML boolean false only.
+in_app_local_automation = false
 
 # Deny reads to credential files
 [permissions.filesystem]

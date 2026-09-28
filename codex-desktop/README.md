@@ -108,6 +108,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 |---------|-------------|
 | `browser_use` | Browser Use and Browser Agent |
 | `in_app_browser` | In-app browser pane |
+| `in_app_local_automation` | Requirements lock: `false` disables local scheduled tasks in the desktop app |
 | `computer_use` | Computer Use (macOS only) |
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
@@ -140,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `features.in_app_local_automation = false` in `requirements.toml` on Moderate and Strict so the desktop app cannot run local scheduled tasks unattended
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

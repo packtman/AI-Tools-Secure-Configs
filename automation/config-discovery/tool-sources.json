@@ -262,7 +262,8 @@
             "sandbox",
             "approval",
             "model",
-            "profiles"
+            "profiles",
+            "in_app_local_automation"
           ]
         }
       ]

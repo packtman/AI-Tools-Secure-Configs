@@ -74,6 +74,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.in_app_local_automation` (requirements.toml)
+
+**What it does:** Disables local scheduled tasks in the Codex desktop app when set to `false`. A local scheduled task is a recurring job the desktop app runs in a project folder or a separate worktree while the person may be away. This key lives in the `[features]` table of `requirements.toml`. It is separate from `features.browser_use` and `features.computer_use`, which turn other desktop capabilities on or off.
+
+**Why it matters:** Local scheduled tasks run unattended. OpenAI documents that they use `approval_policy = "never"` when the organization allows that policy, and that they can change files in the selected project. Setting this key to `true` does not turn the feature off and does not bypass other availability checks. Omitting it leaves local scheduled tasks unconstrained by requirements. `features.in_app_chat = false` hides related cloud automation screens and does not stop local scheduled tasks. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`.
+
+**What breaks if removed or set to `true`:** The desktop app can keep running local scheduled tasks. Set the TOML boolean `false`. The string `"false"` is not the documented value. Do not set `true`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Unattended local jobs stay off even if a later exception widens the sandbox. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. The person runs the prompt in an attended chat. |
+| Individual developers (Baseline) | unset | Local scheduled tasks follow the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.in_app_local_automation` | unset | `false` | `false` | Baseline leaves local scheduled tasks on the product default so a person can keep a local recurring check. Moderate and Strict pin `false` in `requirements.toml`. Blocking `approval_policy = "never"` only changes how a task asks for approval. It does not turn the feature off. |
+
+---
+
 ## `memories`
 
 **What it does:** Enables Memories, allowing Codex to carry context from past sessions into future work.
@@ -155,6 +177,7 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+in_app_local_automation = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +192,7 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+in_app_local_automation = false
 ```
 
 ### Developer Teams
