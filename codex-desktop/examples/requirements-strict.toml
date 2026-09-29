@@ -16,6 +16,13 @@ computer_use = false
 memories = false
 multi_agent = false
 
+# Built-in browser pane only. features.in_app_browser above turns the pane off. This table is the import lock.
+[in_app_browser]
+# WHAT: blocks importing settings or browsing data from an external browser into the built-in browser pane.
+# WHY (Strict): an import can copy cookies, saved site data, and history from another browser into Codex. features.in_app_browser = false turns the pane off for the current policy, but omitting this key leaves import available if a later exception turns the pane on. Setting it to true does not block import. Users cannot override a requirements value. This key belongs in requirements.toml, not in config.toml, and not under [features].
+# WHAT BREAKS: the import action in the built-in browser stops. Sign in to the specific site inside the pane, or paste the URL. Do not set true. TOML boolean false only.
+allow_external_browser_settings_import = false
+
 # Deny reads to sensitive directories
 [permissions.filesystem]
 deny_read = [

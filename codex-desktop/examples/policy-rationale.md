@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `in_app_browser.allow_external_browser_settings_import` (requirements.toml)
+
+**What it does:** Blocks importing settings or browsing data from Chrome, Edge, or another browser into the Codex built-in browser pane when set to `false`. The built-in browser is the pane a person opens. It is separate from Browser Use, which is the agent browsing on its own. This key lives in the `[in_app_browser]` table of `requirements.toml`. It is separate from `features.in_app_browser`, which turns that pane on or off.
+
+**Why it matters:** An import can copy cookies, saved site data, and history into Codex, including signed-in sessions. Setting this key to `true` does not block the import. Omitting it leaves the import available when other product checks allow it. `features.in_app_browser = false` turns the pane off and does not replace this key: a later exception that turns the pane on would still allow import. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`. Do not put it under `[features]`.
+
+**What breaks if removed or set to `true`:** The built-in browser can import another browser's settings or browsing data. Set the TOML boolean `false`. The string `"false"` is not the documented value. Do not set `true`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Import stays off even if a later exception turns the pane on. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. The person signs in inside the pane or pastes the URL. |
+| Individual developers (Baseline) | unset | Import follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `in_app_browser.allow_external_browser_settings_import` | unset | `false` | `false` | Baseline leaves import on the product default so a person can bring bookmarks or a signed-in profile into the pane. Moderate and Strict pin `false` in `requirements.toml`. Turning the pane off with `features.in_app_browser = false` does not block import if a later exception turns the pane back on. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -155,6 +177,9 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+
+[in_app_browser]
+allow_external_browser_settings_import = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +194,9 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+
+[in_app_browser]
+allow_external_browser_settings_import = false
 ```
 
 ### Developer Teams

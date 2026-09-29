@@ -102,6 +102,8 @@ identity = { url = "https://example.com/mcp" }
 
 If `mcp_servers` is present but empty, Codex disables all MCP servers.
 
+`in_app_browser.allow_external_browser_settings_import` is a requirements key in the `[in_app_browser]` table, not a `[features]` flag. On Moderate and Strict, set it to `false` so people cannot import settings or browsing data from Chrome, Edge, or another browser into the built-in browser pane. `features.in_app_browser = false` turns the pane off. It does not replace this key. Do not copy the import key into `config.toml`.
+
 ### Feature Flags (Enterprise-Pinnable)
 
 | Feature | Description |
@@ -140,6 +142,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `in_app_browser.allow_external_browser_settings_import = false` in `requirements.toml` on Moderate and Strict so the built-in browser cannot import another browser's settings or browsing data
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
