@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.in_app_dictation` (requirements.toml)
+
+**What it does:** Turns off in-app dictation in the Codex desktop app when set to `false`. This is the microphone control in the desktop app. It is separate from the CLI `/voice` command (`features.realtime_conversation`) and from ChatGPT Voice.
+
+**Why it matters:** A spoken prompt can include secrets, customer data, or credentials, and that audio leaves the laptop. Setting this key to `true` does not turn dictation off and does not bypass other availability checks. Omitting it leaves dictation unconstrained by requirements. A value in `requirements.toml` cannot be overridden by `config.toml`. Keep the key in the `[features]` table. Do not copy it into `config.toml` as the lock.
+
+**What breaks if removed or set to `true`:** Desktop in-app dictation can run again when other product checks allow it. Set the TOML boolean `false`. The string `"false"` is not the documented value. Do not set `true`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Spoken prompts stay off on regulated desktops. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. The person types the prompt. |
+| Individual developers (Baseline) | unset | Dictation follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.in_app_dictation` | unset | `false` | `false` | Baseline leaves desktop dictation on the product default. Moderate and Strict pin `false` in `requirements.toml` so a spoken prompt cannot leave the laptop through this control. Setting `true` does not turn dictation off. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -155,6 +177,7 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+in_app_dictation = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +192,7 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+in_app_dictation = false
 ```
 
 ### Developer Teams

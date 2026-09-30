@@ -12,6 +12,10 @@ allowed_web_search_modes = ["cached"]
 browser_use = false
 computer_use = false
 codex_hooks = true
+# WHAT: turns off in-app dictation in the Codex desktop app.
+# WHY (Moderate): a spoken prompt can include secrets, customer data, or credentials, and that audio leaves the laptop. Omitting this key leaves dictation unconstrained by requirements. Setting it to true does not turn dictation off and does not bypass other availability checks. Users cannot override a requirements value. Keep this key in the [features] table of requirements.toml. It does not block the CLI /voice command (features.realtime_conversation) or ChatGPT Voice.
+# WHAT BREAKS: desktop in-app dictation stops. Type the prompt instead. Do not set true. TOML boolean false only.
+in_app_dictation = false
 
 # Deny reads to credential files
 [permissions.filesystem]
