@@ -262,7 +262,8 @@
             "sandbox",
             "approval",
             "model",
-            "profiles"
+            "profiles",
+            "realtime_conversation"
           ]
         }
       ]

@@ -15,6 +15,10 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+# WHAT: turns off the experimental /voice command in the Codex CLI.
+# WHY (Strict): a spoken prompt can include secrets, customer data, or credentials, and that audio leaves the laptop. Omitting this key leaves /voice unconstrained even when other features are off. Setting it to true does not turn /voice off and does not bypass client or rollout checks. Users cannot override a requirements value. Keep this key in the [features] table of requirements.toml. It does not block desktop in-app dictation (features.in_app_dictation) or ChatGPT Voice.
+# WHAT BREAKS: the CLI /voice command stops. Type the prompt instead. Do not set true. TOML boolean false only.
+realtime_conversation = false
 
 # Deny reads to sensitive directories
 [permissions.filesystem]

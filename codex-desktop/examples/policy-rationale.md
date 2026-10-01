@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.realtime_conversation` (requirements.toml)
+
+**What it does:** Turns off the experimental `/voice` command in the Codex CLI when set to `false`. This is the CLI voice command. It is separate from desktop in-app dictation (`features.in_app_dictation`) and from ChatGPT Voice.
+
+**Why it matters:** A spoken prompt can include secrets, customer data, or credentials, and that audio leaves the laptop. Setting this key to `true` does not turn `/voice` off and does not bypass client or rollout checks. Omitting it leaves `/voice` unconstrained by requirements. A value in `requirements.toml` cannot be overridden by `config.toml`. Keep the key in the `[features]` table. Do not copy it into `config.toml` as the lock.
+
+**What breaks if removed or set to `true`:** The CLI `/voice` command can run again when other product checks allow it. Set the TOML boolean `false`. The string `"false"` is not the documented value. Do not set `true`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Spoken CLI prompts stay off on regulated machines. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. The person types the prompt. |
+| Individual developers (Baseline) | unset | `/voice` follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.realtime_conversation` | unset | `false` | `false` | Baseline leaves the experimental CLI `/voice` command on the product default. Moderate and Strict pin `false` in `requirements.toml` so a spoken CLI prompt cannot leave the laptop through this command. Setting `true` does not turn `/voice` off. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -155,6 +177,7 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+realtime_conversation = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +192,7 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+realtime_conversation = false
 ```
 
 ### Developer Teams

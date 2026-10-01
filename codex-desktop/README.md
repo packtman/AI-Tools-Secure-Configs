@@ -102,6 +102,8 @@ identity = { url = "https://example.com/mcp" }
 
 If `mcp_servers` is present but empty, Codex disables all MCP servers.
 
+`features.realtime_conversation` is a requirements feature key. On Moderate and Strict, set it to `false` so the Codex CLI cannot run the experimental `/voice` command. Omitting it leaves `/voice` unconstrained. Setting it to `true` does not turn `/voice` off. Do not treat this as a block for desktop in-app dictation or for ChatGPT Voice.
+
 ### Feature Flags (Enterprise-Pinnable)
 
 | Feature | Description |
@@ -112,6 +114,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+| `realtime_conversation` | Experimental CLI `/voice` command. Pin `false` on Moderate and Strict in `requirements.toml` |
 
 ### Protected Paths
 
@@ -140,6 +143,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `features.realtime_conversation = false` in `requirements.toml` on Moderate and Strict so the CLI cannot run `/voice`
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
