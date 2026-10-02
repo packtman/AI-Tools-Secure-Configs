@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `features.in_app_chat` (requirements.toml)
+
+**What it does:** Hides ChatGPT and ChatGPT Work conversation screens and the related cloud automation UI in the ChatGPT desktop app when set to `false`. ChatGPT Voice stays available. Existing cloud tasks keep running. This key is separate from desktop in-app dictation (`features.in_app_dictation`) and from the CLI `/voice` command (`features.realtime_conversation`).
+
+**Why it matters:** Those screens can send source code, secrets, or customer data off the laptop. Setting this key to `true` does not hide the screens and does not bypass account, workspace-permission, or rollout checks. Omitting it leaves the screens unconstrained by requirements. A value in `requirements.toml` cannot be overridden by `config.toml`. Keep the key in the `[features]` table. Do not copy it into `config.toml` as the lock.
+
+**What breaks if removed or set to `true`:** ChatGPT and ChatGPT Work conversation screens can appear again when account, workspace-permission, and rollout checks allow them. Set the TOML boolean `false`. The string `"false"` is not the documented value. Do not set `true`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | ChatGPT conversation screens stay hidden on regulated machines. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. The person uses the local Codex coding session. |
+| Individual developers (Baseline) | unset | Those screens follow the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `features.in_app_chat` | unset | `false` | `false` | Baseline leaves ChatGPT and ChatGPT Work conversation screens on the product default. Moderate and Strict pin `false` in `requirements.toml` so those screens, and the related cloud automation UI, stay hidden. Setting `true` does not hide the screens. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -155,6 +177,7 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+in_app_chat = false
 ```
 
 ### Standard Enterprise
@@ -169,6 +192,7 @@ browser_use = false
 computer_use = false
 memories = false
 codex_hooks = true
+in_app_chat = false
 ```
 
 ### Developer Teams

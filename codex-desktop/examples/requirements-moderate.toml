@@ -12,6 +12,10 @@ allowed_web_search_modes = ["cached"]
 browser_use = false
 computer_use = false
 codex_hooks = true
+# WHAT: hides ChatGPT and ChatGPT Work conversation screens and the related cloud automation UI in the ChatGPT desktop app.
+# WHY (Moderate): those screens can send source code, secrets, or customer data off the laptop. Omitting this key leaves the screens unconstrained by requirements. Setting it to true does not hide them and does not bypass account, workspace-permission, or rollout checks. Users cannot override a requirements value. Keep this key in the [features] table of requirements.toml. ChatGPT Voice stays available. Existing cloud tasks keep running. This key is separate from features.in_app_dictation and features.realtime_conversation.
+# WHAT BREAKS: ChatGPT and ChatGPT Work conversation screens, and the related cloud automation UI, disappear from the desktop app. Use the local Codex coding session instead. Do not set true. TOML boolean false only.
+in_app_chat = false
 
 # Deny reads to credential files
 [permissions.filesystem]

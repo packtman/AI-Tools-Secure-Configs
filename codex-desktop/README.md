@@ -102,6 +102,8 @@ identity = { url = "https://example.com/mcp" }
 
 If `mcp_servers` is present but empty, Codex disables all MCP servers.
 
+`features.in_app_chat` is a requirements feature key. On Moderate and Strict, set it to `false` so the ChatGPT desktop app hides ChatGPT and ChatGPT Work conversation screens and the related cloud automation UI. Omitting it leaves those screens unconstrained. Setting it to `true` does not hide the screens and does not bypass account, workspace-permission, or rollout checks. ChatGPT Voice stays available. Existing cloud tasks keep running. This key is separate from desktop dictation (`features.in_app_dictation`) and from the CLI `/voice` command (`features.realtime_conversation`).
+
 ### Feature Flags (Enterprise-Pinnable)
 
 | Feature | Description |
@@ -112,6 +114,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | `codex_hooks` | Lifecycle hooks |
 | `multi_agent` | Subagent collaboration |
 | `memories` | Cross-session memory |
+| `in_app_chat` | ChatGPT and ChatGPT Work conversation screens, plus related cloud automation UI. Pin `false` on Moderate and Strict in `requirements.toml` |
 
 ### Protected Paths
 
@@ -140,6 +143,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `features.in_app_chat = false` in `requirements.toml` on Moderate and Strict so ChatGPT conversation screens stay hidden
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
