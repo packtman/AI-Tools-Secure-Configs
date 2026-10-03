@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.default_origin_policy.persistent_approval` (requirements.toml)
+
+**What it does:** Stops Browser Use from saving or honoring an "Always allow" approval on origins that use the fallback, meaning sites with no matching `browser_use.origins` entry. Approvals for the current turn or thread can still apply. This key lives in the nested `[browser_use.default_origin_policy]` table of `requirements.toml`. It is separate from the `[features]` flag `browser_use`, which turns the whole Browser Use feature on or off.
+
+**Why it matters:** A saved Always allow on an unmatched site lets a later visit proceed without a fresh review. That site can receive source code, credentials, or customer data the agent types into the browser. OpenAI documents this key under managed requirements. Setting it to `true` makes Always allow available when otherwise permitted, and it does not create an approval. Omitting it leaves the product default, which also does not block the saved approval. `features.browser_use = false` turns Browser Use off, and a later exception that allows Browser Use would still be able to use Always allow on unmatched sites unless this key is `false`. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`. Do not pin org-specific `browser_use.origins` in this template. A matching origin rule replaces the fallback for that site.
+
+**What breaks if removed or set to `true`:** Codex can save and honor Always allow on unmatched sites whenever Browser Use is allowed. Set the TOML boolean `false`. The string `"false"` is not the documented value.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `false` in `requirements.toml` | Always allow stays blocked on unmatched sites even if a later exception allows Browser Use. |
+| Standard enterprise (Moderate) | `false` in `requirements.toml` | Same lock. Approve the current turn or thread for the specific site. |
+| Individual developers (Baseline) | unset | Browser Use stays available. Always allow follows the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.persistent_approval` | unset | `false` | `false` | Baseline keeps local browser approvals on the product default. Moderate and Strict pin `false` so an exception that allows Browser Use cannot save Always allow on sites with no origin rule. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).

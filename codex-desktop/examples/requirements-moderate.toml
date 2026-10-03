@@ -13,6 +13,12 @@ browser_use = false
 computer_use = false
 codex_hooks = true
 
+# WHAT: stops Browser Use from saving or honoring an "Always allow" approval on origins that use the fallback (sites with no matching browser_use.origins entry).
+# WHY (Moderate): features.browser_use = false turns Browser Use off. Omitting this key does not block Always allow on those sites, so a later exception that allows Browser Use can still save a lasting approval. Approvals for the current turn or thread can still apply. Users cannot override a requirements value. Nested table [browser_use.default_origin_policy], not a [features] key and not a sibling of allow_global_persistent_approval. This key belongs in requirements.toml, not config.toml.
+# WHAT BREAKS: a saved Always allow on an unmatched site is not honored until this key is removed. Approve the current turn or thread for that site. Do not set true. true makes Always allow available when otherwise permitted but does not create an approval. TOML boolean false only.
+[browser_use.default_origin_policy]
+persistent_approval = false
+
 # Deny reads to credential files
 [permissions.filesystem]
 deny_read = [

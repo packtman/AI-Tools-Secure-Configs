@@ -35,6 +35,9 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+persistent_approval = false
 ```
 
 **Senior/Trusted Developers:**
@@ -46,6 +49,10 @@ allowed_web_search_modes = ["cached", "live"]
 [features]
 browser_use = true
 computer_use = false
+
+# Browser Use may be allowed for this group. Always allow stays off for sites with no origin rule.
+[browser_use.default_origin_policy]
+persistent_approval = false
 ```
 
 **Regulated Environments:**
@@ -59,6 +66,9 @@ browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
+
+[browser_use.default_origin_policy]
+persistent_approval = false
 ```
 
 ---
@@ -97,6 +107,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+persistent_approval = false
 EOF
 
 # Encode for MDM
@@ -150,6 +163,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+persistent_approval = false
 "@ | Set-Content -Path $requirementsPath -Encoding UTF8
 
 # Restrict permissions
@@ -189,6 +205,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+persistent_approval = false
 EOF
 
 sudo chmod 644 /etc/codex/requirements.toml
@@ -203,7 +222,7 @@ sudo chown root:root /etc/codex/requirements.toml
 
 1. Use cloud-managed requirements to enforce `read-only` sandbox and disable all extended features
 2. Set `allowed_web_search_modes = []` to disable web search entirely
-3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`
+3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`, and `browser_use.default_origin_policy.persistent_approval = false`
 4. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
 5. Restrict MCP servers to an empty allowlist or specific approved servers only
 6. Add command rules to forbid dangerous operations
@@ -222,3 +241,104 @@ sudo chown root:root /etc/codex/requirements.toml
 - Require SSO/MFA via ChatGPT Enterprise workspace settings
 - Enable device code authentication only if needed for remote dev environments
 - Use RBAC to separate Codex Admin from Codex User permissions
+
+---
+
+## Fallback-origin browser approval lock
+
+Browser Use is the Codex feature that lets the agent open and operate web pages. `browser_use.default_origin_policy.persistent_approval` is a requirements key in the nested table `[browser_use.default_origin_policy]`. `false` stops Browser Use from saving or honoring an "Always allow" approval on origins that use the fallback, meaning sites with no matching `browser_use.origins` entry. Approvals for the current turn or thread can still apply. Setting the key to `true` makes Always allow available when otherwise permitted, and it does not create an approval. Omitting the key leaves that saved approval unconstrained.
+
+This key is documented for `requirements.toml`. Do not copy it into `config.toml` or `managed_config.toml`. Do not pin org-specific site lists under `browser_use.origins` in this template. A matching origin rule replaces the fallback for that site.
+
+### Rollout plan
+
+Pilot one managed group that already receives `requirements.toml`. Exit when every pilot host shows `[browser_use.default_origin_policy]` with `persistent_approval = false` after a Codex restart, and the pilot lead confirms that a current-turn approval still works for an approved Browser Use exception. Expanded pilot: the rest of the Moderate cohort. Exit when a week of helpdesk tickets shows no workflow that requires Always allow on unmatched sites. Org-wide: remaining Moderate and Strict devices. Baseline stays unset.
+
+Pre-rollout checklist:
+
+- MDM (Mobile Device Management, the system that pushes settings to laptops) can write `com.openai.codex` / `requirements_toml_base64` on macOS, or the system requirements file on Windows and Linux.
+- The ChatGPT admin console path is verified if you use cloud-managed requirements.
+- SIEM (Security Information and Event Management, the central log store) already receives the ChatGPT Compliance API export, or you have a file-integrity alert on `requirements.toml`.
+- No API keys or tokens belong in `requirements.toml`. Credential storage stays in the OS keyring.
+- Rollback below is copied into the change ticket before the pilot starts.
+
+What will break: on Moderate and Strict, Browser Use will not save or honor Always allow for a site that has no origin rule. A developer who previously approved one of those sites for Always allow will be asked again for the current turn or thread. Browser Use itself stays off unless that group's requirements set `features.browser_use = true`.
+
+Developer message to send before rollout:
+
+> On [date], Codex on standard and regulated laptops will stop saving and honoring "Always allow" for websites that are not on an admin origin list. If a task needs a page, approve that site for the current turn or the current thread. Browser Use stays off unless security has approved it for your group, and even then a lasting Always allow stays off for unmatched sites. Reply if a named workflow cannot continue with a per-turn or per-thread approval. We will review a time-boxed exception for that group. Do not edit the managed requirements file locally. That file wins over config.toml.
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.persistent_approval` | unset | `false` | `false` | Baseline leaves Always allow on the product default so local browser workflows keep working. Moderate and Strict pin `false` in `requirements.toml`. `features.browser_use = false` turns Browser Use off and still leaves Always allow available on unmatched sites if a later exception allows the feature. |
+
+### Deployment steps
+
+Put the key in the shared requirements file. Codex Desktop, the Codex CLI, and the IDE extension read one requirements file. Deploy it once. Do not create a second CLI-only copy. Do not put this key in `config.toml` or `managed_config.toml`.
+
+| OS | Requirements path |
+|----|-------------------|
+| macOS | MDM payload `com.openai.codex` key `requirements_toml_base64`, or `/etc/codex/requirements.toml` |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` |
+| Linux | `/etc/codex/requirements.toml` |
+
+MDM:
+
+- Jamf: a custom settings profile for `com.openai.codex` with `requirements_toml_base64` set to the base64 of the requirements file (no line wraps).
+- Intune: a Win32 app or device script that writes the Windows path above and locks the ACL to SYSTEM and Administrators.
+- Workspace ONE: the same macOS custom settings payload (`com.openai.codex` / `requirements_toml_base64`) and the same Windows file path.
+
+Validation, after restart:
+
+```bash
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep -A1 '\[browser_use.default_origin_policy\]'
+
+# Linux
+grep -A1 '\[browser_use.default_origin_policy\]' /etc/codex/requirements.toml
+```
+
+```powershell
+Select-String -Path "$env:ProgramData\OpenAI\Codex\requirements.toml" -Pattern "default_origin_policy" -Context 0,1
+```
+
+Moderate and Strict must show:
+
+```toml
+[browser_use.default_origin_policy]
+persistent_approval = false
+```
+
+Baseline requirements must omit the key. The key must not appear in `config.toml` or `managed_config.toml`.
+
+Audit: keep shipping the ChatGPT Compliance API export to the SIEM. Alert when `requirements.toml` on a Moderate or Strict host no longer contains `[browser_use.default_origin_policy]` with `persistent_approval = false`. Codex does not publish a separate "fallback approval saved" event name for this key.
+
+### Workflow-preservation notes
+
+| Blocked operation | Risk | Safe equivalent | Exception handling |
+|-------------------|------|-----------------|--------------------|
+| Browser Use saves or honors "Always allow" on a site with no origin rule | One approval can cover later actions on a site the admin never listed, including typed source code or credentials | Approve the current turn or the current thread for that site | Time-box a requirements change for a named pilot group. A user edit in `config.toml` does not override requirements. Do not set `true`. |
+
+False-positive friction: people who clicked Always allow on an unmatched site will be prompted again. That prompt is expected. Approve the current turn or thread. The key blocks the saved approval. It does not delete a previously saved one.
+
+Overlap:
+
+- Codex CLI does not browse. It still loads the same `requirements.toml`. One file covers the desktop app, the CLI, and the IDE extension. Do not add a second copy under a CLI-only path.
+- Claude Code's Browser pane uses `browserExternalPageTools` and `disableBrowserExternalNavigation`. Copilot's sandbox uses `allowLocalNetwork`. Those keys do not lock Codex Always allow. Set the Codex key even when the other tools are already locked.
+- `features.browser_use = false` turns Browser Use off. Keep `persistent_approval = false` as well so an exception that allows Browser Use does not also open Always allow on unmatched sites.
+- `browser_use.allow_global_persistent_approval` is a different key. It blocks Always allow that covers every site. This key only covers origins that use the fallback. If both are in force, keep the global key under `[browser_use]` and this key under `[browser_use.default_origin_policy]`.
+- `computer_use.allow_persistent_approval` covers native desktop apps, not websites. Do not use it as a substitute.
+- `browser_use.disable_auto_review` skips automatic review. It does not block a saved Always allow.
+- Do not add `browser_use.origins` hostnames to this template. Site lists are org-specific.
+
+### Rollback
+
+1. Remove the `[browser_use.default_origin_policy]` table from the deployed `requirements.toml` when `persistent_approval` is its only key. If the table has other keys, remove only `persistent_approval`.
+2. Push the updated payload: Jamf or Workspace ONE profile, Intune script, or replace `/etc/codex/requirements.toml`.
+3. Ask users to restart Codex.
+
+Rollback message:
+
+> We removed the Codex fallback-origin browser-approval lock. Restart Codex. Browser Use still follows the feature pin, which stays off on standard and regulated laptops. Always allow on unmatched sites follows the product default again only where Browser Use is allowed.
