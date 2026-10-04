@@ -60,3 +60,4 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+7. Fallback-origin Browser Use uploads are a desktop requirements key, `browser_use.default_origin_policy.uploads = "deny"`, in the shared `requirements.toml`. The CLI does not browse. Deploy that file once for the desktop app, the CLI, and the IDE extension. Do not add a second copy under a CLI-only path, and do not put this key in `config.toml`.

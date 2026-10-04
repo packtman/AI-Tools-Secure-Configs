@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.default_origin_policy.uploads` (requirements.toml)
+
+**What it does:** Blocks Browser Use from uploading files on origins that use the fallback, meaning sites with no matching `browser_use.origins` entry. This key lives in the nested `[browser_use.default_origin_policy]` table of `requirements.toml`. It is separate from the `[features]` flag `browser_use`, which turns the whole Browser Use feature on or off.
+
+**Why it matters:** An agent upload to an unmatched site can send source code, credentials, or customer data off the laptop. OpenAI documents this key under managed requirements. Setting it to `"allow"` only lets the normal approval and policy checks continue. Omitting it leaves uploads unconstrained. `features.browser_use = false` turns Browser Use off, and a later exception that allows Browser Use would still be able to upload to unmatched sites unless this key is `"deny"`. A value in `requirements.toml` cannot be overridden by `config.toml`. Do not copy this key into `config.toml`. Do not pin org-specific `browser_use.origins` in this template. A matching origin rule replaces the fallback for that site.
+
+**What breaks if removed or set to `"allow"`:** Codex can upload files to unmatched sites whenever Browser Use is allowed. Set the quoted TOML string `"deny"`. A bare `deny` is invalid TOML, and the boolean `false` is not the documented value.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated (Strict) | `"deny"` in `requirements.toml` | Uploads stay blocked on unmatched sites even if a later exception allows Browser Use. |
+| Standard enterprise (Moderate) | `"deny"` in `requirements.toml` | Same lock. A person uploads the reviewed file, or security adds one origin rule. |
+| Individual developers (Baseline) | unset | Browser Use stays available. Uploads follow the product default. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.uploads` | unset | `"deny"` | `"deny"` | Baseline keeps local browser uploads on the product default. Moderate and Strict pin `"deny"` so an exception that allows Browser Use cannot upload files to sites with no origin rule. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).

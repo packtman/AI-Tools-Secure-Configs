@@ -35,6 +35,9 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 ```
 
 **Senior/Trusted Developers:**
@@ -46,6 +49,10 @@ allowed_web_search_modes = ["cached", "live"]
 [features]
 browser_use = true
 computer_use = false
+
+# Browser Use may be allowed for this group. Uploads stay blocked for sites with no origin rule.
+[browser_use.default_origin_policy]
+uploads = "deny"
 ```
 
 **Regulated Environments:**
@@ -59,6 +66,9 @@ browser_use = false
 in_app_browser = false
 computer_use = false
 memories = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 ```
 
 ---
@@ -97,6 +107,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 EOF
 
 # Encode for MDM
@@ -150,6 +163,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 "@ | Set-Content -Path $requirementsPath -Encoding UTF8
 
 # Restrict permissions
@@ -189,6 +205,9 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 EOF
 
 sudo chmod 644 /etc/codex/requirements.toml
@@ -203,7 +222,7 @@ sudo chown root:root /etc/codex/requirements.toml
 
 1. Use cloud-managed requirements to enforce `read-only` sandbox and disable all extended features
 2. Set `allowed_web_search_modes = []` to disable web search entirely
-3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`
+3. Pin `browser_use = false`, `in_app_browser = false`, `computer_use = false`, and `browser_use.default_origin_policy.uploads = "deny"`
 4. Add `deny_read` rules for sensitive paths (e.g., `~/.ssh`, credentials directories)
 5. Restrict MCP servers to an empty allowlist or specific approved servers only
 6. Add command rules to forbid dangerous operations
@@ -222,3 +241,104 @@ sudo chown root:root /etc/codex/requirements.toml
 - Require SSO/MFA via ChatGPT Enterprise workspace settings
 - Enable device code authentication only if needed for remote dev environments
 - Use RBAC to separate Codex Admin from Codex User permissions
+
+---
+
+## Fallback-origin browser upload lock
+
+Browser Use is the Codex feature that lets the agent open and operate web pages. `browser_use.default_origin_policy.uploads` is a requirements key in the nested table `[browser_use.default_origin_policy]`. `"deny"` blocks Browser Use uploads on origins that use the fallback, meaning sites with no matching `browser_use.origins` entry. `"allow"` only lets the normal approval and policy checks continue. Omitting the key leaves those uploads unconstrained.
+
+This key is documented for `requirements.toml`. Do not copy it into `config.toml` or `managed_config.toml`. A user value in `config.toml` cannot relax a managed deny. Do not pin org-specific site lists under `browser_use.origins` in this template. A matching origin rule replaces the fallback for that site. Do not set `access = "deny"` in the same change: that blocks Browser Use on every fallback origin, which is a larger workflow break.
+
+### Rollout plan
+
+Pilot one managed group that already receives `requirements.toml`. Exit when every pilot host shows `[browser_use.default_origin_policy]` with `uploads = "deny"` after a Codex restart, and the pilot lead confirms that browsing an approved exception site still works when no file is uploaded. Expanded pilot: the rest of the Moderate cohort. Exit when a week of helpdesk tickets shows no workflow that requires an agent upload to an unmatched site. Org-wide: remaining Moderate and Strict devices. Baseline stays unset.
+
+Pre-rollout checklist:
+
+- MDM (Mobile Device Management, the system that pushes settings to laptops) can write `com.openai.codex` / `requirements_toml_base64` on macOS, or the system requirements file on Windows and Linux.
+- The ChatGPT admin console path is verified if you use cloud-managed requirements.
+- SIEM (Security Information and Event Management, the central log store) already receives the ChatGPT Compliance API export, or you have a file-integrity alert on `requirements.toml`.
+- No API keys or tokens belong in `requirements.toml`. Credential storage stays in the OS keyring.
+- Rollback below is copied into the change ticket before the pilot starts.
+
+What will break: on Moderate and Strict, Browser Use will not upload files to a site that has no origin rule. A developer who previously let the agent attach a local file on one of those sites must upload that file themselves after review, or ask for an origin rule for that one site. Browser Use itself stays off unless that group's requirements set `features.browser_use = true`. Downloads, site access, and Always allow are separate keys and stay unchanged by this pin.
+
+Developer message to send before rollout:
+
+> On [date], Codex on standard and regulated laptops will block Browser Use file uploads to websites that are not on an admin origin list. If a task needs a file on a page, upload that file yourself after you review it, or ask security for a rule for that one site. Browser Use stays off unless security has approved it for your group, and even then agent uploads stay blocked for unmatched sites. Reply if a named workflow cannot continue without an agent upload. We will review a time-boxed exception for that group. Do not edit the managed requirements file locally. That file wins over config.toml.
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.uploads` | unset | `"deny"` | `"deny"` | Baseline leaves uploads on the product default so local browser workflows keep working. Moderate and Strict pin `"deny"` in `requirements.toml`. `features.browser_use = false` turns Browser Use off and still leaves uploads available on unmatched sites if a later exception allows the feature. |
+
+### Deployment steps
+
+Put the key in the shared requirements file. Codex Desktop, the Codex CLI, and the IDE extension read one requirements file. Deploy it once. Do not create a second CLI-only copy. Do not put this key in `config.toml` or `managed_config.toml`.
+
+| OS | Requirements path |
+|----|-------------------|
+| macOS | MDM payload `com.openai.codex` key `requirements_toml_base64`, or `/etc/codex/requirements.toml` |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` |
+| Linux | `/etc/codex/requirements.toml` |
+
+MDM:
+
+- Jamf: a custom settings profile for `com.openai.codex` with `requirements_toml_base64` set to the base64 of the requirements file (no line wraps).
+- Intune: a Win32 app or device script that writes the Windows path above and locks the ACL to SYSTEM and Administrators.
+- Workspace ONE: the same macOS custom settings payload (`com.openai.codex` / `requirements_toml_base64`) and the same Windows file path.
+
+Validation, after restart:
+
+```bash
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep -A1 '\[browser_use.default_origin_policy\]'
+
+# Linux
+grep -A1 '\[browser_use.default_origin_policy\]' /etc/codex/requirements.toml
+```
+
+```powershell
+Select-String -Path "$env:ProgramData\OpenAI\Codex\requirements.toml" -Pattern "default_origin_policy" -Context 0,1
+```
+
+Moderate and Strict must show:
+
+```toml
+[browser_use.default_origin_policy]
+uploads = "deny"
+```
+
+Baseline requirements must omit the key. The key must not appear in `config.toml` or `managed_config.toml`.
+
+Audit: keep shipping the ChatGPT Compliance API export to the SIEM. Alert when `requirements.toml` on a Moderate or Strict host no longer contains `[browser_use.default_origin_policy]` with `uploads = "deny"`. Codex does not publish a separate "fallback upload blocked" event name for this key.
+
+### Workflow-preservation notes
+
+| Blocked operation | Risk | Safe equivalent | Exception handling |
+|-------------------|------|-----------------|--------------------|
+| Browser Use uploads a file to a site with no origin rule | Local source code, secrets, or customer data can leave the laptop for a site the admin never listed | A person uploads the reviewed file, or security adds one origin rule for that site | Time-box a requirements change for a named pilot group. A user edit in `config.toml` cannot relax a managed deny. Do not set `"allow"` on the fallback. |
+
+False-positive friction: people who attached local files through Browser Use on an unmatched site will see the upload fail. That block is expected. Upload the file yourself after review. The key blocks the agent upload. It does not block reading the page.
+
+Overlap:
+
+- Codex CLI does not browse. It still loads the same `requirements.toml`. One file covers the desktop app, the CLI, and the IDE extension. Do not add a second copy under a CLI-only path.
+- Claude Code's Browser pane uses `browserExternalPageTools` and `disableBrowserExternalNavigation`. Copilot's sandbox uses `allowLocalNetwork`. Those keys do not lock Codex uploads. Set the Codex key even when the other tools are already locked.
+- `features.browser_use = false` turns Browser Use off. Keep `uploads = "deny"` as well so an exception that allows Browser Use does not also open uploads on unmatched sites.
+- `browser_use.default_origin_policy.downloads` and `full_cdp_access` are different keys. This pin does not block downloads or Chrome DevTools Protocol access.
+- `browser_use.default_origin_policy.persistent_approval` is a different key. It covers Always allow on unmatched sites. If both are in force, keep both keys in the same `[browser_use.default_origin_policy]` table.
+- `browser_use.default_origin_policy.access = "deny"` blocks Browser Use on every fallback origin, including page access. Do not use it as a substitute for this upload pin.
+- Do not add `browser_use.origins` hostnames to this template. Site lists are org-specific.
+
+### Rollback
+
+1. Remove the `[browser_use.default_origin_policy]` table from the deployed `requirements.toml` when `uploads` is its only key. If the table has other keys, remove only `uploads`.
+2. Push the updated payload: Jamf or Workspace ONE profile, Intune script, or replace `/etc/codex/requirements.toml`.
+3. Ask users to restart Codex.
+
+Rollback message:
+
+> We removed the Codex fallback-origin browser-upload lock. Restart Codex. Browser Use still follows the feature pin, which stays off on standard and regulated laptops. Uploads on unmatched sites follow the product default again only where Browser Use is allowed.

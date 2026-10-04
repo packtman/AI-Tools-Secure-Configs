@@ -107,6 +107,7 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 | Feature | Description |
 |---------|-------------|
 | `browser_use` | Browser Use and Browser Agent |
+| `browser_use.default_origin_policy.uploads` | Requirements lock: Browser Use cannot upload files to sites that use the fallback when set to `"deny"` |
 | `in_app_browser` | In-app browser pane |
 | `computer_use` | Computer Use (macOS only) |
 | `codex_hooks` | Lifecycle hooks |
@@ -140,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `browser_use.default_origin_policy.uploads = "deny"` in `requirements.toml` on Moderate and Strict so a Browser Use exception cannot upload local files to sites with no origin rule
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

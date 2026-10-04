@@ -29,6 +29,9 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 ```
 
 ### Step 2: Deploy via GPO File Distribution
@@ -95,6 +98,9 @@ allowed_web_search_modes = ["cached"]
 [features]
 browser_use = false
 computer_use = false
+
+[browser_use.default_origin_policy]
+uploads = "deny"
 "@
 
 Set-Content -Path $requirementsPath -Value $content -Encoding UTF8
