@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "_comment": "MODERATE enterprise policy. Read-only tools auto-allowed, write/exec tools require approval, dangerous patterns denied. Users may define additional project-level rules. Sandbox enabled with auto-allow. Use for standard enterprise development teams.",
-
   "permissions": {
     "allow": [
       "Read",
@@ -10,7 +9,6 @@
       "LS",
       "Diff"
     ],
-
     "ask": [
       "Write",
       "Edit",
@@ -19,7 +17,6 @@
       "WebFetch",
       "mcp__*"
     ],
-
     "deny": [
       "Bash(curl * | bash)",
       "Bash(curl * | sh)",
@@ -42,7 +39,6 @@
       "Bash(python* -m http.server*)",
       "Bash(node -e *)",
       "Bash(nohup *)",
-
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)",
@@ -63,7 +59,6 @@
       "Read(~/.git-credentials)",
       "Read(//etc/shadow)",
       "Read(//etc/passwd)",
-
       "Write(~/.ssh/**)",
       "Write(~/.aws/**)",
       "Write(~/.config/gcloud/**)",
@@ -80,10 +75,9 @@
       "Write(./**/*.pem)",
       "Write(./**/*.key)"
     ],
-
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true
   },
-
   "allowManagedPermissionRulesOnly": false,
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": false,
@@ -101,20 +95,16 @@
   "channelsEnabled": false,
   "autoMemoryEnabled": false,
   "forceRemoteSettingsRefresh": false,
-
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
-
   "autoUpdatesChannel": "stable",
   "requiredMinimumVersion": "2.1.212",
-
   "availableModels": [
     "sonnet",
     "haiku",
     "opus"
   ],
   "enforceAvailableModels": true,
-
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -136,10 +126,20 @@
       "allowWrite": [
         ".",
         "/tmp"
-      ]
+      ],
+      "disabled": false
+    },
+    "allowAppleEvents": false,
+    "enableWeakerNetworkIsolation": false,
+    "enableWeakerNestedSandbox": false,
+    "network": {
+      "allowLocalBinding": false,
+      "allowAllUnixSockets": false
+    },
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
-
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
@@ -148,6 +148,13 @@
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
     "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0",
-    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
-  }
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1",
+    "CLAUDE_CODE_DISABLE_CRON": "1"
+  },
+  "switchModelsOnFlag": false,
+  "cleanupPeriodDays": 30,
+  "browserExternalPageTools": "disabled",
+  "disableMobileSimulatorTools": true,
+  "wslInheritsWindowsSettings": true,
+  "enableAllProjectMcpServers": false
 }
