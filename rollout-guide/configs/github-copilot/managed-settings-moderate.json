@@ -36,7 +36,16 @@
     "enabled": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
-    "sandboxLspServers": true
+    "sandboxLspServers": true,
+    "failIfUnavailable": true,
+    "userPolicy": {
+      "seatbelt": {
+        "keychainAccess": false
+      },
+      "network": {
+        "allowLocalNetwork": false
+      }
+    }
   },
   "remoteControl": {
     "mode": "requireSSO",

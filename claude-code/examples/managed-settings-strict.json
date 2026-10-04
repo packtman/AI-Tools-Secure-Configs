@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "_comment": "STRICT enterprise lockdown. All write/exec tools are denied at managed level. Users cannot override any permission rules. Bypass mode, auto mode, and remote control are disabled. Use for regulated environments (finance, healthcare, government).",
-
   "permissions": {
     "allow": [
       "Read",
@@ -9,7 +8,6 @@
       "Glob",
       "LS"
     ],
-
     "ask": [
       "Diff",
       "Write",
@@ -18,12 +16,10 @@
       "Bash",
       "WebFetch"
     ],
-
     "deny": [
       "mcp__*",
       "Agent(Explore)",
       "Agent(Plan)",
-
       "Bash(curl *)",
       "Bash(wget *)",
       "Bash(rm *)",
@@ -44,7 +40,6 @@
       "Bash(ruby -e *)",
       "Bash(perl -e *)",
       "Bash(php -r *)",
-
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)",
@@ -72,7 +67,6 @@
       "Read(//etc/passwd)",
       "Read(//etc/sudoers)",
       "Read(//etc/ssl/private/**)",
-
       "Write(~/.ssh/**)",
       "Write(~/.aws/**)",
       "Write(~/.config/gcloud/**)",
@@ -96,10 +90,9 @@
       "Write(./**/*.p12)",
       "Write(./**/*.pfx)"
     ],
-
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true
   },
-
   "allowManagedPermissionRulesOnly": true,
   "disableAutoMode": "disable",
   "allowManagedHooksOnly": true,
@@ -117,21 +110,16 @@
   "awaySummaryEnabled": false,
   "fastMode": false,
   "channelsEnabled": false,
-
   "forceLoginMethod": "claudeai",
   "forceLoginOrgUUID": "REPLACE_WITH_YOUR_ORG_UUID",
-
   "autoUpdatesChannel": "stable",
   "requiredMinimumVersion": "2.1.212",
-
   "availableModels": [
     "sonnet",
     "haiku"
   ],
   "enforceAvailableModels": true,
-
   "autoMemoryEnabled": false,
-
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": false,
@@ -151,13 +139,21 @@
         "//etc/",
         "//var/",
         "//tmp/"
-      ]
+      ],
+      "disabled": false
     },
     "network": {
-      "allowManagedDomainsOnly": true
+      "allowManagedDomainsOnly": true,
+      "allowLocalBinding": false,
+      "allowAllUnixSockets": false
+    },
+    "allowAppleEvents": false,
+    "enableWeakerNetworkIsolation": false,
+    "enableWeakerNestedSandbox": false,
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
-
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
@@ -168,6 +164,13 @@
     "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
     "CLAUDE_CODE_SKIP_PROMPT_HISTORY": "1",
-    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
-  }
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1",
+    "CLAUDE_CODE_DISABLE_CRON": "1"
+  },
+  "switchModelsOnFlag": false,
+  "cleanupPeriodDays": 7,
+  "disableBrowserExternalNavigation": true,
+  "disableMobileSimulatorTools": true,
+  "wslInheritsWindowsSettings": true,
+  "enableAllProjectMcpServers": false
 }

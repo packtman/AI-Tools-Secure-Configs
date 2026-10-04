@@ -1,12 +1,9 @@
 {
   "_comment": "MODERATE GitHub Copilot enterprise managed settings. Deploy as copilot/managed-settings.json in the source organization's .github-private repository, via MDM string keys, or as a device file. Pair with org-policy-moderate.json. Replace YOUR-ORG placeholders before deploy. No secrets belong in this file.",
-
   "permissions": {
     "disableBypassPermissionsMode": "disable"
   },
-
   "enabledPlugins": {},
-
   "extraKnownMarketplaces": {
     "org-plugins": {
       "source": {
@@ -15,20 +12,17 @@
       }
     }
   },
-
   "strictKnownMarketplaces": [
     {
       "source": "github",
       "repo": "YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"
     }
   ],
-
   "allowedMcpServers": [
     {
       "serverUrl": "https://api.githubcopilot.com/*"
     }
   ],
-
   "deniedMcpServers": [
     {
       "serverCommand": [
@@ -39,14 +33,21 @@
       ]
     }
   ],
-
   "sandbox": {
     "enabled": true,
     "allowBypass": false,
     "sandboxMcpServers": true,
-    "sandboxLspServers": true
+    "sandboxLspServers": true,
+    "failIfUnavailable": true,
+    "userPolicy": {
+      "seatbelt": {
+        "keychainAccess": false
+      },
+      "network": {
+        "allowLocalNetwork": false
+      }
+    }
   },
-
   "remoteControl": {
     "mode": "requireSSO",
     "githubDotComOrganizations": [

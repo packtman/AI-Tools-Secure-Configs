@@ -74,7 +74,8 @@
       "Write(./**/*.pem)",
       "Write(./**/*.key)"
     ],
-    "disableBypassPermissionsMode": "disable"
+    "disableBypassPermissionsMode": "disable",
+    "blockReadsOutsideWorkingDirectories": true
   },
   "allowManagedPermissionRulesOnly": false,
   "disableAutoMode": "disable",
@@ -120,7 +121,18 @@
       "allowWrite": [
         ".",
         "/tmp"
-      ]
+      ],
+      "disabled": false
+    },
+    "allowAppleEvents": false,
+    "enableWeakerNetworkIsolation": false,
+    "enableWeakerNestedSandbox": false,
+    "network": {
+      "allowLocalBinding": false,
+      "allowAllUnixSockets": false
+    },
+    "credentials": {
+      "allowPlaintextInject": false
     }
   },
   "env": {
@@ -132,6 +144,13 @@
     "CLAUDE_CODE_DISABLE_FAST_MODE": "1",
     "CLAUDE_CODE_MCP_ALLOWLIST_ENV": "1",
     "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS": "0",
-    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
-  }
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1",
+    "CLAUDE_CODE_DISABLE_CRON": "1"
+  },
+  "switchModelsOnFlag": false,
+  "cleanupPeriodDays": 30,
+  "browserExternalPageTools": "disabled",
+  "disableMobileSimulatorTools": true,
+  "wslInheritsWindowsSettings": true,
+  "enableAllProjectMcpServers": false
 }
