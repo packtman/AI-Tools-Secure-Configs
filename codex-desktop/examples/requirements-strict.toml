@@ -6,6 +6,8 @@
 allowed_approval_policies = ["untrusted", "on-request"]
 allowed_sandbox_modes = ["read-only"]
 allowed_web_search_modes = []
+allow_appshots = false
+allow_remote_control = false
 enforce_residency = "us"
 
 # Disable all extended features
@@ -15,6 +17,25 @@ in_app_browser = false
 computer_use = false
 memories = false
 multi_agent = false
+in_app_local_automation = false
+in_app_dictation = false
+realtime_conversation = false
+in_app_chat = false
+
+[browser_use]
+allow_history_access = false
+allow_global_persistent_approval = false
+disable_auto_review = true
+
+[computer_use]
+allow_persistent_approval = false
+
+[in_app_browser]
+allow_external_browser_settings_import = false
+
+[browser_use.default_origin_policy]
+persistent_approval = false
+uploads = "deny"
 
 # Deny reads to sensitive directories
 [permissions.filesystem]
