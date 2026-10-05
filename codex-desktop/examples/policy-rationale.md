@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.default_origin_policy.downloads` (in requirements.toml)
+
+Browser Use is the Codex feature that lets the agent open a browser and act on websites. The fallback origin policy applies only to sites that do not match an entry under `browser_use.origins`.
+
+**What it does:** Blocks Browser Use from downloading files on those fallback sites when set to the quoted string `"deny"`.
+
+**Why it is set this way:** Moderate and Strict set `downloads = "deny"`. A download from a site the admin never listed can place malware, an unreviewed installer, or sensitive files into the workspace. `"allow"` does not lock anything: it only lets the normal approval checks continue. Omitting the key leaves downloads unconstrained. Baseline leaves the key unset so low-friction teams keep the vendor default.
+
+**What breaks if misconfigured or removed:** Removing the key, or setting `"allow"`, lets Browser Use download from any fallback site. Setting `access = "deny"` in the same table is a different control: it blocks Browser Use entirely on fallback origins, including page access, uploads, downloads, and browser debugging. `features.browser_use = false` turns the feature off and does not replace this key. If an admin later enables Browser Use for one group, the download lock still applies. A user `config.toml` cannot relax a managed deny. A matching origin rule replaces the fallback for that one site. Do not put organization hostnames in this template.
+
+**Safe equivalent:** A person downloads the reviewed file, or an admin adds one origin rule for that site. An exception removes this key, or adds one origin rule, for a named group. Do not set `"allow"`.
+
+**Overlap:** Codex Desktop, the Codex CLI, and the IDE extension read one `requirements.toml`. The CLI does not browse, so do not copy this key into `codex-cli/`. Cursor and Claude Code keep their own browser and shell download rules. This key does not replace those.
+
+| Tier | Value | Reason for the difference |
+|------|-------|---------------------------|
+| Baseline | unset | Keeps the vendor default for startups and individual developers. |
+| Moderate | `"deny"` | Blocks downloads from sites the admin never listed. |
+| Strict | `"deny"` | Same lock. `"deny"` is already the strongest value for this key. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).

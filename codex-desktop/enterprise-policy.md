@@ -61,6 +61,68 @@ computer_use = false
 memories = false
 ```
 
+### Fallback-origin Browser Use downloads
+
+Browser Use lets the agent operate a browser. `browser_use.default_origin_policy` is the fallback for sites with no matching `browser_use.origins` entry. Moderate and Strict requirements pin `downloads = "deny"` in that table, next to the existing `persistent_approval` and `uploads` keys. Baseline leaves `downloads` unset.
+
+This is a requirements key only. Do not copy it into `config.toml` or `managed_config.toml`. The value is the quoted string `"deny"`, not a boolean. Codex Desktop, the CLI, and the IDE extension read the same `requirements.toml`. The CLI does not browse. Do not add a CLI-only copy.
+
+#### Rollout for this key
+
+1. Pilot: 5 to 10 people who are allowed to use Browser Use, for one week. Exit when every blocked download is either accepted or covered by one named-site exception.
+2. Expanded pilot: one department, for one week. Exit when exception requests name a site, and nobody asks to set the fallback to `"allow"`.
+3. Org-wide: remaining Moderate and Strict groups. Exit when a spot check of endpoints shows `downloads = "deny"` under `[browser_use.default_origin_policy]`.
+
+Before rollout, confirm the existing requirements path (cloud-managed config, MDM, or system file), confirm the file contains no secrets, and confirm the rollback below is written down. `features.browser_use = false` is already set on Moderate and Strict, so most developers will not hit this until an admin enables Browser Use.
+
+Developer message to send first:
+
+> Starting on the rollout date, Codex cannot download files through Browser Use from websites your admin has not listed. If a task needs a file from the web, download it yourself after you review it, or ask your admin to add that one site. Uploads to unlisted sites stay blocked as well.
+
+#### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.downloads` | unset | `"deny"` | `"deny"` | Baseline keeps the vendor default. Moderate and Strict block downloads from unlisted sites. `"deny"` is already the strongest value, so Strict does not go further. |
+
+#### Deploy and validate
+
+Use the requirements paths already in this guide:
+
+| OS | Path |
+|----|------|
+| macOS MDM | Preference domain `com.openai.codex`, key `requirements_toml_base64` (Jamf, Intune, or Workspace ONE custom settings) |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` (Intune Win32 or GPO file copy) |
+| Linux | `/etc/codex/requirements.toml` |
+
+Workspace ONE does not have a separate Codex payload. Push the same macOS preference domain, or the same system file, that Jamf and Intune use.
+
+```bash
+# Linux, or any decoded requirements file
+grep -n -A2 '\[browser_use.default_origin_policy\]' /etc/codex/requirements.toml
+# Expected in that table: downloads = "deny"
+
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep downloads
+# Expected: downloads = "deny"
+```
+
+This key prevents the download. It does not emit its own audit event. Keep shipping the ChatGPT Compliance API and existing Codex telemetry to your SIEM (Security Information and Event Management, the central log store). Alert if a Moderate or Strict requirements file is missing `downloads = "deny"`.
+
+#### Rollback
+
+Delete only the `downloads` line from the Moderate or Strict requirements file, then redeploy that file through the same MDM or system path. Leave `uploads` and `persistent_approval` in place.
+
+> We removed the Codex fallback-origin download block. Browser Use can download from unlisted sites again, subject to normal approvals. Uploads to unlisted sites stay blocked. Tell us if a workflow is still failing.
+
+#### Workflow preservation
+
+| Blocked operation | Risk | Safe equivalent | Exception handling |
+|-------------------|------|-----------------|--------------------|
+| Browser Use download on a site with no `browser_use.origins` rule | The agent can save malware, an unreviewed script, or sensitive files into the workspace | A person downloads the file, reviews it, then places it in the workspace. Or an admin adds one origin rule for that site | Remove `downloads` for a named group, or add one origin rule. Do not set `"allow"`. Do not set `access = "deny"` in the same change: that blocks Browser Use on every fallback site |
+
+False-positive friction shows up when Browser Use is enabled and the agent needs a release file or doc from a known site. Handle that with one origin rule, not by clearing the fallback for everyone. Cursor and Claude Code still need their own browser and shell download rules. This Codex key does not cover them.
+
 ---
 
 ## macOS — Managed Preferences (MDM)

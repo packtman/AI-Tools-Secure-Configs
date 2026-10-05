@@ -36,6 +36,10 @@ allow_external_browser_settings_import = false
 [browser_use.default_origin_policy]
 persistent_approval = false
 uploads = "deny"
+# WHAT: Blocks Browser Use downloads on sites that have no matching browser_use.origins rule.
+# WHY (Strict): A download from an unlisted site can drop malware, an unreviewed script, or sensitive files into the workspace. "deny" is already the strongest value for this key.
+# BREAKS: Removing this, or setting "allow", leaves fallback-origin downloads unconstrained. It does not block uploads, page access, or Always allow. Do not also set access = "deny": that blocks Browser Use on every fallback origin.
+downloads = "deny"
 
 # Deny reads to sensitive directories
 [permissions.filesystem]
