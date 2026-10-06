@@ -33,6 +33,10 @@ allow_external_browser_settings_import = false
 [browser_use.default_origin_policy]
 persistent_approval = false
 uploads = "deny"
+# WHAT: Blocks full Chrome DevTools Protocol (CDP) access on sites that have no matching browser_use.origins rule. CDP is the browser debugging interface that can read cookies, storage, and network traffic, and can run script in the page.
+# WHY (Moderate): An unlisted site can be prompt-injected. Full CDP then exposes the signed-in browser beyond normal Browser Use actions. "deny" is the lock. "allow" only continues normal opt-in and approval checks.
+# BREAKS: Removing this, or setting "allow", leaves fallback-origin CDP unrestricted by this key. It does not block uploads, downloads, page access, or Always allow. Do not also set access = "deny": that blocks Browser Use on every fallback origin. This is not features.browser_use_full_cdp_access.
+full_cdp_access = "deny"
 
 # Deny reads to credential files
 [permissions.filesystem]
