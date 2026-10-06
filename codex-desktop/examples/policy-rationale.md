@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.default_origin_policy.full_cdp_access` (in requirements.toml)
+
+Browser Use is the Codex feature that lets the agent open a browser and act on websites. Chrome DevTools Protocol (CDP) is the browser debugging interface: it can read cookies, storage, and network traffic, and it can run script in the page. The fallback origin policy applies only to sites that do not match an entry under `browser_use.origins`.
+
+**What it does:** Blocks full CDP access on those fallback sites when set to the quoted string `"deny"`.
+
+**Why it is set this way:** Moderate and Strict set `full_cdp_access = "deny"`. A prompt-injected page on a site the admin never listed can use full CDP to read session cookies or drive the signed-in browser beyond normal Browser Use actions. `"allow"` does not lock anything: it only lets the normal opt-in and approval checks continue. The vendor documents `"deny"` as the block and does not document a deny default when the key is omitted. Baseline leaves the key unset so low-friction teams keep the vendor default.
+
+**What breaks if misconfigured or removed:** Removing the key, or setting `"allow"`, leaves fallback-origin CDP unrestricted by this key. Setting `access = "deny"` in the same table is a different control: it blocks Browser Use entirely on fallback origins, including page access, uploads, downloads, and browser debugging. `features.browser_use = false` turns Browser Use off and does not replace this key. `features.browser_use_full_cdp_access = false` is also a different control: it turns full CDP off for the whole local runtime, including Browser Developer mode. If an admin later enables Browser Use, or later enables the feature flag, this origin lock still applies to unlisted sites. A user `config.toml` cannot relax a managed deny. A matching origin rule replaces the fallback for that one site. Do not put organization hostnames in this template.
+
+**Safe equivalent:** A person uses the browser's own developer tools. Or an admin adds one origin rule that sets `full_cdp_access = "allow"` for that one site, which still goes through normal opt-in and approval. An exception removes this key, or adds one origin rule, for a named group. Do not set the fallback to `"allow"`.
+
+**Overlap:** Codex Desktop, the Codex CLI, and the IDE extension read one `requirements.toml`. The CLI does not browse, so do not copy this key into `codex-cli/`. Cursor and Claude Code keep their own browser controls. This key does not replace those, and it does not replace `features.browser_use_full_cdp_access`.
+
+| Tier | Value | Reason for the difference |
+|------|-------|---------------------------|
+| Baseline | unset | Keeps the vendor default for startups and individual developers. |
+| Moderate | `"deny"` | Blocks full CDP on sites the admin never listed. |
+| Strict | `"deny"` | Same lock. `"deny"` is already the strongest value for this key. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
