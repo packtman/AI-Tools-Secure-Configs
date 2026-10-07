@@ -26,6 +26,10 @@ disable_auto_review = true
 
 [computer_use]
 allow_persistent_approval = false
+# WHAT: Blocks Computer Use from opening native apps that do not match a platform rule (a macOS bundle ID, a Windows packaged-app ID, or a signed Windows exe rule).
+# WHY (Moderate): The product default is "allow", which only continues normal approval checks. An unlisted app (mail, chat, a password manager) can then be driven after a prompt. "deny" is the lock.
+# BREAKS: Removing this, or setting "allow", restores the product default for unlisted apps. It does not turn Computer Use off (features.computer_use does that) and it does not clear saved app approvals (allow_persistent_approval does that). Do not add org-specific app IDs in this file.
+default_app_access = "deny"
 
 [in_app_browser]
 allow_external_browser_settings_import = false

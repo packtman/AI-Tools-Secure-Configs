@@ -61,6 +61,68 @@ computer_use = false
 memories = false
 ```
 
+### Fallback Computer Use app access
+
+Computer Use lets the agent see the screen and click or type in native desktop apps. `computer_use.default_app_access` is the fallback for apps that do not match a platform rule (a macOS bundle identifier, a Windows packaged-app ID, or a signed Windows executable rule). Moderate and Strict requirements pin `default_app_access = "deny"` in the existing `[computer_use]` table, next to `allow_persistent_approval`. Baseline leaves `default_app_access` unset. The vendor product default is `"allow"`.
+
+This is a requirements key only. Keep it out of `config.toml` and `managed_config.toml`. The value is the quoted string `"deny"`, not a boolean and not `features.computer_use`. That feature flag turns Computer Use off entirely. This key blocks only apps that have no matching platform rule. Codex Desktop, the CLI, and the IDE extension read the same `requirements.toml`. Computer Use is a desktop feature. Keep this key out of a CLI-only file. Do not add organization bundle IDs, packaged-app IDs, or executable publisher rules to the template.
+
+#### Rollout for this key
+
+1. Pilot: 5 to 10 people who are allowed to use Computer Use, for one week. Exit when every blocked app is either accepted or covered by one named-app exception.
+2. Expanded pilot: one department, for one week. Exit when exception requests name one app, and nobody asks to set the fallback to `"allow"`.
+3. Org-wide: remaining Moderate and Strict groups. Exit when a spot check of endpoints shows `default_app_access = "deny"` under `[computer_use]`.
+
+Before rollout, confirm the existing requirements path (cloud-managed config, MDM, or system file), confirm the file contains no secrets, and confirm the rollback below is written down. MDM is Mobile Device Management, the software that pushes managed settings to endpoints. `features.computer_use = false` is already set on Moderate and Strict, so most developers will not hit this until an admin enables Computer Use.
+
+Developer message to send first:
+
+> Starting on the rollout date, Codex Computer Use cannot open native apps your admin has not listed (mail, chat, a password manager, and other desktop apps). If a task needs one app, use that app yourself, or ask your admin to add that one app. This setting does not turn Computer Use off.
+
+#### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `computer_use.default_app_access` | unset | `"deny"` | `"deny"` | Baseline keeps the product default (`"allow"`). Moderate and Strict block native apps that are not listed. `"deny"` is already the strongest value, so Strict does not go further. |
+
+#### Deploy and validate
+
+Use the requirements paths already in this guide:
+
+| OS | Path |
+|----|------|
+| macOS MDM | Preference domain `com.openai.codex`, key `requirements_toml_base64` (Jamf, Intune, or Workspace ONE custom settings) |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` (Intune Win32 or GPO file copy) |
+| Linux | `/etc/codex/requirements.toml` |
+
+Workspace ONE does not have a separate Codex payload. Push the same macOS preference domain, or the same system file, that Jamf and Intune use.
+
+```bash
+# Linux, or any decoded requirements file
+grep -n -A6 '[computer_use]' /etc/codex/requirements.toml
+# Expected in that table: default_app_access = "deny"
+
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep default_app_access
+# Expected: default_app_access = "deny"
+```
+
+This key prevents Computer Use from opening unlisted native apps. It does not emit its own audit event. Keep shipping the ChatGPT Compliance API and existing Codex telemetry to your SIEM (Security Information and Event Management, the central log store). Alert if a Moderate or Strict requirements file is missing `default_app_access = "deny"`.
+
+#### Rollback
+
+Delete only the `default_app_access` line from the Moderate or Strict requirements file, then redeploy that file through the same MDM or system path. Leave `allow_persistent_approval` in place.
+
+> We removed the Codex fallback block on unlisted native apps. Computer Use can request those apps again, subject to normal approval. Saved app approvals stay off. Tell us if a workflow is still failing.
+
+#### Workflow preservation
+
+| Blocked operation | Risk | Safe equivalent | Exception handling |
+|-------------------|------|-----------------|--------------------|
+| Computer Use opening a native app with no platform rule | The agent can click and type in mail, chat, a password manager, or another app the admin never listed | A person uses the app themselves. Or an admin adds one platform rule that allows that one app, which still requires normal approval | Remove `default_app_access` for a named group, or add one app rule. Do not set the fallback to `"allow"`. Do not put a list of every corporate app in the shared template |
+
+False-positive friction shows up when Computer Use is enabled and a developer needs the agent to drive one known app. Handle that with one app rule, not by clearing the fallback for everyone. Cursor and Claude Code still need their own desktop and shell controls. This Codex key does not cover them. It also does not replace `features.computer_use`, which turns Computer Use off, or `allow_locked_computer_use`, which stops Computer Use after a managed Mac locks.
+
 ---
 
 ## macOS — Managed Preferences (MDM)
