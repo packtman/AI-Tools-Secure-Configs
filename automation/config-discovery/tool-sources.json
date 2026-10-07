@@ -262,7 +262,8 @@
             "sandbox",
             "approval",
             "model",
-            "profiles"
+            "profiles",
+            "computer_use.default_app_access"
           ]
         }
       ]

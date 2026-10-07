@@ -74,6 +74,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `computer_use.default_app_access` (in requirements.toml)
+
+Computer Use is the Codex feature that lets the agent see the screen and click or type in native desktop apps. The fallback applies only to apps that do not match a platform rule: a macOS bundle identifier, a Windows packaged-app ID (an Application User Model ID), or a signed Windows executable rule.
+
+**What it does:** Blocks those unmatched native apps when set to the quoted string `"deny"`.
+
+**Why it is set this way:** Moderate and Strict set `default_app_access = "deny"`. The vendor product default is `"allow"`. `"allow"` does not lock anything: it only lets the normal approval and policy checks continue. A prompt-injected task can then open mail, chat, or a password manager after that prompt. Baseline leaves the key unset so low-friction teams keep the product default.
+
+**What breaks if misconfigured or removed:** Removing the key, or setting `"allow"`, restores the product default for unlisted apps. `features.computer_use = false` turns Computer Use off and does not replace this key. `allow_persistent_approval = false` only stops saved app approvals. `allow_locked_computer_use` is a different control: it stops Computer Use after a managed Mac locks. If an admin later enables Computer Use, this fallback still blocks unlisted apps. A user `config.toml` cannot relax a managed deny. A matching app rule replaces the fallback for that one app. Do not put organization app IDs in this template.
+
+**Safe equivalent:** A person uses the app themselves. Or an admin adds one platform rule that sets that one app to `"allow"`, which still goes through normal approval. An exception removes this key, or adds one app rule, for a named group. Do not set the fallback to `"allow"`.
+
+**Overlap:** Codex Desktop, the Codex CLI, and the IDE extension read one `requirements.toml`. Computer Use is a desktop feature, so do not copy this key into a CLI-only file. Cursor and Claude Code keep their own desktop and shell controls. This key does not replace those, and it does not replace `features.computer_use`.
+
+| Tier | Value | Reason for the difference |
+|------|-------|---------------------------|
+| Baseline | unset | Keeps the product default (`"allow"`) for startups and individual developers. |
+| Moderate | `"deny"` | Blocks native apps the admin never listed. |
+| Strict | `"deny"` | Same lock. `"deny"` is already the strongest value for this key. |
+
+---
+
 ## `memories`
 
 **What it does:** Enables Memories, allowing Codex to carry context from past sessions into future work.
