@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.default_origin_policy.auto_review` (in requirements.toml)
+
+Browser Use is the Codex feature that lets the agent browse and act on websites. Automatic review is the mode that can approve those actions without a person. The fallback applies only to sites that do not match an origin rule (an exact host, or a pattern such as `https://**.example.com`).
+
+**What it does:** Skips automatic review on those unmatched sites when set to the quoted string `"deny"`, and asks the user instead.
+
+**Why it is set this way:** Moderate and Strict set `auto_review = "deny"` in `[browser_use.default_origin_policy]`. `browser_use.disable_auto_review = true` already skips automatic review for every site. Setting that flag to `false`, or removing it, leaves automatic review available when other settings allow it. The origin fallback is the lock that remains if an admin later allows automatic review for one listed site. `"allow"` does not lock anything. Baseline leaves the key unset so low-friction teams keep the product behavior. Vendor: developers.openai.com/codex/config-reference, fetched 2026-10-08.
+
+**What breaks if misconfigured or removed:** Removing the key, or setting `"allow"`, lets automatic review continue on unmatched sites whenever other settings allow it. `features.browser_use = false` turns Browser Use off and does not replace this key. `uploads = "deny"` only blocks file uploads. `access = "deny"` blocks the whole site, including browsing, and is a different control. A user `config.toml` cannot relax a managed deny. A matching origin rule replaces the fallback for that one site. Do not put organization site lists in this template.
+
+**Safe equivalent:** A person approves the browser action. Or an admin adds one origin rule that sets `auto_review = "allow"` for that one site, and sets `disable_auto_review = false` for that group. An exception removes this key, or adds one origin rule, for a named group. Do not set the fallback to `"allow"`.
+
+**Overlap:** Codex Desktop, the Codex CLI, and the IDE extension read one `requirements.toml`. Browser Use is a desktop feature, so do not copy this key into a CLI-only file or into `config.toml`. Cursor and Claude Code keep their own browser and shell controls. This key does not replace those, and it does not replace `features.browser_use` or `disable_auto_review`.
+
+| Tier | Value | Reason for the difference |
+|------|-------|---------------------------|
+| Baseline | unset | Keeps automatic review available on unmatched sites when other settings allow it. |
+| Moderate | `"deny"` | Asks a person on sites the admin never listed, even if automatic review is later enabled. |
+| Strict | `"deny"` | Same lock. `"deny"` is already the strongest value for this key. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
