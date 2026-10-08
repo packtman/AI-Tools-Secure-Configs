@@ -61,6 +61,68 @@ computer_use = false
 memories = false
 ```
 
+### Fallback Browser Use automatic review
+
+Browser Use lets the agent browse websites and take actions on them. Automatic review can approve those actions without a person. `browser_use.default_origin_policy.auto_review` is the fallback for sites that do not match an origin rule. Moderate and Strict requirements pin `auto_review = "deny"` in the existing `[browser_use.default_origin_policy]` table, next to `persistent_approval` and `uploads`. Baseline leaves `auto_review` unset.
+
+This is a requirements key only. Keep it out of `config.toml` and `managed_config.toml`. The value is the quoted string `"deny"`, not a boolean and not `features.browser_use`. That feature flag turns Browser Use off entirely. `disable_auto_review = true` already skips automatic review for every site. This key still asks a person on unlisted sites if an exception later sets `disable_auto_review = false`. Codex Desktop, the CLI, and the IDE extension read the same `requirements.toml`. Browser Use is a desktop feature. Keep this key out of a CLI-only file. Do not add organization site rules to the template. Do not set `access = "deny"` in this table: that blocks the whole site, not only automatic review.
+
+#### Rollout for this key
+
+1. Pilot: 5 to 10 people who are allowed to use Browser Use, for one week. Exit when every blocked site is either accepted or covered by one named-site exception.
+2. Expanded pilot: one department, for one week. Exit when exception requests name one site, and nobody asks to set the fallback to `"allow"`.
+3. Org-wide: remaining Moderate and Strict groups. Exit when a spot check of endpoints shows `auto_review = "deny"` under `[browser_use.default_origin_policy]`.
+
+Before rollout, confirm the existing requirements path (cloud-managed config, MDM, or system file), confirm the file contains no secrets, and confirm the rollback below is written down. MDM is Mobile Device Management, the software that pushes managed settings to endpoints. `features.browser_use = false` and `disable_auto_review = true` are already set on Moderate and Strict, so most developers will not hit this until an admin enables Browser Use and turns automatic review back on.
+
+Developer message to send first:
+
+> Starting on the rollout date, Codex Browser Use cannot automatically approve websites your admin has not listed. Those sites ask a person instead. If a task needs automatic review on one site, ask your admin to add that one site. This setting does not turn Browser Use off, and it does not change the current rule that automatic review is off for every site.
+
+#### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.auto_review` | unset | `"deny"` | `"deny"` | Baseline keeps automatic review available on unmatched sites when other settings allow it. Moderate and Strict ask a person on sites that are not listed. `"deny"` is already the strongest value, so Strict does not go further. |
+
+#### Deploy and validate
+
+Use the requirements paths already in this guide:
+
+| OS | Path |
+|----|------|
+| macOS MDM | Preference domain `com.openai.codex`, key `requirements_toml_base64` (Jamf, Intune, or Workspace ONE custom settings) |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` (Intune Win32 or GPO file copy) |
+| Linux | `/etc/codex/requirements.toml` |
+
+Workspace ONE does not have a separate Codex payload. Push the same macOS preference domain, or the same system file, that Jamf and Intune use.
+
+```bash
+# Linux, or any decoded requirements file
+grep -n -A8 '\[browser_use.default_origin_policy\]' /etc/codex/requirements.toml
+# Expected in that table: auto_review = "deny"
+
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep auto_review
+# Expected: auto_review = "deny"
+```
+
+This key makes Browser Use ask a person on unlisted sites. It does not emit its own audit event. Keep shipping the ChatGPT Compliance API and existing Codex telemetry to your SIEM (Security Information and Event Management, the central log store). Alert if a Moderate or Strict requirements file is missing `auto_review = "deny"` under `[browser_use.default_origin_policy]`.
+
+#### Rollback
+
+Delete only the `auto_review` line from the Moderate or Strict requirements file, then redeploy that file through the same MDM or system path. Leave `persistent_approval`, `uploads`, and `disable_auto_review` in place.
+
+> We removed the Codex fallback block on automatic review for unlisted sites. If automatic review is enabled, those sites can use it again. Uploads and saved site approvals stay blocked. Tell us if a workflow is still failing.
+
+#### Workflow preservation
+
+| Blocked operation | Risk | Safe equivalent | Exception handling |
+|-------------------|------|-----------------|--------------------|
+| Browser Use automatic review on a site with no origin rule | The agent can approve actions on a site the admin never listed, once automatic review is allowed again | A person approves the action. Or an admin adds one origin rule that allows automatic review for that one site | Remove `auto_review` for a named group, or add one origin rule. Do not set the fallback to `"allow"`. Do not put a list of every corporate site in the shared template |
+
+False-positive friction shows up only after Browser Use is enabled and `disable_auto_review` is set back to `false`. Handle that with one origin rule, not by clearing the fallback for everyone. Cursor and Claude Code still need their own browser and shell controls. This Codex key does not cover them. It also does not replace `features.browser_use`, which turns Browser Use off, or `disable_auto_review`, which skips automatic review on every site.
+
 ---
 
 ## macOS — Managed Preferences (MDM)

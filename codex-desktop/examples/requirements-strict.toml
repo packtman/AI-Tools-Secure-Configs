@@ -36,6 +36,10 @@ allow_external_browser_settings_import = false
 [browser_use.default_origin_policy]
 persistent_approval = false
 uploads = "deny"
+# WHAT: Skips automatic review on browser origins that do not match an origin rule, and asks the user instead.
+# WHY (Strict): disable_auto_review already skips automatic review for every site. If an exception later sets disable_auto_review = false, unmatched sites would otherwise keep automatic review. "deny" is already the strongest value for this key.
+# BREAKS: Removing this, or setting "allow", lets automatic review continue on unmatched sites whenever other settings allow it. It does not turn Browser Use off (features.browser_use does that) and it does not block uploads (uploads does that). Do not set access = "deny" here, and do not add org-specific site rules in this file.
+auto_review = "deny"
 
 # Deny reads to sensitive directories
 [permissions.filesystem]

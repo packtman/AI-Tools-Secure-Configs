@@ -140,6 +140,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] On Moderate and Strict, set `browser_use.default_origin_policy.auto_review = "deny"` so Browser Use cannot automatically approve unlisted sites
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults
