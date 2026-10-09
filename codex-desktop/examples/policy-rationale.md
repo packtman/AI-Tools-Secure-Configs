@@ -60,6 +60,28 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use.default_origin_policy.access_approval_lifetime` (in requirements.toml)
+
+Browser Use is the Codex feature that lets the agent browse and act on websites. A site-access approval is the prompt a person accepts so the agent may use one site. The fallback applies only to sites that do not match an origin rule (an exact host, or a pattern such as `https://**.example.com`).
+
+**What it does:** Limits that non-persistent approval to the current turn when set to the quoted string `"turn"`. The product default, `"thread"`, keeps the same approval for the rest of the current thread.
+
+**Why it is set this way:** Moderate and Strict set `access_approval_lifetime = "turn"` in `[browser_use.default_origin_policy]`. `persistent_approval = false` already blocks `Always allow`, which would save the approval across sessions. It does not shorten the approval that remains inside one thread. A long thread can reuse a site the person approved for one action, including later turns they did not intend. `"thread"` is the looser value and matches the product default. Baseline leaves the key unset so low-friction teams keep that default. Vendor: developers.openai.com/codex/config-reference, fetched 2026-10-09.
+
+**What breaks if misconfigured or removed:** Removing the key, or setting `"thread"`, keeps a site approval for the whole thread. `features.browser_use = false` turns Browser Use off and does not replace this key. `uploads = "deny"` only blocks file uploads. `access = "deny"` blocks the whole site, including browsing, and is a different control. A user `config.toml` cannot relax a managed `"turn"`: when both sources apply, Codex keeps the stricter value, and `"turn"` is stricter than `"thread"`. A matching origin rule replaces the fallback for that one site. Do not put organization site lists in this template.
+
+**Safe equivalent:** A person approves the site again on the next turn. Or an admin adds one origin rule that sets `access_approval_lifetime = "thread"` for that one site. An exception removes this key, or adds one origin rule, for a named group. Do not set the fallback to `"thread"`. Do not set `access = "deny"`.
+
+**Overlap:** Codex Desktop, the Codex CLI, and the IDE extension read one `requirements.toml`. Browser Use is a desktop feature, so do not copy this key into a CLI-only file or into `config.toml`. Cursor and Claude Code keep their own browser and shell controls. This key does not replace those, and it does not replace `features.browser_use` or `persistent_approval`.
+
+| Tier | Value | Reason for the difference |
+|------|-------|---------------------------|
+| Baseline | unset | Keeps the product default, `"thread"`, so one site approval lasts for the rest of the thread. |
+| Moderate | `"turn"` | Asks again on the next turn for sites the admin never listed. |
+| Strict | `"turn"` | Same lock. `"turn"` is already the shorter of the two documented values. |
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).

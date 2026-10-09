@@ -61,6 +61,68 @@ computer_use = false
 memories = false
 ```
 
+### Fallback Browser Use site-approval lifetime
+
+Browser Use lets the agent browse websites and take actions on them. A site-access approval is the prompt a person accepts so the agent may use one site. `browser_use.default_origin_policy.access_approval_lifetime` is the fallback for sites that do not match an origin rule. Moderate and Strict requirements pin `access_approval_lifetime = "turn"` in the existing `[browser_use.default_origin_policy]` table, next to `persistent_approval` and `uploads`. Baseline leaves `access_approval_lifetime` unset.
+
+This is a requirements key only. Keep it out of `config.toml` and `managed_config.toml`. The value is the quoted string `"turn"`, not a boolean and not `features.browser_use`. That feature flag turns Browser Use off entirely. `persistent_approval = false` already blocks `Always allow` across sessions. This key shortens the approval that remains inside one thread. The product default is `"thread"`, which keeps the approval until the thread ends. Codex Desktop, the CLI, and the IDE extension read the same `requirements.toml`. Browser Use is a desktop feature. Keep this key out of a CLI-only file. Do not add organization site rules to the template. Do not set `access = "deny"` in this table: that blocks the whole site, not only how long an approval lasts.
+
+#### Rollout for this key
+
+1. Pilot: 5 to 10 people who are allowed to use Browser Use, for one week. Exit when every extra approval prompt is either accepted or covered by one named-site exception.
+2. Expanded pilot: one department, for one week. Exit when exception requests name one site, and nobody asks to set the fallback to `"thread"`.
+3. Org-wide: remaining Moderate and Strict groups. Exit when a spot check of endpoints shows `access_approval_lifetime = "turn"` under `[browser_use.default_origin_policy]`.
+
+Before rollout, confirm the existing requirements path (cloud-managed config, MDM, or system file), confirm the file contains no secrets, and confirm the rollback below is written down. MDM is Mobile Device Management, the software that pushes managed settings to endpoints. `features.browser_use = false` is already set on Moderate and Strict, so most developers will not hit this until an admin enables Browser Use.
+
+Developer message to send first:
+
+> Starting on the rollout date, a Codex Browser Use approval for a website your admin has not listed lasts only for the current turn. The next turn asks again. If a task needs the approval to last for the rest of the thread on one site, ask your admin to add that one site. This setting does not turn Browser Use off, and it does not change the current rule that Always allow stays off.
+
+#### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `browser_use.default_origin_policy.access_approval_lifetime` | unset (product default `"thread"`) | `"turn"` | `"turn"` | Baseline keeps one site approval for the rest of the thread. Moderate and Strict ask again on the next turn for sites that are not listed. `"turn"` is already the shorter value, so Strict does not go further. |
+
+#### Deploy and validate
+
+Use the requirements paths already in this guide:
+
+| OS | Path |
+|----|------|
+| macOS MDM | Preference domain `com.openai.codex`, key `requirements_toml_base64` (Jamf, Intune, or Workspace ONE custom settings) |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` (Intune Win32 or GPO file copy) |
+| Linux | `/etc/codex/requirements.toml` |
+
+Workspace ONE does not have a separate Codex payload. Push the same macOS preference domain, or the same system file, that Jamf and Intune use.
+
+```bash
+# Linux, or any decoded requirements file
+grep -n -A8 '\[browser_use.default_origin_policy\]' /etc/codex/requirements.toml
+# Expected in that table: access_approval_lifetime = "turn"
+
+# macOS MDM
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep access_approval_lifetime
+# Expected: access_approval_lifetime = "turn"
+```
+
+This key shortens how long a site approval lasts. It does not emit its own audit event. Keep shipping the ChatGPT Compliance API and existing Codex telemetry to your SIEM (Security Information and Event Management, the central log store). Alert if a Moderate or Strict requirements file is missing `access_approval_lifetime = "turn"` under `[browser_use.default_origin_policy]`.
+
+#### Rollback
+
+Delete only the `access_approval_lifetime` line from the Moderate or Strict requirements file, then redeploy that file through the same MDM or system path. Leave `persistent_approval` and `uploads` in place.
+
+> We removed the Codex limit that kept unlisted-site approvals to one turn. Those approvals can last for the rest of the thread again. Saved Always allow approvals and uploads stay blocked. Tell us if a workflow is still failing.
+
+#### Workflow preservation
+
+| Blocked operation | Risk | Safe equivalent | Exception handling |
+|-------------------|------|-----------------|--------------------|
+| Reusing a Browser Use site approval on a later turn when the site has no origin rule | The agent can keep using a site the person approved for one action, for the rest of a long thread | A person approves the site again on the next turn. Or an admin adds one origin rule that sets `access_approval_lifetime = "thread"` for that one site | Remove `access_approval_lifetime` for a named group, or add one origin rule. Do not set the fallback to `"thread"`. Do not put a list of every corporate site in the shared template |
+
+False-positive friction shows up only after Browser Use is enabled. A person may think Codex forgot a site they already approved. Handle that with one origin rule, not by clearing the fallback for everyone. Cursor and Claude Code still need their own browser and shell controls. This Codex key does not cover them. It also does not replace `features.browser_use`, which turns Browser Use off, or `persistent_approval`, which blocks Always allow.
+
 ---
 
 ## macOS — Managed Preferences (MDM)
