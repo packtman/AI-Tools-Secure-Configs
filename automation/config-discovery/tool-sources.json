@@ -262,7 +262,8 @@
             "sandbox",
             "approval",
             "model",
-            "profiles"
+            "profiles",
+            "browser_use.default_origin_policy.access_approval_lifetime"
           ]
         }
       ]

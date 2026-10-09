@@ -33,6 +33,10 @@ allow_external_browser_settings_import = false
 [browser_use.default_origin_policy]
 persistent_approval = false
 uploads = "deny"
+# WHAT: Limits a non-persistent Browser Use site approval to the current turn on origins that do not match an origin rule.
+# WHY (Moderate): persistent_approval = false already blocks Always allow. The product default is "thread", so one approval would otherwise last for the rest of the conversation. "turn" asks again on the next turn.
+# BREAKS: Removing this, or setting "thread", keeps a site approval for the whole thread. It does not turn Browser Use off (features.browser_use does that), it does not block Always allow (persistent_approval does that), and it does not block uploads (uploads does that). Do not set access = "deny" here, and do not add org-specific site rules in this file.
+access_approval_lifetime = "turn"
 
 # Deny reads to credential files
 [permissions.filesystem]
