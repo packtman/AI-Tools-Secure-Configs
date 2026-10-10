@@ -12,6 +12,10 @@ web_search      = "cached"
 model           = "o4-mini"
 
 model_reasoning_effort = "high"
+# Default only. A user or project config.toml can still select file or auto.
+# Moderate and Strict requirements.toml pin keyring so that override is rejected.
+# The ChatGPT cloud requirements console ignores the pin. Deploy requirements.toml
+# as the system file or the macOS MDM payload.
 cli_auth_credentials_store = "keyring"
 
 [sandbox_workspace_write]

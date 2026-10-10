@@ -8,6 +8,11 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
+# cli_auth_credentials_store is intentionally unset on Baseline.
+# WHAT: Does not force a login-token store.
+# WHY: Baseline includes CI and headless hosts that have no OS credential store. Moderate and Strict pin "keyring".
+# BREAKS: A user or project config can still select "file" and write tokens to CODEX_HOME/auth.json. Move the host to Moderate to lock keyring.
+
 # Only pin the most dangerous feature
 [features]
 computer_use = false

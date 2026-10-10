@@ -8,7 +8,10 @@ sandbox_mode = "workspace-write"
 # Require approval for all operations.
 approval_policy = "on-request"
 
-# Enforce keyring-based credential storage.
+# Default only. This file is /etc/codex/config.toml, and user or project config can override it.
+# The non-overridable pin is cli_auth_credentials_store = "keyring" in requirements.toml
+# (Moderate and Strict). Deploy that file on the system, or via macOS MDM.
+# The ChatGPT cloud requirements console ignores this key.
 cli_auth_credentials_store = "keyring"
 
 # Default model.

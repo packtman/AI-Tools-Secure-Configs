@@ -57,6 +57,6 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 1. Deploy `/etc/codex/config.toml` on all developer machines for organization-wide defaults.
 2. Set `sandbox_mode = "workspace-write"` as the maximum allowed mode.
 3. Set `approval_policy = "on-request"` for strict environments.
-4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
+4. For Moderate and Strict, pin `cli_auth_credentials_store = "keyring"` in the shared `requirements.toml` (system file or macOS MDM). A value in `config.toml` is only a default. The ChatGPT cloud requirements console ignores this key. Baseline leaves it unset.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.

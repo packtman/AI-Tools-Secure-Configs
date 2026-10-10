@@ -9,6 +9,11 @@ allowed_web_search_modes = ["cached"]
 allow_appshots = false
 allow_remote_control = false
 
+# WHAT: Require the OS credential store (macOS Keychain, Windows Credential Manager, or Linux Secret Service) for Codex login tokens.
+# WHY: Moderate rejects file, auto, and ephemeral. file writes tokens to CODEX_HOME/auth.json. auto falls back to that file when no keyring is present. A user or project config.toml can select those values unless requirements.toml pins keyring.
+# BREAKS: A host with no OS credential store cannot save a ChatGPT login. Use an API key from the environment, or remove this pin for that host. The ChatGPT cloud requirements console ignores this key, so deploy the system requirements file or the macOS MDM payload. Shell, sandbox, and MCP keep working.
+cli_auth_credentials_store = "keyring"
+
 # Disable high-risk features but allow core development
 [features]
 browser_use = false

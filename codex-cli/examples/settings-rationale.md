@@ -139,6 +139,8 @@ Controls where Codex CLI stores authentication credentials (API keys, OAuth toke
 
 For CI/CD environments, skip credential storage entirely and inject credentials via the `OPENAI_API_KEY` environment variable.
 
+Moderate and Strict admin requirements pin `cli_auth_credentials_store = "keyring"` in the shared `requirements.toml` (`codex-desktop/examples/requirements-moderate.toml` and `requirements-strict.toml`). Codex CLI and Codex Desktop read that same system file. The pin rejects `file`, `auto`, and `ephemeral`. The ChatGPT cloud requirements console ignores this key, so deploy the system file or the macOS MDM payload. Baseline requirements leave the key unset.
+
 ### Recommended Values
 
 | Environment | Storage | Rationale |

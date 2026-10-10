@@ -25,6 +25,8 @@ Create `requirements.toml`:
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+# Exact pin. Cloud-managed requirements ignore this key. This ProgramData file applies it.
+cli_auth_credentials_store = "keyring"
 
 [features]
 browser_use = false
@@ -91,6 +93,8 @@ $content = @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+# Exact pin. Cloud-managed requirements ignore this key. This ProgramData file applies it.
+cli_auth_credentials_store = "keyring"
 
 [features]
 browser_use = false

@@ -102,13 +102,23 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ## `cli_auth_credentials_store`
 
-**What it does:** Controls where Codex stores authentication credentials locally.
+**What it does:** Chooses where Codex stores cached login tokens before authentication loads. `file` writes `CODEX_HOME/auth.json` (plaintext). `keyring` requires the OS credential store (macOS Keychain, Windows Credential Manager, or Linux Secret Service). `auto` uses the keyring and falls back to the plaintext file when no keyring is present. `ephemeral` keeps tokens in memory for the current process.
 
-**Why it matters:** The `file` option stores credentials in plaintext at `~/.codex/auth.json`. Anyone with read access to the user's home directory can steal the token.
+**Why it matters:** A value in `config.toml` or `managed_config.toml` is only a default. A user or a trusted project config can still select `file`. Moderate and Strict pin `keyring` in `requirements.toml` so that override is rejected. The vendor docs (developers.openai.com/codex/config-reference, fetched 2026-10-10) say cloud-managed requirements ignore this key. Deploy it in the system requirements file or the macOS MDM payload (`requirements_toml_base64`). Codex CLI, Codex Desktop, and the IDE extension read that same requirements file. This pin does not protect tokens stored by Claude Code, Cursor, or Copilot.
 
-| Environment | Recommended | Reasoning |
-|-------------|-------------|-----------|
-| All environments | `keyring` | Uses OS credential store (macOS Keychain, Windows Credential Manager, Linux Secret Service). Encrypted at rest. |
+**What breaks:** A machine with no OS credential store cannot save a ChatGPT login. Shell, sandbox, and MCP are unchanged. CI should pass `OPENAI_API_KEY` from the secrets manager and should not persist a login. An exception removes this key for a named host group. Do not switch the org pin to `auto`: that value writes `auth.json` when the keyring is missing.
+
+| Tier | requirements.toml | Reason |
+|------|-------------------|--------|
+| Baseline | unset | CI and headless hosts may have no OS credential store. A user config can still select `file`. |
+| Moderate | `"keyring"` | Stops plaintext `auth.json` on enterprise workstations. |
+| Strict | `"keyring"` | Same lock as Moderate. Residency and sandbox rules are separate. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `cli_auth_credentials_store` | unset | `"keyring"` | `"keyring"` | Moderate and Strict reject `file`, `auto`, and `ephemeral`. Baseline leaves the choice for hosts with no OS credential store. The vendor does not name a product default for an omitted key. |
 
 ---
 

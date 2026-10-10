@@ -197,6 +197,66 @@ sudo chown root:root /etc/codex/requirements.toml
 
 ---
 
+## Credential store lock (`cli_auth_credentials_store`)
+
+Codex can cache a ChatGPT login in `CODEX_HOME/auth.json` when the store is `file`, or when `auto` finds no OS credential store. `keyring` keeps the token in the OS credential store instead. OS credential store means macOS Keychain, Windows Credential Manager, or Linux Secret Service.
+
+This key is an exact pin in `requirements.toml`. Users cannot override it. The ChatGPT cloud requirements console ignores it. Put it in the system requirements file, or in the macOS MDM key `requirements_toml_base64`. A copy in `config.toml` or `managed_config.toml` is only a default.
+
+Codex CLI, Codex Desktop, and the IDE extension read one `requirements.toml`. Set the pin once. It does not cover Claude Code, Cursor, or Copilot tokens.
+
+### Rollout plan
+
+1. Pilot: deploy Moderate `requirements-moderate.toml` to a few workstations that already have a keyring. Exit when each pilot user can log in and `CODEX_HOME/auth.json` is not created or updated.
+2. Expanded pilot: add the rest of the standard engineering group, including Linux desktops. Exit when hosts without a keyring are either given one or moved to an exception group that uses `OPENAI_API_KEY`.
+3. Org-wide: ship the same pin with Strict for regulated groups. Exit when a sample of endpoints shows the key in the system file or MDM payload, and SIEM has a path for auth-file creation alerts.
+
+Pre-rollout checklist:
+
+- MDM or system-file path verified. Cloud console assignment alone does not apply this key.
+- Secrets manager can supply `OPENAI_API_KEY` for CI.
+- SIEM ingest tested for file-creation alerts on `auth.json`.
+- Rollback plan documented (remove this one key).
+
+What will break: ChatGPT login on hosts with no OS credential store. Developer message: "Codex will store login tokens in the OS credential store. Machines without Keychain, Credential Manager, or Secret Service should use an API key from the secrets manager. Do not set the credential store to file."
+
+Rollback: delete `cli_auth_credentials_store` from the deployed `requirements.toml` (or from the MDM requirements payload) and restart Codex. Leave the managed default in place if you still want keyring as a starting value. Message: "The credential-store requirement has been removed. Codex will follow your config.toml value again. Prefer keyring until the requirement returns."
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `cli_auth_credentials_store` | unset | `"keyring"` | `"keyring"` | Moderate and Strict block plaintext `auth.json`. Baseline does not lock hosts that have no OS credential store. |
+
+### Deployment
+
+| OS | Requirements path | How this key is enforced |
+|----|-------------------|--------------------------|
+| macOS | `/etc/codex/requirements.toml` or MDM `com.openai.codex` / `requirements_toml_base64` | System file or Jamf, Intune, or Workspace ONE profile. Encode the TOML with `base64` and put it in `requirements_toml_base64`, not `config_toml_base64`. |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` | Intune or Group Policy file copy. Windows has no Codex registry policy for this key. |
+| Linux | `/etc/codex/requirements.toml` | Root-owned file, mode `644`. |
+
+Workspace ONE and Intune on macOS use the same `com.openai.codex` preference domain as Jamf.
+
+Validation:
+
+- macOS: `defaults read com.openai.codex requirements_toml_base64 | base64 -d` includes `cli_auth_credentials_store = "keyring"`.
+- Linux: `grep cli_auth_credentials_store /etc/codex/requirements.toml`.
+- Windows: `Get-Content "$env:ProgramData\OpenAI\Codex\requirements.toml"`.
+- After restart, sign in and confirm Codex does not create or update `auth.json` under the Codex home (usually `~/.codex/auth.json`). If that file appears after a fresh login, the pin is not active.
+
+Audit: alert when `auth.json` is created or changed under a Codex home directory. Ship the endpoint file event to the SIEM. A new `auth.json` on a Moderate or Strict host means the requirement is missing or the process is not Codex reading a managed pin.
+
+### Workflow preservation
+
+| Blocked | Risk | Safe equivalent |
+|---------|------|-----------------|
+| `cli_auth_credentials_store = "file"` | Plaintext login token on disk | Keep `keyring` |
+| `cli_auth_credentials_store = "auto"` | Silent fallback to `auth.json` | Keep `keyring`, or install a keyring |
+| `cli_auth_credentials_store = "ephemeral"` | Rejected because the pin is exact, not because memory storage is riskier than `file` | CI uses `OPENAI_API_KEY` from the secrets manager and does not save a login |
+
+False-positive friction: Linux servers, containers, and SSH sessions often have no Secret Service. Do not change the org pin to `auto`. Give that group an API key, or remove this one key for that group.
+
 ## Security Recommendations
 
 ### For Maximum Lockdown (Regulated Environments)
