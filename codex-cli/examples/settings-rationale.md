@@ -158,6 +158,16 @@ For CI/CD environments, skip credential storage entirely and inject credentials 
 
 ---
 
+## 3b. Feedback (`feedback.enabled`)
+
+Controls whether a user can submit `/feedback` from the Codex CLI, Codex Desktop, and the IDE extension. The product default is `true`.
+
+Moderate and Strict admin requirements pin `enabled = false` under `[feedback]` in the shared `requirements.toml` (`codex-desktop/examples/requirements-moderate.toml` and `requirements-strict.toml`). Codex CLI and Codex Desktop read that same system file. The pin rejects a user or project `config.toml` that sets `enabled = true`. Cloud-managed requirements honor this key. Baseline requirements leave the key unset.
+
+A submission that includes logs can attach a session rollout prefix, local logs, a doctor report, and saved auto-review failure records. The pin does not disable shell, sandbox, MCP, or Guardian approval (`features.guardian_approval`). Claude Code and GitHub Copilot have their own feedback controls.
+
+---
+
 ## 4. Authentication Method
 
 Codex CLI supports two authentication flows. The method is determined by how the user authenticates, not by a config key.

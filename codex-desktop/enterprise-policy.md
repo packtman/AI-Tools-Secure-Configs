@@ -197,6 +197,70 @@ sudo chown root:root /etc/codex/requirements.toml
 
 ---
 
+## Feedback lock (`feedback.enabled`)
+
+Codex lets a user run `/feedback` unless an admin turns it off. The product default is `true`. When the user includes logs, the client can attach a prefix of the session rollout (the local transcript), `codex-logs.log`, a redacted doctor report, and saved auto-review failure records, then send them to OpenAI's Sentry ingest with a thread id and a turn id.
+
+`feedback.enabled` is an exact pin in `requirements.toml`. Users cannot override it. The ChatGPT cloud requirements console honors this key. You can also put it in the system requirements file or the macOS MDM key `requirements_toml_base64`. A copy in `config.toml` or `managed_config.toml` is only a default.
+
+Codex CLI, Codex Desktop, and the IDE extension read one `requirements.toml`. Set the pin once. It does not cover Claude Code feedback surveys, Claude Code feedback drafts, or GitHub Copilot user-feedback collection.
+
+This pin does not turn off Guardian approval. `features.guardian_approval` is a separate key. Leave it unset. Guardian can still record a failed review on the machine. Those records leave the machine only inside a feedback upload that includes logs, so pinning `false` also stops that export.
+
+### Rollout plan
+
+1. Pilot: deploy Moderate `requirements-moderate.toml` to a few workstations. Exit when each pilot user sees a disabled `/feedback` message and a normal shell command still runs.
+2. Expanded pilot: add the rest of the standard engineering group. Exit when an exception path exists for a named group that must file a vendor bug, and that path removes only this key.
+3. Org-wide: ship the same pin with Strict for regulated groups. Exit when a sample of endpoints shows `enabled = false` under `[feedback]` in the system file, MDM payload, or cloud requirements, and the SIEM has a path for unexpected outbound feedback if the proxy can see it.
+
+Pre-rollout checklist:
+
+- MDM, system-file, or cloud requirements path verified. Any one of those three applies this key.
+- Secrets manager is already in place for other Codex pins. This pin does not add a new secret.
+- SIEM ingest tested for the endpoint or proxy events you will use.
+- Rollback plan documented (remove this one key).
+
+What will break: `/feedback` submissions. Developer message: "Codex /feedback is turned off on managed machines. It can upload a session transcript when logs are included. File product issues through the internal ticket form, and leave out source, secrets, and prompts."
+
+Rollback: delete the `[feedback]` table from the deployed `requirements.toml` (or from the MDM or cloud requirements payload) and restart Codex. Message: "The feedback requirement has been removed. Codex will follow your config.toml value again. The product default allows /feedback until the requirement returns."
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `feedback.enabled` | unset (product default `true`) | `false` | `false` | Moderate and Strict block transcript uploads through `/feedback`. Baseline leaves vendor bug reports available. |
+
+### Deployment
+
+| OS | Requirements path | How this key is enforced |
+|----|-------------------|--------------------------|
+| macOS | `/etc/codex/requirements.toml` or MDM `com.openai.codex` / `requirements_toml_base64` | System file, cloud requirements, or a Jamf, Intune, or Workspace ONE profile. Encode the TOML with `base64` and put it in `requirements_toml_base64`, not `config_toml_base64`. |
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` | Cloud requirements, or an Intune or Group Policy file copy. Windows has no Codex registry policy for this key. |
+| Linux | `/etc/codex/requirements.toml` | Cloud requirements, or a root-owned file, mode `644`. |
+
+Workspace ONE and Intune on macOS use the same `com.openai.codex` preference domain as Jamf.
+
+Validation:
+
+- macOS MDM: `defaults read com.openai.codex requirements_toml_base64 | base64 -d` includes `enabled = false` under `[feedback]`.
+- Linux: `grep -A1 '^\[feedback\]' /etc/codex/requirements.toml`.
+- Windows: `Get-Content "$env:ProgramData\OpenAI\Codex\requirements.toml"`.
+- After restart, run `/feedback`. Expected: a disabled message, and no submission. A successful upload means the pin is not active.
+
+Audit: if the corporate proxy can see it, alert on new connections from Codex hosts to `ingest.us.sentry.io` that coincide with a `/feedback` attempt. Ship that proxy event to the SIEM. A successful submission on a Moderate or Strict host means the requirement is missing.
+
+### Workflow preservation
+
+| Blocked | Risk | Safe equivalent |
+|---------|------|-----------------|
+| `/feedback` with logs | Session rollout prefix, local logs, and auto-review failure records leave the machine | Internal ticket with a short description. Omit source, secrets, and prompts. |
+| `/feedback` without logs | Still sends the report, thread id, and client version to OpenAI | Same internal ticket. The pin blocks both forms because the key is one boolean. |
+| Setting `feedback.enabled = true` in `config.toml` | Rejected while the requirements pin is active | Remove this one key for a named exception group |
+
+False-positive friction: a developer who hits a Codex crash cannot send the vendor the logs from the machine. Do not turn the org pin back on to collect a one-off report. Collect a redacted note internally, or remove this key for that host group for the time you need the vendor channel.
+
+---
+
 ## Security Recommendations
 
 ### For Maximum Lockdown (Regulated Environments)

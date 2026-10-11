@@ -112,6 +112,32 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `feedback.enabled`
+
+**What it does:** Turns the `/feedback` command on or off for Codex Desktop, the Codex CLI, and the IDE extension. The product default is `true` when the key is omitted.
+
+**Why it matters:** A value in `config.toml` or `managed_config.toml` is only a default. A user or a trusted project config can set `enabled = true`. Moderate and Strict pin `false` in `requirements.toml` so that override is rejected. Vendor docs (developers.openai.com/codex/config-reference and developers.openai.com/codex/config-advanced, fetched 2026-10-11) say a disabled setting shows a disabled message and rejects the submission. The same requirements reference says users cannot override an enforced feedback setting. Cloud-managed requirements honor this key. That is different from `cli_auth_credentials_store`, which the cloud console ignores.
+
+When a user includes logs, the Codex client can attach a prefix of the session rollout (the local transcript), `codex-logs.log`, a redacted `codex doctor` report, and saved auto-review failure records, then send them to OpenAI's Sentry ingest. Tags can include the thread id and the turn id. The upload happens only after the user agrees to include logs. Moderate and Strict still pin `false` because that agreement is the user's, and the org does not want the transcript to leave the machine.
+
+**What breaks:** `/feedback` no longer submits. Shell, sandbox, MCP, and Guardian approval keep working. `features.guardian_approval` is a different key. Leave it unset here. Guardian still records failed reviews locally. Those records are exported only as part of a feedback upload that includes logs, so this pin also stops that export. An exception removes this one key for a named group. File the vendor bug through an internal ticket that omits secrets, source, and prompts.
+
+Codex CLI, Codex Desktop, and the IDE extension read one `requirements.toml`. This pin does not cover Claude Code feedback surveys, Claude Code feedback drafts, or GitHub Copilot `user_feedback_collection`. Configure those tools separately.
+
+| Tier | requirements.toml | Reason |
+|------|-------------------|--------|
+| Baseline | unset | Product default stays `true` so individual developers can still send a vendor bug report. |
+| Moderate | `false` | Stops a consented transcript upload from enterprise workstations. |
+| Strict | `false` | Same lock as Moderate. Residency and sandbox rules are separate. |
+
+### Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `feedback.enabled` | unset (product default `true`) | `false` | `false` | Moderate and Strict block `/feedback` uploads that can include a session rollout prefix. Baseline leaves the product default so a developer can still report a bug. |
+
+---
+
 ## `mcp_servers` (in requirements.toml)
 
 **What it does:** Defines which MCP (Model Context Protocol) servers the agent is allowed to use.

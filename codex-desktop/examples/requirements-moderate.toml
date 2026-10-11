@@ -9,6 +9,12 @@ allowed_web_search_modes = ["cached"]
 allow_appshots = false
 allow_remote_control = false
 
+# WHAT: Stop /feedback on Codex Desktop, the CLI, and the IDE extension.
+# WHY: Moderate rejects the product default (true). A user who includes logs can upload a session rollout prefix, local logs, a doctor report, and saved auto-review failure records to OpenAI's Sentry ingest, tagged with thread and turn ids. A user or project config.toml can turn feedback back on unless requirements.toml pins false. Guardian approval (features.guardian_approval) stays a separate key.
+# BREAKS: /feedback shows a disabled message and Codex rejects the submission. Shell, sandbox, MCP, and Guardian approval keep working. Remove this one key for a named group that must file vendor bugs.
+[feedback]
+enabled = false
+
 # Disable high-risk features but allow core development
 [features]
 browser_use = false
