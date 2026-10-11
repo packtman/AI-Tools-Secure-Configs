@@ -14,6 +14,12 @@ model           = "o4-mini"
 model_reasoning_effort = "high"
 cli_auth_credentials_store = "keyring"
 
+# Default only. A user or project config.toml can still set enabled = true.
+# Moderate and Strict requirements.toml pin false so that override is rejected.
+# The product default is true when this table is omitted.
+[feedback]
+enabled = false
+
 [sandbox_workspace_write]
 network_access = false
 

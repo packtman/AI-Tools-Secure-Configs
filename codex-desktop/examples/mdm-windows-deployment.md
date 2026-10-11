@@ -26,6 +26,10 @@ allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
 
+# Exact pin. Cloud-managed requirements honor this key. This ProgramData file applies it too.
+[feedback]
+enabled = false
+
 [features]
 browser_use = false
 computer_use = false
@@ -91,6 +95,10 @@ $content = @"
 allowed_approval_policies = ["on-request"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached"]
+
+# Exact pin. Cloud-managed requirements honor this key. This ProgramData file applies it too.
+[feedback]
+enabled = false
 
 [features]
 browser_use = false

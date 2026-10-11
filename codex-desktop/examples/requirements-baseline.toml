@@ -8,6 +8,11 @@ allowed_approval_policies = ["untrusted", "on-request", "never"]
 allowed_sandbox_modes = ["read-only", "workspace-write"]
 allowed_web_search_modes = ["cached", "live"]
 
+# feedback.enabled is intentionally unset on Baseline.
+# WHAT: Does not force /feedback off.
+# WHY: The product default is true. Baseline keeps vendor bug reports available. Moderate and Strict pin false because a consented upload can include a session rollout prefix and local logs.
+# BREAKS: A user can still run /feedback and, if they include logs, send a transcript prefix off the machine. Move the host to Moderate to lock this off.
+
 # Only pin the most dangerous feature
 [features]
 computer_use = false
