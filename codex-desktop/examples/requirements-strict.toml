@@ -62,3 +62,9 @@ prefix_rules = [
 # No MCP servers allowed
 # (empty mcp_servers table disables all MCP)
 [mcp_servers]
+
+# WHAT: Allow only the elevated legacy Windows sandbox. MXC (Microsoft Execution Containers, the newer Windows sandbox) stays available when the device supports it.
+# WHY: Strict deny_read rules are not honored by the unelevated sandbox, and unelevated has weaker network isolation. A regulated fleet should not keep that fallback.
+# WHAT BREAKS: A Windows PC that cannot finish elevated setup stops at setup instead of falling back. macOS and Linux ignore this table. An empty list is invalid and Codex rejects the requirements file. This does not set windows.allow_mxc.
+[windows]
+allowed_sandbox_implementations = ["elevated"]

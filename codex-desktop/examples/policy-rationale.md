@@ -140,6 +140,22 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `windows.allowed_sandbox_implementations` (in requirements.toml)
+
+**What it does:** Limits the legacy Windows sandboxes Codex may use. `elevated` is the stronger legacy mode. `unelevated` is weaker, has weaker network isolation, and does not honor `deny_read`. MXC (Microsoft Execution Containers, the newer Windows sandbox) is a separate implementation. This list does not turn MXC on or off.
+
+**Why it matters:** Moderate and Strict already deny reads of credential paths. Those denials do not apply while Codex is in the unelevated sandbox. Leaving the key unset lets a user, or an automatic fallback, select that weaker mode.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `["elevated"]` | Do not keep a fallback that skips deny_read. |
+| Standard enterprise | `["elevated"]` | Same credential-read gap. Vendor enterprise example is this list. |
+| Individual developers | unset | No assumption that an admin can provision the elevated sandbox. |
+
+**What goes wrong:** An empty list is invalid and Codex rejects the requirements file. `["unelevated"]` forces the weaker sandbox. This key does not change macOS or Linux. It does not set `windows.allow_mxc`.
+
+---
+
 ## Summary: Recommended Profiles
 
 ### Maximum Lockdown (Regulated)

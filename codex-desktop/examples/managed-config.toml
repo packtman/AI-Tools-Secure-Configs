@@ -22,6 +22,12 @@ browser_use = false
 computer_use = false
 codex_hooks = true
 
+# WHAT: Preferred legacy Windows sandbox when MXC is not selected.
+# WHY: elevated is the stronger legacy mode. unelevated does not honor deny_read.
+# WHAT BREAKS: This is a starting value only. A user can still select unelevated until requirements.toml pins allowed_sandbox_implementations. macOS and Linux ignore this table.
+[windows]
+sandbox = "elevated"
+
 # OpenTelemetry — point at your corporate OTLP collector
 [otel]
 environment = "prod"

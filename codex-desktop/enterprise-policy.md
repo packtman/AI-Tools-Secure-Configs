@@ -197,6 +197,117 @@ sudo chown root:root /etc/codex/requirements.toml
 
 ---
 
+## Rollout plan: legacy Windows sandbox allowlist
+
+MDM (Mobile Device Management) is software that pushes managed settings to endpoints. SIEM (Security Information and Event Management) is centralized log collection and alerting. MXC (Microsoft Execution Containers) is the newer Windows sandbox. It does not need a separate admin setup step. This pin does not disable MXC.
+
+Codex CLI, Codex Desktop, and the IDE extension read one `requirements.toml`. Put the key in that file once. Claude Code and Cursor use their own sandboxes. This key does not configure them.
+
+### Phases
+
+1. **Pilot group.** 10 to 25 Windows endpoints that already receive Codex from MDM, plus 2 macOS or Linux endpoints to confirm the extra table does not change them. Before the pin, IT runs elevated sandbox setup for each Windows pilot user who lacks local admin rights. Exit criteria: Windows pilot sessions stay on `elevated` or `mxc` for 5 business days, no one is stuck on the setup screen without an IT ticket, and macOS or Linux sessions start as before.
+2. **Expanded pilot.** One business unit, Windows first. Exit criteria: software inventory shows no `unelevated` selection on pinned machines, and any exception group is named and time-boxed.
+3. **Org-wide.** Every managed Windows endpoint, then the same requirements file on macOS and Linux so the fleet stays on one template. Exit criteria: sampled requirements files contain `allowed_sandbox_implementations = ["elevated"]`, and a user `windows.sandbox = "unelevated"` entry does not take effect after restart.
+
+### Pre-rollout checklist
+
+- MDM path verified: Intune or Workspace ONE file copy on Windows, Jamf or Workspace ONE custom settings for `com.openai.codex` on macOS, config management for `/etc/codex/requirements.toml` on Linux.
+- Elevated sandbox provisioned for Windows users without local admin: `codex sandbox setup --elevated --user 'DOMAIN\user' --codex-home 'C:\Users\user\.codex'`, run from an elevated deployment process. Replace the identity and path. Do not put real employee names in the repo template.
+- No secret is required for this key. Keep using the existing secrets manager for Codex credentials. Do not add tokens to `requirements.toml`.
+- SIEM ingest tested for endpoint software inventory or for changes to `requirements.toml`, if the org has a SIEM.
+- Rollback plan documented (below) and the developer message sent before the pilot.
+
+### What will break
+
+Windows users who cannot complete elevated setup no longer get the unelevated fallback. Codex stops at setup instead of running with the weaker sandbox. macOS and Linux behavior does not change. MXC remains allowed when the device supports it.
+
+Developer message to send before rollout:
+
+> On Windows, Codex will no longer fall back to the weaker unelevated sandbox. If setup asks for administrator approval, contact IT. Do not set windows.sandbox to unelevated in your config. macOS and Linux are unchanged. MXC, when your PC supports it, is still allowed.
+
+### Rollback
+
+1. Remove `allowed_sandbox_implementations` from the deployed `requirements.toml`. If `[windows]` has no other keys, remove that table too.
+2. Redeploy the same way you shipped it: cloud requirements, macOS `requirements_toml_base64`, Windows `%ProgramData%\OpenAI\Codex\requirements.toml`, or Linux `/etc/codex/requirements.toml`.
+3. Ask users to restart Codex.
+
+Communication template:
+
+> We rolled back the Windows sandbox allowlist. Codex may offer the unelevated fallback again until we republish the requirements file. Keep using the company-approved Codex install. Reply to this thread if setup still blocks you.
+
+## Config files
+
+| Tier | File | `windows.allowed_sandbox_implementations` |
+|------|------|-------------------------------------------|
+| Baseline | `codex-desktop/examples/requirements-baseline.toml` | unset |
+| Moderate | `codex-desktop/examples/requirements-moderate.toml` | `["elevated"]` |
+| Strict | `codex-desktop/examples/requirements-strict.toml` | `["elevated"]` |
+
+`examples/managed-config.toml` sets `windows.sandbox = "elevated"` as a starting value only. A user can still select `unelevated` until the requirements file is deployed.
+
+## Tier delta
+
+| Setting | Baseline | Moderate | Strict | Reason for the difference |
+|---------|----------|----------|--------|---------------------------|
+| `windows.allowed_sandbox_implementations` | unset (both legacy modes remain available) | `["elevated"]` | `["elevated"]` | Baseline may not have an admin who can provision elevated setup. Moderate and Strict ship `deny_read`, which unelevated does not honor. |
+| `windows.allow_mxc` | unset | unset | unset | Not part of this pin. `false` would block MXC, which is the newer sandbox, not the weak legacy fallback. |
+| `windows.sandbox` in managed defaults | n/a (no separate baseline managed file) | `elevated` via the shared enterprise managed defaults | `elevated` via the shared enterprise managed defaults | Starting value only. Requirements are the lock. |
+
+## Deployment steps
+
+Codex has no Windows registry policy for this key. Windows uses the system requirements file. macOS uses the managed preference domain. Linux uses the system file.
+
+| OS | Requirements path | MDM |
+|----|-------------------|-----|
+| Windows | `%ProgramData%\OpenAI\Codex\requirements.toml` | Intune Win32 or Workspace ONE file copy. Detection: file exists at that path and contains the key. |
+| macOS | `/etc/codex/requirements.toml` or MDM payload | Jamf, Kandji, Fleet, Mosyle, or Workspace ONE custom settings. Domain `com.openai.codex`, key `requirements_toml_base64` (base64, no line wrap). The Windows table is inert on macOS. |
+| Linux | `/etc/codex/requirements.toml` | No MDM preference domain. Use configuration management. Root-owned, mode `644`. |
+
+Cloud-managed requirements (ChatGPT Business or Enterprise) are the highest requirements layer for supported local clients. Confirm the key in the cloud payload as well as the device file. Work cloud containers do not use the Windows sandbox. Test a Windows laptop separately.
+
+### Validation
+
+Windows:
+
+```powershell
+Select-String -Path "$env:ProgramData\OpenAI\Codex\requirements.toml" -Pattern "allowed_sandbox_implementations"
+codex --version
+```
+
+In Codex, `/debug-config` should show the elevated legacy mode or MXC, not `unelevated`. A user file `%USERPROFILE%\.codex\config.toml` with `sandbox = "unelevated"` under `[windows]` must not win after restart.
+
+macOS:
+
+```bash
+defaults read com.openai.codex requirements_toml_base64 | base64 -d | grep allowed_sandbox_implementations
+```
+
+Linux:
+
+```bash
+grep allowed_sandbox_implementations /etc/codex/requirements.toml
+```
+
+### Audit logging
+
+This key does not emit its own SIEM event. Alert on these instead:
+
+- The requirements file hash changes outside a change window.
+- A Windows endpoint reports sandbox implementation `unelevated` while the pin is deployed.
+- `CODEX_HOME/.sandbox/sandbox.log` shows repeated elevated setup failure (error `1385` is a logon-rights failure). Ship that log through the endpoint agent to the SIEM. Do not upload it through Codex `/feedback`.
+
+## Workflow-preservation notes
+
+| Blocked operation | Risk | Safe equivalent |
+|-------------------|------|-----------------|
+| Selecting `windows.sandbox = "unelevated"` | Weaker network isolation, and `deny_read` does not apply, so credential paths can be read | Finish elevated setup, or use MXC when the device supports it. IT can pre-provision elevated with `codex sandbox setup --elevated`. |
+| Empty `allowed_sandbox_implementations = []` | Codex rejects the requirements file and the rest of the policy may not load | Use `["elevated"]`, or omit the key only on Baseline. |
+| Setting `windows.allow_mxc = false` to "be stricter" | Turns off the newer sandbox and forces the legacy path | Leave `allow_mxc` unset unless a separate, reviewed change says MXC must be off. |
+
+**False-positive friction:** Company laptops that block local user creation, firewall changes, or sandbox-user logon rights cannot finish elevated setup. Those users see a setup block, not a Codex bug.
+
+**Exception requests:** For a named Windows group, and only while IT fixes that policy, set `allowed_sandbox_implementations = ["elevated", "unelevated"]`. Codex still prefers elevated. Record that `deny_read` does not apply on the unelevated path. Do not set the list to `["unelevated"]` only. Remove the exception when elevated setup works. Do not clear the pin for the whole org.
+
 ## Security Recommendations
 
 ### For Maximum Lockdown (Regulated Environments)

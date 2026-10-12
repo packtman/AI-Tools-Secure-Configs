@@ -57,3 +57,9 @@ identity = { command = "npx" }
 
 [mcp_servers.git]
 identity = { command = "uvx" }
+
+# WHAT: Allow only the elevated legacy Windows sandbox. MXC (Microsoft Execution Containers, the newer Windows sandbox) stays available when the device supports it.
+# WHY: Moderate deny_read rules are not honored by the unelevated sandbox, and unelevated has weaker network isolation. Vendor guidance for enterprises is this exact list.
+# WHAT BREAKS: A Windows PC that cannot finish elevated setup stops at setup instead of falling back. macOS and Linux ignore this table. An empty list is invalid and Codex rejects the requirements file. This does not set windows.allow_mxc.
+[windows]
+allowed_sandbox_implementations = ["elevated"]

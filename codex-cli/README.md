@@ -60,3 +60,4 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 4. Configure `cli_auth_credentials_store = "keyring"` to avoid plaintext credential files.
 5. Disable network access unless explicitly required.
 6. Audit `.codex/config.toml` in project repositories before marking them as trusted.
+7. On Moderate and Strict, deploy the shared `requirements.toml` from `codex-desktop/examples/` with `windows.allowed_sandbox_implementations = ["elevated"]`. CLI, Desktop, and the IDE extension read that one file. The pin blocks the weaker unelevated Windows sandbox. It does not change macOS or Linux, and it does not disable MXC (Microsoft Execution Containers, the newer Windows sandbox).

@@ -141,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
 - [ ] Add `deny_read` rules for sensitive paths
+- [ ] On Moderate and Strict, set `windows.allowed_sandbox_implementations = ["elevated"]` so Windows cannot fall back to `unelevated` (that mode skips `deny_read`). Leave the key unset on Baseline. Do not set `windows.allow_mxc` in the same change.
 
 ### Phase 2: Managed Defaults
 - [ ] Deploy `managed_config.toml` with conservative starting values
