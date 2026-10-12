@@ -12,6 +12,12 @@ allowed_web_search_modes = ["cached", "live"]
 [features]
 computer_use = false
 
+# windows.allowed_sandbox_implementations is intentionally unset.
+# WHAT: When unset, Codex may still fall back to the unelevated legacy Windows sandbox.
+# WHY: Baseline does not assume an admin can provision the elevated sandbox. Forcing ["elevated"] blocks Windows startup on machines that cannot finish that setup.
+# WHAT BREAKS: Setting ["elevated"] here without that setup stops Codex until IT provisions it. unelevated does not honor deny_read, so do not rely on a deny_read list while this key stays unset.
+# Do not set windows.allow_mxc here. MXC (Microsoft Execution Containers) is the newer sandbox and this file does not turn it off.
+
 # Block privilege escalation
 [rules]
 prefix_rules = [

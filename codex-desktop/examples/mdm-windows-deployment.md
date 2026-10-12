@@ -115,15 +115,23 @@ Set-Acl -Path $requirementsPath -AclObject $acl
 
 ## Windows Sandbox Mode
 
-For Windows-native Codex usage, configure the sandbox mode in the `[windows]` table:
+MXC (Microsoft Execution Containers) is the newer Windows sandbox. This section does not turn MXC off.
+
+For the legacy fallback, managed defaults may set:
 
 ```toml
 [windows]
-sandbox = "elevated"   # Recommended — requires admin for setup
-# sandbox = "unelevated" # Fallback if admin permissions unavailable
+sandbox = "elevated"
 ```
 
-The `elevated` mode provides stronger isolation. Use `unelevated` only as a fallback.
+Moderate and Strict `requirements.toml` lock the legacy choice:
+
+```toml
+[windows]
+allowed_sandbox_implementations = ["elevated"]
+```
+
+`unelevated` has weaker network isolation and does not honor `deny_read`. Use it only for a named exception group that cannot finish elevated setup. Do not ship an empty list. Codex rejects that requirements file.
 
 ---
 
@@ -138,6 +146,9 @@ Get-Acl "C:\ProgramData\OpenAI\Codex\requirements.toml" | Format-List
 
 # Check Codex applies the policy (look for startup config summary)
 codex --version
+
+# Confirm the legacy sandbox allowlist is the elevated implementation only
+Select-String -Path "$env:ProgramData\OpenAI\Codex\requirements.toml" -Pattern "allowed_sandbox_implementations"
 ```
 
 ---

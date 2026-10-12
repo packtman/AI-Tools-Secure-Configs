@@ -622,6 +622,20 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 
 ---
 
+## 16. Legacy Windows sandbox allowlist (`windows.allowed_sandbox_implementations`)
+
+**What it does:** In the shared `requirements.toml`, limits the legacy Windows sandboxes to `elevated`. The unelevated mode has weaker network isolation and does not honor `deny_read`.
+
+**Why Moderate and Strict set `["elevated"]`:** Those tiers already deny credential paths. The unelevated sandbox skips those denials.
+
+**Why Baseline leaves it unset:** Forcing elevated setup blocks Windows machines that have no admin to provision it.
+
+**What breaks:** Windows startup waits on elevated setup instead of falling back. An empty list makes Codex reject the requirements file. macOS and Linux ignore the table. This does not set `windows.allow_mxc`, so MXC (Microsoft Execution Containers, the newer Windows sandbox) stays a separate decision.
+
+**Overlap:** Codex Desktop uses the same requirements file. Do not maintain a second copy that omits this key. Claude Code and Cursor do not read it.
+
+---
+
 ## Summary Matrix
 
 | Setting | Strict (Regulated) | Standard (Development) | Permissive (Research) |
@@ -640,3 +654,4 @@ Codex CLI distinguishes between trusted and untrusted projects. Project-level co
 | `--yolo` | Blocked by policy | Blocked by policy | Discouraged |
 | Profile | `strict` | `standard` | `research` |
 | Project trust | Explicit review required | Trusted after review | Trusted after review |
+| `windows.allowed_sandbox_implementations` | `["elevated"]` | `["elevated"]` | unset |
