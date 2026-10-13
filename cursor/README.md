@@ -110,8 +110,9 @@ Enterprise admins can enforce policies through MDM (Jamf, Intune, Kandji):
 - MCP tools do not auto-run
 - Browser tool calls need approval when Browser Protection is on
 - Sandboxed commands cannot reach arbitrary hosts
+- On Moderate and Strict, reads and searches outside the project ask for approval (Cursor 3.23+)
 
-Developer message template: "Cursor will auto-run only approved local lint/test commands. Cloud mutations, secret file reads, MCP tools, and Browser actions will ask for approval. Download packages yourself, inspect them, then run installs when prompted."
+Developer message template: "Cursor will auto-run only approved local lint/test commands. Cloud mutations, secret file reads, MCP tools, and Browser actions will ask for approval. The agent will also ask before it reads a file outside the project, including files in your home directory. Download packages yourself, inspect them, then run installs when prompted. Do not approve reads of SSH keys, cloud credentials, or .env files."
 
 ### Rollback
 
@@ -130,6 +131,8 @@ Developer message template: "Cursor will auto-run only approved local lint/test 
 | `autoRun.block_instructions` | Secrets + pipe-to-shell + prod destroy | Adds AWS/K8s/sudo/git push/MCP writes | Adds Browser, package installs, docker push, terraform | Higher tiers force more human gates |
 | `mcpAllowlist` | `[]` | `[]` | `[]` | No MCP auto-run in file templates; use dashboard for exceptions |
 | Sandbox `networkPolicy.default` | deny | deny | deny | Deny-by-default; allowlist grows only with justified registries |
+| Sandbox `readBoundary` | Omitted (product default `system`) | `workspace` | `workspace` | Moderate and Strict ask before reads outside the project. Baseline keeps silent home-directory reads to avoid toolchain prompts. Requires Cursor 3.23+. |
+| Dashboard Read Control user extensions | n/a (mode `system`) | on | off | Strict ignores member and project extra read paths. Moderate allows a reviewed exception path. |
 | `disableTmpWrite` | false | false | true | Strict reduces temp-dir staging for payloads |
 | `enableSharedBuildCache` | true | true | false | Strict avoids shared cache side channels across modes |
 | Browser Protection | on | on | on | Browser tool can reach arbitrary origins |
@@ -147,6 +150,7 @@ Developer message template: "Cursor will auto-run only approved local lint/test 
 | macOS / Linux | `~/.cursor/permissions.json` | `~/.cursor/sandbox.json` |
 | Windows | `%USERPROFILE%\.cursor\permissions.json` | `%USERPROFILE%\.cursor\sandbox.json` |
 | Per-repo (optional) | `<repo>/.cursor/permissions.json` | `<repo>/.cursor/sandbox.json` |
+| CLI override | n/a | `sandbox.readBoundary` in `cli-config.json`. A `sandbox.json` value replaces it. |
 
 ### MDM
 
@@ -159,6 +163,7 @@ See `examples/mdm-policies.md` for Jamf / Intune / Linux policy payloads (`Allow
 3. In a sandboxed command, confirm outbound calls to non-allowlisted hosts fail.
 4. Confirm personal account login fails when `AllowedTeamId` MDM is set.
 5. Confirm MCP servers outside the dashboard allowlist cannot start.
+6. On Cursor 3.23 or later, Settings, Agents, Approvals and Execution, Read Access shows Workspace for Moderate and Strict. If the dashboard policy is set, the control says it is admin-controlled. A read of `~/.aws/credentials` shows an approval card with the full path. A file inside the open project does not. Run Everything must stay off, or this control is hidden.
 
 ### Audit logging / SIEM
 
@@ -172,6 +177,7 @@ See `examples/mdm-policies.md` for Jamf / Intune / Linux policy payloads (`Allow
 |------------------------------|------|-----------------|
 | `curl https://… \| bash` | Remote code execution | Download, inspect, then run a pinned installer |
 | Reading `.env` / PEM / SSH keys | Secret exfiltration to the model or logs | Use secrets manager injection in CI, not agent context |
+| Reading `~/.gitconfig`, a version manager, or another toolchain file outside the repo | Prompt fatigue after `readBoundary` is `workspace` | Copy the non-secret file into the project, or add one absolute directory to the Read Allowlist after review. Do not allowlist `~/.ssh`, `~/.aws`, or a glob whose parent is the home directory. Sandboxed commands treat a glob as access to that parent folder. |
 | AWS / kubectl mutate | Production change without change control | Run through approved CLI/CD pipeline after human review |
 | MCP auto-run | Third-party tool can read/write external systems | Add only reviewed servers to dashboard allowlist; keep file `mcpAllowlist` empty |
 | Browser tool | Navigation to unapproved origins | Use Browser Controls allowlist or keep Browser Protection on |
@@ -186,6 +192,8 @@ See `examples/mdm-policies.md` for Jamf / Intune / Linux policy payloads (`Allow
 ### Overlap with other tools
 
 Claude Code and Cursor both execute local shell commands and can host MCP servers. Apply shell/MCP policy in both places, or explicitly choose one agent runtime per team to avoid a gap where only one tool is locked down.
+
+Cursor `readBoundary` does not apply to Claude Code or Codex. Claude Code deny rules and Codex `deny_read` do not apply to Cursor agent reads. Set each tool's own read limit. Codex `requirements.toml` and Claude Code managed settings are separate files.
 
 ## Deployment Checklist
 

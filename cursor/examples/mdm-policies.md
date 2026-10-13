@@ -18,6 +18,7 @@ These controls are real and required for a secure rollout, but they are not MDM 
 |---------|-----------------|-----------------|
 | Run Mode / Auto-review | Team dashboard → Agents / Security | `permissions-*.json` (`autoRun`) |
 | Sandbox network / paths | Team dashboard + local sandbox policy | `sandbox-*.json` |
+| Read Controls (`readBoundary`) | Team dashboard, Security and automation. Not an MDM key. | `sandbox-*.json` (`readBoundary`) plus dashboard mode |
 | MCP allowlist and per-server network | Team dashboard → MCP Configuration | `permissions-*.json` (`mcpAllowlist`) as fallback |
 | Browser / file / `.cursor` protections | Team dashboard | See `enterprise-policy-*.json` |
 | Privacy Mode / BYOK / repo blocklist | Team dashboard | See `enterprise-policy-*.json` |

@@ -1,5 +1,5 @@
 {
-  "_comment": "BASELINE Cursor sandbox.json. Keeps sandbox on with workspace read/write. Uses Cursor defaults plus a starter allowlist. Prefer Moderate for enterprise pilots.",
+  "_comment": "BASELINE Cursor sandbox.json. Keeps sandbox on with workspace read/write. Uses Cursor defaults plus a starter allowlist. Prefer Moderate for enterprise pilots. readBoundary is omitted on purpose. WHAT: when omitted, Cursor uses system, which reads files outside the workspace without asking. WHY: Baseline keeps that product default so home toolchain files do not prompt on every task. BREAKS: setting workspace here is the Moderate and Strict control, not the startup default. Move to sandbox-moderate.json before an enterprise pilot.",
 
   "type": "workspace_readwrite",
   "disableTmpWrite": false,
