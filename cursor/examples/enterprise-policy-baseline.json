@@ -21,6 +21,8 @@
     "disable_run_everything": true,
     "allowed_modes": ["auto-review", "allowlist"],
     "sandbox_enforced": true,
+    "read_controls": "system",
+    "_read_controls_note": "WHAT: Team Settings, Security and automation, Read Controls. System leaves the choice to each member. WHY (Baseline): startups keep the product default, which reads outside the workspace without a prompt. BREAKS: setting workspace here is the Moderate and Strict lock. sandbox-baseline.json also omits readBoundary for the same reason. Requires Cursor 3.23 or later before you can rely on Workspace.",
     "browser_protection": true,
     "file_deletion_protection": true,
     "external_file_protection": true,

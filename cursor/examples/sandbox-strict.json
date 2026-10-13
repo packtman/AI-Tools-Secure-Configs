@@ -1,7 +1,8 @@
 {
-  "_comment": "STRICT Cursor sandbox.json for ~/.cursor/sandbox.json or <repo>/.cursor/sandbox.json. Deny-by-default network. No temp writes. No shared build cache. Team-admin policy can only tighten this further.",
+  "_comment": "STRICT Cursor sandbox.json for ~/.cursor/sandbox.json or <repo>/.cursor/sandbox.json. Deny-by-default network. No temp writes. No shared build cache. Team-admin policy can only tighten this further. readBoundary workspace (Cursor 3.23+). WHAT: asks before the agent reads or searches outside the workspace, and limits what a sandboxed command can read. WHY: the product default, system, reads SSH keys, cloud credentials, and other home-directory files without asking. BREAKS: removing this key, or setting system, restores those silent reads. It does not apply while Run Everything is on, and it does not block writes outside the workspace. Pair with dashboard Read Controls set to Workspace and Read Control User Extensions off, so a project sandbox.json cannot add extra paths. Do not allowlist ~/.ssh or ~/.aws.",
 
   "type": "workspace_readwrite",
+  "readBoundary": "workspace",
   "disableTmpWrite": true,
   "enableSharedBuildCache": false,
   "additionalReadwritePaths": [],

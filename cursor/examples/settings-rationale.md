@@ -353,13 +353,29 @@ The `permissions.json` file (deployed to `~/.cursor/permissions.json`) controls 
 
 | Attribute | Detail |
 |-----------|--------|
-| **What it does** | Controls sandbox filesystem and network reach for agent shell commands (`type`, `networkPolicy`, `disableTmpWrite`, path extras, shared build cache). |
-| **Why it matters** | Sandboxing limits blast radius when Auto-review or Allowlist lets a command run. Deny-by-default network reduces exfiltration and SSRF risk. |
-| **Misconfiguration risk** | `type: insecure_none` disables the sandbox. Broad `networkPolicy.allow` or `default: allow` recreates open egress. Local files cannot weaken team-admin or hardcoded protections. |
+| **What it does** | Controls sandbox filesystem and network reach for agent shell commands (`type`, `networkPolicy`, `disableTmpWrite`, path extras, shared build cache, `readBoundary`). |
+| **Why it matters** | Sandboxing limits blast radius when Auto-review or Allowlist lets a command run. Deny-by-default network reduces exfiltration and SSRF risk. `readBoundary` controls reads outside the project. |
+| **Misconfiguration risk** | `type: insecure_none` disables the sandbox. Broad `networkPolicy.allow` or `default: allow` recreates open egress. `readBoundary: system` lets the agent read home-directory secrets without asking. Local files cannot weaken team-admin or hardcoded protections. |
+
+### 9A.1 `readBoundary` (Cursor 3.23+)
+
+| Attribute | Detail |
+|-----------|--------|
+| **What it does** | `workspace` asks before the agent reads or searches files outside the workspace, and limits what a sandboxed terminal command can read. `system` allows those reads without asking. The product default is `system`. |
+| **Why it matters** | With `system`, a prompt-injected agent can read `~/.ssh`, `~/.aws`, and other files outside the repo and send them into the model context. `workspace` is the read counterpart to External-File Protection, which covers creates, edits, and deletes, not reads. |
+| **Misconfiguration risk** | Removing the key, or setting `system`, restores silent reads. The control is hidden in Run Everything, so that mode must stay disabled. A glob on the Read Allowlist grants the parent folder to sandboxed commands. Cursor versions before 3.23 ignore the key. Vendor docs describe sandboxed command filesystem limits for macOS and Linux. Confirm the approval card on a Windows pilot host before treating this file as a Windows lock. |
 
 | Environment | Recommended Value | Notes |
 |-------------|-------------------|-------|
-| Regulated | `sandbox-strict.json` | No temp writes, no shared cache, minimal registries |
+| Regulated (Strict) | `readBoundary: "workspace"` plus dashboard Read Controls Workspace and user extensions off | Team allowlist starts empty. A project file cannot add paths. |
+| Standard Enterprise (Moderate) | `readBoundary: "workspace"` plus dashboard Read Controls Workspace and user extensions on | Members can add one reviewed path without changing the org file. |
+| Developer (Baseline) | Key omitted (product default `system`) | Avoids prompts for home toolchain files. Use Moderate before an enterprise pilot. |
+
+Which file to deploy:
+
+| Environment | Recommended Value | Notes |
+|-------------|-------------------|-------|
+| Regulated | `sandbox-strict.json` | No temp writes, no shared cache, minimal registries, `readBoundary` workspace |
 | Standard Enterprise | `sandbox-moderate.json` | Shared cache on; registries + git hosts |
 | Developer | `sandbox-baseline.json` | Starter deny-by-default allowlist |
 
@@ -535,6 +551,7 @@ The following matrix summarizes all settings across the three tiers for quick re
 |---------|-----------|--------------------:|-----------|
 | `terminalAllowlist` | Read-only (11 cmds) | + Build/test (22 cmds) | + Linters (37 cmds) |
 | `mcpAllowlist` | `[]` | `[]` | `[]` |
+| `readBoundary` | `workspace` | `workspace` | Omitted (`system`) |
 
 ### MDM Policies
 

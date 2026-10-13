@@ -92,15 +92,18 @@
       ],
       "tier_files": {
         "strict": [
-          "cursor/examples/permissions-strict.json"
+          "cursor/examples/permissions-strict.json",
+          "cursor/examples/sandbox-strict.json"
         ],
         "moderate": [
           "cursor/examples/permissions-moderate.json",
+          "cursor/examples/sandbox-moderate.json",
           "rollout-guide/configs/cursor/permissions-moderate.json",
           "rollout-guide/configs/cursor/settings.json"
         ],
         "baseline": [
-          "cursor/examples/permissions-baseline.json"
+          "cursor/examples/permissions-baseline.json",
+          "cursor/examples/sandbox-baseline.json"
         ]
       },
       "sources": [
@@ -113,7 +116,9 @@
             "team",
             "policy",
             "audit",
-            "privacy"
+            "privacy",
+            "readBoundary",
+            "Read Controls"
           ]
         },
         {

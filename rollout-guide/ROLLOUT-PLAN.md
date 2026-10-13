@@ -308,6 +308,7 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `autoRun.block_instructions` | Secrets + pipe-to-shell + prod destroy | Adds AWS/K8s/sudo/git push/MCP writes | Adds Browser, installs, docker push, terraform | Higher tiers force more human gates in Auto-review |
 | `mcpAllowlist` | Empty (all MCP prompts) | Empty (all MCP prompts) | Empty (all MCP prompts) | Keep file empty; approve exceptions only in the team dashboard |
 | Sandbox `networkPolicy.default` | deny | deny | deny | Deny-by-default; allowlists are registry/git focused |
+| Sandbox `readBoundary` | Omitted (product default `system`) | `workspace` | `workspace` | Cursor 3.23+ (2026-10-01). Moderate and Strict ask before reads outside the project. Baseline keeps silent home-directory reads. Dashboard Read Controls is the lock. Strict also turns off Read Control user extensions. |
 | `disableTmpWrite` | false | false | true | Strict reduces temp-dir staging for payloads |
 | Browser / file / `.cursor` protections | Browser + file on; `.cursor` off | All on | All on | Prevents unapproved Browser, deletes, external writes, and local rule tampering |
 | BYOK disabled | no | yes | yes | Personal keys bypass Cursor ZDR agreements |
@@ -455,6 +456,7 @@ For each approved stdio MCP server, remove a harmless test variable from the ser
 | User settings | `~/Library/Application Support/Cursor/User/settings.json` | `%APPDATA%\Cursor\User\settings.json` | `~/.config/Cursor/User/settings.json` |
 | Workspace settings | `<project>/.vscode/settings.json` | `<project>\.vscode\settings.json` | `<project>/.vscode/settings.json` |
 | Cursor rules | `<project>/.cursor/rules/security.mdc` | Same | Same |
+| Sandbox | `~/.cursor/sandbox.json` | `%USERPROFILE%\.cursor\sandbox.json` | `~/.cursor/sandbox.json` |
 
 #### MDM Deployment
 
@@ -508,6 +510,18 @@ Cursor does not support MDM-managed permissions. Deploy via:
 3. Dotfiles repo that developers clone during setup
 
 **Limitation:** Cursor's `permissions.json` is user-writable. A developer can modify it. For compensating controls, enforce workspace trust via MDM (that IS enforceable) and use network egress filtering as a second layer.
+
+#### Deploying sandbox.json
+
+`readBoundary` is not an MDM key. Deploy `sandbox-moderate.json` or `sandbox-strict.json` to `~/.cursor/sandbox.json` with the same onboarding script or configuration management used for `permissions.json`. Then set Team Settings, Security and automation, Read Controls to Workspace. That dashboard value applies to every member and cannot be weakened by the local file. Strict also turns off Read Control User Extensions.
+
+Jamf, Intune, and Workspace ONE do not have a `readBoundary` payload. They can still copy the file. Linux has no Cursor MDM path for this key. Use the same file deploy.
+
+The Cursor CLI reads `sandbox.readBoundary` from `cli-config.json`. A `sandbox.json` value replaces it.
+
+#### Read-boundary validation
+
+Requires Cursor 3.23 or later. Open Settings, Agents, Approvals and Execution. Read Access shows Workspace, and shows that an admin controls it when the dashboard policy is on. Ask the agent to read `~/.aws/credentials`: expect an approval card with the full path. Ask it to read a file in the open project: expect no card. If Run Everything is enabled, the control is hidden and does not apply.
 
 #### Deploying settings.json
 
