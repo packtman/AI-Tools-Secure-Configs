@@ -3,6 +3,12 @@
 This report was generated because one or more watched upstream sources changed.
 Use `automation/config-discovery/agent-prompt.md` to turn these signals into a focused config update PR.
 
+## Maintenance decision, 2026-10-14
+
+Pinned `features.browser_use_external = false` on every Codex requirements tier. See `codex-desktop/enterprise-policy.md`.
+
+No other config update from this scan. `disableClaudeAiConnectors` is already on main. Open PRs #136 through #144 still own the Codex and Cursor pins listed in `automation/config-discovery/reports/agent-scope.md`. HTML fingerprint changes on the other watched pages did not add a new admin control for this pass.
+
 ## Summary
 
 | Tool | Source | Change | Status | URL |

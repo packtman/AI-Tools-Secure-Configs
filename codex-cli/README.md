@@ -52,6 +52,10 @@ The `.codex/` directory and `.git/` are always protected, even in writable sandb
 | `file` | `~/.codex/auth.json` | Less secure — plaintext file |
 | `auto` | Keyring with file fallback | Recommended default |
 
+## Shared requirements with Codex Desktop
+
+Codex CLI, Codex Desktop, and the IDE extension share one `requirements.toml`. The external-browser lock `features.browser_use_external = false` is in `codex-desktop/examples/requirements-*.toml`. Deploy that file once for the user. Keep the key out of `config.toml`: it is a requirements pin, and Codex rejects a conflicting feature write in user or profile config. This lock does not change Claude Code or Cursor browser tools.
+
 ## Deployment Checklist
 
 1. Deploy `/etc/codex/config.toml` on all developer machines for organization-wide defaults.
