@@ -60,6 +60,22 @@ Every setting below explains **what it does**, **why you should care**, and **th
 
 ---
 
+## `browser_use_external`
+
+**What it does:** Blocks Codex from driving an external browser through the ChatGPT browser extension, including tabs that are already open and signed in.
+
+**Why it matters:** The vendor default is enabled. Omitting the key in `requirements.toml` leaves external Browser Use allowed. `browser_use = false` governs Codex's own browser and does not cover this path. Signed-in tabs carry the user's cookies, so a prompt injection on a page can act as the user. The flag is stable since 2026-04-30 (commit `719431d`) and is in Codex 0.162.1. It belongs only in `requirements.toml`.
+
+| Environment | Recommended | Reasoning |
+|-------------|-------------|-----------|
+| Regulated | `false` | Closes the external-browser path while `browser_use` and `in_app_browser` are already off. |
+| Standard enterprise | `false` | Keeps signed-in Chrome and Edge sessions out of the agent even though `browser_use` is also off. |
+| Individual developers | `false` | Codex's own browser can stay available. Existing personal sessions stay out of the agent. |
+
+**What breaks if removed:** The extension can drive an external browser again, including signed-in tabs.
+
+---
+
 ## `computer_use`
 
 **What it does:** Enables Computer Use, allowing Codex to see the screen, click, and type on the user's desktop (macOS only).
@@ -151,6 +167,7 @@ web_search = "disabled"
 
 [features]
 browser_use = false
+browser_use_external = false
 in_app_browser = false
 computer_use = false
 memories = false
@@ -166,6 +183,7 @@ web_search = "cached"
 
 [features]
 browser_use = false
+browser_use_external = false
 computer_use = false
 memories = false
 codex_hooks = true
@@ -180,6 +198,7 @@ web_search = "cached"
 
 [features]
 browser_use = true
+browser_use_external = false
 in_app_browser = true
 computer_use = false
 memories = true

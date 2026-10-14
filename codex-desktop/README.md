@@ -106,7 +106,8 @@ If `mcp_servers` is present but empty, Codex disables all MCP servers.
 
 | Feature | Description |
 |---------|-------------|
-| `browser_use` | Browser Use and Browser Agent |
+| `browser_use` | Browser Use and Browser Agent inside Codex |
+| `browser_use_external` | External Browser Use through the ChatGPT browser extension, including already signed-in tabs. Requirements pin only. `false` on every tier. |
 | `in_app_browser` | In-app browser pane |
 | `computer_use` | Computer Use (macOS only) |
 | `codex_hooks` | Lifecycle hooks |
@@ -140,6 +141,7 @@ These features introduce additional attack surface that administrators should ev
 - [ ] Set `allowed_approval_policies` to exclude `never` (if needed)
 - [ ] Restrict MCP servers to an approved allowlist
 - [ ] Pin `browser_use = false` and `computer_use = false` unless explicitly needed
+- [ ] Pin `browser_use_external = false` on every tier so the ChatGPT browser extension cannot drive signed-in tabs
 - [ ] Add `deny_read` rules for sensitive paths
 
 ### Phase 2: Managed Defaults

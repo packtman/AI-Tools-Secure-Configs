@@ -13,6 +13,14 @@ enforce_residency = "us"
 # Disable all extended features
 [features]
 browser_use = false
+# WHAT: Blocks Codex from driving an external browser through the ChatGPT
+# browser extension, including tabs that are already open and signed in.
+# WHY (Strict): Vendor default is enabled. browser_use and in_app_browser
+# already off do not cover this path. Omitting the key leaves signed-in
+# external tabs available. Requirements pin only (stable since 2026-04-30).
+# WHAT BREAKS: The extension can no longer drive Chrome or another external
+# browser. Removing this key turns that path back on.
+browser_use_external = false
 in_app_browser = false
 computer_use = false
 memories = false

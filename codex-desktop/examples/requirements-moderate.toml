@@ -12,6 +12,15 @@ allow_remote_control = false
 # Disable high-risk features but allow core development
 [features]
 browser_use = false
+# WHAT: Blocks Codex from driving an external browser through the ChatGPT
+# browser extension, including tabs that are already open and signed in.
+# WHY (Moderate): Vendor default is enabled. Omitting this key leaves external
+# Browser Use allowed even when browser_use is false. Signed-in tabs carry
+# the user's cookies. Requirements pin only (stable since 2026-04-30).
+# WHAT BREAKS: The extension can no longer drive Chrome or another external
+# browser. browser_use still governs Codex's own browser. Removing this key
+# turns the extension path back on.
+browser_use_external = false
 computer_use = false
 codex_hooks = true
 in_app_local_automation = false

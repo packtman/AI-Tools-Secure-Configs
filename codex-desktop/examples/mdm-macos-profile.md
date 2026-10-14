@@ -33,6 +33,7 @@ allowed_web_search_modes = ["cached"]
 
 [features]
 browser_use = false
+browser_use_external = false
 computer_use = false
 ```
 
