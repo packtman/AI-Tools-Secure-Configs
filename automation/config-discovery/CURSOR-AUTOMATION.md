@@ -2,7 +2,7 @@
 
 Use this prompt for a Cursor Cloud scheduled automation if you want the end result to be a PR with real config updates, not only a discovery report.
 
-GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent.
+GitHub Actions acts as the sensor. Cursor Cloud acts as the config-maintenance agent. This is especially useful when the repository does not provide the optional `ANTHROPIC_API_KEY` secret for the GitHub Actions agent step.
 
 ## Recommended Trigger
 
@@ -28,7 +28,7 @@ Process:
 7. Do not add secrets, tokens, org IDs, team IDs, tenant IDs, or production hostnames.
 8. Do not create a report-only PR. The PR should contain actual config changes when a relevant control changed.
 9. If no config change is needed, update the report with a short "No config update needed" explanation for each changed source.
-10. Validate edited JSON, YAML, TOML, and shell files using AGENTS.md.
+10. Validate edited JSON, YAML, TOML, and shell files using `python3 scripts/validate_config_files.py` and `git diff --check`.
 11. Commit and push the branch.
 
 Use automation/config-discovery/agent-prompt.md as the detailed policy for how to write config updates.
