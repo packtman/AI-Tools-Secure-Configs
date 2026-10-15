@@ -1,0 +1,25 @@
+# Codex CLI STRICT admin-enforced requirements
+# Requires Codex 0.138.0 or later for managed permission-profile enforcement.
+# Deploy to /etc/codex/requirements.toml on Unix, the Windows system path,
+# cloud-managed requirements, or macOS MDM.
+
+# WHAT: Limits approval behavior to explicit user review.
+# WHY: Strict environments require a human decision before supported risky actions.
+# BREAKS: Removing this allows unattended execution; an unsupported value can block startup policy resolution.
+allowed_approval_policies = ["on-request"]
+
+# WHAT: Allows only disabled web search (disabled is always implicitly allowed).
+# WHY: Strict environments must prevent source-code or prompt data reaching external search services.
+# BREAKS: Developers cannot use Codex web search and must use separately approved research tools.
+allowed_web_search_modes = []
+
+# WHAT: Selects the built-in read-only permission profile at startup.
+# WHY: Regulated review workflows must not let the agent modify workspace or system files.
+# BREAKS: Omitting this can select a writable default; naming a denied profile makes the requirement invalid.
+default_permissions = ":read-only"
+
+# WHAT: Defines the complete set of permission profiles users may select.
+# WHY: Omitting writable profiles denies them now and also denies future built-ins by default.
+# BREAKS: Removing this table lets users select any available profile, including full-system access.
+[allowed_permission_profiles]
+":read-only" = true
