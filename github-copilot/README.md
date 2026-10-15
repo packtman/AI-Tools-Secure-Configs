@@ -108,7 +108,7 @@ Control which Copilot plans can access the network:
 4. Deploy `.github/copilot-instructions.md` to all repositories.
 5. Configure firewall rules to allow only business/enterprise Copilot traffic.
 6. Set agent policies (disable cloud agent, custom agents, and third-party agents for regulated environments).
-7. Deploy `examples/managed-settings-*.json` as `copilot/managed-settings.json` (server-managed, MDM, or file-based). Keep the MCP feature toggle enabled, set registry restriction to Allow all, and use `allowedMcpServers` as the allowlist. See `examples/managed-settings-rollout.md`.
+7. Deploy `examples/managed-settings-*.json` as `copilot/managed-settings.json` (server-managed, MDM, or file-based). Keep the MCP feature toggle enabled, set registry restriction to Allow all, and use `allowedMcpServers` as the allowlist. On Strict, keep `sandbox.userPolicy.network.allowOutbound` set to `false` so Copilot CLI sandboxed commands cannot open outbound network. See `examples/managed-settings-rollout.md`.
 8. Set code review runner configuration at org level (self-hosted for sensitive environments).
 9. Create "Manage enterprise AI controls" custom role for AI governance team.
 10. Enable audit log streaming to your SIEM.

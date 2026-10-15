@@ -30,7 +30,8 @@
         "keychainAccess": false
       },
       "network": {
-        "allowLocalNetwork": false
+        "allowLocalNetwork": false,
+        "allowOutbound": false
       }
     }
   },
