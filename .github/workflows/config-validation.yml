@@ -1,0 +1,39 @@
+name: Config Validation
+
+on:
+  pull_request:
+    paths:
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.toml"
+      - "**/*.sh"
+      - "scripts/validate_config_files.py"
+      - ".github/workflows/config-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate deployable config syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install validation tools
+        run: |
+          set -euo pipefail
+          python3 -m pip install --user pyyaml toml
+
+      - name: Validate changed config files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/validate_config_files.py --changed "${BASE_SHA}"
