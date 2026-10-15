@@ -1,8 +1,8 @@
 {
-  "_comment": "STRICT Gemini CLI config — read-only tools only, Docker sandbox enforced, no MCP servers, no telemetry prompt logging. Use for regulated environments (finance, healthcare, government).",
+  "_comment": "STRICT Gemini CLI config. Read-only tools only, Docker sandbox enforced, no MCP servers or hooks, no telemetry prompt logging. Use for regulated environments (finance, healthcare, government).",
 
   "general": {
-    "disableAutoUpdate": true
+    "enableAutoUpdate": false
   },
 
   "privacy": {
@@ -33,12 +33,22 @@
   "mcpServers": {},
 
   "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "folderTrust": {
       "enabled": true
     },
     "auth": {
       "enforcedType": "oauth-personal"
     }
+  },
+
+  "hooksConfig": {
+    "enabled": false
   },
 
   "telemetry": {

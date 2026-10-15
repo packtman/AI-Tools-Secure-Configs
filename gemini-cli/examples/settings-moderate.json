@@ -1,8 +1,8 @@
 {
-  "_comment": "MODERATE Gemini CLI config — read/write tools with sandbox, scoped MCP servers, telemetry enabled without prompt logging. Use for standard enterprise development teams.",
+  "_comment": "MODERATE Gemini CLI config. Read/write tools with sandbox, scoped MCP servers, approval bypass disabled, telemetry enabled without prompt logging. Use for standard enterprise development teams.",
 
   "general": {
-    "disableAutoUpdate": false
+    "enableAutoUpdate": true
   },
 
   "privacy": {
@@ -41,12 +41,22 @@
   },
 
   "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "folderTrust": {
       "enabled": true
     },
     "auth": {
       "enforcedType": "oauth-personal"
     }
+  },
+
+  "hooksConfig": {
+    "enabled": true
   },
 
   "telemetry": {

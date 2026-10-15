@@ -1,8 +1,8 @@
 {
-  "_comment": "BASELINE Gemini CLI config — full tool access with sandbox, open MCP, essential restrictions only. Use for startups and individual developers.",
+  "_comment": "BASELINE Gemini CLI config. Full tool access with sandbox, open MCP, approval bypass disabled, and admin policy denies for destructive shell commands. Use for startups and individual developers.",
 
   "general": {
-    "disableAutoUpdate": false
+    "enableAutoUpdate": true
   },
 
   "privacy": {
@@ -10,12 +10,7 @@
   },
 
   "tools": {
-    "sandbox": "docker",
-    "exclude": [
-      "ShellTool(rm -rf /)",
-      "ShellTool(sudo rm)",
-      "ShellTool(chmod 777)"
-    ]
+    "sandbox": "docker"
   },
 
   "mcp": {},
@@ -23,9 +18,19 @@
   "mcpServers": {},
 
   "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": false,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "folderTrust": {
       "enabled": true
     }
+  },
+
+  "hooksConfig": {
+    "enabled": true
   },
 
   "telemetry": {

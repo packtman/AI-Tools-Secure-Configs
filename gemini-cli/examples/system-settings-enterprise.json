@@ -38,12 +38,22 @@
   },
 
   "security": {
+    "disableYoloMode": true,
+    "disableAlwaysAllow": true,
+    "environmentVariableRedaction": {
+      "enabled": true,
+      "allowed": []
+    },
     "folderTrust": {
       "enabled": true
     },
     "auth": {
       "enforcedType": "oauth-personal"
     }
+  },
+
+  "hooksConfig": {
+    "enabled": true
   },
 
   "telemetry": {
