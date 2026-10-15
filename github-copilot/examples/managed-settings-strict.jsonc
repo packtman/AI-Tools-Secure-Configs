@@ -50,7 +50,17 @@
     "sandboxLspServers": true,
     "gitAuth": false,
     "ghAuth": false,
-    "allowDevToolAccess": false
+    "allowDevToolAccess": false,
+    // WHAT: Blocks outbound network from commands inside the Copilot CLI sandbox.
+    // WHY: A managed false prohibits the capability. Omission leaves the user's own network setting unchanged, so a sandboxed command can still post data to the internet. Strict is the regulated tier, so outbound stays off. Moderate omits this key so package installs and git fetch can still run when CLI is allowed.
+    // BREAKS IF SET true OR REMOVED: true does not grant outbound. It stops prohibiting it. Removed, the user setting applies again and curl, npm, or git inside the sandbox can leave the machine.
+    // DOES NOT COVER: VS Code Copilot Chat, the Copilot app, or Copilot cloud agent. Claude Code and Cursor network rules are separate.
+    "userPolicy": {
+      "network": {
+        "allowLocalNetwork": false,
+        "allowOutbound": false
+      }
+    }
   },
 
   // WHAT: Whether another client can remotely control Copilot sessions hosted on this device.
