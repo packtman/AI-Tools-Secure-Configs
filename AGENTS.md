@@ -11,9 +11,9 @@ Each top-level directory (e.g. `claude-code/`, `cursor/`, `github-copilot/`) pro
 ### File types
 
 - `.md` — Documentation and deployment checklists
-- `.json` / `.jsonc` — Configuration templates (70 JSON + 4 JSONC files)
-- `.yaml` / `.yml` — Configuration templates (10 files)
-- `.toml` — Configuration templates (14 files)
+- `.json` / `.jsonc` — Configuration templates
+- `.yaml` / `.yml` — Configuration templates and GitHub Actions workflows
+- `.toml` — Configuration templates
 - `.sh` — Example hook scripts in `claude-code/examples/hook-scripts/`
 - `.mdc` — Cursor rule files
 
@@ -46,4 +46,5 @@ bash -n path/to/script.sh
 
 - JSONC files (`.jsonc`) contain comments and cannot be validated with standard JSON parsers; they are documentation-oriented config examples.
 - The `claude-code/CLAUDE.md` file is a security instructions template (not project documentation for this repo itself).
-- There is no CI/CD pipeline configured (no `.github/workflows/` directory).
+- `.github/workflows/config-discovery.yml` runs the scheduled upstream config discovery loop.
+- `.github/workflows/config-validation.yml` validates deployable JSON, YAML, TOML, and shell examples on pull requests.

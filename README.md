@@ -154,9 +154,17 @@ AI-Secure-Configs/
 
 ### Automated Config Discovery
 
-This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens a PR when an upstream source changes.
+This repo includes a scheduled config discovery loop under [`automation/config-discovery/`](./automation/config-discovery/). It watches official vendor docs, changelogs, and repositories for supported tools, then opens or updates a PR when an upstream source changes.
 
 Discovery PRs are intended for a config-maintenance agent. The agent reviews the generated report, verifies upstream changes, and updates the affected tiered config or rollout documentation in the same PR when a real admin control changed.
+
+The GitHub workflow can run the built-in Claude Code maintenance step when repository secret `ANTHROPIC_API_KEY` is configured. If that secret is unavailable, it still opens a discovery-only PR for a Cursor Cloud automation or human reviewer. See [`automation/config-discovery/CURSOR-AUTOMATION.md`](./automation/config-discovery/CURSOR-AUTOMATION.md) for the recurring agent setup prompt.
+
+Run the same config syntax checks locally with:
+
+```bash
+python3 scripts/validate_config_files.py --all
+```
 
 ### For Security Teams
 
