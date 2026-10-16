@@ -110,7 +110,7 @@ This guide is for IT admins who have not used Copilot as a daily driver. Pair it
 |---------|----------------|
 | Server-managed | Revert `copilot/managed-settings.json` on the default branch of `.github-private`. Optionally delete `copilot/team-mappings.json` and `copilot/teams/*.json`. |
 | File-based | Remove `/Library/Application Support/GitHubCopilot/managed-settings.json` (macOS), `%ProgramFiles%\GitHubCopilot\managed-settings.json` (Windows), `/etc/github-copilot/managed-settings.json` (Linux). |
-| MDM | Remove string values under `com.github.copilot` (macOS) and `HKLM\SOFTWARE\Policies\GitHubCopilot` (Windows). |
+| MDM | Remove string values under `com.github.copilot` (macOS) and `HKLM\SOFTWARE\Policies\GitHubCopilot` (Windows). To roll back only the Strict sandbox token block, delete the strings `sandbox.auth.git` and `sandbox.auth.gh`. Do not restore `sandbox.gitAuth` or `sandbox.ghAuth`. Clients ignore those names. |
 | AI Controls | Leave the MCP toggle as it was. Do not re-enable registry-only restriction unless you are abandoning managed-settings allowlists. |
 
 Ask users to restart VS Code, Copilot CLI, and the Copilot app. Server-managed rollback can take up to an hour unless they sign in again.
@@ -153,7 +153,9 @@ Replace `YOUR-ORG` and `YOUR-ORG/YOUR-PLUGIN-MARKETPLACE` before deploy. Never c
 | `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Same concrete disk-exfil block in every tier. |
 | `sandbox.enabled` | omitted | `true` | `true` | CLI sandbox floor for enterprise. Baseline leaves it optional. |
 | `sandbox.allowBypass` | omitted | `false` | `false` | Model cannot request unsandboxed commands. |
-| `sandbox.gitAuth` / `ghAuth` / `allowDevToolAccess` | omitted | omitted | `false` | Strict blocks token injection and registry caches. |
+| `sandbox.auth.git` | omitted | omitted | `false` | Strict blocks GitHub token injection for git HTTPS. Copilot CLI 1.0.79 ignores the old `gitAuth` name. |
+| `sandbox.auth.gh` | omitted | omitted | `false` | Strict blocks GitHub token injection for the gh CLI. The old `ghAuth` name is ignored. |
+| `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks device-side remote control. Moderate requires SSO. |
 | Org policy MCP availability (companion) | often enabled | enabled | disabled | AI Controls kill switch is separate. Strict can disable MCP entirely. |
 
@@ -187,7 +189,14 @@ Native MDM does not drop a JSON file. It sets one string per key. Nested keys us
 | `strictKnownMarketplaces` | `[{"source":"github","repo":"YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"}]` |
 | `remoteControl.mode` | `requireSSO` |
 
-**Jamf (macOS):** Custom Settings payload, preference domain `com.github.copilot`, keys as strings.
+Strict adds two more string keys. Do not add them to a Moderate payload. Managed `true` does not turn token injection on, and the vendor default is already on when the keys are absent.
+
+| MDM key | Strict string value |
+|---------|---------------------|
+| `sandbox.auth.git` | `false` |
+| `sandbox.auth.gh` | `false` |
+
+**Jamf (macOS):** Custom Settings payload, preference domain `com.github.copilot`, keys as strings. Store `false` as the string `false`, not a native Boolean.
 
 **Intune (Windows):** Administrative template or OMA-URI / Win32 registry payload writing `REG_SZ` under `HKLM\SOFTWARE\Policies\GitHubCopilot`.
 
@@ -210,6 +219,14 @@ gh api repos/YOUR-ORG/.github-private/contents/copilot/managed-settings.json \
 # Copilot CLI: confirm YOLO is suppressed
 copilot --yolo
 # Expected: startup ignores bypass flags when disableBypassPermissionsMode is disable.
+
+# Strict only: open the sandbox dialog and check the Auth tab
+# copilot
+# then run /sandbox
+# Expected: Authenticate git and Authenticate gh are off and labeled (managed).
+# A sandboxed git push over HTTPS and a sandboxed gh command do not receive an injected token.
+# Confirm the deployed JSON has sandbox.auth.git and sandbox.auth.gh set to false,
+# and that sandbox.gitAuth and sandbox.ghAuth are absent.
 
 # Linux file-based permissions
 ls -l /etc/github-copilot/managed-settings.json
@@ -248,6 +265,7 @@ gh api \
 | Awesome Copilot / random marketplace plugin | Plugin can ship an MCP server | Add the plugin to the org marketplace after review, then set `enabledPlugins` to `true` if it must be default. |
 | `--yolo` / Allow all | Unattended shell, path, and URL access | Approve each tool. For repetitive low-risk tools, request a narrower allow, not bypass. |
 | Copilot CLI unsandboxed command | Host compromise | Run the command in a local terminal you control, or request a sandbox path grant. |
+| Strict: sandboxed `git` HTTPS and sandboxed `gh` | A sandbox command can push or call the GitHub API with the signed-in user's token | Commit and push, or run `gh`, in a terminal you start yourself. SSH remotes do not use this injected HTTPS token. Do not paste a personal access token into the sandbox. |
 | Root filesystem MCP | Disk exfil | Use a project-scoped filesystem MCP path, then add that exact `serverCommand` to the allowlist. |
 | Cloud agent MCP | Allowlist not enforced | Keep cloud agent disabled or limited. Do not use cloud agent as an MCP bypass. |
 
@@ -258,6 +276,7 @@ gh api \
 | `allowedMcpServers` with only the GitHub URL | Playwright, internal APIs, and stdio servers stop | Add one matcher per server. Prefer `serverUrl` or `serverCommand`. Expire exceptions in 90 days. |
 | `strictKnownMarketplaces` placeholder repo | Plugin UI shows nothing | Publish the marketplace before Phase 2, or omit both marketplace keys until it exists. |
 | `sandbox.allowDevToolAccess: false` (Strict) | npm/pip restore fails in CLI | Grant specific cache paths. Do not set the flag back to `true` for the whole org. |
+| `sandbox.auth.git` / `sandbox.auth.gh: false` (Strict) | Sandboxed git HTTPS push and `gh` fail | Omit the `auth` object for a time-boxed group. Do not set either key to `true`. Managed `true` does not grant the capability. |
 | Malformed JSON | Client treats allowlist as empty and blocks all non-built-in MCP | Validate JSON in CI before merge. Failed policy fails closed. |
 
 ### Tool overlap
@@ -267,5 +286,6 @@ Claude Code, Cursor, and Copilot can each run MCP servers and a shell.
 | Concern | Guidance |
 |---------|----------|
 | Double MCP config | An allowlisted Copilot MCP server is not automatically allowed in Claude Code or Cursor. Copy the same server identity into Claude Code `allowedMcpServers` / managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). |
-| Double shell | Copilot CLI sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. Configure each tool. Do not weaken one because another looks covered. |
+| Double shell | The Copilot sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. Configure each tool. Do not weaken one because another looks covered. |
+| Git tokens | `sandbox.auth` covers only tokens the Copilot sandbox would inject for git HTTPS and `gh`. Host git, SSH keys, Claude Code credential masking, and Cursor are separate. Blocking this path does not lock the developer's own terminal. |
 | Cloud agent gap | Only Copilot cloud agent skips this MCP allowlist. Keep it limited in org policy. Claude Code remote control and Cursor cloud agents are separate kill switches. |

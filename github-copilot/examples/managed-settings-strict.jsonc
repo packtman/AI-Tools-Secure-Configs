@@ -48,8 +48,13 @@
     "allowBypass": false,
     "sandboxMcpServers": true,
     "sandboxLspServers": true,
-    "gitAuth": false,
-    "ghAuth": false,
+    // WHAT: Stops the sandbox from injecting a GitHub token into git HTTPS (auth.git) and into gh (auth.gh).
+    // WHY: Copilot CLI 1.0.79 (2026-08-10) renamed sandbox.gitAuth and sandbox.ghAuth. Settings files ignore the old names, so a false on those keys does not block token injection. Managed false prohibits the capability. True, or omitting the key, leaves the user setting unchanged, and the vendor default is on. Baseline and Moderate omit auth so sandboxed git and gh can still use the credential proxy.
+    // BREAKS IF REMOVED OR LEFT ON THE OLD KEYS: A sandboxed command can push over HTTPS or call the GitHub API with the signed-in user's token. On Strict, git HTTPS and gh inside the sandbox fail until the person runs them in their own terminal.
+    "auth": {
+      "git": false,
+      "gh": false
+    },
     "allowDevToolAccess": false
   },
 
