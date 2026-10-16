@@ -26,8 +26,8 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `sandbox.allowBypass` | omitted | `false` | `false` | Prevents the model from requesting unsandboxed commands. |
 | `sandbox.sandboxMcpServers` | omitted | `true` | `true` | Local MCP processes started by Copilot CLI run inside the sandbox. |
 | `sandbox.sandboxLspServers` | omitted | `true` | `true` | Language servers started by Copilot CLI run inside the sandbox. |
-| `sandbox.gitAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for Git HTTPS inside the sandbox. |
-| `sandbox.ghAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for GitHub CLI inside the sandbox. |
+| `sandbox.auth.git` | omitted | omitted | `false` | Strict blocks GitHub token injection for git HTTPS inside the sandbox. Old key `sandbox.gitAuth` is ignored. |
+| `sandbox.auth.gh` | omitted | omitted | `false` | Strict blocks GitHub token injection for the gh CLI inside the sandbox. Old key `sandbox.ghAuth` is ignored. |
 | `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks remote control of sessions on the device. Moderate requires SSO for listed orgs. |
 | `permissions.model` | omitted | omitted | omitted | Model picker is not a security control for these tiers. |
@@ -83,13 +83,21 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 
 ### `sandbox`
 
-**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
+**What it does:** Sets a minimum Copilot sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `auth.git`, `auth.gh`, and `allowDevToolAccess` to `false`.
 
 **Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately.
 
 **What breaks if Strict disables `allowDevToolAccess`:** Package restore, authenticated registries, and shared caches can fail until you grant explicit paths. Use the exception process, not a blanket `true`.
 
 **Linux MDM:** Native MDM is not supported on Linux. Use the file-based path `/etc/github-copilot/managed-settings.json` owned by root, not a symlink, and not group- or world-writable.
+
+### `sandbox.auth.git` and `sandbox.auth.gh`
+
+**What it does:** `auth.git: false` stops the sandbox from injecting a GitHub token for authenticated git HTTPS. `auth.gh: false` stops it from injecting a token for the GitHub CLI (`gh`, which is separate from the `copilot` command). The credential proxy normally supplies the real token only to approved GitHub hosts. These keys turn that proxy path off.
+
+**Why:** Copilot CLI 1.0.79 (2026-08-10) moved `sandbox.gitAuth` and `sandbox.ghAuth` to `sandbox.auth.git` and `sandbox.auth.gh`. There is no migration. Settings files ignore the old names, and SDK requests that still send them are rejected. The current enterprise reference documents the new names: [Enterprise managed settings](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings). The `enterprise-cloud@latest` copy of that page still shows the old names. Follow the current page. This is a capability setting: managed `false` prohibits it, while `true` or omission leaves the user setting unchanged. The vendor default is on, so Baseline and Moderate omit `auth` and sandboxed git and gh keep working. Strict sets both to `false` so a prompt-injected sandbox command cannot push or call the GitHub API with the signed-in user's token. The same managed `sandbox` object applies to Copilot CLI, VS Code Agent Host sessions, and the GitHub Copilot app. It does not cover Copilot cloud agent, JetBrains, Claude Code, or Cursor. Clients older than the sandbox minimum (Copilot CLI 1.0.93, VS Code 1.141.0, Copilot app 1.1.26) are blocked from connecting once `sandbox` is present, and 1.0.93 is new enough to read `auth`.
+
+**What breaks if misconfigured or removed:** Putting `false` back on `gitAuth` or `ghAuth` does nothing on current clients, so token injection stays on. Removing `auth` on Strict has the same result. With `auth` set, sandboxed `git push` over HTTPS and sandboxed `gh` fail. Commit and push from a terminal the person starts themselves. Do not paste a personal access token into the sandbox to work around the block. To exempt a group, omit the `auth` object for that group. Do not set `auth.git` or `auth.gh` to `true` and expect a grant.
 
 ### `remoteControl`
 
@@ -107,3 +115,4 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `telemetry` | Vendor examples put collector `Authorization` headers in JSON. That is a secret. If you need OTEL, inject headers from a secrets manager outside this repo. |
 | `serverName` matchers | Documented as convenience only. Users can rename servers. |
 | Registry-only MCP policy | Preview, name/ID matching, weaker than managed-settings allowlists. GitHub says do not combine it with this file. |
+| `sandbox.gitAuth` / `sandbox.ghAuth` | Ignored since Copilot CLI 1.0.79. Use `sandbox.auth.git` and `sandbox.auth.gh`. Keeping the old keys does not preserve the block. |

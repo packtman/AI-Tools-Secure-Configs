@@ -21,8 +21,10 @@
     "allowBypass": false,
     "sandboxMcpServers": true,
     "sandboxLspServers": true,
-    "gitAuth": false,
-    "ghAuth": false,
+    "auth": {
+      "git": false,
+      "gh": false
+    },
     "allowDevToolAccess": false,
     "failIfUnavailable": true,
     "userPolicy": {
