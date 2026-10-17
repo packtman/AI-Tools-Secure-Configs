@@ -97,6 +97,7 @@ This guide is for IT admins who have not used Copilot as a daily driver. Pair it
 | Copilot CLI `--yolo` / VS Code global auto-approve | `disableBypassPermissionsMode` is `disable` | Approve tools one at a time. If a workflow is blocked, file an exception. Do not look for a bypass flag. |
 | Copilot cloud agent MCP | Allowlists are not enforced on cloud agent | Cloud agent stays limited in org policy. Do not assume this file covers it. |
 | Package restore inside Copilot CLI sandbox (if CLI is later enabled) | Sandbox is forced on | Restore packages on the host terminal, or request a path grant. |
+| Strict: agent edits files in the folder the session started in | `sandbox.addCurrentWorkingDirectory` is `false`. An empty path list does not restore that grant. | Edit in the editor, or request the exact absolute project path under `sandbox.userPolicy.filesystem.readwritePaths`. Do not set this key to `true`. |
 
 **Message to send before rollout:**
 
@@ -154,6 +155,7 @@ Replace `YOUR-ORG` and `YOUR-ORG/YOUR-PLUGIN-MARKETPLACE` before deploy. Never c
 | `sandbox.enabled` | omitted | `true` | `true` | CLI sandbox floor for enterprise. Baseline leaves it optional. |
 | `sandbox.allowBypass` | omitted | `false` | `false` | Model cannot request unsandboxed commands. |
 | `sandbox.gitAuth` / `ghAuth` / `allowDevToolAccess` | omitted | omitted | `false` | Strict blocks token injection and registry caches. |
+| `sandbox.addCurrentWorkingDirectory` | omitted | omitted | `false` | Strict stops auto read/write on the session folder. Empty path grants do not remove that access. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks device-side remote control. Moderate requires SSO. |
 | Org policy MCP availability (companion) | often enabled | enabled | disabled | AI Controls kill switch is separate. Strict can disable MCP entirely. |
 
@@ -195,6 +197,8 @@ Native MDM does not drop a JSON file. It sets one string per key. Nested keys us
 
 Clients refresh about hourly. In VS Code, run `Developer: Sync Account Policy` during testing.
 
+**Strict-only sandbox string:** `sandbox.addCurrentWorkingDirectory` = `false`. In Jamf and Intune store the string `false`, not a DWORD or a native Boolean. Moderate and Baseline omit the key, so those clients keep the automatic session-folder grant. Do not push `true`: for this capability setting, `true` does not force the grant on, it leaves the user setting unchanged.
+
 ### 4.3 Validation
 
 ```bash
@@ -214,6 +218,12 @@ copilot --yolo
 # Linux file-based permissions
 ls -l /etc/github-copilot/managed-settings.json
 # Expected: regular file, owner root, not group/world writable, not a symlink
+
+# Strict sandbox: confirm the session folder is not auto-granted
+python3 -c "import json; d=json.load(open('copilot/managed-settings.json')); assert d['sandbox']['addCurrentWorkingDirectory'] is False"
+# Then, in Copilot CLI or a VS Code Agent Host session, ask the agent to write a file in the folder it started in.
+# Expected on Strict: the write is denied unless that exact absolute path is listed in readwritePaths.
+# Moderate and Baseline omit the key, so the automatic grant remains.
 ```
 
 Minimum clients for MCP allowlists: GitHub Copilot app, Copilot CLI v1.0.11+, VS Code v1.109.3+. JetBrains, Eclipse, and Xcode are public preview. Copilot cloud agent is unsupported for this key.
@@ -248,6 +258,7 @@ gh api \
 | Awesome Copilot / random marketplace plugin | Plugin can ship an MCP server | Add the plugin to the org marketplace after review, then set `enabledPlugins` to `true` if it must be default. |
 | `--yolo` / Allow all | Unattended shell, path, and URL access | Approve each tool. For repetitive low-risk tools, request a narrower allow, not bypass. |
 | Copilot CLI unsandboxed command | Host compromise | Run the command in a local terminal you control, or request a sandbox path grant. |
+| Strict: automatic read/write on the current working directory | The session folder may be a home directory or an unreviewed repo. Empty `readwritePaths` does not remove this grant. | Edit in the editor, or request one absolute path in `readwritePaths`. Keep `addCurrentWorkingDirectory` at `false`. |
 | Root filesystem MCP | Disk exfil | Use a project-scoped filesystem MCP path, then add that exact `serverCommand` to the allowlist. |
 | Cloud agent MCP | Allowlist not enforced | Keep cloud agent disabled or limited. Do not use cloud agent as an MCP bypass. |
 
@@ -258,6 +269,7 @@ gh api \
 | `allowedMcpServers` with only the GitHub URL | Playwright, internal APIs, and stdio servers stop | Add one matcher per server. Prefer `serverUrl` or `serverCommand`. Expire exceptions in 90 days. |
 | `strictKnownMarketplaces` placeholder repo | Plugin UI shows nothing | Publish the marketplace before Phase 2, or omit both marketplace keys until it exists. |
 | `sandbox.allowDevToolAccess: false` (Strict) | npm/pip restore fails in CLI | Grant specific cache paths. Do not set the flag back to `true` for the whole org. |
+| `sandbox.addCurrentWorkingDirectory: false` (Strict) | The agent cannot apply a patch in the folder the session started in | Add that exact absolute path to `readwritePaths` for a time-boxed exception. Do not set this key to `true`, and do not remove it. |
 | Malformed JSON | Client treats allowlist as empty and blocks all non-built-in MCP | Validate JSON in CI before merge. Failed policy fails closed. |
 
 ### Tool overlap
@@ -267,5 +279,5 @@ Claude Code, Cursor, and Copilot can each run MCP servers and a shell.
 | Concern | Guidance |
 |---------|----------|
 | Double MCP config | An allowlisted Copilot MCP server is not automatically allowed in Claude Code or Cursor. Copy the same server identity into Claude Code `allowedMcpServers` / managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). |
-| Double shell | Copilot CLI sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. Configure each tool. Do not weaken one because another looks covered. |
+| Double shell | Copilot CLI sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. `addCurrentWorkingDirectory` covers only Copilot CLI, VS Code Agent Host, and the Copilot app. It does not cover Copilot cloud agent, JetBrains, Claude Code, or Cursor. Configure each tool. |
 | Cloud agent gap | Only Copilot cloud agent skips this MCP allowlist. Keep it limited in org policy. Claude Code remote control and Cursor cloud agents are separate kill switches. |

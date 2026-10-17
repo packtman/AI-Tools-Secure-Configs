@@ -29,6 +29,7 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `sandbox.gitAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for Git HTTPS inside the sandbox. |
 | `sandbox.ghAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for GitHub CLI inside the sandbox. |
 | `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
+| `sandbox.addCurrentWorkingDirectory` | omitted | omitted | `false` | Strict stops the sandbox from auto-granting read/write on the session folder. Empty `readwritePaths` does not remove that grant. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks remote control of sessions on the device. Moderate requires SSO for listed orgs. |
 | `permissions.model` | omitted | omitted | omitted | Model picker is not a security control for these tiers. |
 | `telemetry` | omitted | omitted | omitted | OTEL export can carry Authorization headers. Configure collector auth in a secrets manager, not in this JSON. |
@@ -83,13 +84,25 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 
 ### `sandbox`
 
-**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
+**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, `allowDevToolAccess`, and `addCurrentWorkingDirectory` to `false`.
 
 **Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately.
 
 **What breaks if Strict disables `allowDevToolAccess`:** Package restore, authenticated registries, and shared caches can fail until you grant explicit paths. Use the exception process, not a blanket `true`.
 
 **Linux MDM:** Native MDM is not supported on Linux. Use the file-based path `/etc/github-copilot/managed-settings.json` owned by root, not a symlink, and not group- or world-writable.
+
+### `sandbox.addCurrentWorkingDirectory`
+
+**What it does:** When `false`, the sandbox does not automatically add the current working directory (the folder the session started in) to its read/write paths.
+
+**Why Strict sets `false`:** Vendor docs (enterprise managed settings, checked 2026-10-17) say an empty `sandbox.userPolicy.filesystem.readwritePaths` array removes user-configured path grants, but it does not remove access the runtime assembles on its own, including the current working directory. Strict closes that gap. This is a capability setting: managed `false` prohibits the automatic grant. Managed `true`, or omitting the key, leaves the user setting unchanged. Do not set it to `true`.
+
+**Why Baseline and Moderate omit it:** Those tiers keep the vendor behavior so a sandboxed agent can still edit the project it was started in. Strict is the tier that requires an explicit path grant.
+
+**What breaks if removed or set to `true`:** A sandboxed command can read and write the whole session folder. That folder may be a home directory, a monorepo root, or a repo the admin never listed. The same managed `sandbox` object applies to Copilot CLI, VS Code Agent Host sessions, and the GitHub Copilot app. It does not cover Copilot cloud agent, JetBrains, Claude Code, or Cursor. Adding any `sandbox` key already requires Copilot CLI 1.0.93+, VS Code 1.141.0+, and the Copilot app 1.1.26+.
+
+**Safe equivalent:** Edit files in the editor, or ask IT to add the exact absolute project path to `sandbox.userPolicy.filesystem.readwritePaths`. Do not flip this key to `true` for one team.
 
 ### `remoteControl`
 
