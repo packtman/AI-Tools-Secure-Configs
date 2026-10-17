@@ -65,7 +65,7 @@ This is a separate control plane from AI Controls. Users cannot loosen most keys
 | MDM | macOS `com.github.copilot`, Windows `HKLM\SOFTWARE\Policies\GitHubCopilot` | Device groups, and policy that must apply before sign-in. Linux has no native MDM. |
 | File-based | macOS `/Library/Application Support/GitHubCopilot/managed-settings.json`, Windows `%ProgramFiles%\GitHubCopilot\managed-settings.json`, Linux `/etc/github-copilot/managed-settings.json` | Linux, containers, Codespaces, or when you cannot use `.github-private`. |
 
-MCP allowlists (`allowedMcpServers`, `deniedMcpServers`) are generally available on the GitHub Copilot app, Copilot CLI v1.0.11+, and VS Code v1.109.3+. They are **not** enforced on Copilot cloud agent. Agent Plugins 1.0 are governed with `enabledPlugins`, `extraKnownMarketplaces`, and `strictKnownMarketplaces` in the same file. Full rollout steps: `examples/managed-settings-rollout.md`.
+MCP allowlists (`allowedMcpServers`, `deniedMcpServers`) are generally available on the GitHub Copilot app, Copilot CLI v1.0.11+, and VS Code v1.109.3+. They are **not** enforced on Copilot cloud agent. Agent Plugins 1.0 are governed with `enabledPlugins`, `extraKnownMarketplaces`, and `strictKnownMarketplaces` in the same file. Strict also sets `sandbox.addCurrentWorkingDirectory` to `false` so the sandbox does not auto-grant the session folder. Baseline and Moderate omit that key. Full rollout steps: `examples/managed-settings-rollout.md`.
 
 ## Content Exclusion
 

@@ -50,7 +50,11 @@
     "sandboxLspServers": true,
     "gitAuth": false,
     "ghAuth": false,
-    "allowDevToolAccess": false
+    "allowDevToolAccess": false,
+    // WHAT: Stops the sandbox from automatically adding the current working directory to its read/write paths.
+    // WHY: Strict. An empty readwritePaths list does not remove that folder. The vendor assembles it separately. This is a capability setting: managed false prohibits it. true or omission leaves the user setting unchanged.
+    // BREAKS IF SET TO true OR REMOVED: Sandboxed commands can edit whatever folder the session started in, including a home directory or a repo the admin did not grant.
+    "addCurrentWorkingDirectory": false
   },
 
   // WHAT: Whether another client can remotely control Copilot sessions hosted on this device.

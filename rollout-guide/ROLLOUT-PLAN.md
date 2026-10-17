@@ -337,6 +337,7 @@ Full Copilot managed-settings rollout (plan, MDM paths, validation, workflow not
 | `deniedMcpServers` | filesystem MCP at `/` | filesystem MCP at `/` | filesystem MCP at `/` | Deny wins. Blocks a root-disk filesystem MCP in every tier. |
 | `strictKnownMarketplaces` | omitted | org GitHub marketplace repo | `[]` (lockdown) | Agent Plugins 1.0 GA 2026-08-12. Empty array blocks all plugin catalogs. |
 | `sandbox.enabled` (Copilot CLI) | omitted | `true` | `true` | Defense in depth if CLI is later enabled. Native MDM is not available on Linux. |
+| `sandbox.addCurrentWorkingDirectory` | omitted | omitted | `false` | Strict stops the Copilot sandbox from auto-granting the session folder. Empty path lists do not remove that access. |
 
 ---
 
@@ -689,6 +690,7 @@ GitHub also supports audit log streaming to: Amazon S3, Azure Blob Storage, Azur
 | `rm -rf <path>` (Strict only) | Data destruction | In Moderate tier, specific dangerous patterns like `rm -rf /` are blocked but `rm` generally works. In Strict, all `rm` is blocked; use `git clean` or manually delete. | Claude Code (Strict) |
 | Copilot CLI (`gh copilot suggest`) | Generated shell commands on shared systems | Use Copilot Chat in the IDE instead. It generates code snippets you can review before running. | Copilot |
 | Copilot web search | Code snippets sent to external search APIs | Use the IDE's built-in documentation features, or search manually in a browser. | Copilot |
+| Copilot sandbox auto-grant of the current working directory (Strict) | The session folder can be a home directory or an unreviewed repo. An empty read/write path list does not remove this grant. | Edit files in the editor, or ask IT to add the exact absolute project path to `sandbox.userPolicy.filesystem.readwritePaths`. Do not set `addCurrentWorkingDirectory` to `true`. | Copilot CLI, VS Code Agent Host, Copilot app |
 | Writing to `~/.bashrc`, `~/.zshrc` | Shell config poisoning (persistence attack) | Edit shell config files manually in a text editor, not through the AI tool. | Claude Code |
 | Claude Code dynamic workflows | Long-running, parallel agent work can consume more usage and execute broader plans than a normal interactive session | Use normal Claude Code sessions for now. Request a pilot exception if your team needs workflow commands or ultracode. | Claude Code |
 | Stdio MCP server relies on an inherited shell variable | Ambient inheritance can expose unrelated credentials to every local MCP process | Declare the required variable in that server's `env`; resolve secrets through the approved secrets manager or credential helper | Claude Code |
@@ -726,6 +728,7 @@ These settings commonly cause developer frustration that is NOT a security issue
 | `fastMode: false` / `CLAUDE_CODE_DISABLE_FAST_MODE=1` | Developer wants `/fast` for live debugging latency | Treat this as an exception request. Confirm usage credits or Console Fast mode access, a spend alert, and that Codex `features.fast_mode` is pinned separately if Codex is also deployed. Do not set `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK` as a workaround. |
 | `disableClaudeAiConnectors: true` | Developer needs a claude.ai Drive or Slack connector inside Claude Code | Treat this as an exception request. Prefer adding an org-approved MCP server to `managed-mcp.json`. If the connector must come from claude.ai, omit `disableClaudeAiConnectors` for that group and pair it with `allowedMcpServers` or `deniedMcpServers`. Do not set `allowAllClaudeAiMcps: true` without those lists. |
 | Content exclusion on `*.yaml` (Copilot, Strict only) | Copilot stops suggesting in Kubernetes/Helm YAML files | In Moderate tier, YAML completions are enabled. Only `helm/values*.yaml` is excluded in Strict. If you are on Strict and need YAML completions, file an exception to narrow the exclusion to only secret-containing YAML files. |
+| `sandbox.addCurrentWorkingDirectory: false` (Copilot, Strict only) | The agent cannot write the folder the Copilot session started in | Grant that one absolute path in `readwritePaths` for a time-boxed exception. Do not set the key to `true`. Moderate and Baseline omit it on purpose. This does not change Claude Code or Cursor filesystem rules. |
 | Workspace trust prompt every session | Developer opens the same project daily and finds the prompt annoying | This is by design. The prompt takes 1 second. If truly problematic, switch to `"once"` for that team. Never disable workspace trust entirely. |
 
 ### 5.3 Exception Request Process

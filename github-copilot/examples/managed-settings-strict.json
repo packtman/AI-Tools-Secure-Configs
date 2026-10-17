@@ -24,6 +24,7 @@
     "gitAuth": false,
     "ghAuth": false,
     "allowDevToolAccess": false,
+    "addCurrentWorkingDirectory": false,
     "failIfUnavailable": true,
     "userPolicy": {
       "seatbelt": {
