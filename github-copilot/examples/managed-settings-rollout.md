@@ -97,10 +97,11 @@ This guide is for IT admins who have not used Copilot as a daily driver. Pair it
 | Copilot CLI `--yolo` / VS Code global auto-approve | `disableBypassPermissionsMode` is `disable` | Approve tools one at a time. If a workflow is blocked, file an exception. Do not look for a bypass flag. |
 | Copilot cloud agent MCP | Allowlists are not enforced on cloud agent | Cloud agent stays limited in org policy. Do not assume this file covers it. |
 | Package restore inside Copilot CLI sandbox (if CLI is later enabled) | Sandbox is forced on | Restore packages on the host terminal, or request a path grant. |
+| Windows sandbox learning mode set to allow | `sandbox.learningMode` is `deny` on Moderate and Strict | Blocked file and process access is still recorded. Request the exact path. Do not set learning mode to allow in Intune. Writing allow in managed-settings.json does nothing. |
 
 **Message to send before rollout:**
 
-> Starting [DATE], GitHub Copilot will load enterprise managed settings. Two changes matter for daily work. First, Copilot will only connect to approved MCP servers (the built-in GitHub MCP is already approved). Second, plugins can only be installed from our org marketplace. Copilot will also refuse YOLO / allow-all. If a server or plugin you need is missing, file an exception with the exact URL or command. Do not put tokens in config files.
+> Starting [DATE], GitHub Copilot will load enterprise managed settings. Two changes matter for daily work. First, Copilot will only connect to approved MCP servers (the built-in GitHub MCP is already approved). Second, plugins can only be installed from our org marketplace. Copilot will also refuse YOLO / allow-all. On Windows, sandbox learning mode stays on deny: blocked file and process access is still recorded, so ask for a specific path instead of turning learning mode to allow. If a server or plugin you need is missing, file an exception with the exact URL or command. Do not put tokens in config files.
 
 ### 1.4 Rollback procedure
 
@@ -154,6 +155,7 @@ Replace `YOUR-ORG` and `YOUR-ORG/YOUR-PLUGIN-MARKETPLACE` before deploy. Never c
 | `sandbox.enabled` | omitted | `true` | `true` | CLI sandbox floor for enterprise. Baseline leaves it optional. |
 | `sandbox.allowBypass` | omitted | `false` | `false` | Model cannot request unsandboxed commands. |
 | `sandbox.gitAuth` / `ghAuth` / `allowDevToolAccess` | omitted | omitted | `false` | Strict blocks token injection and registry caches. |
+| `sandbox.learningMode` | omitted | `"deny"` | `"deny"` | Locks out Windows MDM allow, which permits file and process access the sandbox would block. No effect on macOS, Linux, or when the sandbox is off. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks device-side remote control. Moderate requires SSO. |
 | Org policy MCP availability (companion) | often enabled | enabled | disabled | AI Controls kill switch is separate. Strict can disable MCP entirely. |
 
@@ -182,6 +184,7 @@ Native MDM does not drop a JSON file. It sets one string per key. Nested keys us
 | `permissions.disableBypassPermissionsMode` | `disable` |
 | `sandbox.enabled` | `true` |
 | `sandbox.allowBypass` | `false` |
+| `sandbox.learningMode` | `deny` |
 | `allowedMcpServers` | `[{"serverUrl":"https://api.githubcopilot.com/*"}]` |
 | `deniedMcpServers` | `[{"serverCommand":["npx","-y","@modelcontextprotocol/server-filesystem","/"]}]` |
 | `strictKnownMarketplaces` | `[{"source":"github","repo":"YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"}]` |
@@ -189,7 +192,7 @@ Native MDM does not drop a JSON file. It sets one string per key. Nested keys us
 
 **Jamf (macOS):** Custom Settings payload, preference domain `com.github.copilot`, keys as strings.
 
-**Intune (Windows):** Administrative template or OMA-URI / Win32 registry payload writing `REG_SZ` under `HKLM\SOFTWARE\Policies\GitHubCopilot`.
+**Intune (Windows):** Administrative template or OMA-URI / Win32 registry payload writing `REG_SZ` under `HKLM\SOFTWARE\Policies\GitHubCopilot`. Store `sandbox.learningMode` as the string `deny`. Do not use a DWORD. An Intune value of `allow` is overridden by `deny` from this file or any other managed source.
 
 **Workspace ONE:** Profile with the same domain (macOS) or registry path (Windows).
 
@@ -210,6 +213,16 @@ gh api repos/YOUR-ORG/.github-private/contents/copilot/managed-settings.json \
 # Copilot CLI: confirm YOLO is suppressed
 copilot --yolo
 # Expected: startup ignores bypass flags when disableBypassPermissionsMode is disable.
+
+# Confirm learning mode is the string deny, not allow.
+# File-based or server-managed JSON:
+python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['sandbox']['learningMode']=='deny'" \
+  /etc/github-copilot/managed-settings.json
+# Windows MDM (REG_SZ, not a DWORD):
+# reg query HKLM\SOFTWARE\Policies\GitHubCopilot /v sandbox.learningMode
+# Expected: deny
+# On a supported Windows host, a sandboxed command that touches a path outside the grant must be blocked.
+# macOS and Linux ignore this key. Do not treat a missing registry value there as a failure.
 
 # Linux file-based permissions
 ls -l /etc/github-copilot/managed-settings.json
@@ -248,6 +261,7 @@ gh api \
 | Awesome Copilot / random marketplace plugin | Plugin can ship an MCP server | Add the plugin to the org marketplace after review, then set `enabledPlugins` to `true` if it must be default. |
 | `--yolo` / Allow all | Unattended shell, path, and URL access | Approve each tool. For repetitive low-risk tools, request a narrower allow, not bypass. |
 | Copilot CLI unsandboxed command | Host compromise | Run the command in a local terminal you control, or request a sandbox path grant. |
+| Windows learning mode allow | Records and permits file and process access the sandbox would block. Network limits stay, which can look like the sandbox is still on. | Keep `deny`. Read the recorded blocks, then request one absolute path in `readwritePaths`. Do not set Intune to allow, and do not write allow in managed-settings.json (the client ignores it). |
 | Root filesystem MCP | Disk exfil | Use a project-scoped filesystem MCP path, then add that exact `serverCommand` to the allowlist. |
 | Cloud agent MCP | Allowlist not enforced | Keep cloud agent disabled or limited. Do not use cloud agent as an MCP bypass. |
 
@@ -258,6 +272,7 @@ gh api \
 | `allowedMcpServers` with only the GitHub URL | Playwright, internal APIs, and stdio servers stop | Add one matcher per server. Prefer `serverUrl` or `serverCommand`. Expire exceptions in 90 days. |
 | `strictKnownMarketplaces` placeholder repo | Plugin UI shows nothing | Publish the marketplace before Phase 2, or omit both marketplace keys until it exists. |
 | `sandbox.allowDevToolAccess: false` (Strict) | npm/pip restore fails in CLI | Grant specific cache paths. Do not set the flag back to `true` for the whole org. |
+| `sandbox.learningMode: deny` (Moderate and Strict, Windows only) | A build or test that used learning mode to discover missing paths now fails those paths | Read the recorded denial and grant that exact path. A time-boxed allow requires removing `deny` from every managed source on that device (file, server-managed, and MDM). Do not ship `allow` in this JSON. |
 | Malformed JSON | Client treats allowlist as empty and blocks all non-built-in MCP | Validate JSON in CI before merge. Failed policy fails closed. |
 
 ### Tool overlap
@@ -268,4 +283,5 @@ Claude Code, Cursor, and Copilot can each run MCP servers and a shell.
 |---------|----------|
 | Double MCP config | An allowlisted Copilot MCP server is not automatically allowed in Claude Code or Cursor. Copy the same server identity into Claude Code `allowedMcpServers` / managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). |
 | Double shell | Copilot CLI sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. Configure each tool. Do not weaken one because another looks covered. |
+| Windows learning mode | `sandbox.learningMode` only affects Copilot on Windows while its sandbox is on. It does not change Claude Code or Cursor sandboxes, and it does nothing on macOS or Linux. Pinning deny here does not close those other shells. |
 | Cloud agent gap | Only Copilot cloud agent skips this MCP allowlist. Keep it limited in org policy. Claude Code remote control and Cursor cloud agents are separate kill switches. |

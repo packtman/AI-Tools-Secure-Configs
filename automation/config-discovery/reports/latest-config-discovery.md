@@ -329,6 +329,8 @@ organization Scroll breadcrumbs right GitHub Copilot Get started Quickstart Copi
 Copilot app quickstart What is GitHub Copilot? Plans Features Best practices Enterprise AI
 governance Concepts Completions Code suggestions Code referencing Chat Agents ...
 
+Config update applied from the enterprise managed settings reference (fetched 2026-10-18), not from this page fingerprint: pin `sandbox.learningMode` to `deny` on Moderate and Strict. Baseline omits it. `allow` is ignored in `managed-settings.json` and is accepted only by Windows device management.
+
 ### GitHub Copilot: Content exclusion documentation
 
 - Change type: `content-changed`
@@ -360,6 +362,8 @@ metrics Copilot LoC metrics Team-level metrics Example schema Enterprise a ...
 > Configure and audit content exclusion - GitHub Docs Skip to main content GitHub Docs Version: Free,
 Pro, & Team Search or ask Copilot Search or ask Copilot Select language: current language is Englis
 ...
+
+No config update needed from this content-exclusion page. The Copilot change in this run is `sandbox.learningMode`, taken from the enterprise managed settings reference.
 
 ### Codex CLI: OpenAI Codex repository
 
