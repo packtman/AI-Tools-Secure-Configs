@@ -38,6 +38,7 @@
     "allowBypass": false,
     "sandboxMcpServers": true,
     "sandboxLspServers": true,
+    "learningMode": "deny",
     "failIfUnavailable": true,
     "userPolicy": {
       "seatbelt": {

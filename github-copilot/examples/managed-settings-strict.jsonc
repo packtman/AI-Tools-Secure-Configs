@@ -50,7 +50,11 @@
     "sandboxLspServers": true,
     "gitAuth": false,
     "ghAuth": false,
-    "allowDevToolAccess": false
+    "allowDevToolAccess": false,
+    // WHAT: Keeps Windows sandbox learning mode on deny. Deny still records blocked file and process access.
+    // WHY: allow records and permits that access, so the sandbox no longer protects files or processes. Only Intune or the Windows registry accepts allow. This JSON ignores allow. A managed deny from any source wins, including this file.
+    // BREAKS IF OMITTED OR SET TO allow: An Intune allow can turn off filesystem and process enforcement on supported Windows hosts. Writing allow here does not enable that mode.
+    "learningMode": "deny"
   },
 
   // WHAT: Whether another client can remotely control Copilot sessions hosted on this device.

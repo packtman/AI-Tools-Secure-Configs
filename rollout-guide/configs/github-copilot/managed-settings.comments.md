@@ -29,6 +29,7 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `sandbox.gitAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for Git HTTPS inside the sandbox. |
 | `sandbox.ghAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for GitHub CLI inside the sandbox. |
 | `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
+| `sandbox.learningMode` | omitted | `"deny"` | `"deny"` | Locks out Windows MDM `allow`, which records and permits file and process access the sandbox would block. No effect on macOS, Linux, or when the sandbox is off. Baseline does not force the sandbox, so it omits the key. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks remote control of sessions on the device. Moderate requires SSO for listed orgs. |
 | `permissions.model` | omitted | omitted | omitted | Model picker is not a security control for these tiers. |
 | `telemetry` | omitted | omitted | omitted | OTEL export can carry Authorization headers. Configure collector auth in a secrets manager, not in this JSON. |
@@ -83,11 +84,23 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 
 ### `sandbox`
 
-**What it does:** Sets a minimum Copilot CLI sandbox. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
+**What it does:** Sets a minimum Copilot sandbox for Copilot CLI, VS Code Agent Host sessions, and the GitHub Copilot app. `enabled: true` forces the sandbox on. `allowBypass: false` stops unsandboxed command requests. `sandboxMcpServers` / `sandboxLspServers: true` put local MCP and language servers inside the sandbox. Moderate and Strict set `learningMode` to `deny`. Strict also sets `gitAuth`, `ghAuth`, and `allowDevToolAccess` to `false`.
 
 **Why:** Copilot CLI is a shell agent. This sandbox does not replace Claude Code or Cursor shell policy. Configure those tools separately.
 
 **What breaks if Strict disables `allowDevToolAccess`:** Package restore, authenticated registries, and shared caches can fail until you grant explicit paths. Use the exception process, not a blanket `true`.
+
+### `sandbox.learningMode`
+
+**What it does:** On supported Windows hosts, chooses whether sandboxed commands only record blocked filesystem and process access (`deny`) or record and permit that access (`allow`). Network limits stay in place either way. The key does nothing when sandboxing is off, and it does nothing on macOS or Linux.
+
+**Why:** `allow` removes normal filesystem and process protection while the sandbox still looks enabled. Windows device management (Intune or `HKLM\SOFTWARE\Policies\GitHubCopilot`) is the only channel that accepts `allow`. `managed-settings.json` ignores `allow`. A `deny` from any managed source wins, including this file, so Moderate and Strict pin `deny`. Baseline omits the key because it does not force the sandbox. Vendor default is already `deny`. The pin exists so an Intune `allow` cannot override it.
+
+**What breaks if removed or set to `allow`:** Removing it lets a Windows MDM `allow` turn off filesystem and process enforcement on hosts that support access recording. Writing `allow` in this JSON does not turn learning mode on. The client ignores that value, so the file looks changed and the lock is not applied.
+
+**Coverage:** Copilot CLI, VS Code Agent Host, and the GitHub Copilot app, only on Windows hosts that support access recording, and only while the sandbox is on. Does not cover Copilot cloud agent, JetBrains, Claude Code, or Cursor. Same sandbox client floor as the rest of the `sandbox` object: CLI 1.0.93, VS Code 1.141.0, Copilot app 1.1.26.
+
+**Safe equivalent:** Keep `deny`. It still records what was blocked. Grant the exact path in `readwritePaths`, or run the command in a terminal you control. Do not set learning mode to `allow` in Intune.
 
 **Linux MDM:** Native MDM is not supported on Linux. Use the file-based path `/etc/github-copilot/managed-settings.json` owned by root, not a symlink, and not group- or world-writable.
 
@@ -106,4 +119,5 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `permissions.model` | Auto model selection is a productivity default, not a threat control. |
 | `telemetry` | Vendor examples put collector `Authorization` headers in JSON. That is a secret. If you need OTEL, inject headers from a secrets manager outside this repo. |
 | `serverName` matchers | Documented as convenience only. Users can rename servers. |
+| `sandbox.learningMode` value `allow` | Ignored in `managed-settings.json`. The only enforceable value in this file is `deny`. Do not write `allow` as an exception. |
 | Registry-only MCP policy | Preview, name/ID matching, weaker than managed-settings allowlists. GitHub says do not combine it with this file. |
