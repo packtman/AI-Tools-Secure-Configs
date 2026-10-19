@@ -612,7 +612,7 @@ MDM is also still useful for:
    *.individual.githubcopilot.com
    ```
 7. **Deploy VS Code/Cursor Copilot settings** via `.vscode/settings.json` in repos
-8. **Deploy managed settings** (`managed-settings-moderate.json`) as `copilot/managed-settings.json` in `.github-private`. Replace `YOUR-ORG` placeholders. Set AI Controls MCP registry restriction to Allow all so this file is the MCP allowlist. Confirm cloud agent stays limited (allowlists are not enforced there).
+8. **Deploy managed settings** (`managed-settings-moderate.json`) as `copilot/managed-settings.json` in `.github-private`. Replace `YOUR-ORG` placeholders. Set AI Controls MCP registry restriction to Allow all so this file is the MCP allowlist. Confirm cloud agent stays limited (allowlists are not enforced there). Moderate omits `forceRemoteSettingsRefresh`. Strict sets it to `true` and must also deliver that value by MDM or the device file, because a server-managed copy does not cover the first startup. Store the MDM value as the string `true`, not a DWORD.
 
 #### Validation
 
@@ -755,6 +755,7 @@ Both Claude Code and Cursor can execute shell commands in the terminal. This cre
 | **Gap: Cursor allowlist vs. Claude Code deny** | A command in Cursor's `terminalAllowlist` (like `npm test`) will auto-run in Cursor, but Claude Code has its own permission system. When Claude Code runs `npm test`, it follows Claude Code's rules (it is in `ask`, so it prompts). These are separate enforcement layers. |
 | **Recommendation** | Configure both tools independently. Cursor's allowlist controls what auto-runs in the IDE terminal. Claude Code's permissions control what the Claude agent can do. They are complementary, not redundant. Do not weaken one because the other provides coverage. |
 | **MCP servers** | Claude Code, Cursor, and Copilot can each run MCP servers. Copilot now has a generally available `allowedMcpServers` allowlist in `managed-settings.json`. That list does not apply to Claude Code or Cursor. Copy the same server identity into Claude Code managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). Copilot cloud agent does not enforce the Copilot allowlist. |
+| **Startup freshness** | Claude Code Strict `forceRemoteSettingsRefresh` and Copilot Strict `forceRemoteSettingsRefresh` are different products. Pinning Claude Code does not make Copilot drop its one-hour policy cache, and the reverse is also true. Cursor has no equivalent key in this repo. |
 | **Model allowlists** | Claude Code `availableModels` does not constrain Cursor or GitHub Copilot. If you need the same families everywhere, pin each tool separately (Cursor dashboard models, Copilot policy models, Claude Enterprise console restrictions). |
 | **MCP servers** | Both tools support MCP servers. If you define MCP servers in both `.mcp.json` (for Claude Code) and Cursor's MCP settings, the same server may be accessible from both tools. Use `allowManagedMcpServersOnly` in Claude Code and an empty `mcpAllowlist` in Cursor to ensure consistent MCP governance. |
 

@@ -30,6 +30,7 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 | `sandbox.ghAuth` | omitted | omitted | `false` | Strict blocks GitHub token injection for GitHub CLI inside the sandbox. |
 | `sandbox.allowDevToolAccess` | omitted | omitted | `false` | Strict blocks automatic access to caches and registries that often hold tokens. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks remote control of sessions on the device. Moderate requires SSO for listed orgs. |
+| `forceRemoteSettingsRefresh` | omitted | omitted | `true` | Strict fails closed until a fresh server policy download succeeds. Baseline and Moderate keep the one-hour cache so a GitHub or VPN outage does not block Copilot. |
 | `permissions.model` | omitted | omitted | omitted | Model picker is not a security control for these tiers. |
 | `telemetry` | omitted | omitted | omitted | OTEL export can carry Authorization headers. Configure collector auth in a secrets manager, not in this JSON. |
 
@@ -98,6 +99,21 @@ Do not put secrets, tokens, API keys, or Authorization headers in managed settin
 **Why:** A remote-controlled session is a prompt-injection path from a second machine.
 
 **What breaks if the org login is wrong:** Every remote-control attempt fails, or a sibling org is trusted. Use the GitHub organization login, not a display name.
+
+### `forceRemoteSettingsRefresh`
+
+**What it does:** Makes Copilot CLI, VS Code, and the GitHub Copilot app download server-managed settings at startup. Server-managed settings are the policy file GitHub serves from the enterprise `.github-private` repository. The key skips the normal one-hour cache. If the download fails, CLI and the app do not fall back to an older cached policy, and the affected operations stay restricted. In VS Code, Copilot features stay blocked until that refresh succeeds. Users need a network connection when they start the client.
+
+**Why Strict only:** A stale cache can keep a revoked MCP server, plugin, or permission rule active for an hour, or longer when a failed download falls back to an older cache. Baseline and Moderate omit the key. The vendor default is off, and omission is enough. Do not pin `false`: it does not block a threat, and a managed `false` from MDM would override a server-managed `true` because MDM wins over server-managed, which wins over the device file.
+
+**What breaks if misconfigured or removed:**
+
+- Removed on Strict: clients use the cache again.
+- Present only in `.github-private`: the first startup is not covered. Deliver the same value through MDM or the device file so it applies before the first sign-in. A server-managed `true` starts requiring refreshes on later startups, after the client has received it once.
+- Windows registry DWORD, or a macOS native boolean: Copilot CLI ignores the value. Store the string `true` or `false`. In `managed-settings.json`, use a JSON boolean.
+- Set with a policy helper script: the vendor says those scripts cannot set this key. Use the JSON file or MDM.
+- Offline, captive portal, or VPN not up yet: VS Code Copilot does not start. Connect first, then open the client.
+- Coverage gap: this key does not cover Copilot cloud agent or JetBrains. It does not cover Claude Code or Cursor. Claude Code has its own `forceRemoteSettingsRefresh`, and that pin does not refresh Copilot policy.
 
 ## Keys intentionally omitted
 

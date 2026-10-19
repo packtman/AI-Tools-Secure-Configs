@@ -36,5 +36,6 @@
   },
   "remoteControl": {
     "mode": "disabled"
-  }
+  },
+  "forceRemoteSettingsRefresh": true
 }
