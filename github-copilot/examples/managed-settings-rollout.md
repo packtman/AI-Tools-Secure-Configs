@@ -97,6 +97,7 @@ This guide is for IT admins who have not used Copilot as a daily driver. Pair it
 | Copilot CLI `--yolo` / VS Code global auto-approve | `disableBypassPermissionsMode` is `disable` | Approve tools one at a time. If a workflow is blocked, file an exception. Do not look for a bypass flag. |
 | Copilot cloud agent MCP | Allowlists are not enforced on cloud agent | Cloud agent stays limited in org policy. Do not assume this file covers it. |
 | Package restore inside Copilot CLI sandbox (if CLI is later enabled) | Sandbox is forced on | Restore packages on the host terminal, or request a path grant. |
+| Starting Copilot before the network is up (Strict only) | `forceRemoteSettingsRefresh: true` blocks VS Code Copilot until a fresh policy download succeeds. CLI and the Copilot app restrict operations instead of using an older cache. | Connect to the corporate network, then start the client. Moderate and Baseline do not set this key. |
 
 **Message to send before rollout:**
 
@@ -155,6 +156,7 @@ Replace `YOUR-ORG` and `YOUR-ORG/YOUR-PLUGIN-MARKETPLACE` before deploy. Never c
 | `sandbox.allowBypass` | omitted | `false` | `false` | Model cannot request unsandboxed commands. |
 | `sandbox.gitAuth` / `ghAuth` / `allowDevToolAccess` | omitted | omitted | `false` | Strict blocks token injection and registry caches. |
 | `remoteControl.mode` | omitted | `requireSSO` | `disabled` | Strict blocks device-side remote control. Moderate requires SSO. |
+| `forceRemoteSettingsRefresh` | omitted | omitted | `true` | Strict fails closed until a fresh server policy download succeeds. Baseline and Moderate keep the one-hour cache. |
 | Org policy MCP availability (companion) | often enabled | enabled | disabled | AI Controls kill switch is separate. Strict can disable MCP entirely. |
 
 ---
@@ -187,6 +189,14 @@ Native MDM does not drop a JSON file. It sets one string per key. Nested keys us
 | `strictKnownMarketplaces` | `[{"source":"github","repo":"YOUR-ORG/YOUR-PLUGIN-MARKETPLACE"}]` |
 | `remoteControl.mode` | `requireSSO` |
 
+Strict adds one more MDM string. Do not add it to a Moderate payload.
+
+| MDM key | Strict string value |
+|---------|---------------------|
+| `forceRemoteSettingsRefresh` | `true` |
+
+Store `true` or `false` as the string itself. Do not use a Windows DWORD and do not use a macOS native boolean. `managed-settings.json` uses a JSON boolean (`true` without quotes). Policy helper scripts cannot set this key. MDM (Jamf, Intune, Workspace ONE) or the device file is what makes the requirement apply on the first startup. A copy that exists only in `.github-private` starts enforcing it on later startups, after the client has received it once.
+
 **Jamf (macOS):** Custom Settings payload, preference domain `com.github.copilot`, keys as strings.
 
 **Intune (Windows):** Administrative template or OMA-URI / Win32 registry payload writing `REG_SZ` under `HKLM\SOFTWARE\Policies\GitHubCopilot`.
@@ -214,6 +224,19 @@ copilot --yolo
 # Linux file-based permissions
 ls -l /etc/github-copilot/managed-settings.json
 # Expected: regular file, owner root, not group/world writable, not a symlink
+
+# Strict only: confirm the freshness pin is a string, not a DWORD
+# Windows
+reg query "HKLM\SOFTWARE\Policies\GitHubCopilot" /v forceRemoteSettingsRefresh
+# Expected: REG_SZ true
+
+# macOS
+defaults read "/Library/Managed Preferences/com.github.copilot" forceRemoteSettingsRefresh
+# Expected: the string true
+
+# Strict behavior check: disconnect the network, then start VS Code.
+# Expected: Copilot stays blocked until Developer: Sync Account Policy succeeds.
+# Moderate and Baseline omit the key, so the same offline start still uses the cache.
 ```
 
 Minimum clients for MCP allowlists: GitHub Copilot app, Copilot CLI v1.0.11+, VS Code v1.109.3+. JetBrains, Eclipse, and Xcode are public preview. Copilot cloud agent is unsupported for this key.
@@ -250,6 +273,7 @@ gh api \
 | Copilot CLI unsandboxed command | Host compromise | Run the command in a local terminal you control, or request a sandbox path grant. |
 | Root filesystem MCP | Disk exfil | Use a project-scoped filesystem MCP path, then add that exact `serverCommand` to the allowlist. |
 | Cloud agent MCP | Allowlist not enforced | Keep cloud agent disabled or limited. Do not use cloud agent as an MCP bypass. |
+| Copilot startup while GitHub policy cannot be downloaded (Strict) | A revoked rule can stay active on the one-hour cache, or on an older cache after a failed download | Connect, then start Copilot. There is no offline safe equivalent that still fails closed. |
 
 ### False-positive friction
 
@@ -259,6 +283,7 @@ gh api \
 | `strictKnownMarketplaces` placeholder repo | Plugin UI shows nothing | Publish the marketplace before Phase 2, or omit both marketplace keys until it exists. |
 | `sandbox.allowDevToolAccess: false` (Strict) | npm/pip restore fails in CLI | Grant specific cache paths. Do not set the flag back to `true` for the whole org. |
 | Malformed JSON | Client treats allowlist as empty and blocks all non-built-in MCP | Validate JSON in CI before merge. Failed policy fails closed. |
+| `forceRemoteSettingsRefresh: true` (Strict) | Captive portal, VPN not connected yet, or a proxy login prompt blocks VS Code Copilot at startup. CLI and the app restrict operations instead of using cache. | Fix egress to the Copilot hosts in `network-security.md` (`api.github.com`, `github.com`, `copilot-proxy.githubusercontent.com`). For a time-boxed outage, remove the key from MDM, the device file, and `.github-private` for that device group. MDM wins, so clearing only the server file does nothing while MDM still has the string `true`. Do not set org-wide `false`. |
 
 ### Tool overlap
 
@@ -269,3 +294,4 @@ Claude Code, Cursor, and Copilot can each run MCP servers and a shell.
 | Double MCP config | An allowlisted Copilot MCP server is not automatically allowed in Claude Code or Cursor. Copy the same server identity into Claude Code `allowedMcpServers` / managed MCP and keep Cursor `mcpAllowlist` empty (prompt every tool). |
 | Double shell | Copilot CLI sandbox does not bind Cursor terminal allowlists or Claude Code Bash rules. Configure each tool. Do not weaken one because another looks covered. |
 | Cloud agent gap | Only Copilot cloud agent skips this MCP allowlist. Keep it limited in org policy. Claude Code remote control and Cursor cloud agents are separate kill switches. |
+| Startup freshness | Claude Code Strict `forceRemoteSettingsRefresh` blocks Claude Code until Anthropic managed settings load. Copilot Strict uses the same key name for a different host: GitHub's server-managed policy, on Copilot CLI, VS Code, and the Copilot app. Pin both if you deploy both tools. Neither key covers Cursor, JetBrains, or Copilot cloud agent. |

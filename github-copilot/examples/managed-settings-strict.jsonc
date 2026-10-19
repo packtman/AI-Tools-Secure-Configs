@@ -58,5 +58,12 @@
   // BREAKS IF SET TO enabled: Any authorized client can drive a session on this endpoint.
   "remoteControl": {
     "mode": "disabled"
-  }
+  },
+
+  // WHAT: Requires a fresh download of server-managed settings at startup in Copilot CLI, VS Code, and the GitHub Copilot app.
+  // WHY: Strict cannot keep a revoked MCP, plugin, or permission rule alive on the normal one-hour cache, or on an older cache after a failed download.
+  // BREAKS IF REMOVED: CLI and the Copilot app fall back to cached policy. VS Code starts Copilot without a confirmed refresh.
+  // BREAKS IF THE FILE IS THE ONLY COPY: A server-managed true applies on later startups, after the client has received it once. First startup stays on the cache unless MDM or the device file also sets this key. Policy helper scripts cannot set it.
+  // FORMAT: JSON boolean true here. Windows registry and macOS managed preferences store the string true, not a DWORD and not a native boolean.
+  "forceRemoteSettingsRefresh": true
 }

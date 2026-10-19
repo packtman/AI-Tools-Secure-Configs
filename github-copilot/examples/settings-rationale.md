@@ -289,6 +289,16 @@ Pair plugin governance with MCP allowlists. A plugin can ship an MCP server that
 
 Set to `"disable"` in every tier. This blocks Copilot CLI `--yolo` / `--allow-all`, VS Code `chat.tools.global.autoApprove`, and the Copilot app Allow all setting. It is the Copilot equivalent of Claude Code `disableBypassPermissionsMode`.
 
+### Fresh server policy (`forceRemoteSettingsRefresh`)
+
+Strict sets this to `true`. Baseline and Moderate omit it.
+
+**What it does:** Requires Copilot CLI, VS Code, and the GitHub Copilot app to download server-managed settings at startup. Server-managed settings are the policy GitHub serves from `.github-private`. The key skips the normal one-hour cache. A failed download does not fall back to an older cache: CLI and the app restrict the affected operations, and VS Code blocks Copilot features until the refresh succeeds.
+
+**Why Strict only:** A cached policy can keep a revoked MCP server, plugin, or permission rule active after you have already removed it. Moderate keeps the cache so a GitHub or VPN outage does not stop the editor.
+
+**What breaks:** Developers on Strict need network before they open Copilot. Deliver the key through MDM or the device file, not only through `.github-private`, or the first startup is still cached. In the Windows registry and macOS managed preferences, store the string `true`, not a DWORD and not a native boolean. Policy helper scripts cannot set this key. Copilot cloud agent and JetBrains do not enforce it. Claude Code's same-named setting does not refresh Copilot.
+
 ---
 
 ## 6. Seat Management

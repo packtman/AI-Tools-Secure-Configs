@@ -12,7 +12,7 @@ This directory contains security-hardened configurations for **GitHub Copilot** 
 | `examples/org-policy-moderate.json` | **Moderate** — Core features enabled, sensible exclusions (enterprise) |
 | `examples/org-policy-baseline.json` | **Baseline** — Most features enabled, minimal exclusions (startups) |
 | `examples/org-policy.json` | Organization-level feature policies (reference) |
-| `examples/managed-settings-strict.json` | **Strict** enterprise `copilot/managed-settings.json` (MCP allowlist empty, plugins locked) |
+| `examples/managed-settings-strict.json` | **Strict** enterprise `copilot/managed-settings.json` (MCP allowlist empty, plugins locked, fresh server policy required at startup) |
 | `examples/managed-settings-moderate.json` | **Moderate** enterprise `copilot/managed-settings.json` (GitHub MCP allowlist, org plugin catalog) |
 | `examples/managed-settings-baseline.json` | **Baseline** enterprise `copilot/managed-settings.json` (deny root filesystem MCP, block YOLO) |
 | `examples/managed-settings-*.jsonc` | Same files with inline comments (strip before deploy) |
