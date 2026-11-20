@@ -70,14 +70,30 @@ This file uses the same format as `.mcp.json` and defines organization-wide MCP 
 
 ## MCP Permission Rules
 
-Control MCP tool usage via permission rules:
+Claude Code can make a **per-tool decision** independently of whether the MCP server is permitted to connect:
+
+| Decision | Example action | Result |
+|----------|----------------|--------|
+| **Allow** | GitHub `search_repositories`, `get_file_contents` | Executes without an approval prompt |
+| **Ask** | GitHub `create_issue`, `create_pull_request` | Prompts the user to approve the call |
+| **Deny** | GitHub `delete_file`, `push_files`; all filesystem/shell MCP tools | Blocks the call |
+
+A copyable **Claude Code** example is in [`mcp-tool-permissions.json`](./mcp-tool-permissions.json). Merge its `permissions` object into the appropriate `settings.json` or enterprise `managed-settings.json` (do **not** replace the entire managed settings file):
 
 ```json
 {
   "permissions": {
-    "allow": ["mcp__github__search_repositories"],
-    "ask": ["mcp__github__create_issue"],
+    "allow": [
+      "mcp__github__search_repositories",
+      "mcp__github__get_file_contents"
+    ],
+    "ask": [
+      "mcp__github__create_issue",
+      "mcp__github__create_pull_request"
+    ],
     "deny": [
+      "mcp__github__delete_file",
+      "mcp__github__push_files",
       "mcp__filesystem__*",
       "mcp__shell__*"
     ]
@@ -85,11 +101,24 @@ Control MCP tool usage via permission rules:
 }
 ```
 
-Pattern syntax:
-- `mcp__servername` — Matches the server name exactly (no tools).
-- `mcp__servername__*` — Matches all tools from that server.
-- `mcp__servername__toolname` — Matches a specific tool.
-- `mcp__*` — Matches all MCP tools from any server.
+### Important precedence and deployment details
+
+- **Deny > Ask > Allow**, regardless of specificity. A broad `ask: ["mcp__*"]` takes precedence over a narrower `allow: ["mcp__github__search_repositories"]`. The [Moderate managed settings](./managed-settings-moderate.json) currently contain `ask: ["mcp__*"]`; **replace that catch-all** with deliberate per-tool `ask` entries to make the example's `allow` rules effective. Check for conflicting managed rules and other policies.
+- The inverse also holds: `deny: ["mcp__github__*"]` cannot be paired with a narrower `allow` exception. This sample is **not a deny-by-default allowlist**: unlisted tools follow the client's remaining permission rules and mode. For stronger enforcement, combine explicit denied tools, server governance, scoped credentials, and an MCP gateway or pre-tool policy enforcement.
+- `allowedMcpServers` and `deniedMcpServers` control **server availability**, not per-call approval. A permitted server can expose multiple tools with very different risks.
+- Use the **actual** tool names exposed by the installed server; examples assume a GitHub MCP server named `github`. Names and offered operations can differ by server version and toolset. `mcp__servername__*` matches all tools from that server, while `mcp__servername__toolname` matches an individual tool. No MCP server is installed by this JSON snippet.
+- The tool's ability to search/read data does not make it inherently low-risk. Limit identities, repositories, and scopes at the service; use server-side controls for parameter-sensitive policies.
+- Tool-level decisions are enforced by **Claude Code**, not by the MCP specification, and are not portable JSON to Cursor, Gemini CLI, or Codex.
+
+### Verify before rollout
+
+1. Configure an approved GitHub MCP server and confirm its exposed tool names with `/mcp`.
+2. Load the proposed settings, then inspect **`/permissions`** to identify the effective rule and source.
+3. Test an allowed read/search, a write that prompts, and a denied destructive call **in a disposable test repository**.
+4. Confirm a managed `ask` catch-all is not unintentionally shadowing `allow`, and verify the behavior of **unlisted** MCP calls.
+5. Log calls, scope MCP credentials, and test that denied actions cannot be performed through a different allowed tool.
+
+Vendor reference: [Claude Code permission rules](https://code.claude.com/docs/en/permissions).
 
 ---
 

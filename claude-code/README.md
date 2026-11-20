@@ -25,6 +25,7 @@ This directory contains comprehensive, security-hardened configurations for **Cl
 | `examples/sandbox-config.json` | OS-level sandbox (filesystem + network isolation) |
 | `examples/managed-mcp.json` | Managed MCP server configuration |
 | `examples/mcp-security.md` | MCP server security guide (risk model, allowlists, best practices) |
+| `examples/mcp-tool-permissions.json` | Copyable example: allow, ask, or deny specific MCP tool calls |
 | `examples/server-managed-settings-guide.md` | Claude.ai Admin Console deployment guide |
 | `examples/environment-variables-reference.md` | Security-relevant env vars reference |
 | `examples/permissions-cheatsheet.md` | Complete permission rules quick reference |
@@ -172,6 +173,8 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 | `env.CLAUDE_CODE_MCP_ALLOWLIST_ENV` | Prevent stdio servers from inheriting undeclared shell credentials |
 
 Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wide MCP servers.
+
+Use [`examples/mcp-tool-permissions.json`](./examples/mcp-tool-permissions.json) to allow read-only calls, ask before mutations, and deny destructive MCP calls. **Important:** a broad managed `ask: ["mcp__*"]` rule overrides a narrower `allow` rule, so adapt the existing Moderate tier rather than blindly appending the example.
 
 See `examples/mcp-security.md` for the complete security guide.
 

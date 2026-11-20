@@ -21,6 +21,10 @@ A comprehensive collection of **security-hardened configurations** for popular A
 | [`tabnine/`](./tabnine/) | Tabnine Enterprise | Command permissions, workspace restrictions |
 | [`continue-dev/`](./continue-dev/) | Continue.dev | `config.yaml`, permissions, secrets management |
 
+### MCP Tool-Call Permissions
+
+MCP server approval and **individual MCP tool-call permissions** are separate controls. For a concrete Claude Code `allow` / `ask` / `deny` policy (including precedence and rollout checks), see [MCP tool-call example](./claude-code/examples/mcp-tool-permissions.json) and [MCP security guide](./claude-code/examples/mcp-security.md). Other AI tools use different policy syntax; do not copy Claude Code's JSON to them unchanged.
+
 ### Cross-Tool Admin Controls
 
 | Directory | Purpose | Key Content |
