@@ -23,7 +23,7 @@ A comprehensive collection of **security-hardened configurations** for popular A
 
 ### MCP Tool-Call Permissions
 
-MCP server approval and **individual MCP tool-call permissions** are separate controls. For a concrete Claude Code `allow` / `ask` / `deny` policy (including precedence and rollout checks), see [MCP tool-call example](./claude-code/examples/mcp-tool-permissions.json) and [MCP security guide](./claude-code/examples/mcp-security.md). Other AI tools use different policy syntax; do not copy Claude Code's JSON to them unchanged.
+MCP server approval and **individual MCP tool-call permissions** are separate controls. The Claude Code [Strict](./claude-code/examples/managed-settings-strict.json), [Moderate](./claude-code/examples/managed-settings-moderate.json), and [Baseline](./claude-code/examples/managed-settings-baseline.json) managed configuration examples each include MCP tool-call policies. See the [MCP security guide](./claude-code/examples/mcp-security.md#tiered-managed-configuration-examples) for the tier matrix, [standalone snippet](./claude-code/examples/mcp-tool-permissions.json), precedence, and rollout checks. Other AI tools use different policy syntax; do not copy Claude Code's JSON to them unchanged.
 
 ### Cross-Tool Admin Controls
 

@@ -1,13 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment": "MODERATE enterprise policy. Read-only tools auto-allowed, write/exec tools require approval, dangerous patterns denied. Users may define additional project-level rules. Sandbox enabled with auto-allow. Use for standard enterprise development teams.",
+  "_comment": "MODERATE enterprise policy. Read-only tools auto-allowed, write/exec tools require approval, dangerous patterns denied. Users may define additional project-level rules. Sandbox enabled with auto-allow. Use for standard enterprise development teams. Approved GitHub metadata lookup auto-allowed; repo content and GitHub mutations require approval; destructive MCP tools and shell/filesystem MCP servers denied.",
   "permissions": {
     "allow": [
       "Read",
       "Grep",
       "Glob",
       "LS",
-      "Diff"
+      "Diff",
+      "mcp__github__search_repositories"
     ],
     "ask": [
       "Write",
@@ -15,9 +16,15 @@
       "MultiEdit",
       "Bash",
       "WebFetch",
-      "mcp__*"
+      "mcp__github__get_file_contents",
+      "mcp__github__create_issue",
+      "mcp__github__create_pull_request"
     ],
     "deny": [
+      "mcp__github__delete_file",
+      "mcp__github__push_files",
+      "mcp__filesystem__*",
+      "mcp__shell__*",
       "Bash(curl * | bash)",
       "Bash(curl * | sh)",
       "Bash(wget * | bash)",
@@ -76,7 +83,8 @@
       "Write(./**/*.key)"
     ],
     "disableBypassPermissionsMode": "disable",
-    "blockReadsOutsideWorkingDirectories": true
+    "blockReadsOutsideWorkingDirectories": true,
+    "defaultMode": "default"
   },
   "allowManagedPermissionRulesOnly": false,
   "disableAutoMode": "disable",

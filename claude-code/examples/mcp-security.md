@@ -101,9 +101,24 @@ A copyable **Claude Code** example is in [`mcp-tool-permissions.json`](./mcp-too
 }
 ```
 
+### Tiered managed configuration examples
+
+These permissions are **included directly in each Claude Code managed-settings tier**. Choose a tier before deployment; do not blindly paste the standalone snippet into every tier.
+
+| Tier | Allow without prompt | Ask for approval | Deny |
+|------|----------------------|------------------|------|
+| [Strict](./managed-settings-strict.json) | No MCP tools | No MCP tools | `mcp__*` (all MCP tools) |
+| [Moderate](./managed-settings-moderate.json) | `github.search_repositories` | `github.get_file_contents`, `github.create_issue`, `github.create_pull_request` | `github.delete_file`, `github.push_files`; all `filesystem` and `shell` MCP tools |
+| [Baseline](./managed-settings-baseline.json) | `github.search_repositories`, `github.get_file_contents` | `github.create_issue`, `github.create_pull_request` | Same destructive GitHub and filesystem/shell MCP calls |
+
+- Strict intentionally preserves the previous **deny-all MCP** posture; adding more specific allow or ask rules would not work because deny has precedence.
+- Moderate and Baseline set `permissions.defaultMode: "default"` so unmatched calls follow interactive default-mode permission handling. These are **illustrative per-tool rules, not a comprehensive deny-by-default allowlist**. Review unlisted MCP tools and their effective permissions before rollout.
+- The example MCP server name is `github`; replace it with your configured server's actual name and tool IDs. The tier files do not install or approve an MCP server by themselves.
+- If you need a stricter posture with approved exceptions, build a fully scoped server/tool exposure policy or enforce through an MCP gateway, rather than using a blanket `mcp__*` deny alongside narrower allows.
+
 ### Important precedence and deployment details
 
-- **Deny > Ask > Allow**, regardless of specificity. A broad `ask: ["mcp__*"]` takes precedence over a narrower `allow: ["mcp__github__search_repositories"]`. The [Moderate managed settings](./managed-settings-moderate.json) currently contain `ask: ["mcp__*"]`; **replace that catch-all** with deliberate per-tool `ask` entries to make the example's `allow` rules effective. Check for conflicting managed rules and other policies.
+- **Deny > Ask > Allow**, regardless of specificity. A broad `ask: ["mcp__*"]` takes precedence over a narrower `allow: ["mcp__github__search_repositories"]`. The tiered configs below intentionally avoid the broad `ask` rule except for the Strict deny-everything policy. Check other managed rules and organization-level policies for conflicts.
 - The inverse also holds: `deny: ["mcp__github__*"]` cannot be paired with a narrower `allow` exception. This sample is **not a deny-by-default allowlist**: unlisted tools follow the client's remaining permission rules and mode. For stronger enforcement, combine explicit denied tools, server governance, scoped credentials, and an MCP gateway or pre-tool policy enforcement.
 - `allowedMcpServers` and `deniedMcpServers` control **server availability**, not per-call approval. A permitted server can expose multiple tools with very different risks.
 - Use the **actual** tool names exposed by the installed server; examples assume a GitHub MCP server named `github`. Names and offered operations can differ by server version and toolset. `mcp__servername__*` matches all tools from that server, while `mcp__servername__toolname` matches an individual tool. No MCP server is installed by this JSON snippet.
