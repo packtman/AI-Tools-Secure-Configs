@@ -174,7 +174,7 @@ See `examples/hooks-security.json` and `examples/hook-scripts/` for ready-to-use
 
 Deploy `managed-mcp.json` alongside `managed-settings.json` for organization-wide MCP servers.
 
-Use [`examples/mcp-tool-permissions.json`](./examples/mcp-tool-permissions.json) to allow read-only calls, ask before mutations, and deny destructive MCP calls. **Important:** a broad managed `ask: ["mcp__*"]` rule overrides a narrower `allow` rule, so adapt the existing Moderate tier rather than blindly appending the example.
+The [Strict](./examples/managed-settings-strict.json), [Moderate](./examples/managed-settings-moderate.json), and [Baseline](./examples/managed-settings-baseline.json) managed configuration examples **already include tier-appropriate MCP tool-call rules**. Strict denies all MCP tools; Moderate allows narrow metadata searches, asks before content reads and mutations; Baseline allows approved reads, asks before mutations. Both Moderate and Baseline deny destructive GitHub calls and filesystem/shell MCP tools. See the [tier comparison and verification steps](./examples/mcp-security.md#tiered-managed-configuration-examples) or reuse the [standalone permission snippet](./examples/mcp-tool-permissions.json) with care.
 
 See `examples/mcp-security.md` for the complete security guide.
 
