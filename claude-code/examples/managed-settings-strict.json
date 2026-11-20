@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment": "STRICT enterprise lockdown. All write/exec tools are denied at managed level. Users cannot override any permission rules. Bypass mode, auto mode, and remote control are disabled. Use for regulated environments (finance, healthcare, government).",
+  "_comment": "STRICT enterprise lockdown. All write/exec tools are denied at managed level. Users cannot override any permission rules. Bypass mode, auto mode, and remote control are disabled. Use for regulated environments (finance, healthcare, government). All MCP tool calls remain denied by mcp__*; do not add allow/ask exceptions because deny wins.",
   "permissions": {
     "allow": [
       "Read",
