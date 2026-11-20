@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github__search_repositories",
+      "mcp__github__get_file_contents"
+    ],
+    "ask": [
+      "mcp__github__create_issue",
+      "mcp__github__create_pull_request"
+    ],
+    "deny": [
+      "mcp__github__delete_file",
+      "mcp__github__push_files",
+      "mcp__filesystem__*",
+      "mcp__shell__*"
+    ]
+  }
+}
